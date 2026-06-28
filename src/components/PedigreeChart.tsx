@@ -115,7 +115,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
               <div onClick={() => onSelectPerson('rosario-patane-sr')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosario-patane-sr', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
                 <p className="font-bold truncate">Rosario Patanè</p>
-                <p className="text-[10px] opacity-80 font-sans">c. 1890 • Sicily</p>
+                <p className="text-[10px] opacity-80 font-sans">9 Feb 1889 • Calatabiano</p>
               </div>
               <div onClick={() => onSelectPerson('venera-vecchio')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('venera-vecchio', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>

@@ -116,7 +116,7 @@ export function getLineBadgeColor(line: string): string {
 }
 
 export const TIMELINE_EVENTS = [
-  { year: 'c. 1890', title: 'Rosario Patanè Born', desc: 'Born in Fiumefreddo di Sicilia area, Sicily. Worked as a day labourer (bracciante).', line: 'Patanè' as const, icon: 'Calendar' as const },
+  { year: '1889', title: 'Rosario Patanè Born', desc: 'Born 9 February in Calatabiano, Sicily. Baptized 10 February. Worked as a day labourer (bracciante).', line: 'Patanè' as const, icon: 'Calendar' as const },
   { year: '1898', title: 'Ida Galanti Born', desc: 'Born in Ascoli Piceno area, Marche, Italy.', line: 'Buatti' as const, icon: 'Calendar' as const },
   { year: '1915', title: 'Gregorio Emmi Born & Baptized', desc: 'Born 27 October in Linguaglossa, Sicily. Baptized 5 December by Fr. Rochus La Rosa.', line: 'Emmi' as const, icon: 'Calendar' as const },
   { year: '1923', title: 'Ezio Buatti Born', desc: 'Born 27 April in Ascoli Piceno, Marche, Italy.', line: 'Buatti' as const, icon: 'Calendar' as const },

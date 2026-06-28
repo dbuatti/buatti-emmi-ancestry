@@ -87,6 +87,26 @@ function ProfileTabOverview({ person, people, onSelectPerson }: { person: Person
             ) : <span className="text-sm italic text-stone-500">None recorded</span>}
           </div>
         </div>
+        {person.parents.length > 0 && (() => {
+          const siblings = people.filter(p =>
+            p.id !== person.id &&
+            p.parents.some(pid => person.parents.includes(pid))
+          );
+          if (siblings.length === 0) return null;
+          return (
+            <div>
+              <span className="text-xs text-stone-600 font-sans">Siblings:</span>
+              <div className="mt-1 flex flex-col gap-1">
+                {siblings.map(sibling => (
+                  <Button key={sibling.id} variant="link" onClick={() => onSelectPerson(sibling.id)}
+                    className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif text-left justify-start">
+                    • {sibling.name}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
         <div>
           <span className="text-xs text-stone-600 font-sans">Children:</span>
           <div className="mt-1 flex flex-col gap-1">

@@ -30,7 +30,7 @@ function AddLeadDialog({ leads, setLeads }: {
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ ...DEFAULT_NEW_LEAD });
+  const [form, setForm] = useState<Omit<ResearchLead, 'id'>>({ ...DEFAULT_NEW_LEAD });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +123,7 @@ function AddQuestionDialog({ questions, setQuestions }: {
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ ...DEFAULT_NEW_QUESTION });
+  const [form, setForm] = useState<Omit<OpenQuestion, 'id'>>({ ...DEFAULT_NEW_QUESTION });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
