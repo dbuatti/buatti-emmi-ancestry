@@ -290,7 +290,7 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Patanè',
     gender: 'F',
-    birthDate: 'Unknown / to be confirmed',
+    birthDate: 'c. 1888',
     deathDate: 'Deceased by 1953',
     occupations: ['Casalinga (housewife)', 'Tailor (sartora)'],
     residences: ['Sezione Castello, Fiumefreddo di Sicilia'],
@@ -304,8 +304,9 @@ export const initialPeople: Person[] = [
       'Note the recurrence of the name "Venera" in this family line, later given to her granddaughter Venera Buatti.',
       'Marriage record found (24 Apr 1911, Fiumefreddo). Parents confirmed: Vincenzo Vecchio & Rosaria Rapisardi.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Venera Vecchio (daughter of Carmelo Vecchio & Rosaria Ragonesi) marrying Giuseppe Di Blasi was investigated and confirmed to be a different person.',
-      'Birth date: can be estimated from her age at marriage. At marriage (24 Apr 1911) she must have been at least 15 (canonical minimum) — born ~1896 at latest. At Rosaria\'s birth (23 May 1924) she was of childbearing age — no upper bound. Likely born ~1894-1898.',
-      'Parents Vincenzo Vecchio & Rosaria Rapisardi were both from Fiumefreddo (per marriage record). Her birth most likely registered in Fiumefreddo.',
+      'Parent note: mother\'s surname recorded as "Raciti" on marriage banns (variation of Rapisardi).',
+      'Baptism record located in margin note of marriage record (Fiumefreddo parish): "V. Lib. Baptiz. ann. 1888 fol. 240 n. 8" — Volume 5, Baptisms 1888, folio 240, entry 8. NEEDS CHECKING: actual baptism register not yet viewed to confirm exact birth date.',
+      'Birth year refined to c. 1888 (baptism referenced as 1888, consistent with marriage around age 23).',
       'Nickname: "Ni Ni Na" (Nenina?) per family memory (Connie Emmi, 28 Jun 2026).'
     ],
     records: [

@@ -71,6 +71,49 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
       </div>
 
       <div className="space-y-8 relative z-10 my-auto">
+        {/* Generation 0 */}
+        <div className="space-y-4">
+          <GenerationLabel label="Generation 0 — Great-Great-Grandparents" />
+          <div className="grid grid-cols-8 gap-2 text-center">
+            <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
+              <p className="font-bold truncate text-stone-400">Unknown</p>
+              <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
+            </div>
+            <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
+              <p className="font-bold truncate text-stone-400">Unknown</p>
+              <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
+            </div>
+            <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
+              <p className="font-bold truncate text-stone-400">Unknown</p>
+              <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
+            </div>
+            <div className="col-span-2 space-y-2">
+              <div onClick={() => onSelectPerson('sebastiano-patane-sr')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('sebastiano-patane-sr', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
+                <p className="font-bold truncate">Sebastiano Patanè</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Calatabiano</p>
+              </div>
+              <div onClick={() => onSelectPerson('rosaria-dagata')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-dagata', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
+                <p className="font-bold truncate">Rosaria D'Agata</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Calatabiano</p>
+              </div>
+              <div onClick={() => onSelectPerson('vincenzo-vecchio')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('vincenzo-vecchio', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
+                <p className="font-bold truncate">Vincenzo Vecchio</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Fiumefreddo</p>
+              </div>
+              <div onClick={() => onSelectPerson('rosaria-rapisardi')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-rapisardi', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
+                <p className="font-bold truncate">Rosaria Rapisardi</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Fiumefreddo</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ConnectingLine count={4} />
+
         {/* Generation 1 */}
         <div className="space-y-4">
           <GenerationLabel label="Generation 1 — Great-Grandparents" />
