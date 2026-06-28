@@ -1,81 +1,6 @@
-export interface Person {
-  id: string;
-  name: string;
-  generation: number; // 0 = Great-Great-Grandparents, 1 = Great-Grandparents, 2 = Grandparents, 3 = Parents, 4 = Children
-  line: 'Buatti' | 'Chiappini' | 'Emmi' | 'Patanè' | 'Other';
-  gender: 'M' | 'F';
-  birthDate?: string;
-  birthPlace?: string;
-  deathDate?: string;
-  deathPlace?: string;
-  burialPlace?: string;
-  burialDetails?: string;
-  burialLink?: string;
-  spouses: string[]; // IDs of spouses
-  parents: string[]; // IDs of parents
-  children: string[]; // IDs of children
-  siblings?: string[]; // Names of siblings
-  notes?: string[];
-  occupations?: string[];
-  residences?: string[];
-  physicalDescription?: {
-    height?: string;
-    build?: string;
-    hair?: string;
-    eyes?: string;
-    other?: string;
-  };
-  migration?: {
-    details?: string;
-    voyages?: {
-      ship?: string;
-      departure?: string;
-      arrival?: string;
-      date?: string;
-      details?: string;
-    }[];
-    sponsorship?: string;
-    settled?: string;
-  };
-  military?: {
-    service?: string;
-    captured?: string;
-    internment?: string;
-    repatriation?: string;
-    details?: string;
-  };
-  researchStatus: {
-    status: 'Confirmed' | 'In Progress' | 'Outstanding' | 'Ruled Out';
-    details?: string;
-    nextSteps?: string[];
-  };
-  sources?: {
-    title: string;
-    type: string;
-    reference?: string;
-    link?: string;
-  }[];
-  isLiving?: boolean;
-}
+import type { Person, ResearchLead, OpenQuestion } from '@/types';
 
-export interface ResearchLead {
-  id: string;
-  title: string;
-  category: 'Buatti/Chiappini' | 'Emmi/Patanè' | 'General';
-  status: 'To Investigate' | 'In Progress' | 'Ruled Out' | 'Completed';
-  description: string;
-  whyRuledOut?: string;
-  nextSteps?: string;
-  sources?: string[];
-}
-
-export interface OpenQuestion {
-  id: string;
-  question: string;
-  category: 'Buatti/Chiappini' | 'Emmi/Patanè';
-  status: 'Pending' | 'In Progress' | 'Resolved';
-  notes?: string;
-}
+export type { Person, ResearchLead, OpenQuestion };
 
 export const initialPeople: Person[] = [
   // --- GENERATION 1: Great-Grandparents ---
@@ -98,6 +23,12 @@ export const initialPeople: Person[] = [
     notes: [
       'Parents of Ezio Buatti.',
       'Marriage or birth record may predate the 1919 digitisation cutoff and could be searchable on Antenati.'
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Searching', notes: 'Likely pre-1919 Ascoli Piceno — after digital cutoff, searching Antenati' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'Pre-1919, same digital cutoff issue as birth' },
+      { type: 'Death Record', status: 'Found', notes: '5 Sep 1964 — confirmed via Comune cemetery search' },
+      { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, Settore L, Blocco L074O' }
     ],
     researchStatus: {
       status: 'In Progress',
@@ -129,6 +60,12 @@ export const initialPeople: Person[] = [
     spouses: ['alfredo-buatti-sr'],
     parents: [],
     children: ['ezio-buatti'],
+    records: [
+      { type: 'Birth Record', status: 'Searching', notes: '1898 known, record not yet located in Ascoli Piceno' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'Pre-1919 with Alfredo Buatti Sr.' },
+      { type: 'Death Record', status: 'Found', notes: '26 Jan 1970 — confirmed via cemetery search' },
+      { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, same plot as Alfredo' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Burial and death date confirmed. Birth year 1898 known.',
@@ -162,6 +99,11 @@ export const initialPeople: Person[] = [
       'Remo was reportedly sent away to a port town referred to as "San Giorgio" to keep him away from their son, and his wife died about a month later.',
       'Details (which son, exact location/town of "San Giorgio," and dates) still need confirming, as this was relayed informally.'
     ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found — entirely unknown' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Needs primary source verification' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
     researchStatus: {
       status: 'Outstanding',
       details: 'Information based entirely on informal family accounts. Needs primary source verification.',
@@ -187,6 +129,11 @@ export const initialPeople: Person[] = [
       'Survived childbirth but contracted tuberculosis and died about a month later.',
       'Her death led to Remo being sent away to "San Giorgio" to protect their son from infection.'
     ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Name and dates completely unknown' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Husband Remo\'s name known but no marriage record found' },
+      { type: 'Death Record', status: 'Not Found', notes: 'c. 1930s, location unknown' }
+    ],
     researchStatus: {
       status: 'Outstanding',
       details: 'Name and dates completely unknown.',
@@ -211,6 +158,11 @@ export const initialPeople: Person[] = [
     spouses: ['concetta-sgroi'],
     parents: [],
     children: ['gregorio-emmi'],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found — unknown birth details' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'To Concetta Sgroi — likely Linguaglossa parish register' },
+      { type: 'Death Record', status: 'Found', notes: 'Pre-1943 per POW report — confirmed "fu Egidio" on 1949 certificate' }
+    ],
     researchStatus: {
       status: 'In Progress',
       details: 'Death timeframe confirmed (pre-1943/1949). Birth details outstanding.',
@@ -247,6 +199,12 @@ export const initialPeople: Person[] = [
       'Maiden name confirmed via Gregorio\'s 1943 Report on Prisoners of War; an earlier guess of "Sofia Concetta" is superseded.',
       'Gregorio\'s own daughter Concetta was very likely named after this grandmother.'
     ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'To Egidio Emmi — likely Linguaglossa parish register' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+      { type: 'Surname Confirmation', status: 'Found', notes: '"Sgroi" confirmed via Gregorio\'s 1943 POW record' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Maiden name Sgroi confirmed via official POW records.',
@@ -271,7 +229,7 @@ export const initialPeople: Person[] = [
     line: 'Patanè',
     gender: 'M',
     birthDate: 'c. 1890',
-    birthPlace: 'Fiumefreddo di Sicilia area',
+    birthPlace: 'Milo, Province of Catania, Sicily, Italy (likely — Rosario NOT found in Fiumefreddo births 1889-1891)',
     deathDate: 'Unknown / to be confirmed',
     occupations: ['Bracciante (day labourer)'],
     residences: ['Sezione Castello, Fiumefreddo di Sicilia'],
@@ -281,14 +239,26 @@ export const initialPeople: Person[] = [
     notes: [
       'Age 34 in May 1924, per Rosaria\'s birth record.',
       'Parents of Rosaria Patanè.',
-      'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person. Rosario\'s parents remain unidentified.'
+      'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person. Rosario\'s parents remain unidentified.',
+      'NAA file A446, 1967/39646 (Item ID 7775953) requested — access application RK26/00009589 submitted 28 Jun 2026.',
+      'NOT IN FIUMEFREDDO BIRTHS (1889-1891 indexes checked, no match). Likely born in Milo.',
+      'Milo church records (DGS 7490063) confirmed Patanè family in Milo: Rosaria Patanè (b. 24 Nov 1875) daughter of Gaetano Patanè & Maria Garozzo, godfather Rosario Patanè (son of late Rosario) from Macchia. Our Rosario likely a younger relative of this godfather Rosario.',
+      'Browsing Milo baptism register (~1529/3000 pages) — search ongoing.'
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Searching', notes: 'c. 1890 estimated from daughter\'s birth record — not yet located' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'To Venera Vecchio — pre-1924, Fiumefreddo. No marriage record found yet' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Unknown — possibly pre-1950 if he did not migrate to Australia' },
+      { type: 'NAA File (A446 1967/39646)', status: 'Searching', notes: 'Requested 28 Jun 2026 — due 2 Nov 2026' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Birth year (~1890) and occupation confirmed via daughter\'s birth record. Parents and marriage record unknown.',
+      details: 'Birth year (~1890) and occupation confirmed via daughter\'s birth record. Birth place now believed to be Milo (not Fiumefreddo — checked 1889-1891 indexes, no match). Milo church records (DGS 7490063) confirm Patanè family presence. Parents and marriage record unknown.',
       nextSteps: [
-        'Search for marriage record with Venera Vecchio in Fiumefreddo di Sicilia (pre-1924).',
-        'Investigate connection to Pietro Patanè (cane farm owner in Ingham).'
+        'Continue browsing Milo baptism register DGS 7490063 for Rosario baptism ~1888-1892.',
+        'Check for alphabetical index at start/end of volume for faster lookup.',
+        'Search for marriage record with Venera Vecchio — possibly in Milo, or Fiumefreddo parish records.',
+        'Investigate connection to Pietro Patanè (cane farm owner in Ingham) — same town Milo.'
       ]
     },
     sources: [
@@ -318,6 +288,11 @@ export const initialPeople: Person[] = [
       'Recorded as "fu Venera" (the late Venera) on a 1953 Comune di Fiumefreddo photo-identity certificate.',
       'Note the recurrence of the name "Venera" in this family line, later given to her granddaughter Venera Buatti.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Venera Vecchio (daughter of Carmelo Vecchio & Rosaria Ragonesi) marrying Giuseppe Di Blasi was investigated and confirmed to be a different person. Venera\'s parents remain unidentified.'
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Completely unknown — no records found' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'To Rosario Patanè — pre-1924, likely Fiumefreddo' },
+      { type: 'Death Record', status: 'Found', notes: 'Pre-1953 — recorded as "fu Venera" on 1953 photo-identity cert' }
     ],
     researchStatus: {
       status: 'In Progress',
@@ -354,7 +329,13 @@ export const initialPeople: Person[] = [
     children: [],
     notes: [
       'Brother of Rosaria Patanè.',
-      'Trained his sister Rosaria in tailoring.'
+      'Trained his sister Rosaria in tailoring.',
+      'NAA file A446, 1967/39646 (Item ID 7775953) includes a Sebastiano Patanè b. 18 Feb 1936 — could be this person or another Sebastiano. Access application submitted.'
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found in Fiumefreddo' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+      { type: 'NAA File (A446 1967/39646)', status: 'Searching', notes: 'Requested 28 Jun 2026 — due 2 Nov 2026. Includes a Sebastiano Patanè b. 18 Feb 1936' }
     ],
     researchStatus: {
       status: 'Outstanding',
@@ -391,6 +372,14 @@ export const initialPeople: Person[] = [
         }
       ]
     },
+    records: [
+      { type: 'Birth Record', status: 'Searching', notes: '27 Apr 1923 — embargo lifted 2023, digital gap in Ascoli Piceno records' },
+      { type: 'Death Record', status: 'Found', notes: '16 Oct 1991 — confirmed by family' },
+      { type: 'Immigration File (NAA)', status: 'Found', notes: 'B78, ITALIAN/BUATTI EZIO — copy ordered 27 Jun 2026 (Order 2458870)' },
+      { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'Unclear if married before or after 1952 migration' },
+      { type: 'Bankruptcy Record', status: 'Found', notes: 'Café & milk bar proprietor, Broadford VIC. Bankrupt Oct 1957 (Trove, Commonwealth Gazette)' }
+    ],
     researchStatus: {
       status: 'In Progress',
       details: 'Birth record not yet located (privacy embargo lifted in 2023). Migration confirmed via NAA files. Full digital copy of NAA file ordered on 27 June 2026.',
@@ -440,15 +429,29 @@ export const initialPeople: Person[] = [
         }
       ]
     },
+    residences: ['303 Punt Road, Richmond, Victoria (1965)'],
+    records: [
+      { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
+      { type: 'Death Record', status: 'Found', notes: '23 May 1998 — burial confirmed' },
+      { type: 'Burial Record', status: 'Found', notes: 'Springvale Botanical Cemetery, Spotted Gums, Row AS, Grave 68' },
+      { type: 'Naturalisation Record', status: 'Found', notes: 'Commonwealth Gazette notice, 18 Nov 1965 — lists address 303 Punt Rd, Richmond' },
+      { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — listed as "CHIAPPINI, Lilia"' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'Unclear if married to Ezio before 1952 voyage' }
+    ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Birth record not yet located (under privacy embargo until 2030). Burial and migration confirmed.',
+      details: 'Birth record not yet located (under privacy embargo until 2030). Residence confirmed at 303 Punt Rd, Richmond (1965). Burial and migration confirmed.',
       nextSteps: [
         'Contact Comune di San Benedetto del Tronto directly for 1930 birth record.',
         'Ask family why she travelled as "servant" rather than wife/fiancée (sponsorship category vs. marital status).'
       ]
     },
     sources: [
+      {
+        title: 'Commonwealth of Australia Gazette — Naturalisation List',
+        type: 'Government Gazette',
+        reference: '18 November 1965, p. 3958 (Trove)'
+      },
       {
         title: 'Find a Grave — Lilia Buatti',
         type: 'Cemetery Record',
@@ -509,6 +512,19 @@ export const initialPeople: Person[] = [
       internment: 'Transported from Bombay to Sydney aboard SS Uruguay (arrived 4 Oct 1943). Interned as POW at Camp No. 12, Cowra, NSW (from 5 Oct 1943); later moved to Murchison, Victoria. Hospitalized at Leongatha (malaria, May 1944) and Tatura/Murchison (epistaxis, Dec 1944).',
       repatriation: 'Repatriated to Italy on 30 September 1946 aboard H.T. Chitral.'
     },
+    records: [
+      { type: 'Birth (Civil)', status: 'Searching', notes: '27 Oct 1915 — all FS digital routes exhausted, emails sent to Comune di Linguaglossa & Archivio di Stato di Catania 28 Jun 2026' },
+      { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80' },
+      { type: 'Death Record', status: 'Searching', notes: 'c. late Nov 1979 — funeral 30 Nov 1979, exact date unknown' },
+      { type: 'Burial Record', status: 'Found', notes: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070' },
+      { type: 'POW Record', status: 'Found', notes: 'NAA MP1103/1 & MP1103/2 — captured Asmara 1941, Cowra POW Camp, repatriated 1946' },
+      { type: 'Immigration File (NAA)', status: 'Found', notes: 'J25, 1949/13301 — Piero Lalli sponsorship application' },
+      { type: 'Passenger List', status: 'Found', notes: 'M/V Napoli, Mar 1950; SS Uruguay, Oct 1943 (POW transport); H.T. Chitral, Sep 1946 (repatriation)' },
+      { type: 'Alien Registration', status: 'Found', notes: 'No. 139899, 13 Mar 1950' },
+      { type: 'Identity Document', status: 'Found', notes: 'Carta d\'identità No. 17.771.300, Comune di Linguaglossa' },
+      { type: 'Police Record', status: 'Found', notes: 'Townsville District Police Report, 15 Sep 1950 — "good character and repute"' },
+      { type: 'Medical Record', status: 'Found', notes: 'Malaria (May 1944) & epistaxis (Dec 1944) during POW internment' }
+    ],
     researchStatus: {
       status: 'In Progress',
       details: 'Baptismal record found and confirmed. Civil birth record outstanding (FamilySearch digital routes exhausted). Request emails sent to Comune di Linguaglossa and Archivio di Stato di Catania on 28 June 2026.',
@@ -588,6 +604,17 @@ export const initialPeople: Person[] = [
         }
       ]
     },
+    records: [
+      { type: 'Birth (Civil)', status: 'Found', notes: 'Numero 71, Fiumefreddo di Sicilia 1924 — FS DGS 7851867. Born 23 May 1924 (not 25th)' },
+      { type: 'Baptismal Record', status: 'Searching', notes: 'FS DGS 5429284 restricted — emails sent to Diocesi di Acireale & parish 28 Jun 2026' },
+      { type: 'Death Record', status: 'Found', notes: '30 Mar 1994 — burial confirmed' },
+      { type: 'Burial Record', status: 'Found', notes: 'Cheltenham Memorial Cemetery, Plot 27*377*N' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'To Gregorio Emmi — pre-1950, date/location unknown' },
+      { type: 'Immigration File (NAA)', status: 'Found', notes: 'J25, 1950/8776 — 15+ pages, already digitised' },
+      { type: 'Passport', status: 'Found', notes: 'No. 3187826, issued 2 Dec 1950, Linguaglossa' },
+      { type: 'Passenger List', status: 'Found', notes: 'SS Surriento, Mar 1951 — Messina to Brisbane via Sydney' },
+      { type: 'Medical Record', status: 'Found', notes: 'Medical examination, Messina 5-6 Dec 1950, Dott. Francesco Siracusano' }
+    ],
     researchStatus: {
       status: 'In Progress',
       details: 'Civil birth record confirmed (Numero 71, 1924). Baptismal record outstanding (FamilySearch DGS 5429284 is restricted). Outreach emails sent to Diocesi di Acireale and parish on 28 June 2026.',
@@ -642,6 +669,9 @@ export const initialPeople: Person[] = [
       'Moved to Italy with brother John c. 1962–63; returned to Australia in 1975.',
       'Provided various correspondence and recollections that formed the basis of this research.'
     ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '8 Nov 1956, Broadford VIC — confirmed' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Living. Details confirmed.'
@@ -653,18 +683,22 @@ export const initialPeople: Person[] = [
     generation: 3,
     line: 'Emmi',
     gender: 'F',
-    birthDate: 'Unknown / to be confirmed',
+    birthDate: '1952 (exact date TBC)',
     spouses: ['alfred-buatti'],
     parents: ['gregorio-emmi', 'rosaria-patane'],
     children: ['daniele-buatti', 'roberto-buatti', 'stefano-buatti', 'marco-buatti'],
     siblings: ['Angie McWilliams', 'Concetta ("Connie") Emmi', 'John Emmi', 'Greg Emmi', 'Ross Emmi'],
     notes: [
       'Living.',
+      'Born 1952 per self-report.',
       'Named after her grandmother Venera Vecchio, following Italian naming traditions.'
     ],
+    records: [
+      { type: 'Birth Record', status: 'Pending', notes: 'Born 1952 — ask for exact date and place' }
+    ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Living. Exact date and place of birth need to be confirmed.',
+      status: 'In Progress',
+      details: 'Living. Birth year confirmed as 1952. Exact date and place TBC.',
       nextSteps: [
         'Ask Venera or family for her exact birth date and place.'
       ]
@@ -678,10 +712,15 @@ export const initialPeople: Person[] = [
     generation: 4,
     line: 'Buatti',
     gender: 'M',
+    birthDate: '20 November 1990',
+    birthPlace: 'Parkdale, Victoria, Australia',
     spouses: [],
     parents: ['alfred-buatti', 'venera-buatti'],
     children: [],
     isLiving: true,
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '20 Nov 1990, Parkdale VIC — confirmed by individual' }
+    ],
     researchStatus: { status: 'Confirmed' }
   },
   {
@@ -808,6 +847,98 @@ export const initialPeople: Person[] = [
     children: [],
     notes: ['Brother of Venera Buatti.'],
     researchStatus: { status: 'Confirmed' }
+  },
+  {
+    id: 'pietro-patane',
+    name: 'Pietro Patanè',
+    generation: 2,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '22 Jul 1911 (or 1 Oct 1911 — conflicting sources)',
+    birthPlace: 'Milo, Province of Catania, Sicily, Italy',
+    deathDate: '6 February 1994',
+    deathPlace: 'Ingham, Queensland, Australia',
+    burialPlace: 'New Ingham Cemetery, Ingham, Queensland',
+    burialDetails: 'Roman Catholic Sect: 31, Plot: 12. Cause of death: chronic renal failure.',
+    spouses: ['maria-ragonesi-patane'],
+    parents: [],
+    children: ['filadelfo-patane', 'sam-patane'],
+    occupations: ['Cane cutter', 'Cane farmer'],
+    residences: ['Milo, Catania, Sicily', 'Black Rock, via Ingham, Queensland'],
+    notes: [
+      'Arrived Brisbane per ORAMA, 24 November 1930. Recorded birthplace "Melo" on some records.',
+      'Interned at Loveday Camp (South Australia) during WWII as an enemy alien. Alien registration no. Q8299. Released 12 December 1943.',
+      'Owned the cane farm at Black Rock, via Ingham, North Queensland.',
+      'Sponsored Gregorio Emmi\'s migration (1949-50) and employed him as a cane cutter.',
+      'Guaranteed accommodation for Rosaria Patanè Emmi and daughter Concetta (1950).',
+      'Likely a close relative of Rosario Patanè (Rosaria\'s father) — same surname, same region (Milo is ~15km from Fiumefreddo). Exact relationship unconfirmed.',
+      'Naturalised 26 September 1938 (A714, 4/1530).'
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '22 Jul 1911, Milo CT — confirmed via NAA D4028 index card' },
+      { type: 'Death Record', status: 'Found', notes: '6 Feb 1994, Ingham QLD — chronic renal failure, New Ingham Cemetery' },
+      { type: 'Burial Record', status: 'Found', notes: 'New Ingham Cemetery, RC Sect: 31, Plot: 12' },
+      { type: 'Naturalisation Record', status: 'Found', notes: 'A714 4/1530 — naturalised 26 Sep 1938, Ingham QLD' },
+      { type: 'Passenger List', status: 'Found', notes: 'Arrived Brisbane per ORAMA, 24 Nov 1930' },
+      { type: 'POW/Internment Record', status: 'Found', notes: 'MP1103/1 Q8299 — interned Loveday Camp WWII. Released 12 Dec 1943' }
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Key sponsor and employer of the Emmi family in Australia. Relationship to Rosario Patanè still unconfirmed.'
+    }
+  },
+  {
+    id: 'maria-ragonesi-patane',
+    name: 'Maria Ragonesi',
+    generation: 2,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: 'Unknown',
+    deathDate: '1980',
+    spouses: ['pietro-patane'],
+    parents: [],
+    children: ['filadelfo-patane', 'sam-patane'],
+    notes: ['Wife of Pietro Patanè. Married before 1939 (Pietro listed as married on 1939 alien registration).'],
+    researchStatus: {
+      status: 'In Progress',
+      details: 'Death year known (1980). Birth details and maiden name origin unknown.'
+    }
+  },
+  {
+    id: 'filadelfo-patane',
+    name: 'Filadelfo Antonio "Phil" Patanè',
+    generation: 3,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '1952',
+    birthPlace: 'Ingham, Queensland, Australia',
+    deathDate: '29 May 1989',
+    deathPlace: 'Ingham, Queensland, Australia',
+    burialPlace: 'New Ingham Cemetery, Ingham, Queensland',
+    burialDetails: 'Roman Catholic Sect: 38, Plot: 56. Cause: Coroner\'s order.',
+    parents: ['pietro-patane', 'maria-ragonesi-patane'],
+    spouses: [],
+    children: [],
+    notes: ['Son of Pietro Patanè and Maria Ragonesi.'],
+    researchStatus: { status: 'Confirmed' }
+  },
+  {
+    id: 'sam-patane',
+    name: 'Sam Patanè',
+    generation: 3,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '1954',
+    birthPlace: 'Ingham, Queensland, Australia',
+    deathDate: '23 May 2014',
+    deathPlace: 'Ingham, Queensland, Australia',
+    burialPlace: 'New Ingham Cemetery, Ingham, Queensland',
+    burialDetails: 'Uniting Sect: 12, Plot: 635.',
+    parents: ['pietro-patane', 'maria-ragonesi-patane'],
+    spouses: [],
+    children: [],
+    notes: ['Son of Pietro Patanè and Maria Ragonesi. His son Jordan Christopher Patanè (1987-1987) predeceased him.'],
+    researchStatus: { status: 'Confirmed' }
   }
 ];
 
@@ -816,9 +947,10 @@ export const initialResearchLeads: ResearchLead[] = [
     id: 'lead-pietro-patane',
     title: 'Pietro Patanè Connection',
     category: 'Emmi/Patanè',
-    status: 'To Investigate',
-    description: 'Pietro Patanè owned the cane farm at Black Rock, via Ingham, N.Q. He employed Gregorio Emmi and guaranteed accommodation for Rosaria and Concetta on arrival. Shared surname with Rosaria strongly suggests a family connection (possibly brother, cousin, or uncle).',
-    nextSteps: 'Search for Pietro Patanè\'s migration or naturalisation records in NAA to find his place of birth and parents, then cross-reference with Fiumefreddo di Sicilia records.'
+    status: 'In Progress',
+    description: 'Pietro Patanè (22 Jul 1911 – 6 Feb 1994), born Milo CT, arrived Brisbane per ORAMA 24 Nov 1930. Interned Loveday Camp WWII. Owned Black Rock cane farm, sponsored Gregorio & Rosaria Emmi. Naturalised 26 Sep 1938 (A714 4/1530). Shared surname and nearby hometown (Milo, 15km from Fiumefreddo) strongly suggests a family connection to Rosario Patanè — possibly brother or cousin. Exact relationship still unknown.',
+    nextSteps: 'His naturalisation record (A714 4/1530) should contain his parents\' names. Request or view online to confirm relationship to Rosario Patanè.',
+    sources: ['NAA: D4028 PATANE PIETRO (Item 9208586)', 'NAA: A714 4/1530 (Item 31518779)', 'Find a Grave: New Ingham Cemetery']
   },
   {
     id: 'lead-piero-lalli',
@@ -886,6 +1018,41 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'To Investigate',
     description: 'Community groups sometimes have members local to Catania province willing to do a free or low-cost archive lookup.',
     nextSteps: 'Post the specific reference: "Linguaglossa, stato civile (Tribunale), Nati, 1915, Gregorio Emmi, parents Egidio Emmi & Concetta Sgroi" in active groups.'
+  },
+  {
+    id: 'lead-naa-rosario-patane-1967',
+    title: 'NAA Record: Rosario Patanè (b. 18 Nov 1895) & Sebastiano Patanè (b. 18 Feb 1936)',
+    category: 'Emmi/Patanè',
+    status: 'In Progress',
+    description: 'NAA file A446, 1967/39646 — "PATANE Rosario born 18 November 1895; Sebastiano born 18 February 1936" (Item ID 7775953, Canberra). Could be Rosaria\'s father Rosario (born c. 1890, close to 1895), or a different Rosario. Rosario Patanè aged ~72 in 1967 would match the c. 1895 birth year. Could also be the Rosario Patanè who married Grazia Coco (ruled out as Rosaria\'s father, but still a Patanè to investigate). File also includes a Sebastiano Patanè (b. 18 Feb 1936) — Rosaria\'s brother was named Sebastiano, but born unknown date.',
+    nextSteps: 'Access application submitted 28 June 2026 (Receipt RK26/00009589, due 2 Nov 2026). Wait for file and examine all pages for family connections, addresses, and sponsors.',
+    sources: ['NAA: A446, 1967/39646 (Item ID 7775953)']
+  },
+  {
+    id: 'lead-alfio-patane-naturalisation',
+    title: 'Alfio Patanè Naturalisation Record (A1, 1930/3825)',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Alfio Patanè (c.1865-1928), cane farmer at Boogan near Innisfail QLD, murdered in "Black Hand" case. NAA naturalisation record A1, 1930/3825 (Item 1500231) — 11 pages fully digitised. Likely contains exact birthplace, parents\' names, arrival date, and possibly mentions of relatives including Pietro Patanè.',
+    nextSteps: 'View the digitised images at RecordSearch (B=1500231). Extract parents\' names and town of origin in Sicily. Cross-reference with Pietro Patanè (Milo, 1911-1994).',
+    sources: ['NAA: A1, 1930/3825 (Item ID 1500231)']
+  },
+  {
+    id: 'lead-vecchio-emmi-network',
+    title: 'Vecchio–Emmi Family Connection (Linguaglossa)',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Nunzio Vecchio (1901-1995, born Linguaglossa) married Sara Emmi, arrived Australia 1932, worked Ingham cane fields. This directly links the Vecchio and Emmi families in Linguaglossa. Leonardo Vecchio (co-signer of Rosaria\'s guarantee, died 1977 aged 75) likely from same network.',
+    nextSteps: 'Contact Darrel Vecchio via vecchio.biz to compare family trees. Exact relationship between Sara Emmi and Gregorio Emmi needs to be established.',
+    sources: ['vecchio.biz family blog', 'New Ingham Cemetery records']
+  },
+  {
+    id: 'lead-darrel-vecchio-contact',
+    title: 'Contact Darrel Vecchio (vecchio.biz)',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Darrel Vecchio (grandson of Nunzio Vecchio & Sara Emmi) runs vecchio.biz and Jondal Industries. Grew up in Ingham. Could provide crucial connections between the Vecchio, Emmi, and Patanè families in the Ingham Italian community.',
+    nextSteps: 'Find contact details via vecchio.biz website or LinkedIn. Prepare specific questions about the Vecchio-Emmi-Patanè connections in Ingham.',
   }
 ];
 
@@ -966,5 +1133,12 @@ export const initialOpenQuestions: OpenQuestion[] = [
     category: 'Emmi/Patanè',
     status: 'Pending',
     notes: 'Living. Need to ask her or family directly.'
+  },
+  {
+    id: 'q-naa-rosario-patane-1967',
+    question: 'Does the NAA file for Rosario Patanè (b. 1895) reveal a connection to Rosaria Patanè\'s family?',
+    category: 'Emmi/Patanè',
+    status: 'In Progress',
+    notes: 'NAA: A446, 1967/39646. Access application RK26/00009589 submitted 28 June 2026. Could be Rosaria\'s father, or Pietro Patanè (the Ingham sponsor), or another relative.'
   }
 ];
