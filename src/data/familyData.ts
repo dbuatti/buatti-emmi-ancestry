@@ -1459,7 +1459,7 @@ export const initialResearchLeads: ResearchLead[] = [
     category: 'Emmi/Patanè',
     status: 'In Progress',
     description: 'Pietro Patanè (22 Jul 1911 – 6 Feb 1994), born Milo CT, arrived Brisbane per ORAMA 24 Nov 1930. Interned Loveday Camp WWII. Owned Black Rock cane farm, sponsored Gregorio & Rosaria Emmi. Naturalised 26 Sep 1938 (A714 4/1530). Shared surname and nearby hometown (Milo, 15km from Fiumefreddo) strongly suggests a family connection to Rosario Patanè — possibly brother or cousin. Exact relationship still unknown.',
-    nextSteps: 'His naturalisation record (A714 4/1530) should contain his parents\' names. Request or view online to confirm relationship to Rosario Patanè.',
+    nextSteps: 'His naturalisation record (A714 4/1530) should contain his parents\' names. NONE of Pietro\'s 19 NAA records are freely digitised — all require paid reproduction ($26.45/item). Order A714 4/1530 (Item 31518779) first — naturalisation files typically list parents\' names, hometown, and arrival details.',
     sources: ['NAA: D4028 PATANE PIETRO (Item 9208586)', 'NAA: A714 4/1530 (Item 31518779)', 'Find a Grave: New Ingham Cemetery']
   },
   {
