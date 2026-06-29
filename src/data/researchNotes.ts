@@ -554,6 +554,8 @@ export const nextActions: ResearchNote[] = [
       'daniele.buatti@gmail.com',
       '+61 424 174 067',
       'Allego: copia del mio passaporto/patente di guida.',
+      '',
+      'UPDATE 29 Jun 2026: PEC forwarded to comune.ap@pec.it successfully. Protocollo № 0057745, assigned to Settore 4 — Servizi al Cittadino (resp. Sergio De Angelis). Awaiting processing.',
       '---',
       'TO: Comune di San Benedetto del Tronto — Ufficio di Stato Civile',
       'PEC: protocollo@cert-sbt.it  |  Email: comunesbt@comunesbt.it  |  Tel: 0735 7941',
