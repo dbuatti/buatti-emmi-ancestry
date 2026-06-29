@@ -1384,7 +1384,8 @@ export const initialPeople: Person[] = [
       'Likely a close relative of Rosario Patanè (Rosaria\'s father) — same surname, same region (Milo is ~10km from Linguaglossa, ~15km from Fiumefreddo). Exact relationship unconfirmed.',
       'Naturalised 26 September 1938 (A714 4/1530) and again 18 April 1947 (A714 66/21033).',
       'Physical description (1947): 5 ft 7 in, dark brown eyes, black hair, slight scar on centre of forehead.',
-      'Wife: Maria Patane (listed on naturalisation). Maiden name unknown.'
+      'Wife: Maria Patane (listed on naturalisation). Maiden name unknown.',
+      'Birth date discrepancy: D4028 alien card says 22 Jul 1911; A714 66/21033 naturalisation (signed by him) says 21 Jul 1911. Using 21 Jul as canonical.'
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '21 Jul 1911, Milo CT — naturalisation particulars confirm exact date' },
