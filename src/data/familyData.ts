@@ -1115,7 +1115,7 @@ export const initialPeople: Person[] = [
       ]
     },
     records: [
-      { type: 'Birth (Civil)', status: 'Found', notes: 'Numero 71, Fiumefreddo di Sicilia 1924 — FS DGS 7851867. Born 23 May 1924 at 6:30 AM, Sezione Castello. Declared 25 May 1924 by father Rosario Patanè (34, bracciante). Mother: Venera Vecchio (casalinga). Witness: Francesco Ferrara (25, calzolaio).' },
+      { type: 'Birth (Civil)', status: 'Found', notes: 'Numero 71, Fiumefreddo di Sicilia 1924 — FS DGS 7851867. Born 23 May 1924 at 6:33 AM, Sezione Castello. Declared 25 May 1924 by father Rosario Patanè (34, bracciante). Mother: Venera Vecchio (casalinga). Witnesses: Francesco Ferrara (25, calzolaio), Leotta Luigi (29, barbiere). Officer: Continella Luigi. Father literate (signed).' },
       { type: 'Baptismal Record', status: 'Searching', notes: 'FS DGS 5429284 restricted — emails sent to Diocesi di Acireale & parish 28 Jun 2026' },
       { type: 'Death Record', status: 'Found', notes: '30 Mar 1994 — burial confirmed' },
       { type: 'Burial Record', status: 'Found', notes: 'Cheltenham Memorial Cemetery, Plot 27*377*N' },
