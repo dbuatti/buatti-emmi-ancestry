@@ -1377,15 +1377,16 @@ export const initialPeople: Person[] = [
     residences: ['Milo, Catania, Sicily', 'Farm 732, Wamoon, near Leeton, NSW', 'Black Rock, via Ingham, Queensland'],
     notes: [
       'Arrived Brisbane per ORAMA, 24 November 1930.',
-      'Interned at Loveday Camp (South Australia) during WWII as enemy alien. Alien registration no. Q8299, D4028. Released 12 December 1943.',
+      'Interned at Loveday Camp (South Australia) during WWII as enemy alien. Alien registration no. Q8299, D4028. Captured Gordonvale 11 Mar 1942. Interned Gaythorne → Loveday → Barmera Hospital → released Adelaide 12 Dec 1943.',
       'Applied for naturalisation from Farm 732, Wamoon, near Leeton, NSW (1947). Later owned cane farm at Black Rock, via Ingham, QLD.',
       'Sponsored Gregorio Emmi\'s migration (1949-50) and employed him as a cane cutter.',
       'Guaranteed accommodation for Rosaria Patanè Emmi and daughter Concetta (1950).',
-      'Likely a close relative of Rosario Patanè (Rosaria\'s father) — same surname, same region (Milo is ~10km from Linguaglossa, ~15km from Fiumefreddo). Exact relationship unconfirmed.',
+      'Likely a close relative of Rosario Patanè (Rosaria\'s father) — same surname, same region (Milo is ~10km from Linguaglossa, ~15km from Fiumefreddo). POW record Special Observations list "PATANE, Rosario" — potentially the first direct link.',
       'Naturalised 26 September 1938 (A714 4/1530) and again 18 April 1947 (A714 66/21033).',
       'Physical description (1947): 5 ft 7 in, dark brown eyes, black hair, slight scar on centre of forehead.',
       'Wife: Maria Patane (listed on naturalisation). Maiden name unknown.',
-      'Birth date discrepancy: D4028 alien card says 22 Jul 1911; A714 66/21033 naturalisation (signed by him) says 21 Jul 1911. Using 21 Jul as canonical.'
+      'Birth date discrepancy: D4028 alien card says 22 Jul 1911; A714 66/21033 naturalisation (signed by him) says 21 Jul 1911. Using 21 Jul as canonical.',
+      'NAA POW files confirm 1 male child (born before 1942). Never returned to Italy.'
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '21 Jul 1911, Milo CT — naturalisation particulars confirm exact date' },
@@ -1394,7 +1395,7 @@ export const initialPeople: Person[] = [
       { type: 'Naturalisation Record', status: 'Found', notes: 'A714 66/21033 (Item 31675770) — viewed 29 Jun 2026. Birthplace Milo 21 Jul 1911. Wife Maria Patane. Farm 732 Wamoon NSW.' },
       { type: 'Naturalisation Record (1938)', status: 'To Order', notes: 'A714 4/1530 (Item 31518779) — 26 Sep 1938. $26.45 to order.' },
       { type: 'Passenger List', status: 'To Order', notes: 'BP9/3 (Item 3458322) — arrived Brisbane per ORAMA, 11 Nov 1930. $26.45 to order.' },
-      { type: 'POW/Internment Record', status: 'To Order', notes: 'MP1103/1 Q8299 (Item 8621488) — interned Loveday Camp WWII. $26.45 to order.' },
+      { type: 'POW/Internment Record', status: 'Found', notes: 'MP1103/1 Q8299 + MP1103/2 Q8299 (Items 8621488, 9910295) — viewed 29 Jun 2026. Gordonvale capture, Loveday camp, released Dec 1943. Special Observations: "PATANE, Rosario" and "ROSA, Messino".' },
       { type: 'Alien Registration', status: 'Found', notes: 'NAA D4028 (Item 9208586) — viewed 29 Jun 2026. Q8299, born Milo 22 Jul 1911, cane cutter, married, arrived 24.11.30 Brisbane.' }
     ],
     researchStatus: {
@@ -1463,9 +1464,9 @@ export const initialResearchLeads: ResearchLead[] = [
     title: 'Pietro Patanè Connection',
     category: 'Emmi/Patanè',
     status: 'In Progress',
-    description: 'Pietro Patanè (21 Jul 1911 – 6 Feb 1994), born Milo CT (~10km from Linguaglossa). Arrived Brisbane per ORAMA 24 Nov 1930. Interned Loveday Camp WWII. Farm 732 Wamoon NSW, later Black Rock QLD cane farm. Sponsored Gregorio & Rosaria Emmi. Naturalised 26 Sep 1938 (A714 4/1530) and 18 Apr 1947 (A714 66/21033). Wife Maria Patane (maiden name unknown). Same surname and nearby hometown makes a family connection to Rosario Patanè plausible but unconfirmed.',
-    nextSteps: 'Order A714 4/1530 (Item 31518779, $26.45) — 1938 naturalisation may list parents\' names. Also search Milo civil records (birth 1911) for parent names.',
-    sources: ['NAA: A714 66/21033 (Item 31675770) — viewed', 'NAA: D4028 PATANE PIETRO (Item 9208586) — viewed', 'NAA: A714 4/1530 (Item 31518779) — to order', 'Find a Grave: New Ingham Cemetery']
+    description: 'Pietro Patanè (21 Jul 1911 – 6 Feb 1994), born Milo CT (~10km from Linguaglossa). Arrived Brisbane per ORAMA 24 Nov 1930. Interned Loveday Camp WWII. Farm 732 Wamoon NSW, later Black Rock QLD cane farm. Sponsored Gregorio & Rosaria Emmi. Naturalised 26 Sep 1938 (A714 4/1530) and 18 Apr 1947 (A714 66/21033). Wife Maria Patane (maiden name unknown). Same surname and nearby hometown makes a family connection to Rosario Patanè plausible — POW file Special Observations list "PATANE, Rosario", the first direct link.',
+    nextSteps: 'Request 1911 birth act from Comune di Giarre (Milo was part of Giarre until 1923). Also check Q30224 record for other Pietro Patanè (Filadelfo + Maria Lofara) — separate Milo line to investigate.',
+    sources: ['NAA: A714 66/21033 (Item 31675770) — viewed', 'NAA: D4028 PATANE PIETRO (Item 9208586) — viewed', 'NAA: MP1103/1+2 Q8299 (Items 8621488, 9910295) — viewed', 'NAA: MP1103/1 Q30224 (Item 8625133) — viewed', 'Find a Grave: New Ingham Cemetery']
   },
   {
     id: 'lead-piero-lalli',
@@ -1655,5 +1656,12 @@ export const initialOpenQuestions: OpenQuestion[] = [
     category: 'Emmi/Patanè',
     status: 'In Progress',
     notes: 'NAA: A446, 1967/39646. Access application RK26/00009589 submitted 28 June 2026. Could be Rosaria\'s father, or Pietro Patanè (the Ingham sponsor), or another relative.'
+  },
+  {
+    id: 'lead-second-pietro-patane-q30224',
+    question: 'Is the second Pietro Patanè (Q30224, b. 29 Nov 1912, Halifax) related to our Pietro or to Rosario Patanè?',
+    category: 'Emmi/Patanè',
+    status: 'In Progress',
+    notes: 'NAA POW record Q30224 documents a different Pietro Patanè: born 29 Nov 1912 in Milo (recorded as "Milan"), son of Filadelfo Patanè and Maria Lofara (deceased). Labourer at Halifax QLD. Also married to a Maria Patane (different woman, same name). Interned Cowra, released Feb 1943. Both from Milo, both arrived on ORAMA ~1930 — suggests a Patanè cluster from Milo. Parents\' names (Filadelfo + Maria Lofara) give us a second Milo Patanè family line to investigate.'
   }
 ];
