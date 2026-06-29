@@ -759,4 +759,23 @@ export const peopleToAsk: ResearchNote[] = [
       'Possible relatives in Griffith, NSW — maybe cousins of Gregorio & Rosaria.',
     ],
   },
+  {
+    id: 'note-liber-matrimoniorum-pointers',
+    title: 'Liber Matrimoniorum Baptism Citation Pointers',
+    category: 'next-actions',
+    date: '29 June 2026',
+    content: [
+      'Fiumefreddo Liber Matrimoniorum (1910-1911, Parrocchia Maria SS.ma Immacolata) — each marriage entry cites the baptism record used to verify identity. Useful pointers for locating baptism records:',
+      '',
+      '--- FOUND / ALREADY LOCATED ---',
+      'Venera Vecchio (filia Vincentii et Rosariae Raciti): V. Lib. Baptiz. ann. 1888, fol. 240, n. 8 — ALREADY FOUND (8 Jan 1888).',
+      'Rosario Patanè (filius Sebastiani et Rosariae D\'Agata): baptism extracted from marriage processetti — ALREADY FOUND (10 Feb 1889, Calatabiano).',
+      '',
+      '--- TO LOCATE ---',
+      'Giuseppe Patanè (filius Sebastiani et Rosariae D\'Agata, married 20 Feb 1911): V. Lib. Baptiz. ann. 1887, fol. 232, n. 12. Would confirm birth date and godparents, and may confirm his relationship as Rosario\'s brother.',
+      'Sebastiana Cogliandolo (filia def. Michaelis et Catharinae Mangano, married same): V. Lib. Baptiz. ann. 1891, fol. 276, n. 12.',
+      '',
+      'Check Fiumefreddo Battesimi register (DGS 5429284 or similar) for both entries.',
+    ],
+  },
 ];
