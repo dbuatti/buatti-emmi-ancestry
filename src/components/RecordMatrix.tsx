@@ -23,7 +23,7 @@ const PEOPLE_IDS = [
   'antonino-emmi', 'rosaria-raiti',
   'salvatore-sgroi', 'santa-cali',
   'sebastiano-patane-sr', 'rosaria-dagata',
-  'vincenzo-vecchio', 'rosaria-rapisardi',
+  'vincenzo-vecchio', 'rosaria-raciti',
 ];
 
 function StatusIcon({ status, record }: { status: string; record: string }) {

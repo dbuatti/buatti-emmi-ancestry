@@ -121,9 +121,9 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
                 <p className="font-bold truncate">Vincenzo Vecchio</p>
                 <p className="text-[10px] opacity-80 font-sans">Unknown • Fiumefreddo</p>
               </div>
-              <div onClick={() => onSelectPerson('rosaria-rapisardi')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-rapisardi', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Rosaria Rapisardi</p>
+              <div onClick={() => onSelectPerson('rosaria-raciti')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-raciti', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
+                <p className="font-bold truncate">Rosaria Raciti</p>
                 <p className="text-[10px] opacity-80 font-sans">Unknown • Fiumefreddo</p>
               </div>
             </div>

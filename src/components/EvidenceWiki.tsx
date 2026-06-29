@@ -27,7 +27,7 @@ const nodes: EvidenceNode[] = [
   { id: 'sebastiano-patane-sr', label: 'Sebastiano Patanè', source: 'Calatabiano civil birth 1889, atto n. 28 — listed as father (age 39, castaldo). Also in Fiumefreddo marriage banns 1911.', note: 'Resident of Calatabiano. Father of Rosario, Giuseppe, and Venera Patanè.' },
   { id: 'rosaria-dagata', label: 'Rosaria D\'Agata', source: 'Calatabiano civil birth 1889, atto n. 28 — listed as mother. Also in Fiumefreddo marriage banns 1911.', note: 'From Fiumefreddo. Died before 1911 (not listed in later records).' },
   { id: 'vincenzo-vecchio', label: 'Vincenzo Vecchio', source: 'Fiumefreddo baptism 1888 — listed as father of Venera. Also in marriage processetti 1911.', note: 'Son of Gregorio Vecchio + Anna D\'Agostino (per 1857 marriage proclamation index).' },
-  { id: 'rosaria-rapisardi', label: 'Rosaria Rapisardi (née Raciti)', source: 'Fiumefreddo baptism 8 Jan 1888 — listed as mother (surname Raciti). Marriage processetti records her as Rapisardi (scribal variation).', note: 'Surname discrepancy: Raciti (baptism) vs Rapisardi (church marriage certificate). Both refer to same person.' },
+  { id: 'rosaria-raciti', label: 'Rosaria Raciti', source: 'Fiumefreddo Liber Matrimoniorum N.18 (24 Apr 1911) — "Vincentii et Rosariae Raciti". Baptism 8 Jan 1888 also records Raciti.', note: 'Often misrecorded as "Rapisardi" on church marriage certificates (scribal error). Correct surname is Raciti.' },
   { id: 'rosario-patane-sr', label: 'Rosario Patanè (1889–?)', source: 'Calatabiano civil birth 8 Feb 1889, atto n. 28. Baptism 9/10 Feb 1889.', note: 'Born Contrada Trappitelli, Calatabiano. Married Venera Vecchio 24 Apr 1911 (church), 27 Apr 1911 (civil).' },
   { id: 'venera-vecchio', label: 'Venera (Veneranda) Vecchio (1888–pre-1953)', source: 'Fiumefreddo baptism 8 Jan 1888, folio 240, entry n. 8. Married 24 Apr 1911.', note: 'Full baptismal name: Veneranda. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano.' },
   { id: 'rosaria-patane', label: 'Rosaria Patanè (1924–1994)', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello.', note: 'Daughter of Rosario Patanè + Venera Vecchio. Married Gregorio Emmi.' },
@@ -46,9 +46,9 @@ const links: EvidenceLink[] = [
   { from: 'sebastiano-patane-sr', to: 'rosaria-dagata', via: 'Marriage (presumed)', source: 'Surmised from Rosario\'s birth record naming both as parents', date: '~1887-1888' },
   { from: 'sebastiano-patane-sr', to: 'rosario-patane-sr', via: 'Father–son', source: 'Calatabiano civil birth 1889, atto n. 28', date: '8 Feb 1889' },
   { from: 'rosaria-dagata', to: 'rosario-patane-sr', via: 'Mother–son', source: 'Calatabiano civil birth 1889, atto n. 28', date: '8 Feb 1889' },
-  { from: 'vincenzo-vecchio', to: 'rosaria-rapisardi', via: 'Marriage (presumed)', source: 'Surmised from Venera\'s baptism naming both as parents', date: '~1886-1887' },
+  { from: 'vincenzo-vecchio', to: 'rosaria-raciti', via: 'Marriage (presumed)', source: 'Surmised from Venera\'s baptism and Liber Matrimoniorum N.18 naming both as parents', date: '~1886-1887' },
   { from: 'vincenzo-vecchio', to: 'venera-vecchio', via: 'Father–daughter', source: 'Fiumefreddo baptism 8 Jan 1888, folio 240 — "figlia di Vincenzo Vecchio"', date: '8 Jan 1888' },
-  { from: 'rosaria-rapisardi', to: 'venera-vecchio', via: 'Mother–daughter', source: 'Fiumefreddo baptism 8 Jan 1888 — "e di Rosaria Raciti" (recorded as Rapisardi in marriage processetti)', date: '8 Jan 1888', notes: 'Surname recorded as Raciti in baptism, as Rapisardi in 1911 marriage processetti. Same person.' },
+  { from: 'rosaria-raciti', to: 'venera-vecchio', via: 'Mother–daughter', source: 'Fiumefreddo Liber Matrimoniorum N.18 (24 Apr 1911) — "Rosariae Raciti". Also in baptism 8 Jan 1888.', date: '8 Jan 1888', notes: 'Surname definitively Raciti. "Rapisardi" was a scribal error on some marriage certificates.' },
   { from: 'rosario-patane-sr', to: 'venera-vecchio', via: 'Marriage', source: 'Fiumefreddo church marriage 24 Apr 1911, celebrated by Fr. Eutichio Scarcella at Chiesa del S. Rosario. Civil marriage 27 Apr 1911.', date: '24/27 Apr 1911', notes: 'Canonical examination 23 Apr 1911 — witnesses knew Rosario from infancy. Both free to marry.' },
   { from: 'rosario-patane-sr', to: 'rosaria-patane', via: 'Father–daughter', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello', date: '23 May 1924' },
   { from: 'venera-vecchio', to: 'rosaria-patane', via: 'Mother–daughter', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello', date: '23 May 1924' },
@@ -165,8 +165,8 @@ export function EvidenceWiki() {
             linkedNodes={links.filter(l => l.from === 'vincenzo-vecchio' || l.to === 'vincenzo-vecchio')}
           />
           <NodeSection
-            node={nodes.find(n => n.id === 'rosaria-rapisardi')!}
-            linkedNodes={links.filter(l => l.from === 'rosaria-rapisardi' || l.to === 'rosaria-rapisardi')}
+            node={nodes.find(n => n.id === 'rosaria-raciti')!}
+            linkedNodes={links.filter(l => l.from === 'rosaria-raciti' || l.to === 'rosaria-raciti')}
           />
           <NodeSection
             node={nodes.find(n => n.id === 'rosario-patane-sr')!}
