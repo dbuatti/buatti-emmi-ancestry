@@ -588,6 +588,8 @@ export const nextActions: ResearchNote[] = [
       'Ezio\'s record (1923) had its 100-year embargo lifted in 2023 — straightforward request.',
       'Bruna\'s (1930) is still embargoed until 2030 — some comuni grant direct-descendant exceptions.',
       'Alternative: send a physical letter (raccomandata) with ID copy rather than email, which some comuni prefer.',
+      '',
+      'UPDATE 29 Jun 2026: Two protocol numbers received from San Benedetto — 0047978/2026 (clean) and 0047974/2026 (flagged "ANOMALIA MESSAGGIO"). Likely a duplicate send. Follow up if no response in 2 weeks.',
     ],
   },
   {
