@@ -427,10 +427,10 @@ export const nextActions: ResearchNote[] = [
     date: 'Next priority',
     content: [
       'May clarify his relationship to Rosaria and reveal further Patanè family detail.',
-      'UPDATE 29 Jun 2026: 19 records found for "Pietro Patane" on RecordSearch. NONE freely digitised — all require paid reproduction via basket/checkout.',
-      'Pricing: $26.45 AUD per item (Digital Small). Key items to request: A714 4/1530 (naturalisation 26 Sep 1938, item 31518779) — should list parents\' names, connecting to Rosario Patanè.',
-      'Alternative: A714 66/21033 (naturalisation 18 Apr 1947, item 31675770) — birthplace Milo, also likely contains parent details.',
-      'Note: minimum 2-3 different Pietro Patanès in results (birth years 1898, Jul 1911, Oct 1911, Nov 1912). Confirm correct DOB before ordering.',
+      'UPDATE 29 Jun 2026: 19 records for "Pietro Patane" on RecordSearch. NONE freely digitised — all require paid reproduction ($26.45/item via basket/checkout). D4028 index card (Item 9208586) viewed as catalogue entry only.',
+      'All records previously marked "Found" were catalogue hits, not actual documents. Status corrected to "To Order".',
+      'Priority order: A714 4/1530 (Item 31518779, 1938 naturalisation) — should list parents\' names. Then A714 66/21033 (Item 31675770, 1947 naturalisation).',
+      'Minimum 2-3 different Pietro Patanès in results (1898, Jul 1911, Oct 1911, Nov 1912). Confirm DOB before ordering.',
     ],
   },
   {
