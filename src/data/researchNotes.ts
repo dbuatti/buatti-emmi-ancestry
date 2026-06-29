@@ -315,11 +315,13 @@ export const nextActions: ResearchNote[] = [
   },
   {
     id: 'action-gregorio-birth-civil',
-    title: 'Gregorio\'s civil birth record',
+    title: 'Gregorio\'s civil birth record (27 Oct 1915, Linguaglossa)',
     category: 'next-actions',
     date: 'Ongoing',
     content: [
-      'Check FamilySearch catalog #145167 digital folders individually.',
+      'Search Antenati: Archivio di Stato di Catania → Linguaglossa → Nati 1915.',
+      'On Antenati, Linguaglossa Nati 1911-1929 are in one register (segnatura ~8566+). Look for "Emmi Gregorio" son of Egidio + Concetta.',
+      'Alternatively check FamilySearch catalog #145167 digital folders individually.',
       'Or contact Archivio di Stato di Catania directly (as-ct@cultura.gov.it — email already sent 28 June 2026).',
       'Or follow up by phone: +39 095 7159860.',
     ],
