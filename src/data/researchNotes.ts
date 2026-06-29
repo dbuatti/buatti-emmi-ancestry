@@ -79,12 +79,13 @@ export const researchNotes: ResearchNote[] = [
     category: 'emmi-patane',
     date: '28 June 2026',
     content: [
-      'NAA D4028 index card: Pietro PATANE, born 22 Jul 1911, Melo (Milo), Catania. Arrived Brisbane per ORAMA, 24 Nov 1930. Cane cutter. Married. Scar on chin.',
+      'NAA D4028 alien registration card (viewed 29 Jun 2026): Q8299, born Milo 22 Jul 1911, cane cutter, married, arrived 24.11.30 Brisbane. Height 5\'7", scar on forehead.',
       'Interned at Loveday Camp (South Australia) as enemy alien during WWII (alien reg. Q8299). Released 12 Dec 1943.',
-      'Naturalised 26 Sep 1938 (A714 4/1530). Resided Ingham QLD at time of naturalisation.',
+      'Naturalised 26 Sep 1938 (A714 4/1530 — NOT viewed, still To Order) and 18 Apr 1947 (A714 66/21033 — viewed 29 Jun 2026).',
+      'A714 66/21033: birth 21 Jul 1911 Milo Sicily. Farm 732 Wamoon near Leeton NSW. Wife Maria Patane (married surname; maiden name unknown).',
       'Sponsored Gregorio Emmi\'s migration 1949-50, employed him on Black Rock farm, guaranteed accommodation for Rosaria and Concetta.',
-      'Relationship to Rosario Patanè (Rosaria\'s father) still unconfirmed — but strong circumstantial evidence: same surname, Milo is 15km from Fiumefreddo.',
-      'Next step: view A714 4/1530 naturalisation record for parents\' names.',
+      'Relationship to Rosario Patanè (Rosaria\'s father) still unconfirmed — but Milo is only ~10km from Linguaglossa, same region. Plausible.',
+      'Next step: order A714 4/1530 (1938 naturalisation, $26.45) — may contain parents\' names.',
     ],
   },
   {

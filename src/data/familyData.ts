@@ -1364,7 +1364,7 @@ export const initialPeople: Person[] = [
     generation: 2,
     line: 'Patanè',
     gender: 'M',
-    birthDate: '22 Jul 1911 (or 1 Oct 1911 — conflicting sources)',
+    birthDate: '21 Jul 1911',
     birthPlace: 'Milo, Province of Catania, Sicily, Italy',
     deathDate: '6 February 1994',
     deathPlace: 'Ingham, Queensland, Australia',
@@ -1373,33 +1373,37 @@ export const initialPeople: Person[] = [
     spouses: ['maria-ragonesi-patane'],
     parents: [],
     children: ['filadelfo-patane', 'sam-patane'],
-    occupations: ['Cane cutter', 'Cane farmer'],
-    residences: ['Milo, Catania, Sicily', 'Black Rock, via Ingham, Queensland'],
+    occupations: ['Cane cutter', 'Cane farmer', 'Farmer'],
+    residences: ['Milo, Catania, Sicily', 'Farm 732, Wamoon, near Leeton, NSW', 'Black Rock, via Ingham, Queensland'],
     notes: [
-      'Arrived Brisbane per ORAMA, 24 November 1930. Recorded birthplace "Melo" on some records.',
-      'Interned at Loveday Camp (South Australia) during WWII as an enemy alien. Alien registration no. Q8299. Released 12 December 1943.',
-      'Owned the cane farm at Black Rock, via Ingham, North Queensland.',
+      'Arrived Brisbane per ORAMA, 24 November 1930.',
+      'Interned at Loveday Camp (South Australia) during WWII as enemy alien. Alien registration no. Q8299, D4028. Released 12 December 1943.',
+      'Applied for naturalisation from Farm 732, Wamoon, near Leeton, NSW (1947). Later owned cane farm at Black Rock, via Ingham, QLD.',
       'Sponsored Gregorio Emmi\'s migration (1949-50) and employed him as a cane cutter.',
       'Guaranteed accommodation for Rosaria Patanè Emmi and daughter Concetta (1950).',
-      'Likely a close relative of Rosario Patanè (Rosaria\'s father) — same surname, same region (Milo is ~15km from Fiumefreddo). Exact relationship unconfirmed.',
-      'Naturalised 26 September 1938 (A714, 4/1530).'
+      'Likely a close relative of Rosario Patanè (Rosaria\'s father) — same surname, same region (Milo is ~10km from Linguaglossa, ~15km from Fiumefreddo). Exact relationship unconfirmed.',
+      'Naturalised 26 September 1938 (A714 4/1530) and again 18 April 1947 (A714 66/21033).',
+      'Physical description (1947): 5 ft 7 in, dark brown eyes, black hair, slight scar on centre of forehead.',
+      'Wife: Maria Patane (listed on naturalisation). Maiden name unknown.'
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '22 Jul 1911, Milo CT — via NAA D4028 index card (not digitised, catalogue only)' },
+      { type: 'Birth Record', status: 'Found', notes: '21 Jul 1911, Milo CT — naturalisation particulars confirm exact date' },
       { type: 'Death Record', status: 'Found', notes: '6 Feb 1994, Ingham QLD — chronic renal failure, New Ingham Cemetery' },
       { type: 'Burial Record', status: 'Found', notes: 'New Ingham Cemetery, RC Sect: 31, Plot: 12' },
-      { type: 'Naturalisation Record', status: 'To Order', notes: 'A714 4/1530 (Item 31518779) 26 Sep 1938 + A714 66/21033 (Item 31675770) 18 Apr 1947. Neither digitised. $26.45 each.' },
-      { type: 'Passenger List', status: 'To Order', notes: 'BP9/3 (Item 3458322) — arrived Brisbane per ORAMA, 11 Nov 1930. Not digitised. $26.45 to order.' },
-      { type: 'POW/Internment Record', status: 'To Order', notes: 'MP1103/1 Q8299 (Item 8621488) — interned Loveday Camp WWII. Not digitised. $26.45 to order.' }
+      { type: 'Naturalisation Record', status: 'Found', notes: 'A714 66/21033 (Item 31675770) — viewed 29 Jun 2026. Birthplace Milo 21 Jul 1911. Wife Maria Patane. Farm 732 Wamoon NSW.' },
+      { type: 'Naturalisation Record (1938)', status: 'To Order', notes: 'A714 4/1530 (Item 31518779) — 26 Sep 1938. $26.45 to order.' },
+      { type: 'Passenger List', status: 'To Order', notes: 'BP9/3 (Item 3458322) — arrived Brisbane per ORAMA, 11 Nov 1930. $26.45 to order.' },
+      { type: 'POW/Internment Record', status: 'To Order', notes: 'MP1103/1 Q8299 (Item 8621488) — interned Loveday Camp WWII. $26.45 to order.' },
+      { type: 'Alien Registration', status: 'Found', notes: 'NAA D4028 (Item 9208586) — viewed 29 Jun 2026. Q8299, born Milo 22 Jul 1911, cane cutter, married, arrived 24.11.30 Brisbane.' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Key sponsor and employer of the Emmi family in Australia. Relationship to Rosario Patanè still unconfirmed.'
+      details: 'Key sponsor and employer of the Emmi family in Australia. Relationship to Rosario Patanè still unconfirmed but plausible — Milo is only ~10km from Linguaglossa.'
     }
   },
   {
     id: 'maria-ragonesi-patane',
-    name: 'Maria Ragonesi',
+    name: 'Maria Patane',
     generation: 2,
     line: 'Patanè',
     gender: 'F',
@@ -1408,10 +1412,10 @@ export const initialPeople: Person[] = [
     spouses: ['pietro-patane'],
     parents: [],
     children: ['filadelfo-patane', 'sam-patane'],
-    notes: ['Wife of Pietro Patanè. Married before 1939 (Pietro listed as married on 1939 alien registration).'],
+    notes: ['Wife of Pietro Patanè. Listed as "Maria Patane" on his 1947 naturalisation (married surname). Maiden name unknown. Married before 1939 (Pietro listed as married on 1939 alien registration).'],
     researchStatus: {
       status: 'In Progress',
-      details: 'Death year known (1980). Birth details and maiden name origin unknown.'
+      details: 'Maiden name unknown. "Ragonesi" was conjectural — removed.'
     }
   },
   {
@@ -1429,7 +1433,7 @@ export const initialPeople: Person[] = [
     parents: ['pietro-patane', 'maria-ragonesi-patane'],
     spouses: [],
     children: [],
-    notes: ['Son of Pietro Patanè and Maria Ragonesi.'],
+    notes: ['Son of Pietro Patanè and Maria Patane.'],
     researchStatus: { status: 'Confirmed' }
   },
   {
@@ -1447,7 +1451,7 @@ export const initialPeople: Person[] = [
     parents: ['pietro-patane', 'maria-ragonesi-patane'],
     spouses: [],
     children: [],
-    notes: ['Son of Pietro Patanè and Maria Ragonesi. His son Jordan Christopher Patanè (1987-1987) predeceased him.'],
+    notes: ['Son of Pietro Patanè and Maria Patane. His son Jordan Christopher Patanè (1987-1987) predeceased him.'],
     researchStatus: { status: 'Confirmed' }
   }
 ];
@@ -1458,9 +1462,9 @@ export const initialResearchLeads: ResearchLead[] = [
     title: 'Pietro Patanè Connection',
     category: 'Emmi/Patanè',
     status: 'In Progress',
-    description: 'Pietro Patanè (22 Jul 1911 – 6 Feb 1994), born Milo CT, arrived Brisbane per ORAMA 24 Nov 1930. Interned Loveday Camp WWII. Owned Black Rock cane farm, sponsored Gregorio & Rosaria Emmi. Naturalised 26 Sep 1938 (A714 4/1530). Shared surname and nearby hometown (Milo, 15km from Fiumefreddo) strongly suggests a family connection to Rosario Patanè — possibly brother or cousin. Exact relationship still unknown. NONE of his 19 NAA records are freely digitised.',
-    nextSteps: 'Order A714 4/1530 (Item 31518779, $26.45) — naturalisation file should list parents\' names, providing the link to Rosario Patanè. Then order A714 66/21033 (Item 31675770, $26.45) — second naturalisation from Milo.',
-    sources: ['NAA: D4028 PATANE PIETRO (Item 9208586)', 'NAA: A714 4/1530 (Item 31518779)', 'Find a Grave: New Ingham Cemetery']
+    description: 'Pietro Patanè (21 Jul 1911 – 6 Feb 1994), born Milo CT (~10km from Linguaglossa). Arrived Brisbane per ORAMA 24 Nov 1930. Interned Loveday Camp WWII. Farm 732 Wamoon NSW, later Black Rock QLD cane farm. Sponsored Gregorio & Rosaria Emmi. Naturalised 26 Sep 1938 (A714 4/1530) and 18 Apr 1947 (A714 66/21033). Wife Maria Patane (maiden name unknown). Same surname and nearby hometown makes a family connection to Rosario Patanè plausible but unconfirmed.',
+    nextSteps: 'Order A714 4/1530 (Item 31518779, $26.45) — 1938 naturalisation may list parents\' names. Also search Milo civil records (birth 1911) for parent names.',
+    sources: ['NAA: A714 66/21033 (Item 31675770) — viewed', 'NAA: D4028 PATANE PIETRO (Item 9208586) — viewed', 'NAA: A714 4/1530 (Item 31518779) — to order', 'Find a Grave: New Ingham Cemetery']
   },
   {
     id: 'lead-piero-lalli',
