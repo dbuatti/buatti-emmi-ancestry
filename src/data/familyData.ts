@@ -992,7 +992,7 @@ export const initialPeople: Person[] = [
     },
     records: [
       { type: 'Birth (Civil)', status: 'Searching', notes: '27 Oct 1915 — all FS digital routes exhausted, emails sent to Comune di Linguaglossa & Archivio di Stato di Catania 28 Jun 2026' },
-      { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80' },
+      { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin.' },
       { type: 'Death Record', status: 'Searching', notes: 'c. late Nov 1979 — funeral 30 Nov 1979, exact date unknown' },
       { type: 'Burial Record', status: 'Found', notes: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070' },
       { type: 'POW Record', status: 'Found', notes: 'NAA MP1103/1 & MP1103/2 — captured Asmara 1941, Cowra POW Camp, repatriated 1946' },

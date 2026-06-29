@@ -224,6 +224,19 @@ export const researchNotes: ResearchNote[] = [
   },
   {
     id: 'note-egidio-emmi-marriage-proclamation-1900',
+    title: 'Gregorio\'s Baptism — Godmother Is an Undocumented Rosaria Emmi',
+    category: 'next-actions',
+    date: '29 June 2026',
+    content: [
+      'Gregorio\'s baptism (5 Dec 1915, Linguaglossa, DGS 5455112, entry N.251, folio 80):',
+      'Godmother: Rosaria Emmi — NOT Rosaria Patanè (his future wife). This is a different Rosaria Emmi, likely a sister or cousin of Egidio Emmi.',
+      'Midwife: Giuseppa Nicotra.',
+      'Officiant: Fr. Rochus La Rosa, by license of Archpriest Blasius Palermo.',
+      'NEXT: Investigate who Rosaria Emmi is — she could be Egidio\'s sister, connecting us to another Emmi sibling line.',
+    ],
+  },
+  {
+    id: 'note-egidio-emmi-marriage-proclamation-1900',
     title: 'Egidio Emmi & Concetta Sgroi — Marriage Proclamation Found! (Atto № 59)',
     category: 'emmi-patane',
     date: '28 June 2026',
