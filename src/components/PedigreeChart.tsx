@@ -83,9 +83,27 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
               <p className="font-bold truncate text-stone-400">Unknown</p>
               <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
             </div>
-            <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
-              <p className="font-bold truncate text-stone-400">Unknown</p>
-              <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
+            <div className="col-span-2 space-y-2">
+              <div onClick={() => onSelectPerson('antonino-emmi')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('antonino-emmi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
+                <p className="font-bold truncate">Antonino Emmi</p>
+                <p className="text-[10px] opacity-80 font-sans">d. pre-1900 • Linguaglossa</p>
+              </div>
+              <div onClick={() => onSelectPerson('rosaria-raiti')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-raiti', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
+                <p className="font-bold truncate">Rosaria Raiti</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Linguaglossa</p>
+              </div>
+              <div onClick={() => onSelectPerson('salvatore-sgroi')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('salvatore-sgroi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
+                <p className="font-bold truncate">Salvatore Sgroi</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Linguaglossa</p>
+              </div>
+              <div onClick={() => onSelectPerson('santa-cali')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('santa-cali', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
+                <p className="font-bold truncate">Santa Cali</p>
+                <p className="text-[10px] opacity-80 font-sans">Unknown • Linguaglossa</p>
+              </div>
             </div>
             <div className="col-span-2 space-y-2">
               <div onClick={() => onSelectPerson('sebastiano-patane-sr')}
@@ -146,24 +164,24 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
               <div onClick={() => onSelectPerson('egidio-emmi')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('egidio-emmi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
                 <p className="font-bold truncate">Egidio Emmi</p>
-                <p className="text-[10px] opacity-80 font-sans">d. pre-1949 • Sicily</p>
+                <p className="text-[10px] opacity-80 font-sans">~1870 – pre-1943 • Linguaglossa</p>
               </div>
               <div onClick={() => onSelectPerson('concetta-sgroi')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('concetta-sgroi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
                 <p className="font-bold truncate">Concetta Sgroi</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Sicily</p>
+                <p className="text-[10px] opacity-80 font-sans">~1880 – pre-1967 • Linguaglossa</p>
               </div>
             </div>
             <div className="space-y-2">
               <div onClick={() => onSelectPerson('rosario-patane-sr')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosario-patane-sr', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
                 <p className="font-bold truncate">Rosario Patanè</p>
-                <p className="text-[10px] opacity-80 font-sans">9 Feb 1889 • Calatabiano</p>
+                <p className="text-[10px] opacity-80 font-sans">8 Feb 1889 • Calatabiano</p>
               </div>
               <div onClick={() => onSelectPerson('venera-vecchio')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('venera-vecchio', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
                 <p className="font-bold truncate">Venera Vecchio</p>
-                <p className="text-[10px] opacity-80 font-sans">d. pre-1953 • Sicily</p>
+                <p className="text-[10px] opacity-80 font-sans">b. 8 Jan 1888 • Fiumefreddo</p>
               </div>
             </div>
           </div>

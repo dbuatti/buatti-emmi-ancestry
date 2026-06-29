@@ -149,26 +149,30 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Emmi',
     gender: 'M',
-    birthDate: 'Unknown / to be confirmed',
-    deathDate: 'Deceased prior to 1949',
+    birthDate: '~1870 (age 30 at marriage on 8 Sep 1900)',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    occupation: 'Farmer (contadino)',
+    deathDate: 'Deceased prior to 1943',
     notes: [
       'Recorded as "DEC" on Gregorio\'s 1943 POW report, and as "fu Egidio" (the late Egidio) on the 1949 Comune di Linguaglossa certificate.',
-      'Parents of Gregorio Emmi. Had at least one older son (that son\'s family now in Venezuela — per Connie Emmi 28 Jun 2026).',
+      'Parents confirmed via Marriage Proclamation atto № 59 (8 Sep 1900): fu Antonino Emmi + Rosaria Raiti.',
+      'Married Concetta Sgroi on 8 Sep 1900 in Linguaglossa (atto № 59). Witnesses: Francesco Di Francesco (44) and Giacomo Di Casaco (44). Both illiterate.',
+      'Had at least one older son (that son\'s family now in Venezuela — per Connie Emmi 28 Jun 2026).',
+      'NOT the same person as Egidio Emmi (b. ~1855, son of Antonino + Rosa Vecchio) who married Angela Raiti on 16 Dec 1895 — same father, different mother, likely uncle/nephew or cousins.',
     ],
     spouses: ['concetta-sgroi'],
-    parents: [],
+    parents: ['antonino-emmi', 'rosaria-raiti'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found — unknown birth details' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'To Concetta Sgroi — likely Linguaglossa parish register' },
+      { type: 'Birth Record', status: 'Not Found', notes: '~1870, Linguaglossa — search Linguaglossa civil records' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Marriage Proclamation atto № 59, 8 Sep 1900, Linguaglossa. Confirmed parents, ages, occupations.' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1943 per POW report — confirmed "fu Egidio" on 1949 certificate' }
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Death timeframe confirmed (pre-1943/1949). Birth details outstanding.',
+      status: 'Confirmed',
+      details: 'Marriage record found (8 Sep 1900, atto № 59). Parents confirmed: Antonino Emmi + Rosaria Raiti. Age ~30 (born ~1870). Occupation: farmer.',
       nextSteps: [
-        'Search for marriage record with Concetta Sgroi in Linguaglossa to find birth years and parents.',
-        'Investigate wider Sgroi/Emmi family network in Linguaglossa.'
+        'Find Egidio\'s birth record (~1870) in Linguaglossa civil records.',
       ]
     },
     sources: [
@@ -181,6 +185,11 @@ export const initialPeople: Person[] = [
         title: '1949 Comune di Linguaglossa Certificate',
         type: 'Civil Certificate',
         reference: 'fu Egidio notation'
+      },
+      {
+        title: 'Linguaglossa Marriage Proclamation Records 1900',
+        type: 'Civil Record',
+        reference: 'Atto № 59, 8 Sep 1900. Egidio Emmi (30) + Concetta Sgroi (20). Parents: fu Antonino Emmi + Rosaria Raiti (groom); Salvatore Sgroi + Santa Cali (bride).'
       }
     ]
   },
@@ -190,28 +199,32 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Emmi',
     gender: 'F',
-    birthDate: 'Unknown / to be confirmed',
-    deathDate: 'Unknown / to be confirmed',
+    birthDate: '~1880 (age 20 at marriage on 8 Sep 1900)',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    occupation: 'Farmer (contadina)',
+    deathDate: 'Deceased prior to 1967',
     spouses: ['egidio-emmi'],
-    parents: [],
+    parents: ['salvatore-sgroi', 'santa-cali'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     notes: [
       'Maiden name confirmed via Gregorio\'s 1943 Report on Prisoners of War; an earlier guess of "Sofia Concetta" is superseded.',
+      'Parents confirmed via Marriage Proclamation atto № 59 (8 Sep 1900): Salvatore Sgroi + Santa Cali.',
       'Gregorio\'s own daughter Concetta was very likely named after this grandmother.',
-      'Had at least one older son (that son\'s family migrated to Venezuela — per Connie Emmi 28 Jun 2026).'
+      'Had at least one older son (that son\'s family migrated to Venezuela — per Connie Emmi 28 Jun 2026).',
+      'Egidio and Concetta are both illiterate per the 1900 marriage proclamation record.'
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'To Egidio Emmi — likely Linguaglossa parish register' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
-      { type: 'Surname Confirmation', status: 'Found', notes: '"Sgroi" confirmed via Gregorio\'s 1943 POW record' }
+      { type: 'Birth Record', status: 'Not Found', notes: '~1880, Linguaglossa — search Linguaglossa civil records' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Marriage Proclamation atto № 59, 8 Sep 1900, Linguaglossa. Confirmed parents, ages, occupations.' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Pre-1967 per later church records. Exact date unknown.' },
+      { type: 'Surname Confirmation', status: 'Found', notes: '"Sgroi" confirmed via Gregorio\'s 1943 POW record and 1900 marriage record' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Maiden name Sgroi confirmed via official POW records.',
+      details: 'Parents confirmed: Salvatore Sgroi + Santa Cali. Age ~20 at marriage (born ~1880).',
       nextSteps: [
-        'Search for marriage record with Egidio Emmi in Linguaglossa.',
-        'Look into Sgroi family network in Linguaglossa (e.g., Alfio Emmi & Carmela Sgroi line).'
+        'Find Concetta\'s birth record (~1880) in Linguaglossa civil records.',
+        'Look into Sgroi family network in Linguaglossa.'
       ]
     },
     sources: [
@@ -219,6 +232,11 @@ export const initialPeople: Person[] = [
         title: 'Gregorio Emmi 1943 POW Report',
         type: 'Military Record',
         reference: 'NAA: MP1103/2, 55491 (records "Mother\'s Pre-marriage Name: Sgroi Concetta")'
+      },
+      {
+        title: 'Linguaglossa Marriage Proclamation Records 1900',
+        type: 'Civil Record',
+        reference: 'Atto № 59, 8 Sep 1900. Egidio Emmi (30) + Concetta Sgroi (20). Parents: Salvatore Sgroi + Santa Cali.'
       }
     ]
   },
@@ -229,39 +247,48 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Patanè',
     gender: 'M',
-    birthDate: '9 February 1889',
+    birthDate: '8 February 1889',
     birthPlace: 'Calatabiano, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown / to be confirmed',
-    occupations: ['Bracciante (day labourer)'],
-    residences: ['Sezione Castello, Fiumefreddo di Sicilia'],
+    occupations: ['Castaldo (farm manager)', 'Bracciante (day labourer)'],
+    residences: ['Contrada Trappitelli, Calatabiano', 'Sezione Castello, Fiumefreddo di Sicilia'],
     spouses: ['venera-vecchio'],
     parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
     children: ['rosaria-patane', 'sebastiano-patane'],
     notes: [
+      'Civil birth record found (28 Jun 2026): Antenati, Calatabiano Nati 1889, atto n. 28. Born 8 Feb 1889 at 4:15 AM in Contrada Trappitelli, Calatabiano. Declared 10 Feb 1889.',
+      'DATE DISCREPANCY: Civil record says 8 Feb (4:15 AM); baptism extract says 9 Feb ("born yesterday" on 10 Feb). Civil record is the legal document, so 8 Feb 1889 is the official date.',
+      'Father at birth: Sebastiano Patanè (39, castaldo/farm manager). Mother: Rosaria D\'Agata (his legitimate wife).',
+      'Witnesses at registration: Sebastiano Intelisano (60, bracciante) & Giuseppe Intelisano (30, bracciante). Both illiterate.',
+      'Margin note on civil birth act: "Joined in marriage with Venera Vecchio by act of 27 April 1911. Registered in Fiumefreddo." — suggests civil marriage was 27 Apr 1911 (vs church marriage 24 Apr 1911).',
       'Age 34 in May 1924, per Rosaria\'s birth record.',
-      'Parents of Rosaria Patanè.',
-      'BREAKTHROUGH 28 Jun 2026: Found marriage record (Fiumefreddo parish, 24 Apr 1911). Confirmed parents: Sebastiano Patanè & Rosaria D\'Agata. Born in Calatabiano.',
-      'BREAKTHROUGH 28 Jun 2026: Found baptism certificate (10 Feb 1889, Calatabiano) in marriage processetti packet — confirms birth date 9 Feb 1889. Baptized by Sac. Salvatore Catalano, godfather Giuseppe Caruso.',
+      'Baptism certificate (10 Feb 1889, Calatabiano) found in marriage processetti packet. Baptized by Sac. Salvatore Catalano, godfather Giuseppe Caruso.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person.',
       'NAA file A446, 1967/39646 (Item ID 7775953) requested — access application RK26/00009589 submitted 28 Jun 2026.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '9 Feb 1889, Calatabiano — confirmed via baptism certificate extract in marriage processetti (Fiumefreddo Marriage Supplements 1911)' },
-      { type: 'Baptismal Record', status: 'Found', notes: '10 Feb 1889, Calatabiano. Baptized by Sac. Salvatore Catalano at Chiesa dell\'Amministrazione della Beata Vergine e S. Giorgio Martire. Godfather: Giuseppe Caruso.' },
-      { type: 'Marriage Record', status: 'Found', notes: '24 Apr 1911, Fiumefreddo (church). Banns 2, 9, 16 Apr 1911. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella at Chiesa del S. Rosario.' },
+      { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trappitelli. Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
+      { type: 'Baptismal Record', status: 'Found', notes: '9/10 Feb 1889, Calatabiano. Baptized by Sac. Salvatore Catalano at Chiesa dell\'Amministrazione della Beata Vergine e S. Giorgio Martire. Godfather: Giuseppe Caruso.' },
+      { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Banns 2, 9, 16 Apr 1911. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella at Chiesa del S. Rosario.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: '27 Apr 1911, Fiumefreddo — noted in margin of Calatabiano birth act n. 28' },
       { type: 'Death Record', status: 'Not Found', notes: 'Unknown — possibly pre-1950 if he did not migrate to Australia' },
       { type: 'NAA File (A446 1967/39646)', status: 'Searching', notes: 'Requested 28 Jun 2026 — due 2 Nov 2026' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Birth date (9 Feb 1889) and birthplace (Calatabiano) confirmed via baptism certificate in marriage processetti. Parents (Sebastiano Patanè & Rosaria D\'Agata) and marriage (24 Apr 1911, Fiumefreddo) all confirmed.',
+      details: 'Both civil birth act (8 Feb 1889, Calatabiano n. 28) and baptism extract (9/10 Feb 1889) found and cross-referenced. Parents, marriage, and children all confirmed from primary sources.',
       nextSteps: [
         'Investigate connection to Pietro Patanè (cane farm owner in Ingham) — both from Patanè lines in Milo/Calatabiano area.',
-        'Search for Rosario\'s death record and civil birth registration in Calatabiano.',
+        'Search for Rosario\'s death record.',
         'Await NAA file A446, 1967/39646.'
       ]
     },
     sources: [
+      {
+        title: 'Civil Birth Register (Calatabiano)',
+        type: 'Civil Registry',
+        reference: 'Nati 1889, atto n. 28 (Antenati)'
+      },
       {
         title: 'Rosaria Patanè Civil Birth Record',
         type: 'Civil Registry',
@@ -290,7 +317,7 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Patanè',
     gender: 'F',
-    birthDate: 'c. 1888',
+    birthDate: '8 January 1888',
     deathDate: 'Deceased by 1953',
     occupations: ['Casalinga (housewife)', 'Tailor (sartora)'],
     residences: ['Sezione Castello, Fiumefreddo di Sicilia'],
@@ -305,21 +332,28 @@ export const initialPeople: Person[] = [
       'Marriage record found (24 Apr 1911, Fiumefreddo). Parents confirmed: Vincenzo Vecchio & Rosaria Rapisardi.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Venera Vecchio (daughter of Carmelo Vecchio & Rosaria Ragonesi) marrying Giuseppe Di Blasi was investigated and confirmed to be a different person.',
       'Parent note: mother\'s surname recorded as "Raciti" on marriage banns (variation of Rapisardi).',
-      'Baptism record located in margin note of marriage record (Fiumefreddo parish): "V. Lib. Baptiz. ann. 1888 fol. 240 n. 8" — Volume 5, Baptisms 1888, folio 240, entry 8. NEEDS CHECKING: actual baptism register not yet viewed to confirm exact birth date.',
-      'Birth year refined to c. 1888 (baptism referenced as 1888, consistent with marriage around age 23).',
+      'BREAKTHROUGH (28 Jun 2026): Baptism register entry found — Fiumefreddo Battesimi 1762-1904, folio 240, entry n. 8. Image 007490026_01391.jpg.',
+      'Exact birth date: 8 January 1888. Baptized same day. Full name recorded as "Veneranda Vecchio" (Veneranda, not Venera).',
+      'Baptized by Rev. Nicola Sgarlata (with permission of the Economus Pastor).',
+      'Godparents: Alfio Musumeci Casalino & Maria Raciti (daughter of Giuseppe) — confirms connection to the Raciti family through the godmother.',
+      'Midwife: Concetta Marano delivered her.',
+      'Margin note in baptism register: "Matrim. fuit de [---] cum Rosario Patanè die 24 Aprilis 1911" — cross-referencing to the marriage record already found.',
+      'Mother\'s surname confirmed as Raciti (not Rapisardi) — matching the marriage banns, not the church marriage certificate.',
       'Nickname: "Ni Ni Na" (Nenina?) per family memory (Connie Emmi, 28 Jun 2026).'
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'Completely unknown — no records found' },
-      { type: 'Marriage Record', status: 'Found', notes: '24 Apr 1911, Fiumefreddo (church). Parents named: Vincenzo Vecchio & Rosaria Rapisardi.' },
+      { type: 'Birth Record', status: 'Not Found', notes: '8 Jan 1888, Fiumefreddo — civil equivalent not yet searched' },
+      { type: 'Baptism Record', status: 'Found', notes: '8 Jan 1888, Fiumefreddo. Baptized same day by Rev. Nicola Sgarlata. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano. Full name: Veneranda. Entry n. 8, folio 240.' },
+      { type: 'Marriage Record', status: 'Found', notes: '24 Apr 1911, Fiumefreddo (church). Parents named: Vincenzo Vecchio & Rosaria Raciti.' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1953 — recorded as "fu Venera" on 1953 photo-identity cert' }
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Surname and death timeframe (pre-1953) confirmed. Parents now confirmed via marriage record. Marriage found.',
+      status: 'Confirmed',
+      details: 'Baptism found 28 Jun 2026 (Fiumefreddo Battesimi 1762-1904, fol. 240 n. 8). Exact birth date: 8 Jan 1888. Full name: Veneranda Vecchio. Mother\'s surname: Raciti. Death pre-1953.',
       nextSteps: [
-        'Search for Venera\'s birth record in Fiumefreddo civil records.',
-        'Investigate connection to Leonardo Vecchio (co-signer of Rosaria\'s accommodation guarantee in Ingham) — same surname, possibly relative.'
+        'Search Fiumefreddo civil births 1888 for the civil birth act.',
+        'Investigate connection to Leonardo Vecchio (co-signer of Rosaria\'s accommodation guarantee in Ingham) — same surname, possibly relative.',
+        'Explore the Raciti family lead via godmother Maria Raciti (daughter of Giuseppe).'
       ]
     },
     sources: [
@@ -337,6 +371,11 @@ export const initialPeople: Person[] = [
         title: 'Parish Marriage Certificate (28 Mar 1911)',
         type: 'Ecclesiastical Record',
         reference: 'Parrocchia Maria SS.ma Immacolata, Fiumefreddo di Sicilia'
+      },
+      {
+        title: 'Parish Baptism Register (1888)',
+        type: 'Ecclesiastical Record',
+        reference: 'Fiumefreddo Battesimi 1762-1904, folio 240, entry n. 8 (8 Jan 1888)'
       }
     ]
   },
@@ -544,6 +583,108 @@ export const initialPeople: Person[] = [
     }
   },
 
+  // --- GENERATION 0: Great-Great-Grandparents (Emmi Line) ---
+  {
+    id: 'antonino-emmi',
+    name: 'Antonino Emmi',
+    generation: 0,
+    line: 'Emmi',
+    gender: 'M',
+    birthDate: 'Unknown',
+    deathDate: 'Deceased prior to 8 Sep 1900',
+    spouses: ['rosaria-raiti'],
+    parents: [],
+    children: ['egidio-emmi'],
+    notes: [
+      'Father of Egidio Emmi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
+      'Recorded as "fu Antonino" (the late Antonino) at the time of Egidio\'s marriage.',
+      'Possibly the same Antonino Emmi who appears in earlier Linguaglossa records.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
+    researchStatus: {
+      status: 'Outstanding',
+      details: 'Name confirmed as father of Egidio Emmi.',
+      nextSteps: [
+        'Search Linguaglossa birth/death records for Antonino Emmi.'
+      ]
+    }
+  },
+  {
+    id: 'rosaria-raiti',
+    name: 'Rosaria Raiti',
+    generation: 0,
+    line: 'Emmi',
+    gender: 'F',
+    birthDate: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['antonino-emmi'],
+    parents: [],
+    children: ['egidio-emmi'],
+    notes: [
+      'Mother of Egidio Emmi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
+      'NOT to be confused with Rosa Vecchio — mother of the OTHER Egidio Emmi (b. ~1855) who married Angela Raiti in 1895.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
+    researchStatus: {
+      status: 'Outstanding',
+      details: 'Name confirmed as mother of Egidio Emmi.'
+    }
+  },
+  {
+    id: 'salvatore-sgroi',
+    name: 'Salvatore Sgroi',
+    generation: 0,
+    line: 'Emmi',
+    gender: 'M',
+    birthDate: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['santa-cali'],
+    parents: [],
+    children: ['concetta-sgroi'],
+    notes: [
+      'Father of Concetta Sgroi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
+      'Listed as living at the time of Concetta\'s marriage (not "fu").',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
+    researchStatus: {
+      status: 'Outstanding',
+      details: 'Name confirmed as father of Concetta Sgroi.'
+    }
+  },
+  {
+    id: 'santa-cali',
+    name: 'Santa Cali',
+    generation: 0,
+    line: 'Emmi',
+    gender: 'F',
+    birthDate: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['salvatore-sgroi'],
+    parents: [],
+    children: ['concetta-sgroi'],
+    notes: [
+      'Mother of Concetta Sgroi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
+      'Listed as living at the time of Concetta\'s marriage (not "fu").',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
+    researchStatus: {
+      status: 'Outstanding',
+      details: 'Name confirmed as mother of Concetta Sgroi.'
+    }
+  },
+
   // --- GENERATION 0: Great-Great-Grandparents (Patanè Line) ---
   {
     id: 'sebastiano-patane-sr',
@@ -632,8 +773,9 @@ export const initialPeople: Person[] = [
     parents: [],
     children: ['venera-vecchio'],
     notes: [
-      'Mother of Venera Vecchio, confirmed via 1911 parish marriage certificate.',
-      'Maiden name recorded as Rapisardi in the parish cert; also possibly Brancati in another record.',
+      'Mother of Venera Vecchio, confirmed via 1911 parish marriage certificate and 1888 baptism register.',
+      'Surname confirmed as Raciti in the baptism record (8 Jan 1888) — matching the marriage banns. Recorded as "Rapisardi" on the church marriage certificate (possible scribal variation).',
+      'Baptism godmother: Maria Raciti (daughter of Giuseppe) — likely a relative of Rosaria Raciti (possibly her sister).',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
@@ -647,7 +789,7 @@ export const initialPeople: Person[] = [
   {
     id: 'sebastiano-patane',
     name: 'Sebastiano Patanè',
-    generation: 1,
+    generation: 2,
     line: 'Patanè',
     gender: 'M',
     birthDate: 'Unknown / to be confirmed',
@@ -909,7 +1051,7 @@ export const initialPeople: Person[] = [
   {
     id: 'emmi-older-brother-venezuela',
     name: 'Emmi (older brother, name unknown)',
-    generation: 1,
+    generation: 2,
     line: 'Emmi',
     gender: 'M',
     birthDate: 'Unknown',
@@ -973,7 +1115,7 @@ export const initialPeople: Person[] = [
       ]
     },
     records: [
-      { type: 'Birth (Civil)', status: 'Found', notes: 'Numero 71, Fiumefreddo di Sicilia 1924 — FS DGS 7851867. Born 23 May 1924 (not 25th)' },
+      { type: 'Birth (Civil)', status: 'Found', notes: 'Numero 71, Fiumefreddo di Sicilia 1924 — FS DGS 7851867. Born 23 May 1924 at 6:30 AM, Sezione Castello. Declared 25 May 1924 by father Rosario Patanè (34, bracciante). Mother: Venera Vecchio (casalinga). Witness: Francesco Ferrara (25, calzolaio).' },
       { type: 'Baptismal Record', status: 'Searching', notes: 'FS DGS 5429284 restricted — emails sent to Diocesi di Acireale & parish 28 Jun 2026' },
       { type: 'Death Record', status: 'Found', notes: '30 Mar 1994 — burial confirmed' },
       { type: 'Burial Record', status: 'Found', notes: 'Cheltenham Memorial Cemetery, Plot 27*377*N' },

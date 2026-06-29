@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { initialPeople, initialResearchLeads, initialOpenQuestions, Person, ResearchLead, OpenQuestion } from '../data/familyData';
-import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus } from 'lucide-react';
+import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { PersonProfile } from '@/components/PersonProfile';
 import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { ResearchLog } from '@/components/ResearchLog';
 import { TimelineTab } from '@/components/TimelineTab';
+import { EvidenceWiki } from '@/components/EvidenceWiki';
 import { STORAGE_KEYS, DEFAULT_NEW_PERSON } from '@/lib/constants';
 
 const Index = () => {
@@ -136,6 +137,44 @@ const Index = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+        {/* NEXT TASK BANNER */}
+        <div className="mb-6 bg-emerald-900 text-emerald-50 border border-emerald-700 rounded-xl p-4 shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="bg-emerald-800 rounded-lg p-2 mt-0.5">
+              <BookOpen className="w-5 h-5 text-emerald-200" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold tracking-wide uppercase">Next Research Task</p>
+              <p className="text-base mt-1">
+                Find <strong>Egidio Emmi</strong>'s birth record (son of Antonino Emmi + Rosaria Raiti) in{' '}
+                <strong>Linguaglossa Nati 1868–1872</strong>
+              </p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <a href="https://antenati.cultura.gov.it/ark:/12657/an_ua81363/?lang=en" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                  1868 ↗
+                </a>
+                <a href="https://antenati.cultura.gov.it/ark:/12657/an_ua81364/LoY2Axj?lang=en" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                  1869 ↗
+                </a>
+                <a href="https://antenati.cultura.gov.it/ark:/12657/an_ua81365/5xepaMV?lang=en" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                  1870 ↗
+                </a>
+                <a href="https://antenati.cultura.gov.it/ark:/12657/an_ua81366/LpAx9rk?lang=en" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                  1871 ↗
+                </a>
+                <a href="https://antenati.cultura.gov.it/ark:/12657/an_ua81367/LpAx9bk?lang=en" target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1.5 rounded-lg transition-colors">
+                  1872 ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-stone-200 pb-2">
             <TabsList className="bg-[#F4EFE6] border border-stone-200 p-1">
@@ -150,6 +189,9 @@ const Index = () => {
               </TabsTrigger>
               <TabsTrigger value="timeline" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
                 <Clock className="w-4 h-4" /> Migration & Timeline
+              </TabsTrigger>
+              <TabsTrigger value="evidence" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
+                <ScrollText className="w-4 h-4" /> Evidence Wiki
               </TabsTrigger>
             </TabsList>
             <div className="text-xs text-stone-500 font-sans italic flex items-center gap-1">
@@ -203,6 +245,9 @@ const Index = () => {
 
           <TabsContent value="timeline" className="space-y-6">
             <TimelineTab />
+          </TabsContent>
+          <TabsContent value="evidence" className="space-y-6">
+            <EvidenceWiki />
           </TabsContent>
         </Tabs>
       </main>
