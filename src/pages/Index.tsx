@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { initialPeople, initialResearchLeads, initialOpenQuestions, Person, ResearchLead, OpenQuestion } from '../data/familyData';
-import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText } from 'lucide-react';
+import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText, Search } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { ResearchLog } from '@/components/ResearchLog';
 import { TimelineTab } from '@/components/TimelineTab';
 import { EvidenceWiki } from '@/components/EvidenceWiki';
+import { RecordMatrix } from '@/components/RecordMatrix';
 import { STORAGE_KEYS, DEFAULT_NEW_PERSON } from '@/lib/constants';
 
 const Index = () => {
@@ -193,6 +194,9 @@ const Index = () => {
               <TabsTrigger value="evidence" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
                 <ScrollText className="w-4 h-4" /> Evidence Wiki
               </TabsTrigger>
+              <TabsTrigger value="records" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
+                <Search className="w-4 h-4" /> Record Matrix
+              </TabsTrigger>
             </TabsList>
             <div className="text-xs text-stone-500 font-sans italic flex items-center gap-1">
               <Info className="w-3.5 h-3.5 text-[#800020]" /> Click on any ancestor to view their full profile.
@@ -248,6 +252,9 @@ const Index = () => {
           </TabsContent>
           <TabsContent value="evidence" className="space-y-6">
             <EvidenceWiki />
+          </TabsContent>
+          <TabsContent value="records" className="space-y-6">
+            <RecordMatrix people={people} />
           </TabsContent>
         </Tabs>
       </main>
