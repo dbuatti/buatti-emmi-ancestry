@@ -17,25 +17,16 @@ import { ResearchLog } from '@/components/ResearchLog';
 import { TimelineTab } from '@/components/TimelineTab';
 import { EvidenceWiki } from '@/components/EvidenceWiki';
 import { RecordMatrix } from '@/components/RecordMatrix';
-import { STORAGE_KEYS, DEFAULT_NEW_PERSON } from '@/lib/constants';
+import { DEFAULT_NEW_PERSON } from '@/lib/constants';
 
 const Index = () => {
   const { toast } = useToast();
 
-  const [people, setPeople] = useState<Person[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.PEOPLE);
-    return saved ? JSON.parse(saved) : initialPeople;
-  });
+  const [people, setPeople] = useState<Person[]>(initialPeople);
 
-  const [leads, setLeads] = useState<ResearchLead[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.LEADS);
-    return saved ? JSON.parse(saved) : initialResearchLeads;
-  });
+  const [leads, setLeads] = useState<ResearchLead[]>(initialResearchLeads);
 
-  const [questions, setQuestions] = useState<OpenQuestion[]>(() => {
-    const saved = localStorage.getItem(STORAGE_KEYS.QUESTIONS);
-    return saved ? JSON.parse(saved) : initialOpenQuestions;
-  });
+  const [questions, setQuestions] = useState<OpenQuestion[]>(initialOpenQuestions);
 
   const [selectedPersonId, setSelectedPersonId] = useState<string>('ezio-buatti');
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,10 +37,6 @@ const Index = () => {
 
   const [isAddPersonOpen, setIsAddPersonOpen] = useState(false);
   const [newPerson, setNewPerson] = useState<Partial<Person>>({ ...DEFAULT_NEW_PERSON });
-
-  useEffect(() => { localStorage.setItem(STORAGE_KEYS.PEOPLE, JSON.stringify(people)); }, [people]);
-  useEffect(() => { localStorage.setItem(STORAGE_KEYS.LEADS, JSON.stringify(leads)); }, [leads]);
-  useEffect(() => { localStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(questions)); }, [questions]);
 
   const handleAddPerson = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +84,6 @@ const Index = () => {
 
   const resetToDefault = () => {
     if (confirm("Are you sure you want to reset all data to the original compiled records? Any custom changes will be lost.")) {
-      [STORAGE_KEYS.PEOPLE, STORAGE_KEYS.LEADS, STORAGE_KEYS.QUESTIONS].forEach(k => localStorage.removeItem(k));
       setPeople(initialPeople);
       setLeads(initialResearchLeads);
       setQuestions(initialOpenQuestions);
