@@ -265,6 +265,7 @@ export const initialPeople: Person[] = [
       'Baptism certificate (10 Feb 1889, Calatabiano) found in marriage processetti packet. Baptized by Sac. Salvatore Catalano, godfather Giuseppe Caruso.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person.',
       'NAA file A446, 1967/39646 (Item ID 7775953) requested — access application RK26/00009589 submitted 28 Jun 2026.',
+      'Giuseppe Patanè (married Sebastiana Cogliandolo 20 Feb 1911, Liber Matrimoniorum N.11/12) shares same parents (Sebastiano & Rosaria D\'Agata) — likely Rosario\'s brother.',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trappitelli. Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
@@ -322,23 +323,23 @@ export const initialPeople: Person[] = [
     occupations: ['Casalinga (housewife)', 'Tailor (sartora)'],
     residences: ['Sezione Castello, Fiumefreddo di Sicilia'],
     spouses: ['rosario-patane-sr'],
-    parents: ['vincenzo-vecchio', 'rosaria-rapisardi'],
+    parents: ['vincenzo-vecchio', 'rosaria-raciti'],
     children: ['rosaria-patane', 'sebastiano-patane'],
     notes: [
       'Surname confirmed via Rosaria\'s civil birth record (1924).',
       'Recalled in family memory as a tailor (sartora).',
       'Recorded as "fu Venera" (the late Venera) on a 1953 Comune di Fiumefreddo photo-identity certificate.',
       'Note the recurrence of the name "Venera" in this family line, later given to her granddaughter Venera Buatti.',
-      'Marriage record found (24 Apr 1911, Fiumefreddo). Parents confirmed: Vincenzo Vecchio & Rosaria Rapisardi.',
+      'Marriage record found (24 Apr 1911, Fiumefreddo, Liber Matrimoniorum N.18). Parents confirmed: Vincenzo Vecchio & Rosaria Raciti.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Venera Vecchio (daughter of Carmelo Vecchio & Rosaria Ragonesi) marrying Giuseppe Di Blasi was investigated and confirmed to be a different person.',
-      'Parent note: mother\'s surname recorded as "Raciti" on marriage banns (variation of Rapisardi).',
+      'Surname confirmed as Raciti (NOT Rapisardi) via Liber Matrimoniorum entry N.18 (fol. 240), viewed 29 Jun 2026. "Rapisardi" was a scribal error on the marriage certificate.',
       'BREAKTHROUGH (28 Jun 2026): Baptism register entry found — Fiumefreddo Battesimi 1762-1904, folio 240, entry n. 8. Image 007490026_01391.jpg.',
       'Exact birth date: 8 January 1888. Baptized same day. Full name recorded as "Veneranda Vecchio" (Veneranda, not Venera).',
       'Baptized by Rev. Nicola Sgarlata (with permission of the Economus Pastor).',
       'Godparents: Alfio Musumeci Casalino & Maria Raciti (daughter of Giuseppe) — confirms connection to the Raciti family through the godmother.',
       'Midwife: Concetta Marano delivered her.',
       'Margin note in baptism register: "Matrim. fuit de [---] cum Rosario Patanè die 24 Aprilis 1911" — cross-referencing to the marriage record already found.',
-      'Mother\'s surname confirmed as Raciti (not Rapisardi) — matching the marriage banns, not the church marriage certificate.',
+      'Liber Matrimoniorum N.18 (29 Jun 2026): confirms Venera = daughter of Vincentii et Rosariae Raciti. "Rapisardi" was a scribal error on the marriage certificate.',
       'Nickname: "Ni Ni Na" (Nenina?) per family memory (Connie Emmi, 28 Jun 2026).'
     ],
     records: [
@@ -699,7 +700,7 @@ export const initialPeople: Person[] = [
     children: ['rosario-patane-sr', 'giuseppe-patane-sibling', 'venera-patane-sibling'],
     notes: [
       'Father of Rosario Patanè, confirmed via 1911 parish marriage certificate.',
-      'Also father of Giuseppe Patanè (married Sebastiana Guglielmino, 5 Feb 1911) and Venera Patanè (married Orazio Pagano, 17 Sep 1911) — both confirmed via Fiumefreddo civil marriage banns.',
+      'Also father of Giuseppe Patanè (married Sebastiana Cogliandolo, 20 Feb 1911, Liber Matrimoniorum N.11/12 — also recorded as "Sebastiana Guglielmino" on civil banns) and Venera Patanè (married Orazio Pagano, 17 Sep 1911) — both confirmed via Fiumefreddo records.',
       'From Calatabiano area; resided in Fiumefreddo by 1911.',
     ],
     records: [
@@ -745,7 +746,7 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: 'Unknown',
     deathDate: 'Unknown',
-    spouses: ['rosaria-rapisardi'],
+    spouses: ['rosaria-raciti'],
     parents: [],
     children: ['venera-vecchio'],
     notes: [
@@ -762,8 +763,8 @@ export const initialPeople: Person[] = [
     }
   },
   {
-    id: 'rosaria-rapisardi',
-    name: 'Rosaria Rapisardi',
+    id: 'rosaria-raciti',
+    name: 'Rosaria Raciti',
     generation: 0,
     line: 'Patanè',
     gender: 'F',
@@ -773,9 +774,8 @@ export const initialPeople: Person[] = [
     parents: [],
     children: ['venera-vecchio'],
     notes: [
-      'Mother of Venera Vecchio, confirmed via 1911 parish marriage certificate and 1888 baptism register.',
-      'Surname confirmed as Raciti in the baptism record (8 Jan 1888) — matching the marriage banns. Recorded as "Rapisardi" on the church marriage certificate (possible scribal variation).',
-      'Baptism godmother: Maria Raciti (daughter of Giuseppe) — likely a relative of Rosaria Raciti (possibly her sister).',
+      'Mother of Venera Vecchio, confirmed via 1888 baptism register and Liber Matrimoniorum N.18 (24 Apr 1911).',
+      'Surname definitively Raciti — "Rapisardi" on marriage certificate was a scribal error. Baptism godmother was Maria Raciti (daughter of Giuseppe), likely a relative.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
@@ -1641,7 +1641,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'When and where did Rosario Patanè & Venera Vecchio marry, and who were their parents?',
     category: 'Emmi/Patanè',
     status: 'Resolved',
-    notes: 'RESOLVED 28 Jun 2026: Married 24 Apr 1911 at Parrocchia Maria SS.ma Immacolata, Fiumefreddo. Parents: Rosario = Sebastiano Patanè & Rosaria D\'Agata; Venera = Vincenzo Vecchio & Rosaria Rapisardi. Baptism certificate in processetti also confirmed Rosario born 9 Feb 1889 in Calatabiano.'
+    notes: 'RESOLVED 28 Jun 2026: Married 24 Apr 1911 at Parrocchia Maria SS.ma Immacolata, Fiumefreddo (Liber Matrimoniorum N.18). Parents: Rosario = Sebastiano Patanè & Rosaria D\'Agata; Venera = Vincenzo Vecchio & Rosaria Raciti. Baptism certificate in processetti also confirmed Rosario born 9 Feb 1889 in Calatabiano. Giuseppe Patanè (married Sebastiana Cogliandolo 20 Feb 1911) shares the same parents — likely Rosario\'s brother.'
   },
   {
     id: 'q-venera-birth',
