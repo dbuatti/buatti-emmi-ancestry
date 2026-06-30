@@ -950,7 +950,7 @@ export const initialPeople: Person[] = [
     generation: 2,
     line: 'Emmi',
     gender: 'M',
-    birthDate: '27 October 1915',
+    birthDate: '23 October 1915 (civil) — see note re baptism discrepancy',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
     deathDate: 'c. late November 1979',
     burialPlace: 'Rookwood Catholic Cemetery, Sydney, NSW',
@@ -961,6 +961,9 @@ export const initialPeople: Person[] = [
     residences: ['Via Roma 333, Linguaglossa', 'Black Rock, via Ingham, Queensland', 'Sydney, NSW'],
     occupations: ['Bracciante (farm labourer) in Italy', 'Cane cutter in Australia'],
     notes: [
+      '4-day birth date discrepancy: civil birth extract (atto n. 202) says 23 Oct 1915; baptismal record (DGS 5455112, n. 251) says 27 Oct 1915. Civil date legally authoritative — baptism may reflect actual birth reported to parish later.',
+      'Married Rosaria Patanè 7 July 1948 in Fiumefreddo di Sicilia (atto n. 34, part 2, series A).',
+      'Lost Italian citizenship 26 Jan 1961 per naturalisation certificate EM(2)28650 — acquired Australian citizenship, transcribed at Linguaglossa 1961 atto n. 32 part I.',
       'Had at least 5 siblings per Mum (28 Jun 2026): one older brother (his family migrated to Venezuela — confirmed by Connie Emmi), another brother in NSW, and 3 sisters (one met in Italy).',
       'Connie Emmi also said "there are many Emmis in Griffith NSW that are not directly related to us."',
     ],
@@ -991,7 +994,7 @@ export const initialPeople: Person[] = [
       repatriation: 'Repatriated to Italy on 30 September 1946 aboard H.T. Chitral.'
     },
     records: [
-      { type: 'Birth (Civil)', status: 'Searching', notes: '27 Oct 1915 — all FS digital routes exhausted, emails sent to Comune di Linguaglossa & Archivio di Stato di Catania 28 Jun 2026' },
+      { type: 'Birth (Civil)', status: 'Found', notes: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30 Jun 2026. Date: 23 Oct 1915. (4-day discrepancy with baptismal record: 27 Oct 1915.)' },
       { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin.' },
       { type: 'Death Record', status: 'Searching', notes: 'c. late Nov 1979 — funeral 30 Nov 1979, exact date unknown' },
       { type: 'Burial Record', status: 'Found', notes: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070' },
@@ -1001,14 +1004,16 @@ export const initialPeople: Person[] = [
       { type: 'Alien Registration', status: 'Found', notes: 'No. 139899, 13 Mar 1950' },
       { type: 'Identity Document', status: 'Found', notes: 'Carta d\'identità No. 17.771.300, Comune di Linguaglossa' },
       { type: 'Police Record', status: 'Found', notes: 'Townsville District Police Report, 15 Sep 1950 — "good character and repute"' },
-      { type: 'Medical Record', status: 'Found', notes: 'Malaria (May 1944) & epistaxis (Dec 1944) during POW internment' }
+      { type: 'Medical Record', status: 'Found', notes: 'Malaria (May 1944) & epistaxis (Dec 1944) during POW internment' },
+      { type: 'Naturalisation Record', status: 'Found', notes: 'Certificate EM(2)28650, 26 Jan 1961. Transcribed Linguaglossa 1961 atto n. 32 part I. Per civil birth extract (atto n. 202).' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Rosaria Patanè, 7 Jul 1948, Fiumefreddo di Sicilia — atto n. 34, part 2, series A. Recorded in margin of civil birth extract (atto n. 202).' },
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Baptismal record found and confirmed. Civil birth record outstanding (FamilySearch digital routes exhausted). Request emails sent to Comune di Linguaglossa and Archivio di Stato di Catania on 28 June 2026.',
+      details: 'Civil birth extract received 30 Jun 2026 (atto n. 202 — confirms 23 Oct 1915 birth). Baptismal record previously found. Marriage to Rosaria Patanè confirmed: 7 Jul 1948, Fiumefreddo. Naturalisation (Australian citizenship) 26 Jan 1961, cert. EM(2)28650.',
       nextSteps: [
-        'Await reply from Comune di Linguaglossa (anagrafe@comune.linguaglossa.ct.it) regarding birth extract request.',
-        'Await reply from Archivio di Stato di Catania (as-ct@cultura.gov.it) regarding Film 2278858 lookup.',
+        'Request actual marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34).',
+        'Request naturalisation certificate (EM(2)28650) from NAA.',
         'Follow up by phone if no reply (Liuzzo Francesca: 095 7777216).',
         'Confirm exact date of death (funeral was 30 Nov 1979).',
         'Establish when/why the family relocated from Ingham to Sydney.'
@@ -1119,7 +1124,7 @@ export const initialPeople: Person[] = [
       { type: 'Baptismal Record', status: 'Searching', notes: 'FS DGS 5429284 restricted — emails sent to Diocesi di Acireale & parish 28 Jun 2026' },
       { type: 'Death Record', status: 'Found', notes: '30 Mar 1994 — burial confirmed' },
       { type: 'Burial Record', status: 'Found', notes: 'Cheltenham Memorial Cemetery, Plot 27*377*N' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'To Gregorio Emmi — pre-1950, date/location unknown' },
+      { type: 'Marriage Record', status: 'Found', notes: 'To Gregorio Emmi, 7 Jul 1948, Fiumefreddo di Sicilia — atto n. 34, part 2, series A. Per Gregorio\'s civil birth extract margin annotation.' },
       { type: 'Immigration File (NAA)', status: 'Found', notes: 'J25, 1950/8776 — 15+ pages, already digitised' },
       { type: 'Passport', status: 'Found', notes: 'No. 3187826, issued 2 Dec 1950, Linguaglossa' },
       { type: 'Passenger List', status: 'Found', notes: 'SS Surriento, Mar 1951 — Messina to Brisbane via Sydney' },

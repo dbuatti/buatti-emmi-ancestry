@@ -3,7 +3,7 @@ import type { Person } from '@/types';
 export interface ResearchNote {
   id: string;
   title: string;
-  category: 'buatti-chiappini' | 'emmi-patane' | 'methodology' | 'lesson' | 'people-to-ask' | 'next-actions';
+  category: 'buatti-chiappini' | 'emmi-patane' | 'methodology' | 'lesson' | 'people-to-ask' | 'next-actions' | 'found-records' | 'discrepancies';
   date: string;
   content: string[];
 }
@@ -42,7 +42,7 @@ export const researchNotes: ResearchNote[] = [
     content: [
       'Found via separate FamilySearch catalog entry: "Italia, Catania, Linguaglossa (Parrocchia di Santa Maria delle Grazie). Registri ecclesiastici, 1866-1946" — DGS 5455112, Battesimi 1914-1921.',
       'Key technique: used the parish\'s decennial alphabetical index — entries arranged as "[Father surname] [Mother maiden surname] [Child given name]" — found "Emmi Sgroi Gregorius, fol. 80" instantly.',
-      'Entry N. 251, folio 80: Gregorio baptised 5 Dec 1915, born 27 October 1915 (NOT 23 Oct as on Australian paperwork), son of Aegidio Emmi and Concepta Sgroi, godmother Rosaria Emmi.',
+      'Entry N. 251, folio 80: Gregorio baptised 5 Dec 1915, born 27 October 1915, son of Aegidio Emmi and Concepta Sgroi, godmother Rosaria Emmi. ⚠ NOTE: civil birth extract (30 Jun 2026) says 23 Oct 1915 — 4-day discrepancy; see note-gregorio-birth-date-discrepancy.',
       'Lesson: when one catalog entry is access-restricted, check for OTHER separate catalog entries for the same parish — different digitisation batches can have different access rules.',
     ],
   },
@@ -329,15 +329,32 @@ export const nextActions: ResearchNote[] = [
   },
   {
     id: 'action-gregorio-birth-civil',
-    title: 'Gregorio\'s civil birth record (27 Oct 1915, Linguaglossa)',
-    category: 'next-actions',
-    date: 'Ongoing',
+    title: 'RESOLVED — Gregorio\'s civil birth record found (atto n. 202)',
+    category: 'found-records',
+    date: '30 June 2026',
     content: [
-      'Search Antenati: Archivio di Stato di Catania → Linguaglossa → Nati 1915.',
-      'On Antenati, Linguaglossa Nati 1911-1929 are in one register (segnatura ~8566+). Look for "Emmi Gregorio" son of Egidio + Concetta.',
-      'Alternatively check FamilySearch catalog #145167 digital folders individually.',
-      'Or contact Archivio di Stato di Catania directly (as-ct@cultura.gov.it — email already sent 28 June 2026).',
-      'Or follow up by phone: +39 095 7159860.',
+      'Estratto dell\'Atto di Nascita n. 202 issued by Comune di Linguaglossa 30 Jun 2026, signed by Foti Maria Angela.',
+      'Gregorio Emmi born 23 October 1915 (NOT 27 Oct as per baptism — 4-day discrepancy, see note-gregorio-birth-date-discrepancy).',
+      'Additional data from extract:',
+      '  - Married Rosaria Patanè 7 Jul 1948 in Fiumefreddo di Sicilia (atto n. 34, part 2, series A)',
+      '  - Naturalised Australian 26 Jan 1961 (cert. EM(2)28650), transcribed Linguaglossa 1961 atto n. 32 part I',
+      'NEXT: Request marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34).',
+      'NEXT: Request naturalisation certificate EM(2)28650 from NAA.',
+    ],
+  },
+  {
+    id: 'note-gregorio-birth-date-discrepancy',
+    title: '⚠ Gregorio Emmi birth date discrepancy: civil 23 Oct vs baptism 27 Oct 1915',
+    category: 'discrepancies',
+    date: '30 June 2026',
+    content: [
+      'Civil birth extract (atto n. 202, Comune di Linguaglossa): born 23 October 1915.',
+      'Baptismal record (DGS 5455112, entry n. 251, folio 80): "natum... die 27 Octobris 1915" — baptised 5 Dec 1915.',
+      '4-day gap. Possible explanations:',
+      '  1. Late reporting to the comune (family had 5 days to register) — baptism reflects actual birth date.',
+      '  2. Transcription error in the civil register or baptismal record.',
+      '  3. The baptism uses the ecclesiastical calendar or a feast day reference.',
+      'Civil record is legally authoritative. Baptism likely reflects the true birth date.',
     ],
   },
   {

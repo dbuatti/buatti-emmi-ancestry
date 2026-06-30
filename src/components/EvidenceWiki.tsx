@@ -23,14 +23,14 @@ const nodes: EvidenceNode[] = [
   { id: 'santa-cali', label: 'Santa Cali', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59 — listed as mother "Cali Santa"', note: 'Living at time of Concetta\'s marriage.' },
   { id: 'egidio-emmi', label: 'Egidio Emmi (~1870 – pre-1943)', source: 'Marriage Proclamation atto № 59: age 30 on 8 Sep 1900 → born ~1869/1870. POW report (1943) shows "DEC" = deceased.', note: 'Farmer (contadino). Illiterate. NOT the same as Egidio Emmi (b. ~1855) who married Angela Raiti in 1895 — same father Antonino, different mother (Rosa Vecchio vs Rosaria Raiti), likely half-brothers.' },
   { id: 'concetta-sgroi', label: 'Concetta Sgroi (~1880 – pre-1967)', source: 'Marriage Proclamation atto № 59: age 20 on 8 Sep 1900 → born ~1879/1880. Later church records show deceased by 1967.', note: 'Farmer (contadina). Illiterate. Maiden name Sgroi confirmed via Gregorio\'s 1943 POW report.' },
-  { id: 'gregorio-emmi', label: 'Gregorio Emmi (1915–1979)', source: 'Parish baptism 5 Dec 1915 (DGS 5455112, entry N.251, folio 80). Parents: Egidio Emmi + Concetta Sgroi.', note: 'Born 27 Oct 1915, Linguaglossa. POW in WWII. Emigrated to Australia 1950.' },
+  { id: 'gregorio-emmi', label: 'Gregorio Emmi (1915–1979)', source: 'Civil birth extract atto n. 202 (23 Oct 1915). Also parish baptism 5 Dec 1915 (DGS 5455112, entry N.251) — 4-day discrepancy.', note: 'Born 23 Oct 1915 (civil) / 27 Oct 1915 (baptism), Linguaglossa. POW in WWII. Married Rosaria Patanè 7 Jul 1948 Fiumefreddo. Emigrated Australia 1950. Naturalised 26 Jan 1961.' },
   { id: 'sebastiano-patane-sr', label: 'Sebastiano Patanè', source: 'Calatabiano civil birth 1889, atto n. 28 — listed as father (age 39, castaldo). Also in Fiumefreddo marriage banns 1911.', note: 'Resident of Calatabiano. Father of Rosario, Giuseppe, and Venera Patanè.' },
   { id: 'rosaria-dagata', label: 'Rosaria D\'Agata', source: 'Calatabiano civil birth 1889, atto n. 28 — listed as mother. Also in Fiumefreddo marriage banns 1911.', note: 'From Fiumefreddo. Died before 1911 (not listed in later records).' },
   { id: 'vincenzo-vecchio', label: 'Vincenzo Vecchio', source: 'Fiumefreddo baptism 1888 — listed as father of Venera. Also in marriage processetti 1911.', note: 'Son of Gregorio Vecchio + Anna D\'Agostino (per 1857 marriage proclamation index).' },
   { id: 'rosaria-raciti', label: 'Rosaria Raciti', source: 'Fiumefreddo Liber Matrimoniorum N.18 (24 Apr 1911) — "Vincentii et Rosariae Raciti". Baptism 8 Jan 1888 also records Raciti.', note: 'Often misrecorded as "Rapisardi" on church marriage certificates (scribal error). Correct surname is Raciti.' },
   { id: 'rosario-patane-sr', label: 'Rosario Patanè (1889–?)', source: 'Calatabiano civil birth 8 Feb 1889, atto n. 28. Baptism 9/10 Feb 1889.', note: 'Born Contrada Trappitelli, Calatabiano. Married Venera Vecchio 24 Apr 1911 (church), 27 Apr 1911 (civil).' },
   { id: 'venera-vecchio', label: 'Venera (Veneranda) Vecchio (1888–pre-1953)', source: 'Fiumefreddo baptism 8 Jan 1888, folio 240, entry n. 8. Married 24 Apr 1911.', note: 'Full baptismal name: Veneranda. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano.' },
-  { id: 'rosaria-patane', label: 'Rosaria Patanè (1924–1994)', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello.', note: 'Daughter of Rosario Patanè + Venera Vecchio. Married Gregorio Emmi.' },
+  { id: 'rosaria-patane', label: 'Rosaria Patanè (1924–1994)', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello.', note: 'Daughter of Rosario Patanè + Venera Vecchio. Married Gregorio Emmi 7 Jul 1948, Fiumefreddo.' },
 ];
 
 const links: EvidenceLink[] = [
@@ -52,7 +52,7 @@ const links: EvidenceLink[] = [
   { from: 'rosario-patane-sr', to: 'venera-vecchio', via: 'Marriage', source: 'Fiumefreddo church marriage 24 Apr 1911, celebrated by Fr. Eutichio Scarcella at Chiesa del S. Rosario. Civil marriage 27 Apr 1911.', date: '24/27 Apr 1911', notes: 'Canonical examination 23 Apr 1911 — witnesses knew Rosario from infancy. Both free to marry.' },
   { from: 'rosario-patane-sr', to: 'rosaria-patane', via: 'Father–daughter', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello', date: '23 May 1924' },
   { from: 'venera-vecchio', to: 'rosaria-patane', via: 'Mother–daughter', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello', date: '23 May 1924' },
-  { from: 'gregorio-emmi', to: 'rosaria-patane', via: 'Marriage', source: 'Family records, NAA immigration documents', date: '~1949-1950', notes: 'Married before emigrating to Australia. Date to be confirmed from civil record.' },
+  { from: 'gregorio-emmi', to: 'rosaria-patane', via: 'Marriage', source: 'Civil birth extract atto n. 202 margin annotation: 7 Jul 1948, Fiumefreddo di Sicilia, atto n. 34 part 2 series A.', date: '7 Jul 1948' },
 ];
 
 function NodeSection({ node, linkedNodes }: { node: EvidenceNode; linkedNodes: EvidenceLink[] }) {
