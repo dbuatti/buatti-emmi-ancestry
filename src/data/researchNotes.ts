@@ -64,13 +64,17 @@ export const researchNotes: ResearchNote[] = [
     id: 'note-ezio-bruna-migration',
     title: 'Ezio Buatti & Bruna ("Lilia") Chiappini — Migration to Australia',
     category: 'buatti-chiappini',
-    date: 'June 2026',
+    date: 'July 2026',
     content: [
-      'NAA: B78, ITALIAN/BUATTI EZIO — confirmed arrival Sydney per Toscana, 27 Sept 1952. Full copy ordered (Order No. 2458870, 27 June 2026).',
-      'Found Toscana passenger manifest (NAA: K269, 15 Sept 1952) — "CHIAPPINI, Lilia", occupation "Servant", destination Sydney.',
-      'Resolved Fremantle vs Sydney discrepancy: Fremantle was first port of call, K269 includes in-transit passengers. NAA Fact Sheet 56 confirms same voyage, two indexing systems.',
-      'Lesson: search all known given names — Bruna travelled as "Lilia". Family memory ("Nonna Lilia") confirmed identity.',
-      'Lesson: married women may not have separate immigration files — they appear within husband\'s file or only on manifests.',
+      'RESOLVED: NAA B78, ITALIAN/BUATTI EZIO digitised and received 9 Jul 2026 (Item 5746087). Full file: arrival form RA, marriage notification RA 6, passport photo.',
+      'Ezio & Lilia travelled on same voyage (Toscana, landed Fremantle 15 Sep 1952, Sydney 27 Sep 1952). Registration numbers 12 apart (290718 / 290730) — same batch.',
+      'Married one week after landing: 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW (cert C810020). St Anthony\'s served Greta Migrant Camp in the Hunter Valley.',
+      'Ezio\'s Italian home address: Via Mercantini 62, Ascoli Piceno. Passport 3925755 P issued Ascoli Piceno 19 Jun 1952.',
+      'Physical: 5\'10", brown eyes/hair, normal build, no marks. Labourer. Assisted Passage Agreement. Single on arrival.',
+      '"LEFT PER NEPTUNIA ON 13.9.63 FROM MELB" — entirely undocumented family trip. "Noted for Return" stamp. Ask family about this.',
+      'NEXT: Find Lilia\'s own B78 file (reg 290730).',
+      'NEXT: Order marriage cert C810020 from NSW BDM.',
+      'NEXT: Find Neptunia outbound passenger list 13 Sep 1963.'
     ],
   },
   {
@@ -141,7 +145,7 @@ export const researchNotes: ResearchNote[] = [
     date: 'June 2026',
     content: [
       'Angie (Angela) McWilliams (née Emmi): Gregorio\'s death certificate/funeral notice? When/why did family move from Ingham to Sydney? What does she know about Pietro Patanè and Leonardo Vecchio\'s relationship to the family?',
-      'Dad (Alfred Buatti) / Uncle John: hold original birth/marriage certificates or Italian ID documents for Ezio and Bruna? Details on 1962-63 move to Italy and 1975 return?',
+      'Dad (Alfred Buatti) / Uncle John: hold original birth/marriage certificates or Italian ID documents for Ezio and Bruna? Why did the family take the Neptunia back to Italy in Sep 1963 — visit to Alfredo Sr & Ida, or attempted permanent return? When did they return to Australia?',
     ],
   },
   {
@@ -322,10 +326,26 @@ export const researchNotes: ResearchNote[] = [
 export const nextActions: ResearchNote[] = [
   {
     id: 'action-wait-naa-ezio',
-    title: 'Wait for Ezio\'s NAA file (B78)',
-    category: 'next-actions',
-    date: 'Due late July/August 2026',
-    content: ['Order No. 2458870, Item ID 5746087. Processing up to 30 business days.'],
+    title: 'RESOLVED — Ezio\'s NAA file (B78) digitised and received 9 Jul 2026',
+    category: 'found-records',
+    date: '9 July 2026',
+    content: [
+      'NAA B78, ITALIAN/BUATTI EZIO (Item 5746087) — full digitised copy received.',
+      'Contains:',
+      '  - Form RA 6: Notification of Marriage (Aliens Act 1947–1952) — Ezio + Lilia Chiappini, married 4 Oct 1952 at St Anthony\'s, Greta, NSW (cert C810020). Lilia\'s reg no: 290730. Ezio\'s reg no: 290718. Stamped "LEFT PER NEPTUNIA ON 13.9.63 FROM MELB".',
+      '  - Form RA: Alien arrival registration — Ship Toscana, landed Fremantle 15 Sep 1952, arrived Sydney 27 Sep 1952. Height 5\'10", brown eyes/hair, normal build, no marks. Passport 3925755 P, issued 19 Jun 1952 Ascoli Piceno. Assisted Passage Agreement. Intended address: Immigration Centre, Greta, NSW. Single. Labourer.',
+      '  - Passport photo of Ezio at 29.',
+      '  - Home address in Italy: Via Mercantini 62, Ascoli Piceno.',
+      'KEY FINDINGS:',
+      '  1. Ezio & Lilia travelled on same ship (Toscana), registered same batch (12 apart: 290718/290730). They emigrated together, already engaged.',
+      '  2. Married one week after landing (4 Oct 1952) at St Anthony\'s, Greta — the Catholic church serving Greta Migrant Camp.',
+      '  3. Left Australia per Neptunia 13 Sep 1963 — an entirely undocumented chapter. Possibly a family visit to Alfredo Sr & Ida, or an attempted permanent return.',
+      '  4. "Noted for Return" stamped on arrival form — they did return and Ezio died in Australia 1991.',
+      'NEXT: Order marriage cert C810020 from NSW BDM.',
+      'NEXT: Find Lilia\'s B78 file (under Chiappini or Buatti, reg 290730) via RecordSearch.',
+      'NEXT: Search Neptunia outbound passenger list 13 Sep 1963.',
+      'NEXT: Ask family about the 1963 Italy trip.'
+    ],
   },
   {
     id: 'action-gregorio-birth-civil',

@@ -63,6 +63,13 @@ export interface Person {
     link?: string;
   }[];
   isLiving?: boolean;
+  italianAddress?: string;
+  passport?: {
+    number: string;
+    issued: string;
+    issuedBy: string;
+  };
+  alienRegistration?: string;
 }
 
 export interface ResearchLead {

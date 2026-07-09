@@ -834,40 +834,64 @@ export const initialPeople: Person[] = [
     spouses: ['bruna-lilia-chiappini'],
     parents: ['alfredo-buatti-sr', 'ida-galanti'],
     children: ['alfred-buatti', 'john-buatti-extended'],
+    physicalDescription: {
+      height: '5 ft 10 in (1.78m)',
+      build: 'Normal',
+      hair: 'Brown',
+      eyes: 'Brown',
+      other: 'No distinguishing marks'
+    },
     migration: {
-      details: 'Arrived in Sydney per Toscana on 27 September 1952, embarked Trieste. Departed the Commonwealth on 13 September 1963 (consistent with the known family move to Italy with sons Alfred and John, c. 1962–63).',
+      details: 'Arrived per Toscana under Australia/Italy Assisted Passage Agreement. Landed Fremantle 15 Sep 1952, arrived Sydney 27 Sep 1952. Intended address: Immigration Centre, Greta, NSW. Marital status on arrival: single. Departed Australia per Neptunia from Melbourne on 13 Sep 1963 ("Noted for Return" on arrival form — subsequently returned and died in Australia in 1991).',
       voyages: [
         {
           ship: 'Toscana',
           departure: 'Trieste',
           arrival: 'Sydney (via Fremantle)',
           date: '27 September 1952',
-          details: 'Travelled alone under this listing, destination listed as "Comm. Th Migr. Office Sydney" (no private sponsor address).'
+          details: 'Landed Fremantle 15 Sep 1952. Intended address: Immigration Centre, Greta, NSW. Under Assisted Passage Agreement. Marital status: single. Occupation: labourer.'
+        },
+        {
+          ship: 'Neptunia',
+          departure: 'Melbourne',
+          arrival: 'Italy',
+          date: '13 September 1963',
+          details: 'Departed Melbourne. "Noted for Return" stamp on arrival form. Possibly entire family (Ezio, Lilia, Alfred, John). Unknown whether a visit or attempted permanent return.'
         }
       ]
     },
+    italianAddress: 'Via Mercantini N° 62, Ascoli Piceno',
+    passport: {
+      number: '3925755 P',
+      issued: '19 June 1952',
+      issuedBy: 'Ascoli Piceno, Italy'
+    },
+    alienRegistration: '290718',
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '27 Apr 1923 — embargo lifted 2023, digital gap in Ascoli Piceno records' },
       { type: 'Death Record', status: 'Found', notes: '16 Oct 1991 — confirmed by family' },
-      { type: 'Immigration File (NAA)', status: 'Found', notes: 'B78, ITALIAN/BUATTI EZIO — copy ordered 27 Jun 2026 (Order 2458870)' },
-      { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'Unclear if married before or after 1952 migration' },
+      { type: 'Immigration File (NAA)', status: 'Found', notes: 'B78, ITALIAN/BUATTI EZIO — digitised copy received 9 Jul 2026 (Item 5746087). Full file: arrival form RA, marriage notification, passport photo.' },
+      { type: 'Alien Registration', status: 'Found', notes: 'No. 290718, issued Sydney 27 Sep 1952. Re-issued 23 Jan 1957 (entered register 22 Feb 1957).' },
+      { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269. Also Fremantle customs stamp 15 Sep 1952.' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Notified per Aliens Act s.10A (Form RA 6).' },
       { type: 'Bankruptcy Record', status: 'Found', notes: 'Café & milk bar proprietor, Broadford VIC. Bankrupt Oct 1957 (Trove, Commonwealth Gazette)' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Birth record not yet located (privacy embargo lifted in 2023). Migration confirmed via NAA files. Full digital copy of NAA file ordered on 27 June 2026.',
+      details: 'NAA B78 file digitised and received 9 Jul 2026 — full arrival form, marriage notification, passport photo. Birth record (27 Apr 1923) still outstanding from Ascoli Piceno. Marriage confirmed: 4 Oct 1952 at St Anthony\'s, Greta. 1963 Neptunia departure documented.',
       nextSteps: [
-        'Contact Comune di Ascoli Piceno or Archivio di Stato di Ascoli Piceno directly for 1923 birth record.',
-        'Await NAA file processing (Order No. 2458870, Item ID 5746087, ordered 27 June 2026).',
-        'Confirm whether Ezio and Lilia were married before migrating in 1952.'
+        'Contact Comune di Ascoli Piceno for 1923 birth record — now have precise address (Via Mercantini 62) and passport details for request.',
+        'Order marriage certificate C810020 from NSW Registry of Births Deaths & Marriages.',
+        'Search for Lilia\'s B78 file under Chiappini or Buatti (registration 290730) via RecordSearch — may contain her own photo.',
+        'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled.',
+        'Ask family about the 1963 Italy trip — was it a visit to Alfredo Sr & Ida, or an attempted permanent return?'
       ]
     },
     sources: [
       {
-        title: 'NAA: B78, ITALIAN/BUATTI EZIO (Melbourne)',
+        title: 'NAA: B78, ITALIAN/BUATTI EZIO',
         type: 'Immigration File',
-        reference: 'Item ID 5746087 (Order No. 2458870)'
+        reference: 'Item ID 5746087 (digitised, received 9 Jul 2026)'
       },
       {
         title: 'Toscana Passenger List',
@@ -892,14 +916,14 @@ export const initialPeople: Person[] = [
     parents: ['remo-chiappini', 'remo-wife-unknown'],
     children: ['alfred-buatti', 'john-buatti-extended'],
     migration: {
-      details: 'Travelled as "CHIAPPINI, Lilia", occupation "Servant", on the same voyage as Ezio (Toscana, 15 Sept 1952). Known within the family as "Nonna Lilia" (went by her middle name).',
+      details: 'Travelled as "CHIAPPINI, Lilia", occupation "Servant", on the same voyage as Ezio (Toscana, 15 Sept 1952). Known within the family as "Nonna Lilia" (went by her middle name). Registration numbers 12 apart (Ezio: 290718, Lilia: 290730) — registered in same batch on landing. Almost certainly travelled as engaged couple, married one week later.',
       voyages: [
         {
           ship: 'Toscana',
           departure: 'Trieste',
           arrival: 'Sydney (via Fremantle)',
           date: '27 September 1952',
-          details: 'Listed as "Servant", destination "Comm.th Migr. Off. Sydney". Fremantle passenger list includes her in-transit to Sydney.'
+          details: 'Listed as "Servant", destination "Comm.th Migr. Off. Sydney". Fremantle passenger list includes her in-transit to Sydney. Registration no. 290730.'
         }
       ]
     },
@@ -908,16 +932,19 @@ export const initialPeople: Person[] = [
       { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
       { type: 'Death Record', status: 'Found', notes: '23 May 1998 — burial confirmed' },
       { type: 'Burial Record', status: 'Found', notes: 'Springvale Botanical Cemetery, Spotted Gums, Row AS, Grave 68' },
+      { type: 'Alien Registration', status: 'Found', notes: 'No. 290730 — issued same batch as Ezio (290718), Sydney 27 Sep 1952. Per Ezio\'s marriage notification (Form RA 6).' },
       { type: 'Naturalisation Record', status: 'Found', notes: 'Commonwealth Gazette notice, 18 Nov 1965 — lists address 303 Punt Rd, Richmond' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — listed as "CHIAPPINI, Lilia"' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'Unclear if married to Ezio before 1952 voyage' }
+      { type: 'Marriage Record', status: 'Found', notes: 'Ezio Buatti, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. One week after arrival.' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Birth record not yet located (under privacy embargo until 2030). Residence confirmed at 303 Punt Rd, Richmond (1965). Burial and migration confirmed.',
+      details: 'NAA B78 file received for Ezio — marriage to Lilia confirmed 4 Oct 1952 St Anthony\'s Greta. Lilia travelled same ship (Toscana), registered same batch (no. 290730). Birth record still outstanding (privacy embargo until 2030).',
       nextSteps: [
-        'Contact Comune di San Benedetto del Tronto directly for 1930 birth record.',
-        'Ask family why she travelled as "servant" rather than wife/fiancée (sponsorship category vs. marital status).'
+        'Search NAA RecordSearch for Lilia\'s own B78 file (under Chiappini or Buatti, reg. 290730).',
+        'Order marriage certificate C810020 from NSW BDM.',
+        'Contact Comune di San Benedetto del Tronto for 1930 birth record.',
+        'Ask family why she travelled as "Servant" — likely sponsorship category, not marital status.'
       ]
     },
     sources: [
@@ -952,9 +979,9 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: '23 October 1915 (civil) — see note re baptism discrepancy',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
-    deathDate: 'c. late November 1979',
+    deathDate: '24 November 1979',
     burialPlace: 'Rookwood Catholic Cemetery, Sydney, NSW',
-    burialDetails: 'Lawn (5), plot 1070. Funeral conducted by T. J. Andrews Funeral Services Pty. Ltd., Newtown; officiating clergyman Rev. John Shanahan on 30 November 1979.',
+    burialDetails: 'Lawn (5), plot 1070. Funeral conducted by T. J. Andrews Funeral Services Pty. Ltd., Newtown; officiating clergyman Rev. John Shanahan on 30 November 1979. Death notice: Sydney Morning Herald 30 Nov 1979.',
     spouses: ['rosaria-patane'],
     parents: ['egidio-emmi', 'concetta-sgroi'],
     children: ['venera-buatti', 'angie-mcwilliams-extended', 'connie-emmi-extended', 'john-emmi-extended', 'greg-emmi-extended', 'ross-emmi-extended'],
@@ -996,7 +1023,7 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth (Civil)', status: 'Found', notes: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30 Jun 2026. Date: 23 Oct 1915. (4-day discrepancy with baptismal record: 27 Oct 1915.)' },
       { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin.' },
-      { type: 'Death Record', status: 'Searching', notes: 'c. late Nov 1979 — funeral 30 Nov 1979, exact date unknown' },
+      { type: 'Death Record', status: 'Found', notes: 'Confirmation: death notice in Sydney Morning Herald 30 Nov 1979 (Ryerson Index). Died 24 Nov 1979, age 64, late of Stanmore, formerly of Highett, Melbourne.' },
       { type: 'Burial Record', status: 'Found', notes: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070' },
       { type: 'POW Record', status: 'Found', notes: 'NAA MP1103/1 & MP1103/2 — captured Asmara 1941, Cowra POW Camp, repatriated 1946' },
       { type: 'Immigration File (NAA)', status: 'Found', notes: 'J25, 1949/13301 — Piero Lalli sponsorship application' },
@@ -1015,7 +1042,8 @@ export const initialPeople: Person[] = [
         'Request actual marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34).',
         'Request naturalisation certificate (EM(2)28650) from NAA.',
         'Follow up by phone if no reply (Liuzzo Francesca: 095 7777216).',
-        'Confirm exact date of death (funeral was 30 Nov 1979).',
+        'Order marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34).',
+        'Order naturalisation certificate EM(2)28650 from NAA.',
         'Establish when/why the family relocated from Ingham to Sydney.'
       ]
     },
