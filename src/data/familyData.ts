@@ -13,7 +13,7 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: 'Unknown / to be confirmed',
     birthPlace: 'Likely Ascoli Piceno area, late 1800s/early 1900s',
-    deathDate: '5 September 1964',
+    deathDate: '9 May 1964',
     burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
     burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1. Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
     burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp',
@@ -27,7 +27,7 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Searching', notes: 'Likely pre-1919 Ascoli Piceno — after digital cutoff, searching Antenati' },
       { type: 'Marriage Record', status: 'Searching', notes: 'Pre-1919, same digital cutoff issue as birth' },
-      { type: 'Death Record', status: 'Found', notes: '5 Sep 1964 — confirmed via Comune cemetery search' },
+      { type: 'Death Record', status: 'Found', notes: '9 May 1964 — confirmed via Comune cemetery search (database shows 9/5/1964, Italian format)' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, Settore L, Blocco L074O' }
     ],
     researchStatus: {
@@ -52,7 +52,7 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Buatti',
     gender: 'F',
-    birthDate: '1898',
+    birthDate: '1898 (unsourced — calculated?)',
     deathDate: '26 January 1970',
     burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
     burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1 (same plot as her husband Alfredo Buatti Sr.). Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
@@ -929,7 +929,7 @@ export const initialPeople: Person[] = [
     },
     residences: ['303 Punt Road, Richmond, Victoria (1965)'],
     notes: [
-      'Travelled on Toscana K269 line 178 — directly below line 177: "CHIAPPIN[I], Gine" (Gino), same rare surname, same destination (Commonwealth Migration Office, Sydney). Almost certainly a brother or cousin travelling together. This is a new lead — no Gino mentioned in family oral history. Worth checking NAA RecordSearch and asking papa/Aunt Angie.',
+      'Travelled on Toscana K269 line 178 — directly below line 177: CHIAPPIN Gino (b. 1927, labourer, reg 290502). Confirmed by NAA 10 Jul 2026 (A2571, barcode 203679026). NoK field blank on his ID card. He worked as transient fruit-picker in Mildura then Bonalgo NSW. No naturalisation found. 3-year age gap consistent with being her brother.',
     ],
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
