@@ -555,14 +555,30 @@ export const nextActions: ResearchNote[] = [
   },
   {
     id: 'note-lilia-richmond-address',
-    title: 'Lilia Buatti — Richmond Address Confirmed (1965)',
+    title: 'Lilia Buatti — Richmond Address Confirmed (1965); Naturalisation Details',
     category: 'buatti-chiappini',
-    date: '28 June 2026',
+    date: 'July 2026',
     content: [
-      'Found via Trove (Commonwealth Gazette naturalisation list): "Buatti, Lilia, 303 Punt-road, Richmond, 18.11.65".',
+      'Trove: Commonwealth Gazette naturalisation list — "Buatti, Lilia, 303 Punt-road, Richmond, 18.11.65".',
+      'Confirming reply from NAA: cert EF10155554, naturalisation file V653748 (Victorian registry). Case file due 20 Aug 2026 (NAA1000454740) — may contain birth details and parentage.',
       'Confirms Lilia was living in Richmond, Melbourne as of November 1965, after the family returned from Italy (1962–63).',
       'Matches the known family timeline: Ezio/Lilia returned to Australia from the failed Italy move, living in Melbourne area.',
       '303 Punt Road, Richmond is ≈4km from the Springvale Botanical Cemetery where Lilia is buried — consistent with her Melbourne base.',
+    ],
+  },
+  {
+    id: 'note-gino-chiappini-lead',
+    title: 'NEW LEAD — Gino Chiappini on Toscana K269, line 177 (same voyage as Lilia)',
+    category: 'buatti-chiappini',
+    date: '9 July 2026',
+    content: [
+      'Toscana passenger manifest (K269, 15 Sep 1952), line 177: "CHIAPPIN[I], Gine" [Gino] — Alien, Labourer, disembarking Sydney, intended address Commonwealth Migration Office Sydney.',
+      'Line 178: CHIAPPINI, Lilia — directly below, same surname, same destination. Alphabetical order explains adjacency but the same rare surname + same voyage + same destination is almost certainly not coincidence.',
+      'Gino Chiappini is plausibly Lilia\'s brother, cousin, or uncle — no one in the family oral history has mentioned him.',
+      'WHY THIS MATTERS: if Gino is Lilia\'s brother, his paper trail is a second independent route to identifying their mother. His Australian naturalisation application (if he naturalised) would state his parents. His Italian birth act in San Benedetto del Tronto (if born before ~1926) is outside the 100-year embargo and freely orderable.',
+      'NEXT: Search NAA RecordSearch for "Chiappini" — look for B78 (ITALIAN/CHIAPPINI GINO), A446 or Victorian naturalisation, further K269 entries.',
+      'NEXT: Search Ryerson Index and Trove for Gino Chiappini death notices.',
+      'NEXT: Ask papa and Aunt Angie — "Do you know a Gino Chiappini? Brother/cousin of Nonna Lilia?"',
     ],
   },
   {

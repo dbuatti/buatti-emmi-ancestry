@@ -916,35 +916,40 @@ export const initialPeople: Person[] = [
     parents: ['remo-chiappini', 'remo-wife-unknown'],
     children: ['alfred-buatti', 'john-buatti-extended'],
     migration: {
-      details: 'Travelled as "CHIAPPINI, Lilia", occupation "Servant", on the same voyage as Ezio (Toscana, 15 Sept 1952). Known within the family as "Nonna Lilia" (went by her middle name). Registration numbers 12 apart (Ezio: 290718, Lilia: 290730) — registered in same batch on landing. Almost certainly travelled as engaged couple, married one week later.',
+      details: 'Travelled as "CHIAPPINI, Lilia", occupation "Servant" (past and future), on the Toscana (voyage 12/52, master Capt. Giuseppe Raggi) Trieste→Sydney via Fremantle. Known within the family as "Nonna Lilia" (went by her middle name). Registration numbers 12 apart (Ezio: 290718, Lilia: 290730) — registered in same batch on landing. Almost certainly travelled as engaged couple, married one week later. Line 178 on K269, directly below "CHIAPPIN[I], Gine" (Gino) line 177 — same rare surname, same destination, almost certainly travelling together.',
       voyages: [
         {
           ship: 'Toscana',
           departure: 'Trieste',
-          arrival: 'Sydney (via Fremantle)',
-          date: '27 September 1952',
-          details: 'Listed as "Servant", destination "Comm.th Migr. Off. Sydney". Fremantle passenger list includes her in-transit to Sydney. Registration no. 290730.'
+          arrival: 'Fremantle (first AU landfall) / Sydney (disembarked)',
+          date: '15 Sep 1952 (Fremantle) / 27 Sep 1952 (Sydney)',
+          details: 'Voyage 12/52, master Capt. Giuseppe Raggi. Listed as "Servant" (past and future). Intended address: Commonwealth Migration Office, Sydney. Registration no. 290730.'
         }
       ]
     },
     residences: ['303 Punt Road, Richmond, Victoria (1965)'],
+    notes: [
+      'Travelled on Toscana K269 line 178 — directly below line 177: "CHIAPPIN[I], Gine" (Gino), same rare surname, same destination (Commonwealth Migration Office, Sydney). Almost certainly a brother or cousin travelling together. This is a new lead — no Gino mentioned in family oral history. Worth checking NAA RecordSearch and asking papa/Aunt Angie.',
+    ],
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
       { type: 'Death Record', status: 'Found', notes: '23 May 1998 — burial confirmed' },
       { type: 'Burial Record', status: 'Found', notes: 'Springvale Botanical Cemetery, Spotted Gums, Row AS, Grave 68' },
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290730 — issued same batch as Ezio (290718), Sydney 27 Sep 1952. Per Ezio\'s marriage notification (Form RA 6).' },
-      { type: 'Naturalisation Record', status: 'Found', notes: 'Commonwealth Gazette notice, 18 Nov 1965 — lists address 303 Punt Rd, Richmond' },
+      { type: 'Naturalisation Record', status: 'Found', notes: 'Commonwealth Gazette notice, 18 Nov 1965 — lists address 303 Punt Rd, Richmond. Cert EF10155554, file V653748 (Victorian registry). Confirmed by NAA.' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — listed as "CHIAPPINI, Lilia"' },
       { type: 'Marriage Record', status: 'Found', notes: 'Ezio Buatti, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. One week after arrival.' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'NAA B78 file received for Ezio — marriage to Lilia confirmed 4 Oct 1952 St Anthony\'s Greta. Lilia travelled same ship (Toscana), registered same batch (no. 290730). Birth record still outstanding (privacy embargo until 2030).',
+      details: 'NAA B78 file received for Ezio — marriage to Lilia confirmed 4 Oct 1952 St Anthony\'s Greta. Lilia travelled same ship (Toscana), registered same batch (no. 290730). Naturalisation confirmed: 18 Nov 1965, cert EF10155554, file V653748 (Victorian registry). Toscana passenger list reveals Gino Chiappini (line 177) — same surname, same destination, likely relative. Birth record still outstanding (privacy embargo until 2030).',
       nextSteps: [
-        'Search NAA RecordSearch for Lilia\'s own B78 file (under Chiappini or Buatti, reg. 290730).',
-        'Order marriage certificate C810020 from NSW BDM.',
-        'Contact Comune di San Benedetto del Tronto for 1930 birth record.',
-        'Ask family why she travelled as "Servant" — likely sponsorship category, not marital status.'
+        'Search NAA RecordSearch for Gino Chiappini — B78 alien registration, naturalisation file, passenger lists.',
+        'Ask papa and Aunt Angie about Gino Chiappini — brother/cousin of Lilia? Also ask about 1963 Neptunia trip.',
+        'Await NSW marriage cert 27340/1952 and Greta/Branxton parish register check — both will name Lilia\'s parents.',
+        'Await NAA naturalisation case file V653748 (due 20 Aug 2026) — may contain birth details and parentage.',
+        'Search Ryerson Index and Trove for Gino Chiappini death/funeral notices.',
+        'Contact Comune di San Benedetto del Tronto for 1930 birth record.'
       ]
     },
     sources: [
