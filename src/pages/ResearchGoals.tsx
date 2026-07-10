@@ -155,11 +155,13 @@ export default function ResearchGoals() {
                               ? 'bg-emerald-50/50 text-stone-400'
                               : goal.status === 'Searching'
                               ? 'bg-amber-50/50 text-stone-700'
+                              : goal.status === 'Not Found'
+                              ? 'bg-stone-100/50 text-stone-400'
                               : 'text-stone-700 hover:bg-stone-50'
                           }`}
                         >
                           {statusIcon(goal.status)}
-                          <div className={`min-w-0 flex-1 ${goal.status === 'Found' ? 'line-through decoration-stone-300' : ''}`}>
+                          <div className={`min-w-0 flex-1 ${goal.status === 'Found' || goal.status === 'Not Found' ? 'line-through decoration-stone-300' : ''}`}>
                             <p className="font-sans text-sm leading-snug">{goal.description}</p>
                             <p className="text-xs text-stone-400 font-mono mt-0.5 truncate">{goal.where}</p>
                           </div>

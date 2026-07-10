@@ -47,13 +47,22 @@ const antenatiCoverage: Record<string, AntenatiInfo> = {
   'Acireale': { available: true, years: '1820–1929' },
 };
 
+const nearbyTownsByLine: Record<string, string[]> = {
+  Buatti: ['Ascoli Piceno', 'San Benedetto del Tronto'],
+  Chiappini: ['Ascoli Piceno', 'San Benedetto del Tronto', 'Porto San Giorgio'],
+  Emmi: ['Linguaglossa', 'Fiumefreddo di Sicilia', 'Calatabiano', 'Castiglione di Sicilia', 'Randazzo', 'Piedimonte Etneo', 'Giarre'],
+  Patanè: ['Fiumefreddo di Sicilia', 'Calatabiano', 'Milo', 'Giarre', 'Linguaglossa'],
+  Other: ['Linguaglossa', 'Fiumefreddo di Sicilia', 'Calatabiano', 'Ascoli Piceno'],
+};
+
+const nearbyTownsAll = ['Linguaglossa', 'Fiumefreddo di Sicilia', 'Calatabiano', 'Castiglione di Sicilia', 'Randazzo', 'Piedimonte Etneo', 'Giarre', 'Ascoli Piceno', 'San Benedetto del Tronto'];
+
 const recordStatus = (person: Person, typePrefix: string): 'Found' | 'Searching' | 'Not Found' | undefined => {
   if (!person.records) return undefined;
   const found = person.records.find(
     r => r.type.toLowerCase().startsWith(typePrefix.toLowerCase())
   );
   if (!found) return undefined;
-  // Handle 'Requested' as 'Searching'
   if (found.status === 'Requested' || found.status === 'Searching') return 'Searching';
   if (found.status === 'Found') return 'Found';
   if (found.status === 'Not Found') return 'Not Found';
@@ -69,12 +78,28 @@ const hasSearchingRecord = (person: Person, typePrefix: string): boolean =>
 const hasRequestedRecord = (person: Person, typePrefix: string): boolean =>
   recordStatus(person, typePrefix) === 'Searching';
 
+const isNotFoundRecord = (person: Person, typePrefix: string): boolean =>
+  recordStatus(person, typePrefix) === 'Not Found';
+
 const recordNote = (person: Person, typePrefix: string): string | undefined => {
   if (!person.records) return undefined;
   const found = person.records.find(
     r => r.type.toLowerCase().startsWith(typePrefix.toLowerCase())
   );
   return found?.notes;
+};
+
+const goalStatus = (person: Person, typePrefix: string): 'Found' | 'Searching' | 'Not Found' | 'Pending' => {
+  if (hasFoundRecord(person, typePrefix)) return 'Found';
+  if (hasSearchingRecord(person, typePrefix)) return 'Searching';
+  if (isNotFoundRecord(person, typePrefix)) return 'Not Found';
+  return 'Pending';
+};
+
+const antenatiUrl = (comune: string, tipo: string, anno?: string): string => {
+  let url = `https://antenati.cultura.gov.it/search-registry/?comune=${encodeURIComponent(comune)}&tipologia=${tipo}`;
+  if (anno) url += `&anno=${anno}`;
+  return url;
 };
 
 export function generateGoals(person: Person): ResearchGoal[] {
@@ -98,31 +123,32 @@ export function generateGoals(person: Person): ResearchGoal[] {
 
   // --- BIRTH ACT (civil) ---
   if (!hasFoundRecord(person, 'Birth Record') || recordNote(person, 'Birth Record')?.includes('Not Yet Read')) {
-    if (ante?.available && birthYear && birthYear <= 1929) {
+    if (comune && ante?.available && birthYear && birthYear <= 1929) {
       push(
-        `Search ${comune} Nati ${birthYear} on Antenati`,
-        `https://antenati.cultura.gov.it/search/?comune=${encodeURIComponent(comune!)}&tipo=nati&anno=${birthYear}`,
-        hasFoundRecord(person, 'Birth Record') ? 'Found' : hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
+        `1. Go to Antenati — filter: ${comune} > Nati > ${birthYear}\n2. Open the register, scroll to the last pages first (indice/annual index)\n3. Find "${person.name.split(' ')[0]}" in the index, note the act number\n4. Jump to that act and verify parents match`,
+        antenatiUrl(comune, 'nati', String(birthYear)),
+        goalStatus(person, 'Birth Record')
       );
     }
     if (comune && birthYear) {
       push(
-        `Search FamilySearch catalog for ${comune} civil registration (Nati ~${birthYear})`,
-        `https://www.familysearch.org/search/catalog?q=${encodeURIComponent(comune!)}&filter=recordType%3ACivil%20Registration`,
-        hasFoundRecord(person, 'Birth Record') ? 'Found' : hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
+        `1. Open FamilySearch Catalog (link below)\n2. Search "${comune}"\n3. Filter: Civil Registration\n4. Browse Nati (~${birthYear}) and check for ${person.name}`,
+        `https://www.familysearch.org/search/catalog?q=${encodeURIComponent(comune)}&filter=recordType%3ACivil%20Registration`,
+        goalStatus(person, 'Birth Record')
       );
     }
     if (ante && !ante.available) {
       push(
-        `Request estratto di nascita from Comune di ${comune} (raccomandata A/R)`,
+        `1. Write a letter (raccomandata A/R) to Comune di ${comune}, Ufficio di Stato Civile\n2. Request: "estratto di nascita" for ${person.name}\n3. Include: full name, estimated birth year (~${birthYear || 'unknown'}), parents' names if known\n4. Enclose: self-addressed envelope + international reply coupon or check their PEC`,
         `Comune di ${comune}, Ufficio di Stato Civile`,
         hasRequestedRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
       );
     }
-    if (!comune && birthYear) {
+    if (!comune && !birthYear) {
+      const towns = nearbyTownsByLine[person.line] || nearbyTownsAll;
       push(
-        `Estimate birthplace from known records; search Antenati Nati ${birthYear} for surrounding towns`,
-        `https://antenati.cultura.gov.it/search/`,
+        `1. Birthplace is unknown — start with the most likely towns for the ${person.line} line:\n   ${towns.slice(0, 4).join(', ')}\n2. On Antenati, search each town's Nati registers\n3. Start with the index (last pages) for each year range\n4. Look for ${person.name.split(' ')[0]} in the surname section`,
+        `https://antenati.cultura.gov.it/search-registry/?cognome=${encodeURIComponent(person.name.split(' ').slice(-1)[0])}`,
         'Pending'
       );
     }
@@ -132,15 +158,15 @@ export function generateGoals(person: Person): ResearchGoal[] {
   if (!hasFoundRecord(person, 'Baptism')) {
     if (comune && birthYear) {
       push(
-        `Search ${comune} parish baptism registers on FamilySearch (~${birthYear})`,
-        `https://www.familysearch.org/search/catalog/results?q=${encodeURIComponent(comune!)}&filter=recordType%3AChurch%20Records`,
-        hasFoundRecord(person, 'Baptism') ? 'Found' : hasSearchingRecord(person, 'Baptism') ? 'Searching' : 'Pending'
+        `1. On FamilySearch, search Catalog for "${comune}"\n2. Filter: Church Records\n3. Look for Battesimi (baptism) register ~${birthYear}\n4. Open and search for ${person.name.split(' ')[0]}`,
+        `https://www.familysearch.org/search/catalog/results?q=${encodeURIComponent(comune)}&filter=recordType%3AChurch%20Records`,
+        goalStatus(person, 'Baptism')
       );
     }
     if (comune === 'Fiumefreddo di Sicilia' || comune === 'Linguaglossa') {
       push(
-        `Check Diocesi di Acireale church records for ${comune} baptisms`,
-        `Emails sent 28 Jun 2026 — follow up if no reply`,
+        `1. Follow up on the email sent to Diocesi di Acireale (28 Jun 2026)\n2. If no reply, re-send or call — ask for baptism record of ${person.name}\n3. Provide: full name, estimated birth year ~${birthYear || 'unknown'}, parents' names`,
+        `Diocesi di Acireale — emails sent 28 Jun 2026`,
         hasSearchingRecord(person, 'Baptism') ? 'Searching' : 'Pending'
       );
     }
@@ -148,21 +174,21 @@ export function generateGoals(person: Person): ResearchGoal[] {
 
   // --- MARRIAGE ---
   if (person.spouses.length > 0 && !hasFoundRecord(person, 'Marriage Record')) {
-    const spousePlace = comune; // approximation
     if (ante?.available) {
+      const marriageYearEstimate = birthYear ? birthYear + 25 : undefined;
       push(
-        `Search ${comune} Matrimoni for ${person.name}'s marriage`,
-        `https://antenati.cultura.gov.it/search/?comune=${encodeURIComponent(comune!)}&tipo=matrimoni`,
-        hasFoundRecord(person, 'Marriage Record') ? 'Found' : hasSearchingRecord(person, 'Marriage Record') ? 'Searching' : 'Pending'
+        `1. On Antenati, open ${comune} > Matrimoni\n2. Start with the index at the back of each year's register\n3. Search for ${person.name.split(' ')[0]} + spouse surname\n4. Try years around ${marriageYearEstimate || 'estimated birth year + 25'}`,
+        antenatiUrl(comune, 'matrimoni'),
+        goalStatus(person, 'Marriage Record')
       );
       push(
-        `Search ${comune} Pubblicazioni (marriage banns) for ${person.name}`,
-        `https://antenati.cultura.gov.it/search/?comune=${encodeURIComponent(comune!)}&tipo=pubblicazioni`,
-        hasFoundRecord(person, 'Marriage Record') ? 'Found' : hasSearchingRecord(person, 'Marriage Record') ? 'Searching' : 'Pending'
+        `1. On Antenati, open ${comune} > Pubblicazioni (marriage banns)\n2. Banns often contain more detail than the marriage act itself\n3. Search same years as Matrimoni — they'll be a few weeks before the wedding`,
+        antenatiUrl(comune, 'pubblicazioni'),
+        goalStatus(person, 'Marriage Record')
       );
     }
     push(
-      `Request marriage certificate from Comune di ${comune || 'unknown'} (if ~1920 or later)`,
+      `1. Contact Comune di ${comune || 'unknown'}\n2. Request: certificate of marriage (certificato di matrimonio)\n3. If ~1920 or later, the record will be under privacy — explain genealogical research purpose\n4. Include: both spouses' names, approximate marriage year`,
       `Comune di ${comune || 'unknown'}, Ufficio di Stato Civile`,
       hasRequestedRecord(person, 'Marriage Record') ? 'Searching' : 'Pending'
     );
@@ -173,34 +199,34 @@ export function generateGoals(person: Person): ResearchGoal[] {
     if (comune && deathYear) {
       if (ante?.available && parseInt(deathYear) <= 1929) {
         push(
-          `Search ${comune} Morti ${deathYear} on Antenati`,
-          `https://antenati.cultura.gov.it/search/?comune=${encodeURIComponent(comune!)}&tipo=morti&anno=${deathYear}`,
-          'Pending'
+          `1. On Antenati, open ${comune} > Morti > ${deathYear}\n2. Start at the index (last pages of the register)\n3. Find ${person.name.split(' ')[0]} in the surname section, note the act number\n4. Jump to that act and check: age at death, parents named, spouse named`,
+          antenatiUrl(comune, 'morti', deathYear),
+          goalStatus(person, 'Death Record')
         );
       }
       if (parseInt(deathYear) <= 1929) {
         push(
-          `Search ${comune} Morti indexes on Antenati (${deathYear} ±2 years)`,
-          `https://antenati.cultura.gov.it/search/?comune=${encodeURIComponent(comune!)}&tipo=morti`,
-          'Pending'
+          `1. On Antenati, open ${comune} > Morti\n2. Search ${parseInt(deathYear) - 2} through ${parseInt(deathYear) + 2}\n3. The death index is at the back of each year — check each year's index\n4. Morti indexes are faster to scan than Nati — one page per year typically`,
+          antenatiUrl(comune, 'morti'),
+          goalStatus(person, 'Death Record')
         );
       }
     }
     if (person.deathPlace?.toLowerCase().includes('australia')) {
       push(
-        `Search Ryerson Index for ${person.name}'s death notice`,
+        `1. Open Ryerson Index (link below)\n2. Search: ${person.name}\n3. Try variants: initials, maiden name for women\n4. Note the date, publication, and newspaper reference — then search Trove for the full notice`,
         `https://ryersonindex.net/search.php`,
         'Pending'
       );
       push(
-        `Search Trove for ${person.name} death notice`,
+        `1. Open Trove (link below)\n2. Search: "${person.name}"\n3. Filter: Australian newspapers only\n4. Try date range narrowing and name variants if too many results`,
         `https://trove.nla.gov.au/newspaper/search?adv_y=on&l-australian=y&l-word=${encodeURIComponent(person.name)}`,
         'Pending'
       );
     }
     push(
-      `Search burial in online cemetery database (${comune || person.deathPlace || 'unknown'})`,
-      `e.g., ${comune ? `https://www1.comune.${comune.toLowerCase().replace(/\s+/g, '')}.it/cimitero` : 'comune cemetery portal'}`,
+      `1. Search online cemetery database for ${comune || person.deathPlace || 'the person'}\n2. Try: Find a Grave, BillionGraves, or the comune's own cemetery portal\n3. ${comune ? `For Italian comuni, try the comune website's "Cimitero" or "Servizi al Cittadino" section` : 'Search by full name and death year if known'}`,
+      comune ? `https://www.findagrave.com/memorial/search?firstname=&lastname=${encodeURIComponent(person.name.split(' ').slice(-1)[0])}` : 'Cemetery database online search',
       'Pending'
     );
   }
@@ -208,8 +234,8 @@ export function generateGoals(person: Person): ResearchGoal[] {
   // --- SOMEONE'S PARENTS (generation 0 unknowns) ---
   if (person.parents.length === 0 && person.generation >= 1) {
     push(
-      `Search for ${person.name}'s parents via marriage act allegati (processetti)`,
-      `Processetti volumes often list both sets of parents — check on Antenati if available`,
+      `1. Find ${person.name}'s marriage act (Matrimoni or Pubblicazioni on Antenati)\n2. Marriage acts always name both parents — the "processetti" (allegati) volume has full birth-cert copies\n3. Check if ${comune || 'the relevant comune'}'s allegati/processetti are on Antenati\n4. The marriage act alone will usually give both parents' names`,
+      `Search for marriage record first`,
       'Pending'
     );
   }
@@ -218,8 +244,8 @@ export function generateGoals(person: Person): ResearchGoal[] {
   if (comune && birthYear && ante?.available) {
     const decadeStart = Math.floor((birthYear - 5) / 10) * 10;
     push(
-      `Check ${comune} Indici Decennali ${decadeStart}-${decadeStart + 9} for ${person.name}`,
-      `Antenati — often faster than browsing year-by-year`,
+      `1. On Antenati, find ${comune} > Indici Decennali (10-year indexes)\n2. Open the index covering ${decadeStart}-${decadeStart + 9}\n3. These aggregate all births in one alphabetical list — much faster than browsing year-by-year\n4. Find ${person.name.split(' ')[0]} and note the year + act number, then jump directly to that act`,
+      `https://antenati.cultura.gov.it/search-registry/?comune=${encodeURIComponent(comune)}&tipologia=indici_decennali`,
       'Pending'
     );
   }
@@ -227,16 +253,16 @@ export function generateGoals(person: Person): ResearchGoal[] {
   // --- NAA / TROVE (for anyone who migrated) ---
   if (person.migration || person.migration?.voyages?.length) {
     push(
-      `Search NAA RecordSearch for ${person.name}`,
+      `1. Open NAA RecordSearch (link below)\n2. Search: "${person.name}"\n3. Try narrowing: add a filter for year range or record type (B78 = immigration files)\n4. Look for: passenger lists, alien registration, naturalisation, immigration case files`,
       `https://recordsearch.naa.gov.au`,
-      hasFoundRecord(person, 'Immigration File') ? 'Found' : hasSearchingRecord(person, 'Immigration File') ? 'Searching' : 'Pending'
+      goalStatus(person, 'Immigration File')
     );
   }
 
   // --- FULL TEXT SEARCH ---
   if (comune) {
     push(
-      `FamilySearch full-text search for "${person.name}" in ${comune} records`,
+      `1. FamilySearch full-text search can find names inside handwritten documents\n2. Go to the link below and search for "${person.name}"\n3. Try adding "${comune}" to narrow results\n4. Note: results are OCR-generated, so try name variants (Egidio/Egidia, etc.)`,
       `https://www.familysearch.org/search/full-text?q=${encodeURIComponent(person.name)}`,
       'Pending'
     );
@@ -244,101 +270,151 @@ export function generateGoals(person: Person): ResearchGoal[] {
 
   // --- SIBLING / WIDER NETWORK ---
   if (person.parents.length > 0) {
+    const parentNames = person.parents.map(id => id.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())).join(' + ');
     push(
-      `Search for siblings to triangulate family cluster`,
-      `Same comune, same parent names — helps confirm parentage`,
+      `1. On Antenati, browse ${comune || 'the comune'} Nati registers\n2. Search for other children with the SAME parents (${parentNames})\n3. Siblings help confirm parentage and may reveal migration patterns (e.g., one sibling sponsors another)\n4. Log every sibling found with year, act number, and any margin annotations`,
+      `${comune ? antenatiUrl(comune, 'nati') : 'Antenati search'}`,
       'Pending'
     );
   }
 
   // --- SPECIFIC EDGE CASES ---
 
-  // Egidio Emmi: birth not found in 1868-1871, 1873-1874 — see Claude's strategic advice
+  // Egidio Emmi
   if (person.id === 'egidio-emmi' && !hasFoundRecord(person, 'Birth Record')) {
-    // TOP PRIORITY: allegati shortcut — request marriage allegati from ASCt
+    // === ALREADY CHECKED (Not Found — strikethrough) ===
     push(
-      `Request allegati of marriage atto 59/1900 from Archivio di Stato di Catania — contains certified copy of Egidio's birth act (no year-guessing needed) and Concetta's birth act in same folder`,
-      `Archivio di Stato di Catania — one email request, ref: allegati al matrimonio atto n. 59 del 1900, Linguaglossa (Emmi–Sgroi)`,
+      `Searched Linguaglossa Nati 1868, 1869, 1870, 1871, 1873, 1874 — all images browsed, Egidio not found`,
+      `Antenati — 6 years fully checked`,
+      'Not Found'
+    );
+    push(
+      `Searched Randazzo Nati 1868-1874, Castiglione di Sicilia 1868-1874, Piedimonte Etneo 1870, Calatabiano 1870 — not found`,
+      `Antenati — 5 comuni checked`,
+      'Not Found'
+    );
+    push(
+      `Milo: confirmed no civil records on Antenati at all`,
+      `Antenati — no records for this comune`,
+      'Not Found'
+    );
+    push(
+      `Checked Matrimoni allegati on Antenati — series stops at 1893, 1900 allegati not available online`,
+      `Antenati — serie 81163, Matrimoni allegati only 1866-1893`,
+      'Not Found'
+    );
+    push(
+      `Checked Matrimoni indexes 1866-1872 for Antonino Emmi × Rosaria — found three Antonino marriages, none to a Nasti. Conclusion: they married pre-1866 (Borbonic series)`,
+      `Antenati — Matrimoni 1866-1872`,
+      'Not Found'
+    );
+
+    // === STILL TO DO (Pending) ===
+    push(
+      `KILLER MOVE: Request marriage allegati from Archivio di Stato di Catania
+1. Send email to: Archivio di Stato di Catania (asct@pec.cultura.gov.it)
+2. Subject: "Richiesta riproduzione allegati al matrimonio — Linguaglossa 1900 atto n. 59"
+3. Body (in Italian): request copy of "allegati al matrimonio atto n. 59 del 1900, Comune di Linguaglossa, sposi: Emmi Egidio e Sgroi Concetta"
+4. This single request retrieves: Egidio's certified birth-act copy (year + act number), Concetta's birth-act copy
+5. Expect: small reproduction fee, digital copy by email`,
+      `Archivio di Stato di Catania — PEC: asct@pec.cultura.gov.it`,
       'Pending'
     );
-    // Remaining Nati years: 1867 first (most likely per Scarlata's age rounding tolerance), then 1872, then 1866
     const remainingNatiYears = [
-      { year: '1867', note: 'first priority — clerk rounded other Egidio 32→31, so ours "30" spans 1866–1872' },
+      { year: '1867', note: 'BEST BET — clerk rounded other Egidio to 32 (was 31), so our "30" could be 29 → born 1867' },
       { year: '1872', note: 'second priority' },
-      { year: '1866', note: 'third priority — note index shows "Egidio son of Antonino + Giuseppa Gullo"' },
+      { year: '1866', note: 'third priority — index shows an "Egidio son of Antonino + Giuseppa Gullo"' },
     ];
     remainingNatiYears.forEach(({ year, note }) => {
       push(
-        `Search Linguaglossa Nati ${year} on Antenati (${note})`,
-        `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati&anno=${year}`,
+        `1. On Antenati, open Linguaglossa > Nati > ${year}\n2. Go to the index at the back of the register\n3. Look for "Emmi" in the E section\n4. ${note}\n5. If you find "Emmi Egidio" or "Emmi Antonino", check parents (mother must be Rosaria Nasti, father "fu" Antonino)`,
+        antenatiUrl('Linguaglossa', 'nati', year),
         'Pending'
       );
     });
     push(
-      `Search Linguaglossa Nati pre-1866 (Borbonic series) — Egidio's birth may be there`,
-      `Antenati — covers births before unification`,
+      `1. On Antenati, look for the pre-1866 Borbonic series for Linguaglossa\n2. These are in a different serie from the unified Nati (1866-1929)\n3. Births before Italian unification used a different numbering system\n4. Browse starting from 1865 and work backwards`,
+      `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=nati`,
       'Pending'
     );
-    // Hunt the household: scan for siblings
     push(
-      `Hunt the household: scan every Emmi birth in Nati indexes — log any child of Antonino + Rosaria Nasti to identify family, quartiere, and Antonino's patronymic`,
-      `Linguaglossa Nati on Antenati — sibling's act makes Egidio findable by triangulation`,
+      `HOUSEHOLD HUNT: Stop looking only for Egidio — look for his SIBLINGS
+1. In every Nati index you open, scan ALL "Emmi" entries
+2. Log any child whose father is "Antonino" and mother is "Rosaria"
+3. A sibling tells you: the quartiere, Antonino's patronymic, and whether the family had a consistent naming pattern
+4. Once you find one sibling, Egidio's act becomes findable by triangulation`,
+      `Linguaglossa Nati 1866-1875 on Antenati`,
       'Pending'
     );
-    // Morti registers for Antonino
     push(
-      `Scan Linguaglossa Morti 1866-1893 for Antonino Emmi's death act — will name widow Rosaria Nasti and his parents`,
-      `Antenati — Morti indexes at back of each year, much faster to scan than Nati`,
+      `SCAN MORTI for Antonino Emmi (died between ~1872 and Sep 1900)
+1. On Antenati, open Linguaglossa > Morti
+2. Start from 1893 and work BACKWARDS (older men die older, so 1880s-90s most likely)
+3. Check the index at the back of each year — look for "Emmi Antonino"
+4. The death act will name his widow: "Rosaria Nasti" — this confirms the connection
+5. It will also name his parents — resolving which Antonino is ours
+6. Morti indexes are typically 1-3 pages per year — very fast`,
+      `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=morti`,
       'Pending'
     );
-    // Church route
     push(
-      `Check Santa Maria delle Grazie baptism registers (Registri ecclesiastici 1539-1928) on FamilySearch — baptism ~1866-1872 naming Antonino Emmi + Rosaria Nasti gives birth date independent of civil series`,
+      `CHURCH ROUTE: Santa Maria delle Grazie baptisms
+1. On FamilySearch, search Catalog for "Linguaglossa"
+2. Filter: Church Records
+3. Look for "Registri ecclesiastici di Linguaglossa 1539-1928"
+4. Find the Battesimi register covering ~1866-1872
+5. Search for Egidio Emmi — or any child of Antonino + Rosaria Nasti
+6. Baptismal records are independent of civil records — may survive even if civil act is lost`,
       `https://www.familysearch.org/search/catalog/results?q=Linguaglossa&filter=recordType%3AChurch%20Records`,
       'Pending'
     );
-    // Comune follow-up (lower priority than allegati)
     push(
-      `Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 (atto 59), father fu Antonino, clarify atto 141 is not the one wanted`,
+      `Send corrected follow-up to Comune di Linguaglossa:
+1. Reference your earlier email
+2. Correct mother's surname: Nasti (not Raiti — handwriting confirms across Acts 41 & 59)
+3. Marriage date: 4 Nov 1900 (atto 59) — not 8 Sep (that was the banns)
+4. Father: "fu" Antonino (deceased by 1900)
+5. Warn them: the Egidio born 1868 to Antonino + Rosa Vecchio (atto 141) is NOT the one you want
+6. Ask them to search Nati 1866-1872 for our Egidio`,
       `Comune di Linguaglossa, Ufficio di Stato Civile`,
       hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
     );
-    // DGS 7841071: deprioritized — likely same ASCt images already browsed on Antenati
     push(
-      `[LOW PRIORITY] Visit FamilySearch center for DGS 7841071 (Nati 1866-1875) — likely same Archivio di Stato Catania images already browsed, but worth checking for annotation differences`,
-      `FamilySearch center — segnatura 8541 on Antenati`,
+      `LOW PRIORITY: Visit FamilySearch center for DGS 7841071 (Nati 1866-1875)
+Note: likely the SAME Archivio di Stato Catania images already browsed on Antenati, but may have different annotations`,
+      `FamilySearch center — DGS 7841071, segnatura 8541 on Antenati`,
       'Pending'
     );
   }
 
-  // Gregorio Sgroi: birth window narrowed to ~1847-1852
+  // Gregorio Sgroi
   if (person.id === 'gregorio-sgroi' && !hasFoundRecord(person, 'Birth Record')) {
     push(
-      `Search Linguaglossa Nati ~1847-1852 for Gregorio Sgroi (age 27 in Mar 1877)`,
-      `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati`,
+      `1. On Antenati, open Linguaglossa > Nati\n2. Search years 1847 through 1852 (age 27 at Concetta's birth, 10 Mar 1877)\n3. Start with the index at the back of each year — look for "Sgroi"\n4. When you find Gregorio Sgroi, check: father's name (to confirm right one)`,
+      `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=nati`,
       'Pending'
     );
   }
 
-  // Santa Calì: parents unknown from Concetta's birth act — needs marriage record
+  // Santa Calì
   if (person.id === 'santa-cali' && !hasFoundRecord(person, 'Birth Record')) {
     push(
-      `Search Linguaglossa Nati for Santa Calì (husband: Gregorio Sgroi, falegname)`,
-      `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati`,
+      `1. On Antenati, open Linguaglossa > Nati\n2. Search for "Calì" or "Santa Calì" — estimate: born ~1850-1860 (was a mother in 1877)\n3. Check the yearly indexes (last pages of each register)\n4. Her marriage record to Gregorio Sgroi (below) will confirm her parentage`,
+      `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=nati`,
       'Pending'
     );
     push(
-      `Search Linguaglossa Matrimoni ~1869-1876 for Gregorio Sgroi + Santa Calì marriage`,
-      `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=matrimoni`,
+      `1. On Antenati, open Linguaglossa > Matrimoni\n2. Search ~1869-1876 for "Gregorio Sgroi" × "Santa Calì"\n3. They were married before Concetta was born (Mar 1877)\n4. The marriage act lists both sets of parents for both spouses`,
+      `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=matrimoni`,
       'Pending'
     );
   }
 
-  // Everyone: allegati shortcut for anyone married in Linguaglossa 1900 with missing birth
+  // Concetta Sgroi
   if (person.id === 'concetta-sgroi' && !hasFoundRecord(person, 'Death Record')) {
     push(
-      `Concetta's birth act is also in the Egidio–Sgroi allegati folder (atto 59/1900) — request from Archivio di Stato di Catania alongside Egidio's`,
-      `Archivio di Stato di Catania — one request covers both`,
+      `Concetta's birth-act copy is filed alongside Egidio's in allegati of atto 59/1900 — one request to ASCt retrieves both`,
+      `Archivio di Stato di Catania — same request as Egidio's allegati`,
       'Pending'
     );
   }
