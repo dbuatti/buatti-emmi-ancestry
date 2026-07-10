@@ -1028,7 +1028,7 @@ export const initialPeople: Person[] = [
     },
     residences: ['303 Punt Road, Richmond, Victoria (1965)'],
     notes: [
-      'Travelled on Toscana K269 line 178 — directly below line 177: CHIAPPIN Gino (b. 1927, labourer, reg 290502). Confirmed by NAA 10 Jul 2026 (A2571, barcode 203679026). NoK field blank on his ID card. He worked as transient fruit-picker in Mildura then Bonalgo NSW. No naturalisation found. 3-year age gap consistent with being her brother.',
+      'Travelled on Toscana K269 line 178 — directly below line 177: Gino Chiappini (b. 1927, labourer, reg 290502, listed as "CHIAPPIN Gino" on manifest). Confirmed by NAA 10 Jul 2026 (A2571, barcode 203679026). NoK field blank on his ID card. He worked as transient fruit-picker in Mildura then Bonalgo NSW. No naturalisation found. 3-year age gap consistent with being her brother.',
       'Branxton Catholic Parish marriage register extract (10 Jul 2026) confirms: married Ezio Buatti 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, by Rev Z Lewandowski. Witnesses: Emidio Pica and Domenico Michetti (both Greta Camp). Parents listed: Remo Chiappini and Irma Pirri, both of Ascoli Piceno, Italy.',
     ],
     records: [
