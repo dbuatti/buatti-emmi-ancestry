@@ -176,7 +176,7 @@ export const initialPeople: Person[] = [
     parents: ['antonino-emmi', 'rosaria-nasti'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     records: [
-      { type: 'Birth Record', status: 'Found — Not Yet Read', notes: '~1870, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap).' },
+      { type: 'Birth Record', status: 'Searching', notes: '~1870, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap). Not yet located in Nati 1868-1871 or 1873-1874. Remaining years: 1866, 1867, 1872, and pre-1866 Borbonic series.' },
       { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40), Arlotta Giuseppe (23). Both illiterate. Banns also atto № 59 (8 Sep 1900) — coincidental same number. CORRECTS earlier banns which had wrong mother (Raiti), father (Salvatore), age (20), and bride occupation (contadina vs industriosa).' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1943 per POW report — confirmed "fu Egidio" on 1949 certificate' }
     ],
@@ -184,7 +184,8 @@ export const initialPeople: Person[] = [
       status: 'Confirmed',
       details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi + Rosaria Nasti (given name uncertain). Age ~30 (born ~1870). Farmer. Illiterate. Banns (8 Sep 1900, atto № 59) contained errors — actual marriage record supersedes.',
       nextSteps: [
-        'Find Egidio\'s birth record (~1870) in Linguaglossa Nati registers (DGS 7841071).',
+        'Find Egidio\'s birth record (~1870) in Linguaglossa Nati registers (DGS 7841071). Remaining years: 1866, 1867, 1872, pre-1866 Borbonic.',
+        'Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 atto 59, father fu Antonino, clarify atto 141 is not ours.',
       ]
     },
     sources: [
@@ -678,7 +679,6 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: '5 September 1868',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
-    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
     occupation: 'Contadino (farmer)',
     deathDate: 'Unknown',
     notes: [
@@ -1144,11 +1144,8 @@ export const initialPeople: Person[] = [
       status: 'In Progress',
       details: 'Civil birth extract received 30 Jun 2026 (atto n. 202 — confirms 23 Oct 1915 birth). Baptismal record previously found. Marriage to Rosaria Patanè confirmed: 7 Jul 1948, Fiumefreddo. Naturalisation (Australian citizenship) 26 Jan 1961, cert. EM(2)28650.',
       nextSteps: [
-        'Request actual marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34).',
-        'Request naturalisation certificate (EM(2)28650) from NAA.',
-        'Follow up by phone if no reply (Liuzzo Francesca: 095 7777216).',
-        'Order marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34).',
-        'Order naturalisation certificate EM(2)28650 from NAA.',
+        'Request marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34). Follow up by phone if no reply (Liuzzo Francesca: 095 7777216).',
+        'Request naturalisation certificate EM(2)28650 from NAA.',
         'Establish when/why the family relocated from Ingham to Sydney.'
       ]
     },
@@ -1735,10 +1732,10 @@ export const initialOpenQuestions: OpenQuestion[] = [
   },
   {
     id: 'q-remo-wife',
-    question: 'What was Remo Chiappini\'s wife\'s name, and is the TB/"San Giorgio" story accurate?',
+    question: 'Is the TB/"San Giorgio" story about Irma Pirri or a different wife of Remo?',
     category: 'Buatti/Chiappini',
     status: 'Pending',
-    notes: 'Need to confirm which son was being protected, the exact town of "San Giorgio" (likely Porto San Giorgio), and dates.'
+    notes: 'Irma Pirri confirmed as Lilia\'s mother via Branxton Catholic Parish marriage extract (4 Oct 1952). Remo+s wife was Irma, but the TB story may relate to her or to a different marriage. "San Giorgio" likely Porto San Giorgio, Fermo, Marche. Need dates.'
   },
   {
     id: 'q-bruna-servant',

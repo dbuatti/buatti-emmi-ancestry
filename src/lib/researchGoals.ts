@@ -66,6 +66,9 @@ const hasFoundRecord = (person: Person, typePrefix: string): boolean =>
 const hasSearchingRecord = (person: Person, typePrefix: string): boolean =>
   recordStatus(person, typePrefix) === 'Searching';
 
+const hasRequestedRecord = (person: Person, typePrefix: string): boolean =>
+  recordStatus(person, typePrefix) === 'Searching';
+
 const recordNote = (person: Person, typePrefix: string): string | undefined => {
   if (!person.records) return undefined;
   const found = person.records.find(
@@ -244,6 +247,62 @@ export function generateGoals(person: Person): ResearchGoal[] {
     push(
       `Search for siblings to triangulate family cluster`,
       `Same comune, same parent names — helps confirm parentage`,
+      'Pending'
+    );
+  }
+
+  // --- SPECIFIC EDGE CASES ---
+
+  // Egidio Emmi: birth not found in 1868-1871, 1873-1874 — check remaining Nati years
+  if (person.id === 'egidio-emmi' && !hasFoundRecord(person, 'Birth Record')) {
+    const remainingNatiYears = ['1866', '1867', '1872'];
+    remainingNatiYears.forEach(year => {
+      push(
+        `Search Linguaglossa Nati ${year} on Antenati (all checked: 1868-1871, 1873-1874)`,
+        `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati&anno=${year}`,
+        'Pending'
+      );
+    });
+    push(
+      `Search Linguaglossa Nati pre-1866 (Borbonic series) — Egidio's birth may be there`,
+      `Antenati — covers births before unification`,
+      'Pending'
+    );
+    push(
+      `Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 (atto 59), father fu Antonino, clarify atto 141 is not the one wanted`,
+      `Comune di Linguaglossa, Ufficio di Stato Civile`,
+      hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
+    );
+  }
+
+  // Gregorio Sgroi: birth window narrowed to ~1847-1852
+  if (person.id === 'gregorio-sgroi' && !hasFoundRecord(person, 'Birth Record')) {
+    push(
+      `Search Linguaglossa Nati ~1847-1852 for Gregorio Sgroi (age 27 in Mar 1877)`,
+      `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati`,
+      'Pending'
+    );
+  }
+
+  // Santa Calì: parents unknown from Concetta's birth act — needs marriage record
+  if (person.id === 'santa-cali' && !hasFoundRecord(person, 'Birth Record')) {
+    push(
+      `Search Linguaglossa Nati for Santa Calì (husband: Gregorio Sgroi, falegname)`,
+      `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati`,
+      'Pending'
+    );
+    push(
+      `Search Linguaglossa Matrimoni ~1869-1876 for Gregorio Sgroi + Santa Calì marriage`,
+      `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=matrimoni`,
+      'Pending'
+    );
+  }
+
+  // Everyone: FamilySearch center visit for restricted films (DGS 7841071 etc.)
+  if (comune === 'Linguaglossa') {
+    push(
+      `Visit FamilySearch center to view restricted film DGS 7841071 (Nati 1866-1875)`,
+      `FamilySearch center — segnatura 8541 on Antenati`,
       'Pending'
     );
   }
