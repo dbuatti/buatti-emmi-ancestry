@@ -728,6 +728,7 @@ export const initialPeople: Person[] = [
   },
   {
     id: 'gregorio-sgroi',
+    name: 'Gregorio Sgroi',
     generation: 0,
     line: 'Emmi',
     gender: 'M',
