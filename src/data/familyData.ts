@@ -61,16 +61,17 @@ export const initialPeople: Person[] = [
     parents: [],
     children: ['ezio-buatti'],
     records: [
-      { type: 'Birth Record', status: 'Searching', notes: '1898 known, record not yet located in Ascoli Piceno' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'Pre-1919 with Alfredo Buatti Sr.' },
+      { type: 'Birth Record', status: 'Searching', notes: 'Birth year 1898 unsourced. Two candidates from Archivio di Stato: Ida b. 1893 (d/o Antonio + Rosati Virginia) or Ida b. 1904 (d/o Ignazio + Currozzi Clementina). Marriage cert will settle.' },
+      { type: 'Marriage Record', status: 'Requested', notes: 'To Alfredo Buatti Sr., ~1920–1922. Requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771, assigned Sergio De Angelis). Will settle Ida\'s birth year and parentage definitively.' },
       { type: 'Death Record', status: 'Found', notes: '26 Jan 1970 — confirmed via cemetery search' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, same plot as Alfredo' }
     ],
     researchStatus: {
-      status: 'Confirmed',
-      details: 'Burial and death date confirmed. Birth year 1898 known.',
+      status: 'In Progress — Marriage Cert Requested',
+      details: 'Burial and death date confirmed. Birth year 1898 unsourced — two rival candidates (1893, 1904) from Archivio di Stato. Marriage cert officially requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771).',
       nextSteps: [
-        'Search Antenati for 1898 birth record in Ascoli Piceno area.'
+        'Await marriage cert reply from Comune di Ascoli Piceno (protocol 0062771 — Sergio De Angelis).',
+        'Marriage cert will settle Ida\'s parentage and exact birth date.'
       ]
     },
     sources: [
@@ -78,6 +79,11 @@ export const initialPeople: Person[] = [
         title: 'Comune di Ascoli Piceno Cemetery Search',
         type: 'Online Database',
         link: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp'
+      },
+      {
+        title: 'Comune di Ascoli Piceno — Marriage Cert Request',
+        type: 'Civil Registration Request',
+        reference: 'Protocol 0062771, 10 Jul 2026. Alfredo Buatti + Ida Galanti. Assigned to Sergio De Angelis, Settore 4 - Servizi al Cittadino.'
       }
     ]
   },
@@ -164,7 +170,7 @@ export const initialPeople: Person[] = [
       'Banns recorded a different surname for the mother (Raiti vs Nasti), a different father for the bride (Salvatore vs Gregorio), and a different age (20 vs 23). For the bride\'s details, the marriage ceremony is more authoritative (based on documents she submitted). For the groom\'s mother\'s surname, both acts are the same clerk in the same year — unresolved. Egidio\'s birth act will settle it.',
       'Banns witnesses: De Francesco Francesco (~44, guardia) and Cesareo Giacomo (40, possibly mugnaio/miller). Different from wedding witnesses — normal, banns witnesses were often officials-of-convenience.',
       'Had at least one older son (that son\'s family now in Venezuela — per Connie Emmi 28 Jun 2026).',
-      'NOT the same person as Egidio Emmi (b. ~1855, son of Antonino + Rosa Vecchio) who married Angela Raiti on 16 Dec 1895 — same father, different mother, likely half-brothers or cousins.',
+      'NOT the same person as Egidio Emmi (b. 5 Sep 1868, son of Antonino [son of Francesco] + Rosa Vecchio) who married Angela Raiti on 16 Dec 1895 — same father name, different mother. They MAY be half-brothers but this is not yet proven (multiple Antonino Emmis existed). The other Egidio\'s birth record (7 Sep 1868, Linguaglossa) names Antonino as age 26, "industrioso", son of Francesco — but we cannot assume this Antonino is ours until our Egidio\'s birth act confirms it.',
     ],
     spouses: ['concetta-sgroi'],
     parents: ['antonino-emmi', 'rosaria-nasti'],
@@ -210,7 +216,7 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Emmi',
     gender: 'F',
-    birthDate: '~1880 (age 20 at marriage on 8 Sep 1900)',
+    birthDate: '10 March 1877',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
     occupation: 'Industriosa (home-based textile/domestic work)',
     deathDate: 'Deceased prior to 1967',
@@ -218,29 +224,35 @@ export const initialPeople: Person[] = [
     parents: ['gregorio-sgroi', 'santa-cali'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     notes: [
+      'Birth record found 10 Jul 2026: Linguaglossa Nati 1877, atto n. 58. Born 10 Mar 1877 at 5:46 PM, via Liotto 120. Registered 11 Mar 1877. Father: Gregorio Sgroi (27, falegname). Mother: Santa Calì (industriosa). Witnesses: Mariano Vecchio (24), Pietro Stagnitti (22). Officer: Carmelo Vecchio. Margin: married Egidio Emmi di fu Antonino, 4 Nov 1900.',
       'Maiden name confirmed via Gregorio\'s 1943 Report on Prisoners of War; an earlier guess of "Sofia Concetta" is superseded.',
-      'Parents confirmed via Marriage act atto № 59 (4 Nov 1900) and banns (8 Sep 1900): Gregorio Sgroi + Santa Calì. Age 23 at marriage → born ~1877.',
       'Occupation: "industriosa" (home-based textile/domestic work, per banns), NOT "contadina" as previously recorded. Her mother Santa Calì was also industriosa.',
       'The earlier banns (pubblicazioni, 8 Sep 1900, same officer Scarlata) recorded father as Salvatore Sgroi and age as 20 — both errors corrected by the marriage ceremony (4 Nov 1900). Banns witnesses: De Francesco Francesco (~44, guardia) and Cesareo Giacomo (40, possibly mugnaio).',
       'Gregorio\'s own daughter Concetta was very likely named after this grandmother.',
       'Had at least one older son (that son\'s family migrated to Venezuela — per Connie Emmi 28 Jun 2026).',
-      'Egidio and Concetta are both illiterate per the 1900 marriage record and banns — neither signed.'
+      'Egidio and Concetta are both illiterate per the 1900 marriage record — neither signed.'
     ],
     records: [
-      { type: 'Birth Record', status: 'Found — Not Yet Read', notes: '~1877, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap).' },
+      { type: 'Birth Record', status: 'Found', notes: 'Atto n. 58, 11 Mar 1877, Linguaglossa Nati 1877 (Antenati). Born 10 Mar 1877 at 5:46 PM, via Liotto 120. Father: Gregorio Sgroi (27, falegname). Mother: Santa Calì (industriosa). Witnesses: Mariano Vecchio (24), Pietro Stagnitti (22). Officer: Carmelo Vecchio. Margin: married Egidio Emmi 4 Nov 1900. Link: https://antenati.cultura.gov.it/ark:/12657/an_ua81372/LeG9zQR (page 23).' },
       { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. CORRECTS earlier banns (8 Sep 1900). Bride age 23, father Gregorio Sgroi.' },
       { type: 'Death Record', status: 'Not Found', notes: 'Pre-1967 per later church records. Exact date unknown.' },
       { type: 'Surname Confirmation', status: 'Found', notes: '"Sgroi" confirmed via Gregorio\'s 1943 POW record and 1900 marriage record' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Parents confirmed: Gregorio Sgroi + Santa Calì. Age 23 at marriage (born ~1877). Occupation: industriosa. Banns had wrong father (Salvatore) and age (20) — marriage act corrects.',
+      details: 'Birth record found 10 Jul 2026 (atto n. 58, 11 Mar 1877, Linguaglossa Nati). Parents confirmed: Gregorio Sgroi (falegname, b. ~1850) + Santa Calì (industriosa). Born 10 Mar 1877 at via Liotto 120. Married Egidio Emmi 4 Nov 1900.',
       nextSteps: [
-        'Find Concetta\'s birth record (~1877) in Linguaglossa civil records (DGS 7841071).',
-        'Look into Sgroi family network in Linguaglossa.'
+        'Search for Gregorio Sgroi\'s birth ~1850 in Linguaglossa.',
+        'Search for Santa Calì\'s birth records.',
+        'Search for Concetta\'s death record (pre-1967).'
       ]
     },
     sources: [
+      {
+        title: 'Linguaglossa Nati 1877, Atto n. 58 (Antenati)',
+        type: 'Civil Registry',
+        reference: 'Concetta Sgroi, born 10 Mar 1877 to Gregorio Sgroi (27, falegname) + Santa Calì (industriosa). Via Liotto 120. Margin: married Egidio Emmi 4 Nov 1900.'
+      },
       {
         title: 'Gregorio Emmi 1943 POW Report',
         type: 'Military Record',
@@ -609,15 +621,16 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Emmi',
     gender: 'M',
-    birthDate: 'Unknown',
+    birthDate: '~1842 (age 26 at son Egidio\'s birth 5 Sep 1868)',
+    occupation: 'Industrioso (industrial worker)',
     deathDate: 'Deceased prior to 8 Sep 1900',
     spouses: ['rosaria-nasti'],
     parents: [],
     children: ['egidio-emmi'],
     notes: [
-      'Father of Egidio Emmi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
-      'Recorded as "fu Antonino" (the late Antonino) at the time of Egidio\'s marriage.',
-      'Possibly the same Antonino Emmi who appears in earlier Linguaglossa records.',
+      'Father of our Egidio Emmi, confirmed as "fu Antonino" at his marriage (8 Sep 1900).',
+      'Also possibly the father of ANOTHER Egidio Emmi (b. 5 Sep 1868, mother Rosa Vecchio) — same uncommon name combination strongly suggests same father, but not yet proven definitively. That other Egidio\'s birth record names the declarant as "Antonino Emmi, son of Francesco, age 26, industrioso".',
+      'CAUTION: There are multiple Antonino Emmis in 1860s-70s Linguaglossa (e.g., Antonino son of Giuseppe registered daughter Egidia in 1869). We cannot assume the Antonino of the 1868 record is OUR Antonino until our Egidio\'s birth act confirms it.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
@@ -658,8 +671,64 @@ export const initialPeople: Person[] = [
     }
   },
   {
+    id: 'egidio-emmi-older',
+    name: 'Egidio Emmi (the other — son of Antonino + Rosa Vecchio)',
+    generation: 1,
+    line: 'Emmi',
+    gender: 'M',
+    birthDate: '5 September 1868',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    occupation: 'Contadino (farmer)',
+    deathDate: 'Unknown',
+    notes: [
+      'Birth act (7 Sep 1868, atto 141): Born 5 Sep 1868 at 3:00 AM. Declarant: Antonino Emmi (son of Francesco, 26, industrioso). Mother: Rosa Vecchio, 26.',
+      'Marriage (2 Jul 1900, Linguaglossa, atto 41): Egidio Emmi, 32, contadino, son of Antonino (LIVING) + Rosa Vecchio. Bride: Angela Nasti, 22, contadina, daughter of Giuseppe Nasti + Anna Lo Giudice. Officer: Concetto Scarlata.',
+      'GROOM LITERATE: signed "Io sposo Emmi Egidio" — uniquely valuable for distinguishing from our illiterate Egidio.',
+      'Fully mapped and permanently distinguishable from OUR Egidio by three discriminators: (1) father Antonino LIVING (ours: "fu" by 1900); (2) GROOM LITERATE (ours: illiterate); (3) wife Angela Nasti (ours: Concetta Sgroi).',
+      'Antonino Emmi (this Egidio\'s father) was son of Francesco, born ~1842, industrioso — a DIFFERENT Antonino from our Egidio\'s father.',
+      'The 1895 marriage to "Angela Raiti" previously mentioned was a misreading — corrected by Act 41 to Angela Nasti.',
+    ],
+    spouses: ['angela-nasti-older'],
+    parents: [],
+    children: [],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: 'Atto 141, 7 Sep 1868, Linguaglossa Nati. Declarant: Antonino Emmi (son of Francesco, 26, industrioso). Mother: Rosa Vecchio, 26.' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Atto 41, 2 Jul 1900, Linguaglossa Matrimoni. Egidio Emmi (32, son of Antonino + Rosa Vecchio) married Angela Nasti (22, daughter of Giuseppe Nasti + Anna Lo Giudice). Officer: Concetto Scarlata. Groom literate (signed).' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
+    researchStatus: {
+      status: 'Confirmed — Fully Mapped',
+      details: 'Birth act (1868 atto 141) and marriage (1900 atto 41) both found. Father Antonino (son of Francesco) living at marriage. Literate. Wife Angela Nasti. Three discriminators from our Egidio.',
+      nextSteps: [
+        'Search for his death record.',
+      ]
+    }
+  },
+  {
+    id: 'angela-nasti-older',
+    name: 'Angela Nasti',
+    generation: 1,
+    line: 'Emmi',
+    gender: 'F',
+    spouses: ['egidio-emmi-older'],
+    parents: [],
+    children: [],
+    notes: [
+      'Married Egidio Emmi (other) on 2 Jul 1900, Linguaglossa (atto 41).',
+      'Age 22 at marriage → born ~1878. Contadina. Daughter of Giuseppe Nasti + Anna Lo Giudice.',
+      'Illiterate (did not sign marriage act).',
+      'The surname Nasti in this act, written by same clerk Scarlata, matches the letterforms of "Rosaria Nasti" in our Egidio\'s Act 59 — confirms Nasti as the correct reading for our Egidio\'s mother too.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1878 — search Linguaglossa' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Atto 41, 2 Jul 1900, Linguaglossa. Married Egidio Emmi (other).' },
+    ],
+    researchStatus: { status: 'In Progress' }
+  },
+  },
+  {
     id: 'gregorio-sgroi',
-    name: 'Gregorio Sgroi',
     generation: 0,
     line: 'Emmi',
     gender: 'M',

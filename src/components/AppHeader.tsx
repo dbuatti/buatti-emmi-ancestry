@@ -1,4 +1,4 @@
-import { Users, Plus } from 'lucide-react';
+import { Users, Plus, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BRAND_COLOR } from '@/lib/constants';
 import type { Person, ResearchLead, OpenQuestion } from '@/types';
@@ -30,6 +30,12 @@ export function AppHeader({ people, leads, questions, onReset, onAddPerson }: Ap
           </div>
         </div>
         <div className="flex flex-wrap gap-3 justify-end">
+          <a
+            href="/research-goals"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-sans font-medium border border-stone-300 hover:bg-stone-100 text-stone-700 transition-colors"
+          >
+            <BookOpen className="w-3.5 h-3.5" /> Research Goals
+          </a>
           <Button
             variant="outline"
             onClick={onReset}
