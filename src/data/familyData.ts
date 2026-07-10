@@ -184,7 +184,10 @@ export const initialPeople: Person[] = [
       status: 'Confirmed',
       details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi + Rosaria Nasti (given name uncertain). Age ~30 (born ~1870). Farmer. Illiterate. Banns (8 Sep 1900, atto № 59) contained errors — actual marriage record supersedes.',
       nextSteps: [
-        'Find Egidio\'s birth record (~1870) in Linguaglossa Nati registers (DGS 7841071). Remaining years: 1866, 1867, 1872, pre-1866 Borbonic.',
+        'Request allegati of marriage atto 59/1900 from Archivio di Stato di Catania — contains certified copy of Egidio\'s birth act without needing to guess the year, plus Concetta\'s birth act in same folder.',
+        'Search remaining Nati years: 1867 (first), 1872, 1866, and pre-1866 Borbonic series.',
+        'Hunt the household: scan every Emmi birth for siblings of Antonino + Rosaria Nasti; scan Morti 1866-1893 for Antonino\'s death act.',
+        'Check Santa Maria delle Grazie baptism registers on FamilySearch.',
         'Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 atto 59, father fu Antonino, clarify atto 141 is not ours.',
       ]
     },
@@ -243,6 +246,7 @@ export const initialPeople: Person[] = [
       status: 'Confirmed',
       details: 'Birth record found 10 Jul 2026 (atto n. 58, 11 Mar 1877, Linguaglossa Nati). Parents confirmed: Gregorio Sgroi (falegname, b. ~1850) + Santa Calì (industriosa). Born 10 Mar 1877 at via Liotto 120. Married Egidio Emmi 4 Nov 1900.',
       nextSteps: [
+        'Concetta\'s birth act copy is also in the Egidio–Sgroi allegati folder (atto 59/1900) — request from ASCt alongside Egidio\'s.',
         'Search for Gregorio Sgroi\'s birth ~1850 in Linguaglossa.',
         'Search for Santa Calì\'s birth records.',
         'Search for Concetta\'s death record (pre-1967).'

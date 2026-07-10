@@ -253,12 +253,23 @@ export function generateGoals(person: Person): ResearchGoal[] {
 
   // --- SPECIFIC EDGE CASES ---
 
-  // Egidio Emmi: birth not found in 1868-1871, 1873-1874 — check remaining Nati years
+  // Egidio Emmi: birth not found in 1868-1871, 1873-1874 — see Claude's strategic advice
   if (person.id === 'egidio-emmi' && !hasFoundRecord(person, 'Birth Record')) {
-    const remainingNatiYears = ['1866', '1867', '1872'];
-    remainingNatiYears.forEach(year => {
+    // TOP PRIORITY: allegati shortcut — request marriage allegati from ASCt
+    push(
+      `Request allegati of marriage atto 59/1900 from Archivio di Stato di Catania — contains certified copy of Egidio's birth act (no year-guessing needed) and Concetta's birth act in same folder`,
+      `Archivio di Stato di Catania — one email request, ref: allegati al matrimonio atto n. 59 del 1900, Linguaglossa (Emmi–Sgroi)`,
+      'Pending'
+    );
+    // Remaining Nati years: 1867 first (most likely per Scarlata's age rounding tolerance), then 1872, then 1866
+    const remainingNatiYears = [
+      { year: '1867', note: 'first priority — clerk rounded other Egidio 32→31, so ours "30" spans 1866–1872' },
+      { year: '1872', note: 'second priority' },
+      { year: '1866', note: 'third priority — note index shows "Egidio son of Antonino + Giuseppa Gullo"' },
+    ];
+    remainingNatiYears.forEach(({ year, note }) => {
       push(
-        `Search Linguaglossa Nati ${year} on Antenati (all checked: 1868-1871, 1873-1874)`,
+        `Search Linguaglossa Nati ${year} on Antenati (${note})`,
         `https://antenati.cultura.gov.it/search/?comune=Linguaglossa&tipo=nati&anno=${year}`,
         'Pending'
       );
@@ -268,10 +279,35 @@ export function generateGoals(person: Person): ResearchGoal[] {
       `Antenati — covers births before unification`,
       'Pending'
     );
+    // Hunt the household: scan for siblings
+    push(
+      `Hunt the household: scan every Emmi birth in Nati indexes — log any child of Antonino + Rosaria Nasti to identify family, quartiere, and Antonino's patronymic`,
+      `Linguaglossa Nati on Antenati — sibling's act makes Egidio findable by triangulation`,
+      'Pending'
+    );
+    // Morti registers for Antonino
+    push(
+      `Scan Linguaglossa Morti 1866-1893 for Antonino Emmi's death act — will name widow Rosaria Nasti and his parents`,
+      `Antenati — Morti indexes at back of each year, much faster to scan than Nati`,
+      'Pending'
+    );
+    // Church route
+    push(
+      `Check Santa Maria delle Grazie baptism registers (Registri ecclesiastici 1539-1928) on FamilySearch — baptism ~1866-1872 naming Antonino Emmi + Rosaria Nasti gives birth date independent of civil series`,
+      `https://www.familysearch.org/search/catalog/results?q=Linguaglossa&filter=recordType%3AChurch%20Records`,
+      'Pending'
+    );
+    // Comune follow-up (lower priority than allegati)
     push(
       `Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 (atto 59), father fu Antonino, clarify atto 141 is not the one wanted`,
       `Comune di Linguaglossa, Ufficio di Stato Civile`,
       hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
+    );
+    // DGS 7841071: deprioritized — likely same ASCt images already browsed on Antenati
+    push(
+      `[LOW PRIORITY] Visit FamilySearch center for DGS 7841071 (Nati 1866-1875) — likely same Archivio di Stato Catania images already browsed, but worth checking for annotation differences`,
+      `FamilySearch center — segnatura 8541 on Antenati`,
+      'Pending'
     );
   }
 
@@ -298,11 +334,11 @@ export function generateGoals(person: Person): ResearchGoal[] {
     );
   }
 
-  // Everyone: FamilySearch center visit for restricted films (DGS 7841071 etc.)
-  if (comune === 'Linguaglossa') {
+  // Everyone: allegati shortcut for anyone married in Linguaglossa 1900 with missing birth
+  if (person.id === 'concetta-sgroi' && !hasFoundRecord(person, 'Death Record')) {
     push(
-      `Visit FamilySearch center to view restricted film DGS 7841071 (Nati 1866-1875)`,
-      `FamilySearch center — segnatura 8541 on Antenati`,
+      `Concetta's birth act is also in the Egidio–Sgroi allegati folder (atto 59/1900) — request from Archivio di Stato di Catania alongside Egidio's`,
+      `Archivio di Stato di Catania — one request covers both`,
       'Pending'
     );
   }
