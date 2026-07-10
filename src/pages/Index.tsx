@@ -133,7 +133,7 @@ const Index = () => {
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold tracking-wide uppercase">Next Research Task</p>
               <p className="text-base mt-1">
-                Find <strong>Egidio Emmi</strong>'s birth record (son of Antonino Emmi + Rosaria Raiti) in{' '}
+                Find <strong>Egidio Emmi</strong>'s birth record (son of Antonino Emmi + Rosaria — surname Nasti/Raiti, unresolved) in{' '}
                 <strong>Linguaglossa Nati 1868–1872</strong>
               </p>
               <div className="flex flex-wrap gap-2 mt-2">

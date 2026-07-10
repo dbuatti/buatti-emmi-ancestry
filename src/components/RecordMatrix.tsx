@@ -14,16 +14,16 @@ const RECORD_TYPES = [
 
 const PEOPLE_IDS = [
   'alfredo-buatti-sr', 'ida-galanti',
-  'remo-chiappini', 'remo-wife-unknown',
   'egidio-emmi', 'concetta-sgroi',
   'rosario-patane-sr', 'venera-vecchio',
   'ezio-buatti', 'bruna-lilia-chiappini',
   'gregorio-emmi', 'rosaria-patane',
   'alfred-buatti', 'venera-buatti',
-  'antonino-emmi', 'rosaria-raiti',
-  'salvatore-sgroi', 'santa-cali',
+  'antonino-emmi', 'rosaria-nasti',
+  'gregorio-sgroi', 'santa-cali',
   'sebastiano-patane-sr', 'rosaria-dagata',
   'vincenzo-vecchio', 'rosaria-raciti',
+  'remo-chiappini', 'irma-pirri',
 ];
 
 function StatusIcon({ status, record }: { status: string; record: string }) {

@@ -17,12 +17,12 @@ interface EvidenceLink {
 }
 
 const nodes: EvidenceNode[] = [
-  { id: 'antonino-emmi', label: 'Antonino Emmi', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59 — listed as "fu Antonino"', note: 'Died before 8 Sep 1900. Possibly son of Giuseppe Emmi (pencil theory).' },
-  { id: 'rosaria-raiti', label: 'Rosaria Raiti', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59 — listed as mother "Raiti Rosaria"', note: 'Surname confirmed as Raiti (not Raciti/Rapisardi). Living at time of Egidio\'s marriage.' },
-  { id: 'salvatore-sgroi', label: 'Salvatore Sgroi', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59 — listed as father of Concetta', note: 'Living at time of Concetta\'s marriage. Born ~1850s-60s.' },
-  { id: 'santa-cali', label: 'Santa Cali', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59 — listed as mother "Cali Santa"', note: 'Living at time of Concetta\'s marriage.' },
-  { id: 'egidio-emmi', label: 'Egidio Emmi (~1870 – pre-1943)', source: 'Marriage Proclamation atto № 59: age 30 on 8 Sep 1900 → born ~1869/1870. POW report (1943) shows "DEC" = deceased.', note: 'Farmer (contadino). Illiterate. NOT the same as Egidio Emmi (b. ~1855) who married Angela Raiti in 1895 — same father Antonino, different mother (Rosa Vecchio vs Rosaria Raiti), likely half-brothers.' },
-  { id: 'concetta-sgroi', label: 'Concetta Sgroi (~1880 – pre-1967)', source: 'Marriage Proclamation atto № 59: age 20 on 8 Sep 1900 → born ~1879/1880. Later church records show deceased by 1967.', note: 'Farmer (contadina). Illiterate. Maiden name Sgroi confirmed via Gregorio\'s 1943 POW report.' },
+  { id: 'antonino-emmi', label: 'Antonino Emmi', source: 'Linguaglossa Marriage Act 1900, atto № 59 — listed as "fu Antonino"', note: 'Died before 4 Nov 1900. Husband of Rosaria Nasti (not Raiti — earlier banns error).' },
+  { id: 'rosaria-nasti', label: 'Rosaria (surname unresolved — Nasti/Raiti)', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900) — "Nasti Rosaria". Banns (8 Sep 1900, same clerk) — "Raiti Rosaria". Two documents, same clerk, same year — neither authoritative.', note: 'Given name also uncertain — "Rocaria/Rosaria" in both acts. Banns gave Raiti, marriage act gave Nasti. Only Egidio\'s ~1870 birth act (different clerk, mother present) will resolve. Living in 1900 (not "fu").' },
+  { id: 'gregorio-sgroi', label: 'Gregorio Sgroi (~1840–?)', source: 'Linguaglossa Banns (8 Sep 1900) — age 60, falegname. Marriage Act (4 Nov 1900) confirms given name.', note: 'Born ~1840. Carpenter — tradesman, not farmer. Previously misread as "Salvatore" from banns. Living at time of Concetta\'s marriage.' },
+  { id: 'santa-cali', label: 'Santa Calì', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900) — listed as mother "Cali Santa"', note: 'Living at time of Concetta\'s marriage. Wife of Gregorio Sgroi (not Salvatore).' },
+  { id: 'egidio-emmi', label: 'Egidio Emmi (~1870 – pre-1943)', source: 'Marriage act atto № 59 (4 Nov 1900): age 30 → born ~1869/1870. Banns (8 Sep 1900): same age. POW report (1943) shows "DEC" = deceased.', note: 'Farmer (contadino). Illiterate. Officer: Concetto Scarlata. Wedding witnesses: Cassaniti Vincenzo, Arlotta Giuseppe. Banns witnesses: De Francesco Francesco (guardia), Cesareo Giacomo (mugnaio). Birth act confirmed to exist (cited in processetti). NOT the same as Egidio Emmi (b. ~1855, son of Antonino + Rosa Vecchio) who married Angela Raiti in 1895 — same father, different mother, likely half-brothers or cousins.' },
+  { id: 'concetta-sgroi', label: 'Concetta Sgroi (~1877 – pre-1967)', source: 'Marriage act atto № 59 (4 Nov 1900): age 23 → born ~1876/1877. Banns (8 Sep 1900): age 23, industriosa. Later church records show deceased by 1967.', note: 'Industriosa (home-based textile/domestic work) — NOT contadina as previously recorded. Maiden name Sgroi confirmed via Gregorio\'s 1943 POW report. Previously recorded as age 20, father Salvatore (banns errors — marriage act corrects).' },
   { id: 'gregorio-emmi', label: 'Gregorio Emmi (1915–1979)', source: 'Civil birth extract atto n. 202 (23 Oct 1915). Also parish baptism 5 Dec 1915 (DGS 5455112, entry N.251) — 4-day discrepancy. Death notice SMH 30 Nov 1979 (Ryerson).', note: 'Born 23 Oct 1915 (civil) / 27 Oct 1915 (baptism), Linguaglossa. Died 24 Nov 1979, Stanmore NSW. POW in WWII. Married Rosaria Patanè 7 Jul 1948 Fiumefreddo. Emigrated Australia 1950. Naturalised 26 Jan 1961.' },
   { id: 'sebastiano-patane-sr', label: 'Sebastiano Patanè', source: 'Calatabiano civil birth 1889, atto n. 28 — listed as father (age 39, castaldo). Also in Fiumefreddo marriage banns 1911.', note: 'Resident of Calatabiano. Father of Rosario, Giuseppe, and Venera Patanè.' },
   { id: 'rosaria-dagata', label: 'Rosaria D\'Agata', source: 'Calatabiano civil birth 1889, atto n. 28 — listed as mother. Also in Fiumefreddo marriage banns 1911.', note: 'From Fiumefreddo. Died before 1911 (not listed in later records).' },
@@ -32,17 +32,19 @@ const nodes: EvidenceNode[] = [
   { id: 'venera-vecchio', label: 'Venera (Veneranda) Vecchio (1888–pre-1953)', source: 'Fiumefreddo baptism 8 Jan 1888, folio 240, entry n. 8. Married 24 Apr 1911.', note: 'Full baptismal name: Veneranda. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano.' },
   { id: 'rosaria-patane', label: 'Rosaria Patanè (1924–1994)', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello.', note: 'Daughter of Rosario Patanè + Venera Vecchio. Married Gregorio Emmi 7 Jul 1948, Fiumefreddo.' },
   { id: 'ezio-buatti', label: 'Ezio Buatti (1923–1991)', source: 'NAA: B78, ITALIAN/BUATTI EZIO (Item 5746087) — arrival form RA, marriage notification, passport photo.', note: 'Born Ascoli Piceno. Arrived Toscana 27 Sep 1952, Greta Migrant Camp. Married Lilia Chiappini 4 Oct 1952 St Anthony\'s Greta. Departed per Neptunia 13 Sep 1963. Returned, died Melbourne.' },
-  { id: 'bruna-lilia-chiappini', label: 'Bruna Lilia Chiappini (1930–1998)', source: 'NAA: B78 (Ezio\'s file) — marriage notification listing reg no. 290730. Also Toscana passenger manifest K269, line 178. Naturalisation cert EF10155554, file V653748 (18 Nov 1965).', note: 'Born San Benedetto del Tronto. Travelled Toscana same voyage as Ezio (registered 12 apart). Married 4 Oct 1952 St Anthony\'s Greta. Naturalised 1965, Richmond VIC. Gino Chiappini on line 177 same manifest — confirmed real by NAA, Bonegilla camp, ARDs exist.' },
+  { id: 'bruna-lilia-chiappini', label: 'Bruna Lilia Chiappini (1930–1998)', source: 'NAA: B78 (Ezio\'s file) — marriage notification listing reg no. 290730. Also Toscana passenger manifest K269, line 178. Naturalisation cert EF10155554, file V653748 (18 Nov 1965). Branxton Parish extract (10 Jul 2026) names parents.', note: 'Born San Benedetto del Tronto. Travelled Toscana same voyage as Ezio (registered 12 apart). Married 4 Oct 1952 St Anthony\'s Greta. Parents: Remo Chiappini + Irma Pirri (Branxton extract 10 Jul 2026). Naturalised 1965, Richmond VIC. Gino Chiappini on line 177 same manifest — confirmed real by NAA, Bonegilla camp, ARDs exist.' },
+  { id: 'remo-chiappini', label: 'Remo Chiappini', source: 'Branxton Catholic Parish marriage extract (10 Jul 2026) — named as father of Lilia Chiappini.', note: 'Wife: Irma Pirri. Both resided Ascoli Piceno. Family accounts suggest he was sent to Porto San Giorgio after wife\'s death (TB). Needs primary source verification.' },
+  { id: 'irma-pirri', label: 'Irma Pirri', source: 'Branxton Catholic Parish marriage extract (10 Jul 2026) — named as mother of Lilia Chiappini.', note: 'Previously unknown. Wife of Remo Chiappini, mother of Bruna Lilia Chiappini. Possibly died of TB (per family story). Both resided Ascoli Piceno.' },
 ];
 
 const links: EvidenceLink[] = [
-  { from: 'antonino-emmi', to: 'rosaria-raiti', via: 'Marriage (presumed, record not yet found)', source: 'Surmised from Egidio\'s proclamation naming both as parents', date: '~1868-1869', notes: 'No marriage record found yet. Likely Linguaglossa parish.' },
-  { from: 'antonino-emmi', to: 'egidio-emmi', via: 'Father–son', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59: "figlio di fu Antonino e di Raiti Rosaria"', date: '8 Sep 1900' },
-  { from: 'rosaria-raiti', to: 'egidio-emmi', via: 'Mother–son', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59', date: '8 Sep 1900' },
-  { from: 'salvatore-sgroi', to: 'santa-cali', via: 'Marriage (presumed)', source: 'Surmised from Concetta\'s proclamation naming both as parents', date: '~1878-1879' },
-  { from: 'salvatore-sgroi', to: 'concetta-sgroi', via: 'Father–daughter', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59: "figlia di Salvatore e di Cali Santa"', date: '8 Sep 1900' },
-  { from: 'santa-cali', to: 'concetta-sgroi', via: 'Mother–daughter', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59', date: '8 Sep 1900' },
-  { from: 'egidio-emmi', to: 'concetta-sgroi', via: 'Marriage', source: 'Linguaglossa Marriage Proclamation 1900, atto № 59. Witnesses: Francesco Di Francesco (44), Giacomo Di Casaco (44). Both illiterate.', date: '8 Sep 1900', notes: 'Civil marriage (proclamation). Church marriage may be separate record.' },
+  { from: 'antonino-emmi', to: 'rosaria-nasti', via: 'Marriage (presumed, record not yet found)', source: 'Surmised from Egidio\'s marriage act naming both as parents', date: '~1868-1869', notes: 'No marriage record found yet. Likely Linguaglossa parish.' },
+  { from: 'antonino-emmi', to: 'egidio-emmi', via: 'Father–son', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900): "figlio di fu Antonino e di Nasti Rosaria"', date: '4 Nov 1900' },
+  { from: 'rosaria-nasti', to: 'egidio-emmi', via: 'Mother–son', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900)', date: '4 Nov 1900' },
+  { from: 'gregorio-sgroi', to: 'santa-cali', via: 'Marriage (presumed)', source: 'Surmised from Concetta\'s marriage act naming both as parents', date: '~1875-1876' },
+  { from: 'gregorio-sgroi', to: 'concetta-sgroi', via: 'Father–daughter', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900): "figlia di Gregorio e di Cali Santa"', date: '4 Nov 1900' },
+  { from: 'santa-cali', to: 'concetta-sgroi', via: 'Mother–daughter', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900)', date: '4 Nov 1900' },
+  { from: 'egidio-emmi', to: 'concetta-sgroi', via: 'Marriage', source: 'Linguaglossa Marriage Act 1900, atto № 59 (4 Nov 1900). Officer: Concetto Scarlata. Wedding witnesses: Cassaniti Vincenzo (40), Arlotta Giuseppe (23). Both illiterate. Banns (8 Sep 1900, same officer) witnesses: De Francesco Francesco (~44, guardia), Cesareo Giacomo (40).', date: '4 Nov 1900', notes: 'Civil marriage ceremony. Banns published 9 & 16 Sep 1900. ~7-week gap. Church marriage record may exist separately.' },
   { from: 'egidio-emmi', to: 'gregorio-emmi', via: 'Father–son', source: 'Gregorio\'s baptism record (5 Dec 1915, DGS 5455112). Also 1943 POW report lists mother "Sgroi Concetta" and father as "DEC".', date: '1915' },
   { from: 'concetta-sgroi', to: 'gregorio-emmi', via: 'Mother–son', source: 'Gregorio\'s 1943 POW report NAA: MP1103/2, 55491 — "Mother\'s Pre-marriage Name: Sgroi Concetta"', date: '1943' },
   { from: 'sebastiano-patane-sr', to: 'rosaria-dagata', via: 'Marriage (presumed)', source: 'Surmised from Rosario\'s birth record naming both as parents', date: '~1887-1888' },
@@ -55,7 +57,10 @@ const links: EvidenceLink[] = [
   { from: 'rosario-patane-sr', to: 'rosaria-patane', via: 'Father–daughter', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello', date: '23 May 1924' },
   { from: 'venera-vecchio', to: 'rosaria-patane', via: 'Mother–daughter', source: 'Fiumefreddo civil birth 23 May 1924, atto n. 71, Sezione Castello', date: '23 May 1924' },
   { from: 'gregorio-emmi', to: 'rosaria-patane', via: 'Marriage', source: 'Civil birth extract atto n. 202 margin annotation: 7 Jul 1948, Fiumefreddo di Sicilia, atto n. 34 part 2 series A.', date: '7 Jul 1948' },
-  { from: 'ezio-buatti', to: 'bruna-lilia-chiappini', via: 'Marriage', source: 'NAA B78, Form RA 6 (Aliens Act Notification of Marriage): 4 Oct 1952, St Anthony\'s, Greta, NSW, cert C810020. Both on Toscana same voyage, registered same batch (reg nos 290718 / 290730).', date: '4 Oct 1952' },
+  { from: 'ezio-buatti', to: 'bruna-lilia-chiappini', via: 'Marriage', source: 'NAA B78, Form RA 6 (Aliens Act Notification of Marriage): 4 Oct 1952, St Anthony\'s, Greta, NSW, cert C810020. Branxton Parish extract confirms parents, witnesses, celebrant. Both on Toscana same voyage, registered same batch (reg nos 290718 / 290730).', date: '4 Oct 1952' },
+  { from: 'remo-chiappini', to: 'irma-pirri', via: 'Marriage (presumed)', source: 'Branxton Catholic Parish marriage extract (10 Jul 2026) — named as parents of Lilia', date: '~1928-1929' },
+  { from: 'remo-chiappini', to: 'bruna-lilia-chiappini', via: 'Father–daughter', source: 'Branxton Catholic Parish marriage extract (10 Jul 2026)', date: '3 Jul 1930' },
+  { from: 'irma-pirri', to: 'bruna-lilia-chiappini', via: 'Mother–daughter', source: 'Branxton Catholic Parish marriage extract (10 Jul 2026)', date: '3 Jul 1930' },
 ];
 
 function NodeSection({ node, linkedNodes }: { node: EvidenceNode; linkedNodes: EvidenceLink[] }) {
@@ -123,12 +128,12 @@ export function EvidenceWiki() {
             linkedNodes={links.filter(l => l.from === 'antonino-emmi' || l.to === 'antonino-emmi')}
           />
           <NodeSection
-            node={nodes.find(n => n.id === 'rosaria-raiti')!}
-            linkedNodes={links.filter(l => l.from === 'rosaria-raiti' || l.to === 'rosaria-raiti')}
+            node={nodes.find(n => n.id === 'rosaria-nasti')!}
+            linkedNodes={links.filter(l => l.from === 'rosaria-nasti' || l.to === 'rosaria-nasti')}
           />
           <NodeSection
-            node={nodes.find(n => n.id === 'salvatore-sgroi')!}
-            linkedNodes={links.filter(l => l.from === 'salvatore-sgroi' || l.to === 'salvatore-sgroi')}
+            node={nodes.find(n => n.id === 'gregorio-sgroi')!}
+            linkedNodes={links.filter(l => l.from === 'gregorio-sgroi' || l.to === 'gregorio-sgroi')}
           />
           <NodeSection
             node={nodes.find(n => n.id === 'santa-cali')!}
@@ -186,6 +191,31 @@ export function EvidenceWiki() {
         </div>
       </div>
 
+      {/* Buatti–Chiappini Line */}
+      <div>
+        <h3 className="text-lg font-bold text-stone-900 border-b border-stone-200 pb-2 mb-4 flex items-center gap-2">
+          <BookOpen className="w-5 h-5 text-stone-700" /> Buatti–Chiappini Line
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <NodeSection
+            node={nodes.find(n => n.id === 'remo-chiappini')!}
+            linkedNodes={links.filter(l => l.from === 'remo-chiappini' || l.to === 'remo-chiappini')}
+          />
+          <NodeSection
+            node={nodes.find(n => n.id === 'irma-pirri')!}
+            linkedNodes={links.filter(l => l.from === 'irma-pirri' || l.to === 'irma-pirri')}
+          />
+          <NodeSection
+            node={nodes.find(n => n.id === 'ezio-buatti')!}
+            linkedNodes={links.filter(l => l.from === 'ezio-buatti' || l.to === 'ezio-buatti')}
+          />
+          <NodeSection
+            node={nodes.find(n => n.id === 'bruna-lilia-chiappini')!}
+            linkedNodes={links.filter(l => l.from === 'bruna-lilia-chiappini' || l.to === 'bruna-lilia-chiappini')}
+          />
+        </div>
+      </div>
+
       {/* Name Discrepancies */}
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
         <h3 className="font-bold text-amber-900 flex items-center gap-2 mb-3">
@@ -195,17 +225,22 @@ export function EvidenceWiki() {
           <div>
             <span className="font-semibold">Rosaria Raciti / Rapisardi / Raiti:</span> Three different scribal recordings for women in connected families. 
             Venera Vecchio's mother appears as <strong>Raciti</strong> in the 1888 baptism and as <strong>Rapisardi</strong> in the 1911 marriage processetti. 
-            Our Egidio's mother is <strong>Rosaria Raiti</strong>. These are distinct families (not the same woman), but the phonetic similarity across 
-            Raciti–Rapisardi–Raiti suggests a common root or frequent scribal confusion.
+            Our Egidio's mother appears as <strong>Raiti</strong> in the banns (8 Sep 1900) and as <strong>Nasti</strong> in the marriage act (4 Nov 1900) — same clerk Concetto Scarlata, same year. Neither is inherently more authoritative on this point. Given name also uncertain: "Rocaria/Rosaria" in both. Egidio's ~1870 birth act (a different clerk, mother present) will settle it. These are distinct families from the Raciti/Rapisardi confusion above, but the phonetic similarity across 
+            Raciti–Rapisardi–Raiti/Nasti is worth noting.
           </div>
           <div>
             <span className="font-semibold">Two Egidio Emmis:</span> Both have father Antonino Emmi, but different mothers — Rosa Vecchio (first marriage, Egidio b. ~1855) 
-            vs Rosaria Raiti (second marriage, our Egidio b. ~1870). Likely half-brothers. The older Egidio married Angela Raiti in 1895 (age 40). 
+            vs Rosaria (surname unresolved — Nasti in marriage act, Raiti in banns; our Egidio b. ~1870). Likely half-brothers. The older Egidio married Angela Raiti in 1895 (age 40). 
             Our Egidio married Concetta Sgroi in 1900 (age 30).
           </div>
           <div>
-            <span className="font-semibold">Venera / Veneranda:</span> Baptismal register records "Veneranda" as full name. Marriage records and civil documents 
-            abbreviate to "Venera." Both refer to the same person.
+            <span className="font-semibold">Concetta's occupation — contadina vs industriosa:</span> The banns (8 Sep 1900) record both Concetta and her mother Santa Calì as <strong>industriosa</strong> (home-based textile/domestic work), not contadina. My earlier transcription of the marriage act misread this word. Amend all references: Concetta Sgroi and Santa Calì were industriosa.
+          </div>
+          <div>
+            <span className="font-semibold">Banns vs wedding dates:</span> The marriage act (4 Nov 1900) referred to banns being published "last month" (October), but the banns record shows 9 & 16 September 1900 — both genuine Sundays. The marriage act's phrase was either loose boilerplate or I misread "settembre scorso" as "mese scorso". Banns record wins: September. ~7-week gap between banns and wedding — slightly unusual (most married within 2–3 weeks), but legally valid.
+          </div>
+          <div>
+            <span className="font-semibold">Birth acts confirmed to exist:</span> The banns processetti cite copies of both Egidio's and Concetta's birth acts as issued — both are definitely in Linguaglossa Nati registers (DGS 7841071). However, the allegati volume for 1900 falls in the 1894–1910 unfilmed gap, so the processetti copies aren't available online. Originals may survive at Archivio di Stato di Catania.
           </div>
           <div>
             <span className="font-semibold">Rosario's birth date (8 vs 9 Feb 1889):</span> Civil birth record (atto n. 28, Calatabiano) states 8 Feb 1889 at 4:15 AM. 

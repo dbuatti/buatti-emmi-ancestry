@@ -90,55 +90,57 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: 'Unknown / to be confirmed',
     deathDate: 'Unknown / to be confirmed',
-    spouses: ['remo-wife-unknown'],
+    spouses: ['irma-pirri'],
     parents: [],
     children: ['bruna-lilia-chiappini'],
     siblings: ['At least one son'],
     notes: [
-      'Family account (relayed by Alfred Buatti, originally from an aunt): Remo\'s wife survived childbirth — contrary to an earlier family assumption that she had died giving birth — but contracted an infection (tuberculosis).',
+      'Father of Bruna Lilia Chiappini — confirmed via Branxton Catholic Parish marriage register extract (4 Oct 1952, Ezio Buatti + Lilia Chiappini). Wife: Irma Pirri. Both residing in Ascoli Piceno, Italy.',
+      'Family account (relayed by Alfred Buatti, originally from an aunt): Remo\'s wife (possibly Irma) survived childbirth — contrary to an earlier family assumption that she had died giving birth — but contracted an infection (tuberculosis).',
       'Remo was reportedly sent away to a port town referred to as "San Giorgio" to keep him away from their son, and his wife died about a month later.',
       'Details (which son, exact location/town of "San Giorgio," and dates) still need confirming, as this was relayed informally.'
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found — entirely unknown' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'Needs primary source verification' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Irma Pirri — likely San Benedetto del Tronto or Ascoli Piceno' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Information based entirely on informal family accounts. Needs primary source verification.',
+      status: 'In Progress',
+      details: 'Name confirmed as father of Lilia via Branxton marriage extract 10 Jul 2026. Wife now named (Irma Pirri). Remo\'s own details still unknown.',
       nextSteps: [
-        'Identify Remo\'s wife\'s name.',
+        'Search for Remo Chiappini records in San Benedetto del Tronto or Ascoli Piceno.',
         'Confirm the "San Giorgio" story and locate the town (possibly Porto San Giorgio in Fermo, Marche).',
-        'Search for birth/marriage records in San Benedetto del Tronto or Porto San Giorgio.'
+        'Search for birth/marriage records of Remo Chiappini + Irma Pirri.'
       ]
     }
   },
   {
-    id: 'remo-wife-unknown',
-    name: 'Remo Chiappini\'s Wife (Name Unknown)',
+    id: 'irma-pirri',
+    name: 'Irma Pirri',
     generation: 1,
     line: 'Chiappini',
     gender: 'F',
     birthDate: 'Unknown / to be confirmed',
-    deathDate: 'c. 1930s (about a month after childbirth)',
+    deathDate: 'Unknown / to be confirmed',
     spouses: ['remo-chiappini'],
     parents: [],
     children: ['bruna-lilia-chiappini'],
     notes: [
-      'Survived childbirth but contracted tuberculosis and died about a month later.',
-      'Her death led to Remo being sent away to "San Giorgio" to protect their son from infection.'
+      'Mother of Bruna Lilia Chiappini, confirmed via Branxton Catholic Parish marriage register extract (4 Oct 1952, Ezio Buatti + Lilia Chiappini). Listed as "Irma Pirri", residing in Ascoli Piceno, Italy.',
+      'The family story about Remo\'s wife dying of tuberculosis after childbirth (relayed via Alfred Buatti from an aunt) may refer to Irma or may refer to a different wife — unclear whether the story involves the mother of a son (not Lilia) or Irma herself.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'Name and dates completely unknown' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'Husband Remo\'s name known but no marriage record found' },
-      { type: 'Death Record', status: 'Not Found', notes: 'c. 1930s, location unknown' }
+      { type: 'Birth Record', status: 'Not Found', notes: 'Name now known — search Ascoli Piceno area' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Remo Chiappini — likely San Benedetto del Tronto or Ascoli Piceno' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Unknown date — possibly connected to TB story' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name and dates completely unknown.',
+      status: 'Confirmed — Name Only',
+      details: 'Name confirmed as Lilia Chiappini\'s mother via Branxton marriage extract 10 Jul 2026. All other details unknown.',
       nextSteps: [
-        'Obtain Bruna Lilia Chiappini\'s birth record (1930) to find her mother\'s maiden name.'
+        'Search for birth/marriage records of Irma Pirri in Ascoli Piceno or San Benedetto del Tronto.',
+        'Ask papa about Irma Pirri and whether the TB story relates to her.'
       ]
     }
   },
@@ -149,30 +151,34 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Emmi',
     gender: 'M',
-    birthDate: '~1870 (age 30 at marriage on 8 Sep 1900)',
+    birthDate: '~1870 (age 30 at marriage on 4 Nov 1900)',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
     occupation: 'Farmer (contadino)',
     deathDate: 'Deceased prior to 1943',
     notes: [
       'Recorded as "DEC" on Gregorio\'s 1943 POW report, and as "fu Egidio" (the late Egidio) on the 1949 Comune di Linguaglossa certificate.',
-      'Parents confirmed via Marriage Proclamation atto № 59 (8 Sep 1900): fu Antonino Emmi + Rosaria Raiti.',
-      'Married Concetta Sgroi on 8 Sep 1900 in Linguaglossa (atto № 59). Witnesses: Francesco Di Francesco (44) and Giacomo Di Casaco (44). Both illiterate.',
+      'Parents: fu Antonino Emmi + Rosaria (surname unresolved — Nasti in marriage act, Raiti in banns; same clerk Concetto Scarlata wrote both within 2 months, neither is inherently more authoritative). Given name also uncertain — reads "Rocaria/Rosaria" in both acts.',
+      'Egidio\'s ~1870 birth act (a different clerk, writing decades earlier when the mother was present to give information) will settle the surname.',
+      'Married Concetta Sgroi on 4 Nov 1900 in Linguaglossa (atto № 59). Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40, contadino) and Arlotta Giuseppe (23). Both spouses illiterate.',
+      'Banns (pubblicazioni) issued 8 Sep 1900, act n. 59 (same number as marriage act — coincidental). Published Sundays 9 and 16 Sep 1900. ~7-week gap between banns and wedding — slightly unusual, banns stayed valid. The marriage act\'s reference to "last month" (October) was likely loose boilerplate or a misreading of "settembre scorso"; the banns record is authoritative for September.',
+      'Banns recorded a different surname for the mother (Raiti vs Nasti), a different father for the bride (Salvatore vs Gregorio), and a different age (20 vs 23). For the bride\'s details, the marriage ceremony is more authoritative (based on documents she submitted). For the groom\'s mother\'s surname, both acts are the same clerk in the same year — unresolved. Egidio\'s birth act will settle it.',
+      'Banns witnesses: De Francesco Francesco (~44, guardia) and Cesareo Giacomo (40, possibly mugnaio/miller). Different from wedding witnesses — normal, banns witnesses were often officials-of-convenience.',
       'Had at least one older son (that son\'s family now in Venezuela — per Connie Emmi 28 Jun 2026).',
-      'NOT the same person as Egidio Emmi (b. ~1855, son of Antonino + Rosa Vecchio) who married Angela Raiti on 16 Dec 1895 — same father, different mother, likely uncle/nephew or cousins.',
+      'NOT the same person as Egidio Emmi (b. ~1855, son of Antonino + Rosa Vecchio) who married Angela Raiti on 16 Dec 1895 — same father, different mother, likely half-brothers or cousins.',
     ],
     spouses: ['concetta-sgroi'],
-    parents: ['antonino-emmi', 'rosaria-raiti'],
+    parents: ['antonino-emmi', 'rosaria-nasti'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: '~1870, Linguaglossa — search Linguaglossa civil records' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Marriage Proclamation atto № 59, 8 Sep 1900, Linguaglossa. Confirmed parents, ages, occupations.' },
+      { type: 'Birth Record', status: 'Found — Not Yet Read', notes: '~1870, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap).' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40), Arlotta Giuseppe (23). Both illiterate. Banns also atto № 59 (8 Sep 1900) — coincidental same number. CORRECTS earlier banns which had wrong mother (Raiti), father (Salvatore), age (20), and bride occupation (contadina vs industriosa).' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1943 per POW report — confirmed "fu Egidio" on 1949 certificate' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Marriage record found (8 Sep 1900, atto № 59). Parents confirmed: Antonino Emmi + Rosaria Raiti. Age ~30 (born ~1870). Occupation: farmer.',
+      details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi + Rosaria Nasti (given name uncertain). Age ~30 (born ~1870). Farmer. Illiterate. Banns (8 Sep 1900, atto № 59) contained errors — actual marriage record supersedes.',
       nextSteps: [
-        'Find Egidio\'s birth record (~1870) in Linguaglossa civil records.',
+        'Find Egidio\'s birth record (~1870) in Linguaglossa Nati registers (DGS 7841071).',
       ]
     },
     sources: [
@@ -187,9 +193,14 @@ export const initialPeople: Person[] = [
         reference: 'fu Egidio notation'
       },
       {
-        title: 'Linguaglossa Marriage Proclamation Records 1900',
+        title: 'Linguaglossa Marriage Act 1900',
         type: 'Civil Record',
-        reference: 'Atto № 59, 8 Sep 1900. Egidio Emmi (30) + Concetta Sgroi (20). Parents: fu Antonino Emmi + Rosaria Raiti (groom); Salvatore Sgroi + Santa Cali (bride).'
+        reference: 'Atto № 59, 4 Nov 1900. Egidio Emmi (30) + Concetta Sgroi (23). Parents: fu Antonino Emmi + Rosaria Nasti (groom); Gregorio Sgroi + Santa Calì (bride). Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo, Arlotta Giuseppe.'
+      },
+      {
+        title: 'Linguaglossa Banns (Pubblicazioni) 1900',
+        type: 'Civil Record',
+        reference: 'Atto № 59, 8 Sep 1900. Published 9 & 16 Sep 1900. Witnesses: De Francesco Francesco (~44, guardia), Cesareo Giacomo (40). Confirms banns dates. Both acts by same officer Concetto Scarlata.'
       }
     ]
   },
@@ -201,29 +212,31 @@ export const initialPeople: Person[] = [
     gender: 'F',
     birthDate: '~1880 (age 20 at marriage on 8 Sep 1900)',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
-    occupation: 'Farmer (contadina)',
+    occupation: 'Industriosa (home-based textile/domestic work)',
     deathDate: 'Deceased prior to 1967',
     spouses: ['egidio-emmi'],
-    parents: ['salvatore-sgroi', 'santa-cali'],
+    parents: ['gregorio-sgroi', 'santa-cali'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     notes: [
       'Maiden name confirmed via Gregorio\'s 1943 Report on Prisoners of War; an earlier guess of "Sofia Concetta" is superseded.',
-      'Parents confirmed via Marriage Proclamation atto № 59 (8 Sep 1900): Salvatore Sgroi + Santa Cali.',
+      'Parents confirmed via Marriage act atto № 59 (4 Nov 1900) and banns (8 Sep 1900): Gregorio Sgroi + Santa Calì. Age 23 at marriage → born ~1877.',
+      'Occupation: "industriosa" (home-based textile/domestic work, per banns), NOT "contadina" as previously recorded. Her mother Santa Calì was also industriosa.',
+      'The earlier banns (pubblicazioni, 8 Sep 1900, same officer Scarlata) recorded father as Salvatore Sgroi and age as 20 — both errors corrected by the marriage ceremony (4 Nov 1900). Banns witnesses: De Francesco Francesco (~44, guardia) and Cesareo Giacomo (40, possibly mugnaio).',
       'Gregorio\'s own daughter Concetta was very likely named after this grandmother.',
       'Had at least one older son (that son\'s family migrated to Venezuela — per Connie Emmi 28 Jun 2026).',
-      'Egidio and Concetta are both illiterate per the 1900 marriage proclamation record.'
+      'Egidio and Concetta are both illiterate per the 1900 marriage record and banns — neither signed.'
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: '~1880, Linguaglossa — search Linguaglossa civil records' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Marriage Proclamation atto № 59, 8 Sep 1900, Linguaglossa. Confirmed parents, ages, occupations.' },
+      { type: 'Birth Record', status: 'Found — Not Yet Read', notes: '~1877, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap).' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. CORRECTS earlier banns (8 Sep 1900). Bride age 23, father Gregorio Sgroi.' },
       { type: 'Death Record', status: 'Not Found', notes: 'Pre-1967 per later church records. Exact date unknown.' },
       { type: 'Surname Confirmation', status: 'Found', notes: '"Sgroi" confirmed via Gregorio\'s 1943 POW record and 1900 marriage record' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Parents confirmed: Salvatore Sgroi + Santa Cali. Age ~20 at marriage (born ~1880).',
+      details: 'Parents confirmed: Gregorio Sgroi + Santa Calì. Age 23 at marriage (born ~1877). Occupation: industriosa. Banns had wrong father (Salvatore) and age (20) — marriage act corrects.',
       nextSteps: [
-        'Find Concetta\'s birth record (~1880) in Linguaglossa civil records.',
+        'Find Concetta\'s birth record (~1877) in Linguaglossa civil records (DGS 7841071).',
         'Look into Sgroi family network in Linguaglossa.'
       ]
     },
@@ -234,9 +247,14 @@ export const initialPeople: Person[] = [
         reference: 'NAA: MP1103/2, 55491 (records "Mother\'s Pre-marriage Name: Sgroi Concetta")'
       },
       {
-        title: 'Linguaglossa Marriage Proclamation Records 1900',
+        title: 'Linguaglossa Marriage Act 1900',
         type: 'Civil Record',
-        reference: 'Atto № 59, 8 Sep 1900. Egidio Emmi (30) + Concetta Sgroi (20). Parents: Salvatore Sgroi + Santa Cali.'
+        reference: 'Atto № 59, 4 Nov 1900. Egidio Emmi (30) + Concetta Sgroi (23). Parents: Gregorio Sgroi + Santa Calì. Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo, Arlotta Giuseppe.'
+      },
+      {
+        title: 'Linguaglossa Banns (Pubblicazioni) 1900',
+        type: 'Civil Record',
+        reference: 'Atto № 59, 8 Sep 1900. Same officer. Corrects earlier misread: Concetta = industriosa, not contadina. Witnesses: De Francesco Francesco (~44, guardia), Cesareo Giacomo (40, possibly mugnaio).'
       }
     ]
   },
@@ -593,7 +611,7 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: 'Unknown',
     deathDate: 'Deceased prior to 8 Sep 1900',
-    spouses: ['rosaria-raiti'],
+    spouses: ['rosaria-nasti'],
     parents: [],
     children: ['egidio-emmi'],
     notes: [
@@ -614,42 +632,47 @@ export const initialPeople: Person[] = [
     }
   },
   {
-    id: 'rosaria-raiti',
-    name: 'Rosaria Raiti',
+    id: 'rosaria-nasti',
+    name: 'Rosaria (surname unresolved — Nasti or Raiti)',
     generation: 0,
     line: 'Emmi',
     gender: 'F',
     birthDate: 'Unknown',
-    deathDate: 'Unknown',
+    deathDate: 'Living at time of Egidio\'s marriage (1900)',
     spouses: ['antonino-emmi'],
     parents: [],
     children: ['egidio-emmi'],
     notes: [
-      'Mother of Egidio Emmi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
-      'NOT to be confused with Rosa Vecchio — mother of the OTHER Egidio Emmi (b. ~1855) who married Angela Raiti in 1895.',
+      'Mother of Egidio Emmi. Her surname is disputed: the marriage act (atto № 59, 4 Nov 1900) records "Nasti", the banns (atto № 59, 8 Sep 1900) record "Raiti". Both by the same officer, Concetto Scarlata, within two months — neither is inherently more authoritative.',
+      'Given name also uncertain — reads "Rocaria/Rosaria" in both acts.',
+      'Egidio\'s birth act (~1870, a different clerk who would have recorded the mother\'s name from her own statement) will resolve the surname.',
+      'Living at the time of Egidio\'s marriage (not listed as "fu").',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as mother of Egidio Emmi.'
+      status: 'Confirmed — Surname Disputed',
+      details: 'Existence confirmed as mother of Egidio Emmi. Surname is Nasti (marriage act) vs Raiti (banns) — conflicting, same clerk. Resolution requires Egidio\'s birth act.'
     }
   },
   {
-    id: 'salvatore-sgroi',
-    name: 'Salvatore Sgroi',
+    id: 'gregorio-sgroi',
+    name: 'Gregorio Sgroi',
     generation: 0,
     line: 'Emmi',
     gender: 'M',
-    birthDate: 'Unknown',
+    birthDate: '~1840 (age 60 at Concetta\'s banns, 8 Sep 1900)',
+    occupation: 'Falegname (carpenter)',
     deathDate: 'Unknown',
     spouses: ['santa-cali'],
     parents: [],
     children: ['concetta-sgroi'],
     notes: [
-      'Father of Concetta Sgroi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
+      'Father of Concetta Sgroi, confirmed via Marriage Act (atto № 59, 4 Nov 1900, Linguaglossa) and banns (8 Sep 1900). Officer: Concetto Scarlata.',
+      'Age ~60 at banns (Sep 1900) → born ~1840. Occupation: falegname (carpenter) — notably a tradesman, unlike the contadino/salariato pattern in the Emmi line.',
+      'Previously thought to be "Salvatore Sgroi" from a misreading of the banns. The marriage ceremony record gives Gregorio.',
       'Listed as living at the time of Concetta\'s marriage (not "fu").',
     ],
     records: [
@@ -657,23 +680,25 @@ export const initialPeople: Person[] = [
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as father of Concetta Sgroi.'
+      status: 'Confirmed',
+      details: 'Name confirmed as father of Concetta Sgroi via marriage act 4 Nov 1900.'
     }
   },
   {
     id: 'santa-cali',
-    name: 'Santa Cali',
+    name: 'Santa Calì',
     generation: 0,
     line: 'Emmi',
     gender: 'F',
     birthDate: 'Unknown',
+    occupation: 'Industriosa (home-based textile/domestic work)',
     deathDate: 'Unknown',
-    spouses: ['salvatore-sgroi'],
+    spouses: ['gregorio-sgroi'],
     parents: [],
     children: ['concetta-sgroi'],
     notes: [
-      'Mother of Concetta Sgroi, confirmed via Marriage Proclamation Records (atto № 59, 8 Sep 1900, Linguaglossa).',
+      'Mother of Concetta Sgroi, confirmed via Marriage Act (atto № 59, 4 Nov 1900, Linguaglossa) and banns (8 Sep 1900).',
+      'Occupation: industriosa (home-based textile/domestic work, per banns).',
       'Listed as living at the time of Concetta\'s marriage (not "fu").',
     ],
     records: [
@@ -681,8 +706,8 @@ export const initialPeople: Person[] = [
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as mother of Concetta Sgroi.'
+      status: 'Confirmed',
+      details: 'Name confirmed as mother of Concetta Sgroi via marriage act 4 Nov 1900.'
     }
   },
 
@@ -842,7 +867,7 @@ export const initialPeople: Person[] = [
       other: 'No distinguishing marks'
     },
     migration: {
-      details: 'Arrived per Toscana under Australia/Italy Assisted Passage Agreement. Landed Fremantle 15 Sep 1952, arrived Sydney 27 Sep 1952. Intended address: Immigration Centre, Greta, NSW. Marital status on arrival: single. Departed Australia per Neptunia from Melbourne on 13 Sep 1963 ("Noted for Return" on arrival form — subsequently returned and died in Australia in 1991).',
+      details: 'Arrived per Toscana under Australia/Italy Assisted Passage Agreement. Landed Fremantle 15 Sep 1952, arrived Sydney 27 Sep 1952. Intended address: Immigration Centre, Greta, NSW. Marital status on arrival: single. Returned to Italy per Neptunia 13 Sep 1963 with sons Alfred (age 6) and John — intended as a 6-month visit to see ailing father Alfredo Sr. (colon cancer). Stayed after Alfredo Sr. died (9 May 1964) because Ezio would not uproot his elderly mother Ida. Returned to Australia 1975. Lilia remained in Australia throughout — naturalised 1965 while family was separated.',
       voyages: [
         {
           ship: 'Toscana',
@@ -856,7 +881,7 @@ export const initialPeople: Person[] = [
           departure: 'Melbourne',
           arrival: 'Italy',
           date: '13 September 1963',
-          details: 'Departed Melbourne. "Noted for Return" stamp on arrival form. Possibly entire family (Ezio, Lilia, Alfred, John). Unknown whether a visit or attempted permanent return.'
+          details: 'Departed Melbourne with sons Alfred (6) and John. Lilia stayed in Australia. Intended as a 6-month visit to see ailing father Alfredo Sr. (colon cancer). "Noted for Return" stamp. After Alfredo died 9 May 1964, Ezio stayed because he would not uproot Ida. Stayed 12 years; returned 1975.'
         }
       ]
     },
@@ -873,7 +898,7 @@ export const initialPeople: Person[] = [
       { type: 'Immigration File (NAA)', status: 'Found', notes: 'B78, ITALIAN/BUATTI EZIO — digitised copy received 9 Jul 2026 (Item 5746087). Full file: arrival form RA, marriage notification, passport photo.' },
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290718, issued Sydney 27 Sep 1952. Re-issued 23 Jan 1957 (entered register 22 Feb 1957).' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269. Also Fremantle customs stamp 15 Sep 1952.' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Notified per Aliens Act s.10A (Form RA 6).' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Branxton Parish extract (10 Jul 2026) confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' },
       { type: 'Bankruptcy Record', status: 'Found', notes: 'Café & milk bar proprietor, Broadford VIC. Bankrupt Oct 1957 (Trove, Commonwealth Gazette)' }
     ],
     researchStatus: {
@@ -913,10 +938,10 @@ export const initialPeople: Person[] = [
     burialDetails: 'Spotted Gums, Row AS, Grave 68. Roman Catholic. Interment date 29 May 1998.',
     burialLink: 'https://www.findagrave.com/memorial/231257991/lilia-buatti',
     spouses: ['ezio-buatti'],
-    parents: ['remo-chiappini', 'remo-wife-unknown'],
+    parents: ['remo-chiappini', 'irma-pirri'],
     children: ['alfred-buatti', 'john-buatti-extended'],
     migration: {
-      details: 'Travelled as "CHIAPPINI, Lilia", occupation "Servant" (past and future), on the Toscana (voyage 12/52, master Capt. Giuseppe Raggi) Trieste→Sydney via Fremantle. Known within the family as "Nonna Lilia" (went by her middle name). Registration numbers 12 apart (Ezio: 290718, Lilia: 290730) — registered in same batch on landing. Almost certainly travelled as engaged couple, married one week later. Line 178 on K269, directly below "CHIAPPIN[I], Gine" (Gino) line 177 — same rare surname, same destination, almost certainly travelling together.',
+      details: 'Travelled as "CHIAPPINI, Lilia", occupation "Servant" (past and future), on the Toscana (voyage 12/52, master Capt. Giuseppe Raggi) Trieste→Sydney via Fremantle. Known within the family as "Nonna Lilia" (went by her middle name). Registration numbers 12 apart (Ezio: 290718, Lilia: 290730) — registered in same batch on landing. Almost certainly travelled as engaged couple, married one week later. Line 178 on K269, directly below "CHIAPPIN[I], Gine" (Gino) line 177 — same rare surname, same destination, almost certainly travelling together. Did NOT return to Italy with Ezio and sons in 1963 — remained in Australia and naturalised 1965 while family was separated.',
       voyages: [
         {
           ship: 'Toscana',
@@ -930,6 +955,7 @@ export const initialPeople: Person[] = [
     residences: ['303 Punt Road, Richmond, Victoria (1965)'],
     notes: [
       'Travelled on Toscana K269 line 178 — directly below line 177: CHIAPPIN Gino (b. 1927, labourer, reg 290502). Confirmed by NAA 10 Jul 2026 (A2571, barcode 203679026). NoK field blank on his ID card. He worked as transient fruit-picker in Mildura then Bonalgo NSW. No naturalisation found. 3-year age gap consistent with being her brother.',
+      'Branxton Catholic Parish marriage register extract (10 Jul 2026) confirms: married Ezio Buatti 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, by Rev Z Lewandowski. Witnesses: Emidio Pica and Domenico Michetti (both Greta Camp). Parents listed: Remo Chiappini and Irma Pirri, both of Ascoli Piceno, Italy.',
     ],
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
@@ -938,18 +964,18 @@ export const initialPeople: Person[] = [
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290730 — issued same batch as Ezio (290718), Sydney 27 Sep 1952. Per Ezio\'s marriage notification (Form RA 6).' },
       { type: 'Naturalisation Record', status: 'Found', notes: 'Commonwealth Gazette notice, 18 Nov 1965 — lists address 303 Punt Rd, Richmond. Cert EF10155554, file V653748 (Victorian registry). Confirmed by NAA.' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — listed as "CHIAPPINI, Lilia"' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Ezio Buatti, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. One week after arrival.' }
+      { type: 'Marriage Record', status: 'Found', notes: 'Ezio Buatti, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Branxton Parish extract confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' }
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'NAA B78 file received for Ezio — marriage to Lilia confirmed 4 Oct 1952 St Anthony\'s Greta. Lilia travelled same ship (Toscana), registered same batch (no. 290730). Naturalisation confirmed: 18 Nov 1965, cert EF10155554, file V653748 (Victorian registry). Toscana passenger list reveals Gino Chiappini (line 177) — same surname, same destination, likely relative. Birth record still outstanding (privacy embargo until 2030).',
+      status: 'Confirmed',
+      details: 'NAA B78 file received for Ezio — marriage to Lilia confirmed 4 Oct 1952 St Anthony\'s Greta. Lilia travelled same ship (Toscana), registered same batch (no. 290730). Naturalisation confirmed: 18 Nov 1965, cert EF10155554, file V653748 (Victorian registry). Branxton parish extract (10 Jul 2026) names parents: Remo Chiappini + Irma Pirri. Witnesses: Emidio Pica, Domenico Michetti. Celebrant: Rev Z Lewandowski. Toscana passenger list reveals Gino Chiappini (line 177) — same surname, same destination, likely relative. Birth record still outstanding (privacy embargo until 2030).',
       nextSteps: [
         'Search NAA RecordSearch for Gino Chiappini — B78 alien registration, naturalisation file, passenger lists.',
-        'Ask papa and Aunt Angie about Gino Chiappini — brother/cousin of Lilia? Also ask about 1963 Neptunia trip.',
-        'Await NSW marriage cert 27340/1952 and Greta/Branxton parish register check — both will name Lilia\'s parents.',
+        'Ask papa and Aunt Angie about Gino Chiappini — brother/cousin of Lilia? Also ask about Irma Pirri.',
         'Await NAA naturalisation case file V653748 (due 20 Aug 2026) — may contain birth details and parentage.',
         'Search Ryerson Index and Trove for Gino Chiappini death/funeral notices.',
-        'Contact Comune di San Benedetto del Tronto for 1930 birth record.'
+        'Contact Comune di San Benedetto del Tronto for 1930 birth record.',
+        'Search for Irma Pirri records in Ascoli Piceno.'
       ]
     },
     sources: [
@@ -972,6 +998,11 @@ export const initialPeople: Person[] = [
         title: 'Fremantle Passenger Lists 1897–1963',
         type: 'Passenger Manifest',
         reference: 'Ancestry.com record matching Toscana voyage'
+      },
+      {
+        title: 'Branxton Catholic Parish Marriage Extract',
+        type: 'Parish Register',
+        reference: 'Ezio Buatti + Lilia Chiappini, 4 Oct 1952, St Anthony\'s Greta. Celebrant Rev Z Lewandowski. Witnesses: Emidio Pica, Domenico Michetti. Parents: Remo Chiappini + Irma Pirri. Issued 10 Jul 2026.'
       }
     ]
   },
@@ -1214,8 +1245,9 @@ export const initialPeople: Person[] = [
     parents: ['ezio-buatti', 'bruna-lilia-chiappini'],
     children: ['daniele-buatti', 'roberto-buatti', 'stefano-buatti', 'marco-buatti'],
     notes: [
-      'Moved to Italy with brother John c. 1962–63; returned to Australia in 1975.',
-      'Provided various correspondence and recollections that formed the basis of this research.'
+      'Returned to Italy with father Ezio and brother John per Neptunia Sep 1963 — intended as 6-month visit to dying grandfather Alfredo Sr. (colon cancer). Stayed 12 years after Ezio decided not to uproot Ida. Lived in Ascoli Piceno area. Returned to Australia 1975 (age 18). Brother John returned 1976.',
+      'Provided various correspondence and recollections that formed the basis of this research.',
+      'Father Ezio went bankrupt Oct 1957 running a café/milk bar in Broadford (Trove, Commonwealth Gazette).'
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '8 Nov 1956, Broadford VIC — confirmed' }
