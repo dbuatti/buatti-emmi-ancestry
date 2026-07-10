@@ -726,7 +726,6 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: { status: 'In Progress' }
   },
-  },
   {
     id: 'gregorio-sgroi',
     generation: 0,
