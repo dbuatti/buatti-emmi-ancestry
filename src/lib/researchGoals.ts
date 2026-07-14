@@ -311,13 +311,14 @@ export function generateGoals(person: Person): ResearchGoal[] {
 
     // === STILL TO DO (Pending) ===
     push(
-      `KILLER MOVE: Request marriage allegati from Archivio di Stato di Catania
-1. Send email to: Archivio di Stato di Catania (asct@pec.cultura.gov.it)
-2. Subject: "Richiesta riproduzione allegati al matrimonio — Linguaglossa 1900 atto n. 59"
-3. Body (in Italian): request copy of "allegati al matrimonio atto n. 59 del 1900, Comune di Linguaglossa, sposi: Emmi Egidio e Sgroi Concetta"
-4. This single request retrieves: Egidio's certified birth-act copy (year + act number), Concetta's birth-act copy
+      `KILLER MOVE: Request marriage allegati from TRIBUNALE di Catania
+ASCt confirmed 13 Jul 2026: 1894-1910 Linguaglossa records are held by the Tribunale di Catania, NOT ASCt. This is the correct target.
+1. Send email to: Tribunale di Catania (find PEC on their website)
+2. Subject: "Richiesta copia allegati al matrimonio — Linguaglossa 1900 atto n. 59"
+3. Body: request copy of "allegati al matrimonio atto n. 59 del 1900, Comune di Linguaglossa, sposi: Emmi Egidio e Sgroi Concetta"
+4. This retrieves: Egidio's certified birth-act copy (year + act number), Concetta's birth-act copy
 5. Expect: small reproduction fee, digital copy by email`,
-      `Archivio di Stato di Catania — PEC: asct@pec.cultura.gov.it`,
+      `Tribunale di Catania — ASCt confirmed 1894-1910 records are held there`,
       'Pending'
     );
     const remainingNatiYears = [
@@ -413,8 +414,8 @@ Note: likely the SAME Archivio di Stato Catania images already browsed on Antena
   // Concetta Sgroi
   if (person.id === 'concetta-sgroi' && !hasFoundRecord(person, 'Death Record')) {
     push(
-      `Concetta's birth-act copy is filed alongside Egidio's in allegati of atto 59/1900 — one request to ASCt retrieves both`,
-      `Archivio di Stato di Catania — same request as Egidio's allegati`,
+      `Concetta's birth-act copy is filed alongside Egidio's in allegati of atto 59/1900 — request from Tribunale di Catania (ASCt only holds up to 1893)`,
+      `Tribunale di Catania — same request as Egidio's allegati (1894-1910 held by Tribunal)`,
       'Pending'
     );
   }

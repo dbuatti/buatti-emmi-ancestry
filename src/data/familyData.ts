@@ -959,13 +959,24 @@ export const initialPeople: Person[] = [
         }
       ]
     },
-    italianAddress: 'Via Mercantini N° 62, Ascoli Piceno',
+    italianAddress: 'Via Mercantini N° 62, Ascoli Piceno (later); Via B[arro?] 11, Ascoli Piceno (pre-1942, from matricolare)',
     passport: {
       number: '3925755 P',
       issued: '19 June 1952',
       issuedBy: 'Ascoli Piceno, Italy'
     },
     alienRegistration: '290718',
+    education: [
+      'Diploma di Perito Agrario, R. Ist. Tecn. "Celso Ulpiani", Ascoli Piceno, July 1942',
+      'Laurea in Scienze Agrarie, Università di Perugia, 26 November 1949'
+    ],
+    military: {
+      service: 'Italian Army',
+      details: 'Conscript class 1923, Distretto Militare di Ascoli Piceno. Recalled by RSI (Salò) Nov 1943, depennato (struck off) 17 Jan 1944. Called up 1950 for officer cadet school (Rieti, Fanteria), discharged "deficiente attitudine militare" after infirmary stay. Final discharge 9 Jan 1951.'
+    },
+    notes: [
+      'Ruolo matricolare n. 20102 received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 13 Jul 2026 — waived €4 fee, sent directly. Confirms: full name, parentage (Alfredo + Ida Galanti), DOB 27 Apr 1923, height 1.78m. Education: perito agrario diploma July 1942 (Celso Ulpiani), laurea in Scienze Agrarie 26 Nov 1949 (Perugia). RSI recall Nov 1943, depennato Jan 1944. Officer cadet at Rieti 1950, discharged for deficient military aptitude after infirmary stay. Final congedo illimitato 9 Jan 1951.'
+    ],
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '27 Apr 1923 — embargo lifted 2023, digital gap in Ascoli Piceno records' },
       { type: 'Death Record', status: 'Found', notes: '16 Oct 1991 — confirmed by family' },
@@ -973,17 +984,20 @@ export const initialPeople: Person[] = [
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290718, issued Sydney 27 Sep 1952. Re-issued 23 Jan 1957 (entered register 22 Feb 1957).' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269. Also Fremantle customs stamp 15 Sep 1952.' },
       { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Branxton Parish extract (10 Jul 2026) confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' },
-      { type: 'Bankruptcy Record', status: 'Found', notes: 'Café & milk bar proprietor, Broadford VIC. Bankrupt Oct 1957 (Trove, Commonwealth Gazette)' }
+      { type: 'Bankruptcy Record', status: 'Found', notes: 'Café & milk bar proprietor, Broadford VIC. Bankrupt Oct 1957 (Trove, Commonwealth Gazette)' },
+      { type: 'Military Record (Ruolo Matricolare)', status: 'Found', notes: 'Foglio matricolare n. 20102, Distretto di Ascoli Piceno. Received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 13 Jul 2026. Confirms education, RSI recall/depennato, officer cadet at Rieti, discharge 1951.' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'NAA B78 file digitised and received 9 Jul 2026 — full arrival form, marriage notification, passport photo. Birth record (27 Apr 1923) still outstanding from Ascoli Piceno. Marriage confirmed: 4 Oct 1952 at St Anthony\'s, Greta. 1963 Neptunia departure documented.',
+      details: 'NAA B78 file digitised and received 9 Jul 2026 — full arrival form, marriage notification, passport photo. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi, Archivio di Stato Ascoli Piceno) — confirmed education: perito agrario (1942) + laurea Scienze Agrarie Perugia (1949). RSI recall/depennato WWII. Birth record (27 Apr 1923) still outstanding.',
       nextSteps: [
-        'Contact Comune di Ascoli Piceno for 1923 birth record — now have precise address (Via Mercantini 62) and passport details for request.',
+        'Thank Alessandra for the ruolo matricolare — she waived the €4 fee. Ask if Archivio holds Ulpiani school records or Provveditorato student files.',
+        'Contact Università di Perugia Archivio Storico for Ezio\'s fascicolo studente (thesis title, grades).',
+        'Contact Comune di Ascoli Piceno for 1923 birth record — now have passport details and matricolare confirmation.',
         'Order marriage certificate C810020 from NSW Registry of Births Deaths & Marriages.',
         'Search for Lilia\'s B78 file under Chiappini or Buatti (registration 290730) via RecordSearch — may contain her own photo.',
         'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled.',
-        'Ask family about the 1963 Italy trip — was it a visit to Alfredo Sr & Ida, or an attempted permanent return?'
+        'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?'
       ]
     },
     sources: [
@@ -996,6 +1010,11 @@ export const initialPeople: Person[] = [
         title: 'Toscana Passenger List',
         type: 'Passenger Manifest',
         reference: 'NAA: K269, 15 Sept 1952'
+      },
+      {
+        title: 'Ruolo Matricolare n. 20102',
+        type: 'Military Record',
+        reference: 'Archivio di Stato di Ascoli Piceno (Alessandra Buondi), received 13 Jul 2026'
       }
     ]
   },

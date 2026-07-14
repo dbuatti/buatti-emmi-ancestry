@@ -64,6 +64,7 @@ export interface Person {
   }[];
   isLiving?: boolean;
   italianAddress?: string;
+  education?: string[];
   passport?: {
     number: string;
     issued: string;
