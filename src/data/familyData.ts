@@ -991,11 +991,13 @@ export const initialPeople: Person[] = [
       status: 'In Progress',
       details: 'NAA B78 file digitised and received 9 Jul 2026 — full arrival form, marriage notification, passport photo. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi, Archivio di Stato Ascoli Piceno) — confirmed education: perito agrario (1942) + laurea Scienze Agrarie Perugia (1949). RSI recall/depennato WWII. Birth record (27 Apr 1923) still outstanding.',
       nextSteps: [
-        'Thank Alessandra for the ruolo matricolare — she waived the €4 fee. Ask if Archivio holds Ulpiani school records or Provveditorato student files.',
-        'Contact Università di Perugia Archivio Storico for Ezio\'s fascicolo studente (thesis title, grades).',
+        'Alessandra replied: fee waived ("Non si preoccupi per il pagamento"), Archivio does not hold school records — redirect to USP.',
+        'Send USP and Ulpiani emails (drafts ready in research notes).',
+        'Await reply from Università di Perugia Archivio Storico (fascicolo studente & thesis title).',
         'Contact Comune di Ascoli Piceno for 1923 birth record — now have passport details and matricolare confirmation.',
         'Order marriage certificate C810020 from NSW Registry of Births Deaths & Marriages.',
-        'Search for Lilia\'s B78 file under Chiappini or Buatti (registration 290730) via RecordSearch — may contain her own photo.',
+        'Trove: read full text of two Broadford bankruptcy notices (17 Oct 1957, 28 Aug 1958) for "carrying on business as…"',
+        'RecordSearch BUATTI sweep — search for Lilia\'s naturalisation file V653748, Ezio\'s bankruptcy file 248/1957.',
         'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled.',
         'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?'
       ]
