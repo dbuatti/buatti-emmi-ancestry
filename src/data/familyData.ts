@@ -968,6 +968,7 @@ export const initialPeople: Person[] = [
     alienRegistration: '290718',
     education: [
       'Diploma di Perito Agrario, R. Ist. Tecn. "Celso Ulpiani", Ascoli Piceno, July 1942',
+      'Certificato di cultura generale, Liceo Scientifico di Ascoli Piceno (c. 1944 — for university entry qualification)',
       'Laurea in Scienze Agrarie, Università di Perugia, 26 November 1949'
     ],
     military: {
@@ -989,11 +990,11 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'NAA B78 file digitised and received 9 Jul 2026 — full arrival form, marriage notification, passport photo. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi, Archivio di Stato Ascoli Piceno) — confirmed education: perito agrario (1942) + laurea Scienze Agrarie Perugia (1949). RSI recall/depennato WWII. Birth record (27 Apr 1923) still outstanding.',
+      details: 'NAA B78 file digitised and received 9 Jul 2026. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi). Perugia fascicolo studente found 15 Jul 2026 (Monica Fiore) — thesis title, exam marks, graduation score, authenticated photo awaiting digital delivery. Education confirmed: perito agrario (1942), Liceo Scientifico culture cert (c. 1944), laurea Scienze Agrarie Perugia (1949). RSI recall/depennato WWII.',
       nextSteps: [
-        'Alessandra replied: fee waived ("Non si preoccupi per il pagamento"), Archivio does not hold school records — redirect to USP.',
+        'Perugia found file (Monica Fiore, 15 Jul). Forms + docs returned. Awaiting digital scans — will include thesis title, exam marks, graduation score, authenticated photo.',
+        'Alessandra replied: fee waived, Archivio does not hold school records — redirect to USP.',
         'Send USP and Ulpiani emails (drafts ready in research notes).',
-        'Await reply from Università di Perugia Archivio Storico (fascicolo studente & thesis title).',
         'Contact Comune di Ascoli Piceno for 1923 birth record — now have passport details and matricolare confirmation.',
         'Order marriage certificate C810020 from NSW Registry of Births Deaths & Marriages.',
         'Trove: read full text of two Broadford bankruptcy notices (17 Oct 1957, 28 Aug 1958) for "carrying on business as…"',
