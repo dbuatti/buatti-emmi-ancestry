@@ -985,7 +985,7 @@ export const initialPeople: Person[] = [
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290718, issued Sydney 27 Sep 1952. Re-issued 23 Jan 1957 (entered register 22 Feb 1957).' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269. Also Fremantle customs stamp 15 Sep 1952.' },
       { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Branxton Parish extract (10 Jul 2026) confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' },
-      { type: 'Bankruptcy Record', status: 'Found', notes: 'Café & milk bar proprietor, Broadford VIC. Bankrupt Oct 1957 (Trove, Commonwealth Gazette)' },
+      { type: 'Bankruptcy Record', status: 'Found', notes: 'No. 248 of 1957. Café & milk bar proprietor, Broadford VIC. Petition & sequestration order 2 Oct 1957. Listed as "unemployed" at time. Public examination 2 Sep 1958 (Trove, Commonwealth Gazette 17 Oct 1957 & 28 Aug 1958).' },
       { type: 'Military Record (Ruolo Matricolare)', status: 'Found', notes: 'Foglio matricolare n. 20102, Distretto di Ascoli Piceno. Received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 13 Jul 2026. Confirms education, RSI recall/depennato, officer cadet at Rieti, discharge 1951.' }
     ],
     researchStatus: {
@@ -993,11 +993,11 @@ export const initialPeople: Person[] = [
       details: 'NAA B78 file digitised and received 9 Jul 2026. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi). Perugia fascicolo studente found 15 Jul 2026 (Monica Fiore) — thesis title, exam marks, graduation score, authenticated photo awaiting digital delivery. Education confirmed: perito agrario (1942), Liceo Scientifico culture cert (c. 1944), laurea Scienze Agrarie Perugia (1949). RSI recall/depennato WWII.',
       nextSteps: [
         'Perugia found file (Monica Fiore, 15 Jul). Forms + docs returned. Awaiting digital scans — will include thesis title, exam marks, graduation score, authenticated photo.',
-        'Alessandra replied: fee waived, Archivio does not hold school records — redirect to USP.',
+        'Alessandra replied: fee waived, Archivio does not hold school records.',
         'Send USP and Ulpiani emails (drafts ready in research notes).',
         'Contact Comune di Ascoli Piceno for 1923 birth record — now have passport details and matricolare confirmation.',
         'Order marriage certificate C810020 from NSW Registry of Births Deaths & Marriages.',
-        'Trove: read full text of two Broadford bankruptcy notices (17 Oct 1957, 28 Aug 1958) for "carrying on business as…"',
+        '[DONE] Trove: Broadford café & milk bar proprietor, bankruptcy Oct 1957, public exam Sep 1958.',
         'RecordSearch BUATTI sweep — search for Lilia\'s naturalisation file V653748, Ezio\'s bankruptcy file 248/1957.',
         'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled.',
         'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?'
