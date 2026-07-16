@@ -163,30 +163,29 @@ export const initialPeople: Person[] = [
     deathDate: 'Deceased prior to 1943',
     notes: [
       'Recorded as "DEC" on Gregorio\'s 1943 POW report, and as "fu Egidio" (the late Egidio) on the 1949 Comune di Linguaglossa certificate.',
-      'Parents: fu Antonino Emmi + Rosaria (surname unresolved — Nasti in marriage act, Raiti in banns; same clerk Concetto Scarlata wrote both within 2 months, neither is inherently more authoritative). Given name also uncertain — reads "Rocaria/Rosaria" in both acts.',
-      'Egidio\'s ~1870 birth act (a different clerk, writing decades earlier when the mother was present to give information) will settle the surname.',
+      'Parents: fu Antonino Emmi (bracciante, b. ~1849, d. 11 Mar 1889) + Rosaria Nasti (surname confirmed by two independent clerks: Carmelo Vecchio in Antonino\'s death act 1889, and Concetto Scarlata in marriage act 1900. The "Raiti" in the banns was a clerical slip). Given name "Rosaria" (reads "Rocaria/Rosaria" in both acts).',
       'Married Concetta Sgroi on 4 Nov 1900 in Linguaglossa (atto № 59). Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40, contadino) and Arlotta Giuseppe (23). Both spouses illiterate.',
+      'Father Antonino died when Egidio was ~19. Family lived on Via S. Egidio — Egidio\'s name likely derives from the street.',
+      'Father was a bracciante (day labourer), NOT the same Antonino (industrioso, son of Francesco) who fathered the other Egidio Emmi (1868).',
       'Banns (pubblicazioni) issued 8 Sep 1900, act n. 59 (same number as marriage act — coincidental). Published Sundays 9 and 16 Sep 1900. ~7-week gap between banns and wedding — slightly unusual, banns stayed valid. The marriage act\'s reference to "last month" (October) was likely loose boilerplate or a misreading of "settembre scorso"; the banns record is authoritative for September.',
-      'Banns recorded a different surname for the mother (Raiti vs Nasti), a different father for the bride (Salvatore vs Gregorio), and a different age (20 vs 23). For the bride\'s details, the marriage ceremony is more authoritative (based on documents she submitted). For the groom\'s mother\'s surname, both acts are the same clerk in the same year — unresolved. Egidio\'s birth act will settle it.',
-      'Banns witnesses: De Francesco Francesco (~44, guardia) and Cesareo Giacomo (40, possibly mugnaio/miller). Different from wedding witnesses — normal, banns witnesses were often officials-of-convenience.',
       'Had at least one older son (that son\'s family now in Venezuela — per Connie Emmi 28 Jun 2026).',
-      'NOT the same person as Egidio Emmi (b. 5 Sep 1868, son of Antonino [son of Francesco] + Rosa Vecchio) who married Angela Raiti on 16 Dec 1895 — same father name, different mother. They MAY be half-brothers but this is not yet proven (multiple Antonino Emmis existed). The other Egidio\'s birth record (7 Sep 1868, Linguaglossa) names Antonino as age 26, "industrioso", son of Francesco — but we cannot assume this Antonino is ours until our Egidio\'s birth act confirms it.',
+      'NOT the same person as Egidio Emmi (b. 5 Sep 1868, son of Antonino [son of Francesco] + Rosa Vecchio) who married Angela Nasti on 2 Jul 1900 — same father name, different mother, different Antonino (son of Francesco, industrioso vs ours: bracciante). Definitively distinguished.',
     ],
     spouses: ['concetta-sgroi'],
     parents: ['antonino-emmi', 'rosaria-nasti'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '~1870, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap). Not yet located in Nati 1868-1871 or 1873-1874. Remaining years: 1866, 1867, 1872, and pre-1866 Borbonic series.' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40), Arlotta Giuseppe (23). Both illiterate. Banns also atto № 59 (8 Sep 1900) — coincidental same number. CORRECTS earlier banns which had wrong mother (Raiti), father (Salvatore), age (20), and bride occupation (contadina vs industriosa).' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40), Arlotta Giuseppe (23). Both illiterate. Banns also atto № 59 (8 Sep 1900) — coincidental same number. CORRECTS earlier banns which had wrong mother (Raiti — clerical slip), father (Salvatore), age (20), and bride occupation (contadina vs industriosa).' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1943 per POW report — confirmed "fu Egidio" on 1949 certificate' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi + Rosaria Nasti (given name uncertain). Age ~30 (born ~1870). Farmer. Illiterate. Banns (8 Sep 1900, atto № 59) contained errors — actual marriage record supersedes.',
+      details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi (bracciante, d. 1889) + Rosaria Nasti. Surname Nasti confirmed by independent clerks Vecchio (1889) and Scarlata (1900). Age ~30 (born ~1870). Farmer. Illiterate.',
       nextSteps: [
-        'Request allegati of marriage atto 59/1900 from Archivio di Stato di Catania — contains certified copy of Egidio\'s birth act without needing to guess the year, plus Concetta\'s birth act in same folder.',
+        'Request allegati of marriage atto 59/1900 from Tribunale di Catania — contains certified copy of Egidio\'s birth act without needing to guess the year, plus Concetta\'s birth act in same folder.',
         'Search remaining Nati years: 1867 (first), 1872, 1866, and pre-1866 Borbonic series.',
-        'Hunt the household: scan every Emmi birth for siblings of Antonino + Rosaria Nasti; scan Morti 1866-1893 for Antonino\'s death act.',
+        'Hunt the household: scan every Emmi birth for siblings of Antonino + Rosaria Nasti.',
         'Check Santa Maria delle Grazie baptism registers on FamilySearch.',
         'Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 atto 59, father fu Antonino, clarify atto 141 is not ours.',
       ]
@@ -211,6 +210,11 @@ export const initialPeople: Person[] = [
         title: 'Linguaglossa Banns (Pubblicazioni) 1900',
         type: 'Civil Record',
         reference: 'Atto № 59, 8 Sep 1900. Published 9 & 16 Sep 1900. Witnesses: De Francesco Francesco (~44, guardia), Cesareo Giacomo (40). Confirms banns dates. Both acts by same officer Concetto Scarlata.'
+      },
+      {
+        title: 'Antonino Emmi Death Act 1889',
+        type: 'Civil Record',
+        reference: 'Linguaglossa Morti 1889, atto n. 27. Died 11 Mar 1889, age 40, bracciante, husband of Rosaria Nasti, son of fu Antonino + fu Nunzia Pavone. Officer: Carmelo Vecchio.'
       }
     ]
   },
@@ -626,53 +630,104 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Emmi',
     gender: 'M',
-    birthDate: 'Unknown — age from another Antonino (di Francesco, father of other Egidio) suggests ~1842, but this is NOT confirmed as our Antonino',
-    occupation: 'Industrioso (industrial worker)',
-    deathDate: 'Deceased prior to 8 Sep 1900',
+    birthDate: '~1849 (age 40 at death, 11 Mar 1889)',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    occupation: 'Bracciante (day labourer)',
+    deathDate: '11 March 1889',
+    deathPlace: 'Via S. Egidio, Linguaglossa',
     spouses: ['rosaria-nasti'],
-    parents: [],
+    parents: ['antonino-emmi-sr', 'nunzia-pavone'],
     children: ['egidio-emmi'],
     notes: [
-      'Father of our Egidio Emmi, confirmed as "fu Antonino" at his marriage (8 Sep 1900).',
-      'Also possibly the father of ANOTHER Egidio Emmi (b. 5 Sep 1868, mother Rosa Vecchio) — same uncommon name combination strongly suggests same father, but not yet proven definitively. That other Egidio\'s birth record names the declarant as "Antonino Emmi, son of Francesco, age 26, industrioso".',
-      'CAUTION: There are multiple Antonino Emmis in 1860s-70s Linguaglossa (e.g., Antonino son of Giuseppe registered daughter Egidia in 1869). We cannot assume the Antonino of the 1868 record is OUR Antonino until our Egidio\'s birth act confirms it.',
+      'DEATH ACT FOUND: Morti 1889, atto n. 27, Linguaglossa. Died 11 Mar 1889 at 2:20 PM, aged 40, born ~1849, bracciante. Declarants: Gregorio Pennisi (60, municipal guard) and Antonino D\'Amico (50, gravedigger). Died in house on Via S. Egidio — note: his son is named Egidio, possibly after the street/saint.',
+      'Husband of Rosaria Nasti (the word reads "Nasti" in Carmelo Vecchio\'s hand — independent clerk from Scarlata, strongly corroborating Nasti over Raiti).',
+      'Son of fu Antonino and fu Nunzia Pavone (reading of surname to verify on original).',
+      'Officer: Carmelo Vecchio. Witnesses: Gaetano Petrone (47) and Mariano Vecchio (27). Declarants illiterate.',
+      'Confirmed as "fu Antonino" at Egidio\'s marriage (4 Nov 1900). Died 11 years before Egidio married.',
+      'Occupation: bracciante (day labourer) — NOT the same as the other Antonino Emmi (son of Francesco, industrioso, ~1842) who fathered the other Egidio (1868).',
+      'The name Egidio for his son may derive from Via S. Egidio where the family lived.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located in Nati ~1848-1850, Linguaglossa' },
+      { type: 'Death Record', status: 'Found', notes: 'Morti 1889, atto n. 27 — died 11 Mar 1889, age 40, bracciante, husband of Rosaria Nasti, son of fu Antonino + fu Nunzia Pavone' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as father of Egidio Emmi.',
+      status: 'Confirmed',
+      details: 'Death act found 11 Mar 1889. Confirms occupation bracciante, wife Rosaria Nasti, parents Antonino + Nunzia Pavone.',
       nextSteps: [
-        'Search Linguaglossa birth/death records for Antonino Emmi.'
+        'Search Nati ~1848-1850 for Antonino\'s birth record (son of Antonino + Nunzia Pavone).',
+        'Nasti surname now strongly corroborated by independent clerk Carmelo Vecchio.'
       ]
     }
   },
   {
     id: 'rosaria-nasti',
-    name: 'Rosaria (surname unresolved — Nasti or Raiti)',
+    name: 'Rosaria Nasti',
     generation: 0,
     line: 'Emmi',
     gender: 'F',
-    birthDate: 'Unknown',
+    birthDate: 'Unknown — possibly ~1850-1855 (wife of Antonino ~1849)',
     deathDate: 'Living at time of Egidio\'s marriage (1900)',
     spouses: ['antonino-emmi'],
     parents: [],
     children: ['egidio-emmi'],
     notes: [
-      'Mother of Egidio Emmi. Her surname is disputed: the marriage act (atto № 59, 4 Nov 1900) records "Nasti", the banns (atto № 59, 8 Sep 1900) record "Raiti". Both by the same officer, Concetto Scarlata, within two months — neither is inherently more authoritative.',
-      'Given name also uncertain — reads "Rocaria/Rosaria" in both acts.',
-      'Egidio\'s birth act (~1870, a different clerk who would have recorded the mother\'s name from her own statement) will resolve the surname.',
+      'Mother of Egidio Emmi. Surname now strongly corroborated as NASTI, not Raiti.',
+      'Recorded as "Nasti" in both Egidio\'s marriage act (atto 59, 4 Nov 1900, by Concetto Scarlata) and Antonino\'s death act (atto 27, 11 Mar 1889, by Carmelo Vecchio). Two independent clerks, 11 years apart, both read "Nasti". The banns "Raiti" (also by Scarlata) appears to be a clerical slip.',
+      'Given name uncertain: reads "Rocaria/Rosaria" in both acts.',
       'Living at the time of Egidio\'s marriage (not listed as "fu").',
+      'Husband Antonino died when she was ~39-40, Egidio was ~19.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Confirmed — Surname Disputed',
-      details: 'Existence confirmed as mother of Egidio Emmi. Surname is Nasti (marriage act) vs Raiti (banns) — conflicting, same clerk. Resolution requires Egidio\'s birth act.'
+      status: 'Confirmed — Surname Resolved',
+      details: 'Existence confirmed as mother of Egidio Emmi. Nasti confirmed: independently corroborated by Carmelo Vecchio (Antonino\'s death act, 1889) and Concetto Scarlata (marriage act, 1900). The banns "Raiti" was a clerical slip.'
+    }
+  },
+  {
+    id: 'antonino-emmi-sr',
+    name: 'Antonino Emmi (senior)',
+    generation: -1,
+    line: 'Emmi',
+    gender: 'M',
+    birthDate: 'Unknown — possibly ~1810-1820',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    occupation: 'Unknown',
+    deathDate: 'Deceased by 1889 (listed as "fu" in son\'s death act)',
+    spouses: ['nunzia-pavone'],
+    parents: [],
+    children: ['antonino-emmi'],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Borbonic pre-1866 series' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Pre-1866 or prior to records start' }
+    ],
+    researchStatus: {
+      status: 'In Progress',
+      details: 'Confirmed father of Antonino Emmi (d. 1889) in death act n. 27/1889. Wife: Nunzia Pavone.',
+    }
+  },
+  {
+    id: 'nunzia-pavone',
+    name: 'Nunzia Pavone',
+    generation: -1,
+    line: 'Emmi',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
+    deathDate: 'Deceased by 1889 (listed as "fu" in son\'s death act)',
+    spouses: ['antonino-emmi-sr'],
+    parents: [],
+    children: ['antonino-emmi'],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Borbonic pre-1866 series' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Pre-1866 or prior to records start' }
+    ],
+    researchStatus: {
+      status: 'In Progress',
+      details: 'Confirmed mother of Antonino Emmi (d. 1889) in death act n. 27/1889. Husband: Antonino Emmi Sr. Surname reading to verify on original image.',
     }
   },
   {

@@ -349,14 +349,14 @@ ASCt confirmed 13 Jul 2026: 1894-1910 Linguaglossa records are held by the Tribu
     );
     push(
       `SCAN MORTI for Antonino Emmi (died between ~1872 and Sep 1900)
-1. On Antenati, open Linguaglossa > Morti
-2. Start from 1893 and work BACKWARDS (older men die older, so 1880s-90s most likely)
-3. Check the index at the back of each year — look for "Emmi Antonino"
-4. The death act will name his widow: "Rosaria Nasti" — this confirms the connection
-5. It will also name his parents — resolving which Antonino is ours
-6. Morti indexes are typically 1-3 pages per year — very fast`,
+Found: Linguaglossa Morti 1889, atto n. 27. Died 11 Mar 1889, age 40, bracciante, husband of Rosaria Nasti, son of fu Antonino + fu Nunzia Pavone. Via S. Egidio. Officer: Carmelo Vecchio.
+FULLY RESOLVED:
+- Nasti confirmed (independent clerk Vecchio — not Scarlata's "Raiti" slip)
+- Occupation: bracciante (not the same Antonino who was industrioso, son of Francesco)
+- Parents: Antonino Sr. + Nunzia Pavone — pushes Emmi line back another gen
+- Street: Via S. Egidio — explains Egidio's name`,
       `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=morti`,
-      'Pending'
+      'Done'
     );
     push(
       `CHURCH ROUTE: Santa Maria delle Grazie baptisms
