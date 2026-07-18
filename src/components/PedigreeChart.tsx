@@ -21,8 +21,12 @@ const LINE_SELECTED: Record<string, string> = {
   Patanè: 'bg-blue-900 text-white border-blue-900 shadow-md',
 };
 
-function isConfirmed(status: string): boolean {
-  return status === 'Confirmed' || status.startsWith('Confirmed');
+function isProperlyIdentified(person: Person): boolean {
+  const birth = person.birthDate || '';
+  const hasKnownBirth = birth.length > 0 && !/^Unknown/i.test(birth) && !/to be confirmed/i.test(birth);
+  const hasDeath = !!person.deathDate || !!person.isLiving;
+  const hasFamily = person.parents.length > 0 || person.children.length > 0;
+  return hasKnownBirth && hasDeath && hasFamily;
 }
 
 function genLabel(gen: number): string {
@@ -41,7 +45,7 @@ function genLabel(gen: number): string {
 
 function PersonCard({ person, selected, onSelect }: { person: Person; selected: boolean; onSelect: () => void }) {
   const line = person.line;
-  const confirmed = isConfirmed(person.researchStatus.status);
+  const confirmed = isProperlyIdentified(person);
   const borderColor = LINE_COLORS[line] || 'border-stone-200';
   const selectedStyle = selected ? (LINE_SELECTED[line] || LINE_SELECTED.Buatti) : 'bg-white';
 
@@ -77,10 +81,26 @@ function ConnectingLine() {
 export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: PedigreeChartProps) {
   const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
-  const showPerson = (p: Person) =>
-    p.children.length > 0 || p.parents.length > 0;
+  const directLineIds = new Set<string>();
+  function traceAncestors(id: string) {
+    if (directLineIds.has(id)) return;
+    directLineIds.add(id);
+    const p = people.find(p => p.id === id);
+    if (p) p.parents.forEach(traceAncestors);
+  }
 
-  const filtered = people.filter(showPerson);
+  // Include all siblings of the root (same parents)
+  const root = people.find(p => p.id === 'daniele-buatti');
+  if (root) {
+    people.filter(p =>
+      p.parents.length === root.parents.length &&
+      p.parents.every((pid, i) => root.parents[i] === pid)
+    ).forEach(p => directLineIds.add(p.id));
+  }
+
+  traceAncestors('daniele-buatti');
+
+  const filtered = people.filter(p => directLineIds.has(p.id));
   const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);
 
   const byGenAndLine: Record<number, Record<string, Person[]>> = {};
