@@ -75,9 +75,17 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
         <div className="space-y-4">
           <GenerationLabel label="Generation 0 — Great-Great-Grandparents" />
           <div className="grid grid-cols-8 gap-2 text-center">
-            <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
-              <p className="font-bold truncate text-stone-400">Unknown</p>
-              <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
+            <div className="col-span-2 space-y-2">
+              <div onClick={() => onSelectPerson('giovanni-buatti')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('giovanni-buatti', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
+                <p className="font-bold truncate">Giovanni Buatti</p>
+                <p className="text-[10px] opacity-80 font-sans">25 Jun 1852</p>
+              </div>
+              <div onClick={() => onSelectPerson('emidia-bruni')}
+                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('emidia-bruni', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
+                <p className="font-bold truncate">Emidia Bruni</p>
+                <p className="text-[10px] opacity-80 font-sans">28 Nov 1857</p>
+              </div>
             </div>
             <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
               <p className="font-bold truncate text-stone-400">Unknown</p>
@@ -145,7 +153,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
               <div onClick={() => onSelectPerson('ida-galanti')}
                 className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('ida-galanti', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
                 <p className="font-bold truncate">Ida Galanti</p>
-                <p className="text-[10px] opacity-80 font-sans">1898 – 1970</p>
+                <p className="text-[10px] opacity-80 font-sans">19 Mar 1893 – 1970</p>
               </div>
             </div>
             <div className="space-y-2">
