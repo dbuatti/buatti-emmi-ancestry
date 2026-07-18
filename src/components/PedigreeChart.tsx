@@ -111,7 +111,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
   }
 
   return (
-    <div className="lg:col-span-2 bg-[#F4EFE6] border border-stone-200 rounded-xl p-6 shadow-inner relative overflow-hidden min-h-[600px] flex flex-col justify-between">
+    <div className="lg:col-span-2 bg-[#F4EFE6] border border-stone-200 rounded-xl p-6 shadow-inner relative overflow-y-auto min-h-[600px] max-h-[800px] flex flex-col">
       <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
         <Users className="w-96 h-96 text-[#800020]" />
       </div>
@@ -121,7 +121,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
         <p className="text-xs text-stone-500 font-sans">Interactive lineage — verified ancestors marked with <BadgeCheck className="w-3 h-3 inline text-emerald-600" /></p>
       </div>
 
-      <div className="space-y-6 relative z-10 my-auto overflow-x-auto">
+      <div className="space-y-6 relative z-10 flex-1">
         {gens.map((gen, gi) => (
           <div key={gen} className="space-y-3">
             <div className="text-center">
