@@ -816,7 +816,7 @@ export const initialPeople: Person[] = [
       'Baptism certificate (10 Feb 1889, Calatabiano) found in marriage processetti packet. Baptized by Sac. Salvatore Catalano, godfather Giuseppe Caruso.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person.',
       'NAA file A446, 1967/39646 (Item ID 7775953) requested — access application RK26/00009589 submitted 28 Jun 2026.',
-      'Giuseppe Patanè (married Sebastiana Cogliandolo 20 Feb 1911, Liber Matrimoniorum N.11/12) shares same parents (Sebastiano & Rosaria D\'Agata) — likely Rosario\'s brother.',
+      'Giuseppe Patanè (born 4 Feb 1887, atto 31 Calatabiano) shares same parents (Sebastiano & Rosaria D\'Agata) — confirmed as Rosario\'s brother via civil birth act.',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trappitelli. Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
@@ -938,27 +938,28 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Patanè',
     gender: 'M',
-    birthDate: 'c. 1888',
-    birthPlace: 'Calatabiano, Province of Catania, Sicily, Italy',
+    birthDate: '4 February 1887',
+    birthPlace: 'Contrada Trifilippi, Calatabiano, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     spouses: ['sebastiana-guglielmino'],
     parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
     children: [],
     notes: [
       'Brother of Rosario Patanè.',
-      '23 years old, bracciante, residing in Fiumefreddo in 1911.',
-      'Married Sebastiana Guglielmino on 5 Feb 1911 at Fiumefreddo (civil banns filed same day).',
-      'Birth record not yet located — likely Calatabiano civil records.',
+      'Civil birth act found: Calatabiano Nati 1887, atto n. 31. Born 4 February 1887 at 7:20 AM in Contrada Trifilippi, Calatabiano. Declared 6 February 1887 by father Sebastiano Patanè (37, bracciante). Mother: Rosaria D\'Agata, his legitimate wife living with him. Witnesses: Leonardo Fazio (72, possidente) and Giuseppe Napoli (30, bracciante). All illiterate. Officer: Francesco Raineri Vecchio, assessor delegate.',
+      'Margin note: married Sebastiana Gugliandalo di fu Michele, act of 19 February 1911, registered in Fiumefreddo, N. 8 — resolves the date tangle between parish marriage (20 Feb 1911) and civil banns (5 Feb 1911). Bride\'s surname appears as "Gugliandalo" — a third variant alongside Guglielmino and Cogliandolo.',
+      '23 years old, bracciante, residing in Fiumefreddo in 1911 — age consistent with February 1887 birth to within days.',
+      'First direct documentary sighting of Rosaria D\'Agata as a living named mother in a civil act.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1888, likely Calatabiano — search Calatabiano civil records' },
-      { type: 'Marriage Record', status: 'Found', notes: '5 Feb 1911, Fiumefreddo (civil banns). Bride: Sebastiana Guglielmino (21, daughter of late Michele Guglielmino & Caterina Strangano).' },
+      { type: 'Birth Record', status: 'Found', notes: '4 Feb 1887, Calatabiano — atto n. 31, Nati 1887. Born Contrada Trifilippi. Father: Sebastiano Patanè (37, bracciante). Mother: Rosaria D\'Agata. Officer: Francesco Raineri Vecchio. Margin: married Sebastiana Gugliandalo 19 Feb 1911, Fiumefreddo n. 8.' },
+      { type: 'Marriage Record', status: 'Found', notes: '5 Feb 1911 (civil banns) / 19 Feb 1911 (civil marriage, atto n. 8 Fiumefreddo) / 20 Feb 1911 (parish). Bride: Sebastiana Guglielmino/Gugliandalo/Cogliandolo (21, daughter of late Michele Guglielmino & Caterina Strangano).' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Marriage confirmed via Fiumefreddo civil marriage banns. Birth record outstanding.',
-      nextSteps: ['Search Calatabiano civil records for birth ~1888.']
+      status: 'Confirmed',
+      details: 'Civil birth act found (atto 31/1887, Calatabiano). Parents confirmed: Sebastiano Patanè (37, bracciante) + Rosaria D\'Agata. Marriage margin note confirms civil marriage 19 Feb 1911, Fiumefreddo n. 8.',
+      nextSteps: ['Fetch Fiumefreddo Matrimoni 1911 atto n. 8 for secondary parent confirmation and bride\'s family details.']
     }
   },
   {
@@ -981,9 +982,11 @@ export const initialPeople: Person[] = [
       'Marriage banns filed 8 Sep 1911, Fiumefreddo civil registry. Marriage celebrated 17 Sep 1911 in Calatabiano.',
       'Groom: Orazio Pagano (25, bracciante, son of Santo Pagano & Rosaria Pennisi).',
       'Mother recorded as "Ignazia D\'Agata" on the civil banns (variation of Rosaria D\'Agata).',
+      'NOT found in Calatabiano Nati 1887 or 1888. Likely born 1884–1886 — scan Nati 1884, 1885, 1886 indexes for Patanè entries (same parent rule).',
+      'If still absent, pull her civil marriage act (Calatabiano, 17 Sep 1911) — it states her exact age and birthplace. If born outside Calatabiano, that comuni dates the family\'s arrival and points to the marriage act location.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1888, likely Calatabiano — search Calatabiano civil records' },
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not in Calatabiano Nati 1887-88 — scan 1884-86 indexes, or pull civil marriage act' },
       { type: 'Marriage Record', status: 'Found', notes: '8 Sep 1911 (banns filed) / 17 Sep 1911 (celebrated), Fiumefreddo/Calatabiano. Groom: Orazio Pagano (25, son of Santo Pagano & Rosaria Pennisi).' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
@@ -1050,35 +1053,37 @@ export const initialPeople: Person[] = [
     }
   },
 
-  // --- POSSIBLE SIBLING: Salvatore Patanè (unconfirmed relationship) ---
+  // --- EXCLUDED AS SIBLING: Salvatore Patanè (son of Antonino, not Sebastiano) ---
   {
     id: 'salvatore-patane-possible-sibling',
     name: 'Salvatore Patanè',
     generation: 1,
     line: 'Patanè',
     gender: 'M',
-    birthDate: 'c. 1877',
-    birthPlace: 'Likely Calatabiano area',
+    birthDate: '15 September 1875',
+    birthPlace: 'Calatabiano, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     spouses: ['maria-sgarlato'],
-    parents: [],
+    parents: ['antonino-patane-falegname'],
     children: ['rosaria-patane-salvatore-daughter'],
     notes: [
-      'Possible older brother of Rosario Patanè — SAME SURNAME, same town (Fiumefreddo), same occupation (bracciante).',
-      'Age 34 in Feb 1911 = born ~1877, making him ~12 years older than Rosario (b. 1889). Plausible but UNCONFIRMED — no document directly names his parents.',
-      'If confirmed as son of Sebastiano & Rosaria D\'Agata, he would be the eldest known Patanè sibling.',
+      'Civil birth act found: Calatabiano Nati 1875, atto n. 93. Born 15 Sep 1875 at 9:30 PM, Via Annunziata, Calatabiano. Father: Antonino Patanè (40, falegname/carpenter). Mother: Maria Catena Panessi [lettura incerta — possibly Pennisi or Panebianco]. Witnesses: two shoemakers, illiterate. Officer: Mayor Giuseppe Macherone.',
+      'EXCLUDED as sibling of Rosario Patanè — parents are Antonino Patanè & Maria Catena, NOT Sebastiano & Rosaria D\'Agata.',
+      'Age 34 at daughter Rosaria\'s birth (Feb 1911) = born ~1876-77, close enough to this 15 Sep 1875 birth to be the same person.',
+      'Occupation: bracciante (day labourer), same as Rosario but different father. Shares the Patanè surname from a separate household (Antonino Patanè line, falegname trade).',
+      'No documentary link to Rosario\'s family. "Possible sibling" hypothesis ruled out.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1877 — search Calatabiano records' },
+      { type: 'Birth Record', status: 'Found', notes: '15 Sep 1875, Calatabiano — atto n. 93, Nati 1875. Father: Antonino Patanè (40, falegname). Mother: Maria Catena Panessi. Via Annunziata. Officer: Sindaco Giuseppe Macherone.' },
       { type: 'Birth of Daughter (Rosaria)', status: 'Found', notes: '10 Feb 1911, Fiumefreddo — daughter Rosaria born to Salvatore Patanè (34, bracciante) & Maria Sgarlato. Contrada Panormitana No. 2.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Exists in Fiumefreddo 1911 civil births. Relationship to Rosario Patanè is circumstantial — same surname, town, occupation. Needs parent confirmation.',
+      status: 'Ruled Out',
+      details: 'Birth act found (atto 93/1875, Calatabiano). Parents: Antonino Patanè (falegname) + Maria Catena Panessi. NOT a son of Sebastiano & Rosaria D\'Agata. Excluded as sibling of Rosario Patanè. Likely the same Salvatore who married Maria Sgarlato — separate Patanè household.',
       nextSteps: [
-        'Search Calatabiano births ~1877 for Salvatore Patanè di Sebastiano.',
-        'Search for marriage of Salvatore Patanè & Maria Sgarlato to find parents named.',
+        'Log Antonino Patanè (falegname, b. ~1835) as a separate Patanè family line in Calatabiano.',
+        'Search for marriage of Salvatore Patanè (di Antonino) & Maria Sgarlato to confirm parents named.',
       ]
     }
   },
@@ -1094,16 +1099,16 @@ export const initialPeople: Person[] = [
     parents: [],
     children: ['rosaria-patane-salvatore-daughter'],
     notes: [
-      'Wife of Salvatore Patanè (possible brother of Rosario).',
+      'Wife of Salvatore Patanè (son of Antonino Patanè, falegname — separate line from Rosario\'s family).',
       'Villica (farmworker) residing in Contrada Panormitana, Fiumefreddo in 1911.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Salvatore Patanè (di Antonino) — not yet located' },
     ],
     researchStatus: {
       status: 'Outstanding',
-      details: 'Name confirmed via daughter\'s birth record. All other details unknown.'
+      details: 'Name confirmed via daughter\'s birth record. Husband identified as Salvatore Patanè di Antonino (atto 93/1875 Calatabiano). All other details unknown.'
     }
   },
   {
@@ -1119,19 +1124,18 @@ export const initialPeople: Person[] = [
     parents: ['salvatore-patane-possible-sibling', 'maria-sgarlato'],
     children: [],
     notes: [
-      'Daughter of Salvatore Patanè & Maria Sgarlato — NOT the same Rosaria who married Gregorio Emmi.',
+      'Daughter of Salvatore Patanè (di Antonino) & Maria Sgarlato — NOT the same Rosaria who married Gregorio Emmi.',
       'Registered 13 Feb 1911, born 10 Feb 1911 at 10:15 PM, Contrada Panormitana No. 2.',
       'Baptised 21 Feb 1912 at the local parish.',
-      'If Salvatore is Rosario\'s brother, this Rosaria is the cousin of Rosaria Patanè Emmi (b. 1924).',
+      'NOT a cousin of Rosaria Patanè Emmi (b. 1924) — Salvatore excluded as sibling of Rosario (different parents: Antonino Patanè & Maria Catena, not Sebastiano & Rosaria D\'Agata).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '10 Feb 1911, Fiumefreddo — civil birth act' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Birth record confirmed. Relationship to main Patanè line depends on whether Salvatore is Rosario\'s brother.',
-      nextSteps: ['Search for Salvatore\'s parents to confirm the relationship.']
+      status: 'Ruled Out',
+      details: 'Birth record confirmed. Salvatore\'s birth act (atto 93/1875 Calatabiano) names parents Antonino Patanè + Maria Catena Panessi — separate Patanè line from Rosario\'s family.',
     }
   },
 
@@ -1372,7 +1376,7 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Patanè',
     gender: 'M',
-    birthDate: 'Unknown',
+    birthDate: '~1849–1850 (age 37 at Giuseppe\'s birth Feb 1887, age 39 at Rosario\'s birth Feb 1889)',
     deathDate: 'Unknown',
     spouses: ['rosaria-dagata'],
     parents: [],
@@ -1380,17 +1384,22 @@ export const initialPeople: Person[] = [
     notes: [
       'Father of Rosario Patanè, confirmed via 1911 parish marriage certificate.',
       'Also father of Giuseppe Patanè (married Sebastiana Cogliandolo, 20 Feb 1911, Liber Matrimoniorum N.11/12 — also recorded as "Sebastiana Guglielmino" on civil banns) and Venera Patanè (married Orazio Pagano, 17 Sep 1911) — both confirmed via Fiumefreddo records.',
+      'Age at Giuseppe\'s birth (Feb 1887): 37, bracciante. Age at Rosario\'s birth (Feb 1889): 39, castaldo (farm manager) — a promotion between births, consistent with an estate-manager career arc.',
+      'Contrada at Giuseppe\'s birth: Trifilippi (Calatabiano). Contrada at Rosario\'s birth: Trappitelli (Calatabiano) — likely two different farms in the same area.',
       'From Calatabiano area; resided in Fiumefreddo by 1911.',
+      'Marriage to Rosaria D\'Agata: window now 1878–1886, probably in Calatabiano. The Salvatore fork is resolved — Salvatore Patanè (c. 1877, atto 93/1875) is son of Antonino Patanè (falegname), NOT of Sebastiano. Excluded as sibling. No child of Sebastiano found before 1887, so marriage likely shortly before Giuseppe\'s birth (Feb 1887) — maybe 1885-1886.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Birth Record', status: 'Not Found', notes: '~1849–1850 — search Calatabiano pre-1866 Borbonic records' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as father of Rosario Patanè. All other details unknown.',
+      status: 'In Progress',
+      details: 'Name confirmed as father of Rosario and Giuseppe Patanè via civil birth acts. Birth year now narrowed to ~1849–1850. Occupation: bracciante (1887), promoted to castaldo (1889). Contrada: Trifilippi then Trappitelli, Calatabiano.',
       nextSteps: [
-        'Search Calatabiano records for his birth and marriage.'
+        'Search Calatabiano Nati 1849–1850 for Sebastiano\'s birth record.',
+        'Search Calatabiano Matrimoni 1878–1886 for his marriage to Rosaria D\'Agata (likely 1885-1886).',
+        'Venera not in 1887-88 — scan 1884-86 indexes or pull her civil marriage act to determine birthplace.'
       ]
     }
   },
@@ -1407,14 +1416,16 @@ export const initialPeople: Person[] = [
     children: ['rosario-patane-sr', 'giuseppe-patane-sibling', 'venera-patane-sibling'],
     notes: [
       'Mother of Rosario Patanè, Giuseppe Patanè, and Venera Patanè, confirmed via 1911 Fiumefreddo civil marriage banns.',
+      'First direct documentary sighting in a civil act: Giuseppe\'s birth (atto 31/1887, Calatabiano) names her as "Rosaria D\'Agata, sua legittima sposa convivente" (his legitimate wife living with him).',
+      'Living with Sebastiano in Contrada Trifilippi, Calatabiano at the time of Giuseppe\'s birth (Feb 1887). Still there at Rosario\'s birth in Contrada Trappitelli (Feb 1889).',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as mother of Rosario Patanè.'
+      status: 'In Progress',
+      details: 'Name confirmed as mother of Rosario and Giuseppe Patanè via Calatabiano civil birth acts. First documentary sighting 4 Feb 1887 (Giuseppe\'s birth).'
     }
   },
   {
