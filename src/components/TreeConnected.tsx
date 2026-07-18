@@ -179,23 +179,18 @@ export function TreeConnected({ people, selectedPersonId, onSelectPerson }: Tree
               )}
               {/* Line dot */}
               <circle cx={node.x + 10} cy={node.y + CARD_H / 2} r={4} fill={dot} />
-              {/* Name */}
-              <text x={node.x + 20} y={node.y + 22} fontSize={12} fontWeight="bold"
-                fill={selected ? '#fff' : '#292524'} className="font-sans">
-                {p.name.length > 22 ? p.name.slice(0, 20) + '…' : p.name}
-              </text>
-              {/* Dates */}
-              <text x={node.x + 20} y={node.y + 38} fontSize={9}
-                fill={selected ? '#fff' : '#78716c'} className="font-sans">
-                {(bd || '?').length > 22 ? (bd || '?').slice(0, 20) + '…' : (bd || '?')}{dd ? ` – ${dd.length > 18 ? dd.slice(0, 16) + '…' : dd}` : p.isLiving ? ' – Living' : ''}
-              </text>
-              {/* Occupation */}
-              {p.occupations?.[0] && (
-                <text x={node.x + 20} y={node.y + 52} fontSize={8}
-                  fill={selected ? '#e7e5e4' : '#a8a29e'} className="font-sans italic">
-                  {p.occupations[0].length > 24 ? p.occupations[0].slice(0, 22) + '…' : p.occupations[0]}
-                </text>
-              )}
+              {/* Card content via foreignObject for proper text wrapping */}
+              <foreignObject x={node.x + 18} y={node.y + 6} width={CARD_W - 22} height={CARD_H - 12}>
+                <div className={`w-full h-full text-[11px] font-sans leading-tight overflow-hidden ${selected ? 'text-white' : 'text-stone-800'}`}>
+                  <p className="font-bold truncate">{p.name}</p>
+                  <p className={`text-[10px] ${selected ? 'text-white/80' : 'text-stone-500'}`}>
+                    {bd || '?'}{dd ? ` – ${dd}` : p.isLiving ? ' – Living' : ''}
+                  </p>
+                  {p.occupations?.[0] && (
+                    <p className={`text-[9px] italic truncate ${selected ? 'text-white/60' : 'text-stone-400'}`}>{p.occupations[0]}</p>
+                  )}
+                </div>
+              </foreignObject>
             </g>
           );
         })}
