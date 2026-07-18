@@ -129,7 +129,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
   }
 
   return (
-    <div className="lg:col-span-2 bg-[#F4EFE6] border border-stone-200 rounded-xl p-6 shadow-inner relative overflow-y-auto min-h-[600px] max-h-[800px]">
+    <div className="lg:col-span-2 bg-[#F4EFE6] border border-stone-200 rounded-xl p-6 shadow-inner relative overflow-y-auto min-h-[400px] max-h-[70vh]">
       <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
         <Users className="w-96 h-96 text-[#800020]" />
       </div>

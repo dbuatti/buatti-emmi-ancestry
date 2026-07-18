@@ -39,7 +39,7 @@ export function getScoreColor(score: number): string {
 }
 
 export function getScoreLabel(score: number): string {
-  if (score === 100) return 'Complete';
+  if (score === 100) return 'All records found';
   if (score >= 60) return 'Good progress';
   if (score >= 30) return 'Needs work';
   return 'Priority';

@@ -301,7 +301,9 @@ export const initialPeople: Person[] = [
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '29 Oct 1816, Lisciano — per foglio famiglia 5120' },
-      { type: 'Death Record', status: 'Found', notes: '9 Mar 1889 — per foglio famiglia 5120' }
+      { type: 'Death Record', status: 'Found', notes: '9 Mar 1889 — per foglio famiglia 5120' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Feliciani Angela Maria — not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Pre-unitary parish records, likely Chiesa di Lisciano' }
     ],
     researchStatus: {
       status: 'Confirmed',

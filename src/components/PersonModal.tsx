@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -213,7 +212,7 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] p-0 gap-0 bg-[#FAF6F0]">
+      <DialogContent className="max-w-2xl h-[80vh] p-0 gap-0 flex flex-col bg-[#FAF6F0]">
         <div className={`${lineColors[person.line] || 'bg-stone-800'} p-5 text-white`}>
           <div className="flex items-center justify-between mb-2">
             <Badge className="bg-white/20 text-white border-0 text-[10px] font-sans">
@@ -236,28 +235,26 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
           )}
         </div>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="w-full bg-stone-100 rounded-none border-b border-stone-200 grid grid-cols-4 text-xs sticky top-0 z-10">
+        <Tabs defaultValue="overview" className="flex flex-col flex-1 overflow-hidden">
+          <TabsList className="w-full bg-stone-100 rounded-none border-b border-stone-200 grid grid-cols-4 text-xs shrink-0">
             <TabsTrigger value="overview" className="rounded-none py-2.5">Overview</TabsTrigger>
             <TabsTrigger value="bio" className="rounded-none py-2.5">Notes</TabsTrigger>
             <TabsTrigger value="migration" className="rounded-none py-2.5">Migration</TabsTrigger>
             <TabsTrigger value="records" className="rounded-none py-2.5">Records</TabsTrigger>
           </TabsList>
-          <ScrollArea className="max-h-[55vh] p-4">
-            <TabsContent value="overview" className="mt-0">
-              <ModalOverview person={person} people={people} onSelectPerson={onSelectPerson} />
-              <ModalMilitary person={person} />
-            </TabsContent>
-            <TabsContent value="bio" className="mt-0">
-              <ModalBio person={person} />
-            </TabsContent>
-            <TabsContent value="migration" className="mt-0">
-              <ModalMigration person={person} />
-            </TabsContent>
-            <TabsContent value="records" className="mt-0">
-              <ModalRecords person={person} />
-            </TabsContent>
-          </ScrollArea>
+          <TabsContent value="overview" className="flex-1 overflow-y-auto mt-0 p-4">
+            <ModalOverview person={person} people={people} onSelectPerson={onSelectPerson} />
+            <ModalMilitary person={person} />
+          </TabsContent>
+          <TabsContent value="bio" className="flex-1 overflow-y-auto mt-0 p-4">
+            <ModalBio person={person} />
+          </TabsContent>
+          <TabsContent value="migration" className="flex-1 overflow-y-auto mt-0 p-4">
+            <ModalMigration person={person} />
+          </TabsContent>
+          <TabsContent value="records" className="flex-1 overflow-y-auto mt-0 p-4">
+            <ModalRecords person={person} />
+          </TabsContent>
         </Tabs>
 
         <div className="flex items-center gap-2 px-4 py-2 border-t border-stone-200 text-[10px] text-stone-500 font-sans bg-stone-50">
