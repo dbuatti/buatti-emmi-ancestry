@@ -83,12 +83,12 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: {
       status: 'In Progress — Marriage Cert Requested',
-      details: '1893 Ida confirmed as real person (foglio 5120, 18 Jul 2026): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Still unconfirmed as Alfredo\'s wife — right-hand columns of f. 5120 unreadable. 1904 Ida candidate (f. 5545) not yet checked. Antenati dead end for 1919-1923 records. New strategy: FamilySearch catalog + Comune birth act request for Ezio.',
+      details: '1893 Ida confirmed as real person (foglio 5120): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Right-hand columns visible but BLANK — no marriage annotation. Register closed ~1901 (last entries: Ersilia b. 1901, Annibale departed for Folignano 1901). At Ezio\'s birth (1923) she\'d be 30 — sensible. 1904 Ida (f. 5545, d/o Ignazio Galanti the barber + Clementina Curcozzi) also documented — both candidates still alive. Two emails sent 18 Jul 2026: (1) Comune AP — Ezio\'s copia integrale di nascita; (2) Tribunale AP — marriage act + allegati. Tiebreaker now depends on correspondence.',
       nextSteps: [
-        'Draft Comune email for Ezio\'s copia integrale di nascita (27 Apr 1923) — Ida\'s age at his birth will settle the question.',
-        'Check FamilySearch Catalog for Ascoli Piceno Matrimoni 1919–1923 and Nati 1923.',
-        'Check foglio 5545 (Registro 59) for the 1904 Ida candidate on Antenati.',
-        'Await marriage cert reply from Comune (protocol 0062771 — Sergio De Angelis).'
+        'Await Comune AP reply for Ezio\'s birth act (sent 18 Jul 2026 to protocollo@comune.ap.it). Ida\'s age at his birth settles 1893 vs 1904.',
+        'Await Tribunale AP reply for marriage act + allegati (sent 18 Jul 2026 to cancelleria.civile.tribunale.ascolipiceno@giustizia.it).',
+        'Await marriage cert reply from Comune (protocol 0062771 — Sergio De Angelis).',
+        'Check FamilySearch Catalog for Ascoli Piceno Matrimoni 1919–1923 and Nati 1923.'
       ]
     },
     sources: [
@@ -240,8 +240,8 @@ export const initialPeople: Person[] = [
       'Son of Domenico Galanti (b. 29 Oct 1816, Lisciano, possidente, d. 9 Mar 1889) and fu Vincenza Michetti.',
       'Son of a large landowning family from Lisciano (hill frazione of Ascoli Piceno).',
       'Father Domenico was a widower of Feliciani Angela Maria. Antonio\'s brothers: Annibale (b. 1855, moved to Folignano 1901) and Ottavio (b. 1863).',
-      'Siblings with Ida on foglio 5120: Tito (b. 18 Nov 1891), Emidia (b. 3 Aug 1894), Linda (b. 18 Aug 1897).',
-      'IMPORTANT: Marriage to Alfredo Buatti unconfirmed. Ida (daughter of Antonio) might not be the Ida who married Alfredo. The 1904 Ida candidate (d/o Ignazio Galanti, foglio 5545) still unchecked.',
+      'Siblings with Ida on foglio 5120: Tito (b. 18 Nov 1891), Emidia (b. 3 Aug 1894), Linda (b. 18 Aug 1897), Ersilia (b. 16 Jun 1901).',
+      'IMPORTANT: Marriage to Alfredo Buatti unconfirmed. 1904 Ida candidate (d/o Ignazio Galanti + Clementina Curcozzi, foglio 5545, Registro 59) also checked — both candidates unconfirmed. Two emails in flight: Ezio\'s birth act (Comune AP) + marriage act/allegati (Tribunale AP).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '29 Oct 1857, Lisciano — per foglio famiglia 5120' },
