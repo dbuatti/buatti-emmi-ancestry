@@ -147,7 +147,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
             <div className="text-center">
               <span className="text-[10px] font-sans uppercase tracking-widest text-stone-400 font-bold">{genLabel(gen)}</span>
             </div>
-            <div className="grid gap-1 px-1" style={{ gridTemplateColumns: `repeat(${activeLines.length || 1}, 1fr)` }}>
+            <div className="grid gap-4 px-1" style={{ gridTemplateColumns: `repeat(${activeLines.length || 1}, 1fr)` }}>
               {activeLines.map((line, li) => {
                 const cards = byGenAndLine[gen]?.[line] ?? [];
                 const lineDot = {
@@ -157,7 +157,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
                   Patanè: 'bg-blue-900',
                 }[line];
                 return (
-                  <div key={line} className={`flex flex-col gap-1.5 ${li > 0 ? 'border-l border-stone-200/30 pl-2' : ''}`}>
+                  <div key={line} className={`flex flex-col gap-1.5 ${li > 0 ? 'border-l-2 border-stone-200 pl-4' : 'pr-1'}`}>
                     <div className="flex items-center gap-1">
                       <span className="inline-block w-2 h-2 rounded-full ${lineDot} shrink-0" />
                       <span className="text-[9px] font-sans uppercase tracking-wider text-stone-400 font-semibold">{line}</span>
@@ -177,9 +177,9 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
               })}
             </div>
             {gi < gens.length - 1 && activeLines.length > 0 && (
-              <div className="grid gap-1 px-1 mt-1" style={{ gridTemplateColumns: `repeat(${activeLines.length}, 1fr)` }}>
+              <div className="grid gap-4 px-1 mt-1.5" style={{ gridTemplateColumns: `repeat(${activeLines.length}, 1fr)` }}>
                 {activeLines.map((line, li) => (
-                  <div key={line} className={`flex justify-center ${li > 0 ? 'border-l border-transparent pl-2' : ''}`}>
+                  <div key={line} className={`flex justify-center ${li > 0 ? 'border-l-2 border-transparent pl-4' : ''}`}>
                     <div className="w-px h-3 border-r border-dashed border-stone-400" />
                   </div>
                 ))}
