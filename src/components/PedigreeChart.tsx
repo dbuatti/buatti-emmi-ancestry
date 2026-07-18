@@ -81,24 +81,21 @@ function ConnectingLine() {
 export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: PedigreeChartProps) {
   const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
-  const directLineIds = new Set<string>();
-  function traceAncestors(id: string) {
-    if (directLineIds.has(id)) return;
-    directLineIds.add(id);
-    const p = people.find(p => p.id === id);
-    if (p) p.parents.forEach(traceAncestors);
-  }
-
-  // Include all siblings of the root (same parents)
-  const root = people.find(p => p.id === 'daniele-buatti');
-  if (root) {
-    people.filter(p =>
-      p.parents.length === root.parents.length &&
-      p.parents.every((pid, i) => root.parents[i] === pid)
-    ).forEach(p => directLineIds.add(p.id));
-  }
-
-  traceAncestors('daniele-buatti');
+  const directLineIds = new Set([
+    'daniele-buatti', 'roberto-buatti', 'stefano-buatti', 'marco-buatti',
+    'alfred-buatti', 'venera-buatti',
+    'ezio-buatti', 'bruna-lilia-chiappini', 'gregorio-emmi', 'rosaria-patane',
+    'alfredo-buatti-sr', 'ida-galanti', 'remo-chiappini', 'irma-pirri',
+    'egidio-emmi', 'concetta-sgroi', 'rosario-patane-sr', 'venera-vecchio',
+    'giovanni-buatti', 'emidia-bruni',
+    'antonino-emmi', 'rosaria-nasti', 'gregorio-sgroi', 'santa-cali',
+    'sebastiano-patane-sr', 'rosaria-dagata', 'vincenzo-vecchio', 'rosaria-raciti',
+    'emidio-buatti', 'antonia-lenzi', 'antonino-emmi-sr', 'nunzia-pavone',
+    'antonio-galanti', 'virginia-rosati',
+    'domenico-galanti', 'feliciani-angela-maria', 'luigi-rosati', 'filippini',
+    'domenico-lenzi', 'luigia', 'antonio-bruni', 'sperandia-pasqualini',
+    'luigi-galanti', 'vincenza-michetti',
+  ]);
 
   const filtered = people.filter(p => directLineIds.has(p.id));
   const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);
