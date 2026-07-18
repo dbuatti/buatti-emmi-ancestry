@@ -81,14 +81,6 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
   );
 }
 
-function ConnectingLine() {
-  return (
-    <div className="hidden md:flex justify-center text-stone-300 h-4 pointer-events-none">
-      <div className="w-px border-r-2 border-dashed border-stone-300 h-full" />
-    </div>
-  );
-}
-
 export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: PedigreeChartProps) {
   const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
@@ -131,35 +123,54 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
 
       <div className="space-y-6 relative z-10">
         {gens.map((gen, gi) => (
-          <div key={gen} className="space-y-3">
+          <div key={gen} className="space-y-2">
             <div className="text-center">
               <span className="text-[10px] font-sans uppercase tracking-widest text-stone-400 font-bold">{genLabel(gen)}</span>
             </div>
-            <div className="flex justify-center gap-3 px-2">
-              {allLines.map(line => {
+            <div className="grid grid-cols-4 gap-1 px-1">
+              {allLines.map((line, li) => {
                 const cards = byGenAndLine[gen]?.[line];
-                if (!cards || cards.length === 0) {
-                  return (
-                    <div key={line} className="flex-1 max-w-[200px] min-w-[100px] p-2 rounded-lg border border-dashed border-stone-200 bg-stone-50/30">
-                      <p className="text-[10px] font-sans text-stone-300 text-center italic">No records</p>
-                    </div>
-                  );
-                }
+                const lineDot = {
+                  Buatti: 'bg-[#800020]',
+                  Chiappini: 'bg-amber-700',
+                  Emmi: 'bg-emerald-800',
+                  Patanè: 'bg-blue-900',
+                }[line];
                 return (
-                  <div key={line} className="flex-1 max-w-[200px] min-w-[100px] space-y-2">
-                    {cards.map(p => (
-                      <PersonCard
-                        key={p.id}
-                        person={p}
-                        selected={selectedPersonId === p.id}
-                        onSelect={() => onSelectPerson(p.id)}
-                      />
-                    ))}
+                  <div key={line} className="flex flex-col gap-1.5 border-l border-stone-200/40 pl-2 first:border-l-0">
+                    <div className="flex items-center gap-1">
+                      <span className={`inline-block w-2 h-2 rounded-full ${lineDot} shrink-0`} />
+                      <span className="text-[9px] font-sans uppercase tracking-wider text-stone-400 font-semibold">{line}</span>
+                    </div>
+                    {!cards || cards.length === 0 ? (
+                      <div className="p-2 rounded-lg border border-dashed border-stone-200 bg-stone-50/30 min-h-[48px] flex items-center justify-center">
+                        <p className="text-[10px] font-sans text-stone-300 text-center italic">No records</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        {cards.map(p => (
+                          <PersonCard
+                            key={p.id}
+                            person={p}
+                            selected={selectedPersonId === p.id}
+                            onSelect={() => onSelectPerson(p.id)}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
-            {gi < gens.length - 1 && <ConnectingLine />}
+            {gi < gens.length - 1 && (
+              <div className="grid grid-cols-4 gap-1 px-1 mt-1">
+                {allLines.map(line => (
+                  <div key={line} className="flex justify-center">
+                    <div className="w-px h-3 border-r border-dashed border-stone-300" />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
