@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { initialPeople, initialResearchLeads, initialOpenQuestions, Person, ResearchLead, OpenQuestion } from '../data/familyData';
-import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText, Search } from 'lucide-react';
+import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText, Search, GitBranch, Waypoints } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,8 @@ import { calculateCompleteness } from '@/lib/research';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import { AppHeader } from '@/components/AppHeader';
 import { PedigreeChart } from '@/components/PedigreeChart';
+import { TreeEgo } from '@/components/TreeEgo';
+import { TreeConnected } from '@/components/TreeConnected';
 import { PersonModal } from '@/components/PersonModal';
 import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { ResearchLog } from '@/components/ResearchLog';
@@ -167,7 +169,13 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-stone-200 pb-2">
             <TabsList className="bg-[#F4EFE6] border border-stone-200 p-1">
               <TabsTrigger value="tree" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
-                <GitFork className="w-4 h-4" /> Interactive Tree
+                <GitFork className="w-4 h-4" /> Pedigree
+              </TabsTrigger>
+              <TabsTrigger value="ego" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
+                <Waypoints className="w-4 h-4" /> Ego Tree
+              </TabsTrigger>
+              <TabsTrigger value="connected" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
+                <GitBranch className="w-4 h-4" /> Connected
               </TabsTrigger>
               <TabsTrigger value="directory" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
                 <Users className="w-4 h-4" /> Ancestors Directory
@@ -192,6 +200,28 @@ const Index = () => {
 
           <TabsContent value="tree" className="space-y-6">
             <PedigreeChart
+              people={people}
+              selectedPersonId={selectedPersonId}
+              onSelectPerson={(id) => {
+                setSelectedPersonId(id);
+                setModalPersonId(id);
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="ego" className="space-y-6">
+            <TreeEgo
+              people={people}
+              selectedPersonId={selectedPersonId}
+              onSelectPerson={(id) => {
+                setSelectedPersonId(id);
+                setModalPersonId(id);
+              }}
+            />
+          </TabsContent>
+
+          <TabsContent value="connected" className="space-y-6">
+            <TreeConnected
               people={people}
               selectedPersonId={selectedPersonId}
               onSelectPerson={(id) => {

@@ -1137,7 +1137,10 @@ export const initialPeople: Person[] = [
     children: ['antonino-emmi'],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Borbonic pre-1866 series' },
-      { type: 'Death Record', status: 'Not Found', notes: 'Pre-1866 or prior to records start' }
+      { type: 'Death Record', status: 'Not Found', notes: 'Pre-1866 or prior to records start' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Antonino Emmi Sr. — not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Linguaglossa parish records, pre-1866' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Pre-1866 Borbonic series — not yet searched' }
     ],
     researchStatus: {
       status: 'In Progress',
