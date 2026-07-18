@@ -32,7 +32,9 @@ export const initialPeople: Person[] = [
       { type: 'Marriage Record', status: 'Searching', notes: 'To Ida Galanti — likely ~1920–1922. Requested from Comune di Ascoli Piceno (prot. 0062771).' },
       { type: 'Death Record', status: 'Found', notes: '9 May 1964 — confirmed via Comune cemetery search (database shows 9/5/1964, Italian format)' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, Settore L, Blocco L074O' }
-    ],
+    ,
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress',
       details: 'Birth confirmed 18 Mar 1888 via foglio famiglia N. 1527 (Alessandra Buondi, 17 Jul 2026). Parents: Giovanni Buatti + Emidia Bruni. Grandparents: Emidio Buatti + Antonia Lenzi. Marriage to Ida Galanti and her parentage still outstanding.',
@@ -80,7 +82,9 @@ export const initialPeople: Person[] = [
       { type: 'Marriage Record', status: 'Requested', notes: 'To Alfredo Buatti Sr., ~1920–1922. Requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771, assigned Sergio De Angelis). Will settle whether 1893 Ida is THE Ida. CAUTION: Alfredo\'s sister Ida Buatti (b. 20 Mar 1886) is a different person.' },
       { type: 'Death Record', status: 'Found', notes: '26 Jan 1970 — confirmed via cemetery search' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, same plot as Alfredo' }
-    ],
+    ,
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress — Marriage Cert Requested',
       details: '1893 Ida confirmed as real person (foglio 5120): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Right-hand columns visible but BLANK — no marriage annotation. Register closed ~1901 (last entries: Ersilia b. 1901, Annibale departed for Folignano 1901). At Ezio\'s birth (1923) she\'d be 30 — sensible. 1904 Ida (f. 5545, d/o Ignazio Galanti the barber + Clementina Curcozzi) also documented — both candidates still alive. Two emails sent 18 Jul 2026: (1) Comune AP — Ezio\'s copia integrale di nascita; (2) Tribunale AP — marriage act + allegati. Tiebreaker now depends on correspondence.',
@@ -133,7 +137,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Found', notes: '25 Jun 1852, Ascoli Piceno (Duomo parish) — per foglio famiglia N. 1527' },
       { type: 'Death Record', status: 'Not Found', notes: 'Unknown — likely post-1899' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Identified via foglio famiglia N. 1527 (17 Jul 2026). Son of Emidio Buatti + Antonia Lenzi. Father of Alfredo Buatti (b. 18 Mar 1888). Later residence: Roma.',
@@ -159,7 +166,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Found', notes: '28 Nov 1857, Ascoli Piceno (S. Vittore parish) — per foglio famiglia N. 1527' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Identified via foglio famiglia N. 1527 (17 Jul 2026). Daughter of Antonio Bruni + Sperandia Pasqualini.',
@@ -188,7 +198,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Likely pre-unitary records (pre-1861) — search Archivio di Stato di Ascoli Piceno' },
       { type: 'Death Record', status: 'Not Found', notes: 'Before 1899 — not yet located' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Direct ancestor confirmed via foglio famiglia N. 1527 (17 Jul 2026). Birth/death records outstanding.',
@@ -214,7 +227,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Rotella — search pre-unitary records' },
       { type: 'Death Record', status: 'Found', notes: '4 Oct 1899 — per foglio famiglia N. 1527' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Direct ancestor confirmed via foglio famiglia N. 1527 (17 Jul 2026). Birth record outstanding (Rotella pre-unitary series).',
@@ -246,7 +262,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Found', notes: '29 Oct 1857, Lisciano — per foglio famiglia 5120' },
       { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress',
       details: 'Confirmed father of Ida Galanti (b. 1893). Landowning family from Lisciano. Marriage connection to Alfredo Buatti unconfirmed.',
@@ -273,7 +292,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Found', notes: '7 Feb 1867, Maltignano — per foglio famiglia 5120' },
       { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress',
       details: 'Confirmed mother of Ida Galanti (b. 1893). From Maltignano. Marriage connection to Alfredo Buatti unconfirmed.',
@@ -328,6 +350,14 @@ export const initialPeople: Person[] = [
       'CONFIRMED via foglio famiglia 5120: wife of Domenico Galanti (he is listed as "widower of Feliciani Angela Maria").',
       'Presumed mother of Antonio Galanti (b. 1857), Annibale Galanti (b. 1855), and Ottavio Galanti (b. 1863).',
     ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Wife of Domenico Galanti. Mother of Antonio. Predeceased 1889.',
@@ -348,6 +378,14 @@ export const initialPeople: Person[] = [
     notes: [
       'CONFIRMED via foglio famiglia 5120: father of Virginia Rosati (b. 1867).',
       'From Maltignano, a comune ~8km from Ascoli Piceno.',
+    ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
     ],
     researchStatus: {
       status: 'Confirmed',
@@ -370,6 +408,14 @@ export const initialPeople: Person[] = [
       'CONFIRMED via foglio famiglia 5120: mother of Virginia Rosati, wife of Luigi Rosati.',
       'Only the surname Filippini is recorded — first name not given on foglio 5120.',
     ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Mother of Virginia Rosati. Surname only — first name unknown.',
@@ -390,6 +436,14 @@ export const initialPeople: Person[] = [
     notes: [
       'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): father of Antonia Lenzi, listed as "fu Domenico".',
       'From Rotella (~20km from Ascoli Piceno).',
+    ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
     ],
     researchStatus: {
       status: 'Confirmed',
@@ -412,6 +466,14 @@ export const initialPeople: Person[] = [
       'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): mother of Antonia Lenzi, listed as "fu Luigia".',
       'Only the given name Luigia is recorded — surname not given on foglio 1527.',
     ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Mother of Antonia Lenzi. Given name only — surname unknown.',
@@ -432,6 +494,14 @@ export const initialPeople: Person[] = [
     notes: [
       'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): father of Emidia Bruni.',
     ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Father of Emidia Bruni. All details unknown.',
@@ -451,6 +521,14 @@ export const initialPeople: Person[] = [
     children: ['emidia-bruni'],
     notes: [
       'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): mother of Emidia Bruni, wife of Antonio Bruni.',
+    ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
     ],
     researchStatus: {
       status: 'Confirmed',
@@ -475,6 +553,14 @@ export const initialPeople: Person[] = [
       'CONFIRMED via foglio famiglia 5120: father of Domenico Galanti (b. 1816), listed as "fu Luigi" (the late Luigi).',
       'Likely born late 1700s in Lisciano.',
     ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Father of Domenico Galanti. Pre-unitary records. Predeceased 1816.',
@@ -494,6 +580,14 @@ export const initialPeople: Person[] = [
     children: ['domenico-galanti'],
     notes: [
       'CONFIRMED via foglio famiglia 5120: mother of Domenico Galanti, listed as "fu Vincenza Michetti".',
+    ],
+
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
     ],
     researchStatus: {
       status: 'Confirmed',
@@ -524,7 +618,9 @@ export const initialPeople: Person[] = [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found — entirely unknown' },
       { type: 'Marriage Record', status: 'Not Found', notes: 'To Irma Pirri — likely San Benedetto del Tronto or Ascoli Piceno' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
-    ],
+    ,
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress',
       details: 'Name confirmed as father of Lilia via Branxton marriage extract 10 Jul 2026. Wife now named (Irma Pirri). Remo\'s own details still unknown.',
@@ -554,7 +650,9 @@ export const initialPeople: Person[] = [
       { type: 'Birth Record', status: 'Not Found', notes: 'Name now known — search Ascoli Piceno area' },
       { type: 'Marriage Record', status: 'Not Found', notes: 'To Remo Chiappini — likely San Benedetto del Tronto or Ascoli Piceno' },
       { type: 'Death Record', status: 'Not Found', notes: 'Unknown date — possibly connected to TB story' }
-    ],
+    ,
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed — Name Only',
       details: 'Name confirmed as Lilia Chiappini\'s mother via Branxton marriage extract 10 Jul 2026. All other details unknown.',
@@ -1064,7 +1162,9 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located in Nati ~1848-1850, Linguaglossa' },
       { type: 'Death Record', status: 'Found', notes: 'Morti 1889, atto n. 27 — died 11 Mar 1889, age 40, bracciante, husband of Rosaria Nasti, son of fu Antonino + fu Nunzia Pavone' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Death act found 11 Mar 1889. Confirms occupation bracciante, wife Rosaria Nasti, parents Antonino + Nunzia Pavone.',
@@ -1095,7 +1195,9 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed — Surname Resolved',
       details: 'Existence confirmed as mother of Egidio Emmi. Nasti confirmed: independently corroborated by Carmelo Vecchio (Antonino\'s death act, 1889) and Concetto Scarlata (marriage act, 1900). The banns "Raiti" was a clerical slip.'
@@ -1224,7 +1326,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Name confirmed as father of Concetta Sgroi via marriage act 4 Nov 1900.'
@@ -1250,7 +1355,10 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
-    ],
+    ,
+      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
       details: 'Name confirmed as mother of Concetta Sgroi via marriage act 4 Nov 1900.'
