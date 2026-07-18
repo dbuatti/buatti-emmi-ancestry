@@ -43,6 +43,13 @@ function genLabel(gen: number): string {
   return labels[gen] || `Generation ${gen}`;
 }
 
+const LINE_BORDER: Record<string, string> = {
+  Buatti: 'border-l-[#800020]',
+  Chiappini: 'border-l-amber-700',
+  Emmi: 'border-l-emerald-800',
+  Patanè: 'border-l-blue-900',
+};
+
 function cleanDate(d: string | undefined): string {
   if (!d) return '';
   // Strip parenthetical notes: "19 March 1893 (foglio 5120 — ...)" → "19 March 1893"
@@ -57,13 +64,16 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
   const confirmed = isProperlyIdentified(person);
   const borderColor = LINE_COLORS[line] || 'border-stone-200';
   const selectedStyle = selected ? (LINE_SELECTED[line] || LINE_SELECTED.Buatti) : 'bg-white';
+  const lineStripe = LINE_BORDER[line] || 'border-l-stone-300';
   const birthClean = cleanDate(person.birthDate);
   const deathClean = cleanDate(person.deathDate);
+  const found = person.records?.filter(r => r.status === 'Found').length ?? 0;
+  const total = person.records?.length ?? 0;
 
   return (
     <div
       onClick={onSelect}
-      className={`relative p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${selectedStyle} ${borderColor}`}
+      className={`relative p-2 pl-2.5 rounded-r-lg border border-l-4 text-xs cursor-pointer transition-all duration-200 hover:scale-[1.03] ${lineStripe} ${selectedStyle} ${borderColor}`}
     >
       {confirmed && (
         <div className="absolute -top-1.5 -right-1.5 z-10">
@@ -76,6 +86,14 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
       </p>
       {person.occupations && person.occupations.length > 0 && (
         <p className="text-[9px] font-sans italic opacity-60 truncate">{person.occupations[0]}</p>
+      )}
+      {total > 0 && (
+        <div className="flex items-center gap-1 mt-1">
+          <div className="flex-1 h-1 rounded-full bg-stone-200 overflow-hidden">
+            <div className="h-full rounded-full bg-emerald-600/60" style={{ width: `${Math.round(found / total * 100)}%` }} />
+          </div>
+          <span className="text-[8px] font-sans text-stone-400">{found}/{total}</span>
+        </div>
       )}
     </div>
   );
@@ -129,7 +147,8 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
             </div>
             <div className="grid grid-cols-4 gap-1 px-1">
               {allLines.map((line, li) => {
-                const cards = byGenAndLine[gen]?.[line];
+                const cards = byGenAndLine[gen]?.[line] ?? [];
+                const hasCards = cards.length > 0;
                 const lineDot = {
                   Buatti: 'bg-[#800020]',
                   Chiappini: 'bg-amber-700',
@@ -137,12 +156,12 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
                   Patanè: 'bg-blue-900',
                 }[line];
                 return (
-                  <div key={line} className={`flex flex-col gap-1.5 border-l border-stone-200/30 pl-2 first:border-l-0 ${!cards || cards.length === 0 ? 'opacity-30' : ''}`}>
+                  <div key={line} className={`flex flex-col gap-1.5 ${li > 0 ? 'border-l border-stone-200/30 pl-2' : ''} ${!hasCards ? 'opacity-20' : ''}`}>
                     <div className="flex items-center gap-1">
-                      <span className={`inline-block w-2 h-2 rounded-full ${lineDot} shrink-0 ${!cards || cards.length === 0 ? 'opacity-20' : ''}`} />
+                      <span className={`inline-block w-2 h-2 rounded-full ${lineDot} shrink-0`} />
                       <span className="text-[9px] font-sans uppercase tracking-wider text-stone-400 font-semibold">{line}</span>
                     </div>
-                    {cards && cards.length > 0 && (
+                    {hasCards ? (
                       <div className="space-y-1.5">
                         {cards.map(p => (
                           <PersonCard
@@ -153,6 +172,8 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
                           />
                         ))}
                       </div>
+                    ) : (
+                      <div className="min-h-[32px]" />
                     )}
                   </div>
                 );
@@ -160,13 +181,12 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
             </div>
             {gi < gens.length - 1 && (
               <div className="grid grid-cols-4 gap-1 px-1 mt-1">
-                {allLines.map(line => {
+                {allLines.map((line, li) => {
                   const hasInCurrent = byGenAndLine[gen]?.[line]?.length > 0;
                   const hasInNext = byGenAndLine[gens[gi + 1]]?.[line]?.length > 0;
-                  const connected = hasInCurrent || hasInNext;
                   return (
-                    <div key={line} className="flex justify-center">
-                      <div className={`w-px h-3 border-r border-dashed transition-opacity ${connected ? 'border-stone-400' : 'border-stone-200'}`} />
+                    <div key={line} className={`flex justify-center ${li > 0 ? 'border-l border-transparent pl-2' : ''}`}>
+                      <div className={`w-px h-3 border-r border-dashed ${hasInCurrent || hasInNext ? 'border-stone-400' : 'border-stone-200'}`} />
                     </div>
                   );
                 })}

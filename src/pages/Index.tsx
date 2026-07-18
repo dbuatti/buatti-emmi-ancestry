@@ -11,6 +11,7 @@ import { calculateCompleteness } from '@/lib/research';
 import { MadeWithDyad } from '@/components/made-with-dyad';
 import { AppHeader } from '@/components/AppHeader';
 import { PedigreeChart } from '@/components/PedigreeChart';
+import { PersonModal } from '@/components/PersonModal';
 import { PersonProfile } from '@/components/PersonProfile';
 import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { ResearchLog } from '@/components/ResearchLog';
@@ -29,6 +30,7 @@ const Index = () => {
   const [questions, setQuestions] = useState<OpenQuestion[]>(initialOpenQuestions);
 
   const [selectedPersonId, setSelectedPersonId] = useState<string>('ezio-buatti');
+  const [modalPersonId, setModalPersonId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [lineFilter, setLineFilter] = useState<string>('all');
   const [genFilter, setGenFilter] = useState<string>('all');
@@ -194,7 +196,10 @@ const Index = () => {
               <PedigreeChart
                 people={people}
                 selectedPersonId={selectedPersonId}
-                onSelectPerson={setSelectedPersonId}
+                onSelectPerson={(id) => {
+                  setSelectedPersonId(id);
+                  setModalPersonId(id);
+                }}
               />
               <div className="lg:col-span-1">
                 <PersonProfile
@@ -350,6 +355,17 @@ const Index = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <PersonModal
+        person={people.find(p => p.id === modalPersonId) ?? null}
+        people={people}
+        open={modalPersonId !== null}
+        onOpenChange={(open) => { if (!open) setModalPersonId(null); }}
+        onSelectPerson={(id) => {
+          setSelectedPersonId(id);
+          setModalPersonId(id);
+        }}
+      />
     </div>
   );
 };
