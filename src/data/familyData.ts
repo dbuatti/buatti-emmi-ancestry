@@ -300,8 +300,10 @@ export const initialPeople: Person[] = [
       'Landowning family from Lisciano, a hillside frazione of Ascoli Piceno.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '29 Oct 1816, Lisciano — per foglio famiglia 5120' },
-      { type: 'Death Record', status: 'Found', notes: '9 Mar 1889 — per foglio famiglia 5120' },
+      { type: 'Birth Record (Population Register)', status: 'Found', notes: '29 Oct 1816, Lisciano — from foglio famiglia 5120. Not a civil birth act.' },
+      { type: 'Civil Birth Record', status: 'Searching', notes: 'Pre-1861 Borbonic records — not yet searched in Archivio di Stato' },
+      { type: 'Death Record (Population Register)', status: 'Found', notes: '9 Mar 1889 — from foglio famiglia 5120. Not a civil death act.' },
+      { type: 'Civil Death Record', status: 'Searching', notes: 'Pre-1861 Borbonic records — not yet searched' },
       { type: 'Marriage Record', status: 'Not Found', notes: 'To Feliciani Angela Maria — not yet located' },
       { type: 'Baptism Record', status: 'Not Found', notes: 'Pre-unitary parish records, likely Chiesa di Lisciano' }
     ],
