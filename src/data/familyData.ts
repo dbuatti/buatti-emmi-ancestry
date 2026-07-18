@@ -799,7 +799,7 @@ export const initialPeople: Person[] = [
     line: 'Patanè',
     gender: 'M',
     birthDate: '8 February 1889',
-    birthPlace: 'Calatabiano, Province of Catania, Sicily, Italy',
+    birthPlace: 'Contrada Trifilippi, Calatabiano, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown / to be confirmed',
     occupations: ['Castaldo (farm manager)', 'Bracciante (day labourer)'],
     residences: ['Contrada Trappitelli, Calatabiano', 'Sezione Castello, Fiumefreddo di Sicilia'],
@@ -807,7 +807,7 @@ export const initialPeople: Person[] = [
     parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
     children: ['rosaria-patane', 'sebastiano-patane'],
     notes: [
-      'Civil birth record found (28 Jun 2026): Antenati, Calatabiano Nati 1889, atto n. 28. Born 8 Feb 1889 at 4:15 AM in Contrada Trappitelli, Calatabiano. Declared 10 Feb 1889.',
+      'Civil birth record found (28 Jun 2026): Antenati, Calatabiano Nati 1889, atto n. 28. Born 8 Feb 1889 at 4:15 AM in Contrada Trifilippi, Calatabiano (originally read as "Trappitelli" — corrected to Trifilippi per comparison with Venera 1885 and Giuseppe 1887 acts, which use the same contrada). Declared 10 Feb 1889.',
       'DATE DISCREPANCY: Civil record says 8 Feb (4:15 AM); baptism extract says 9 Feb ("born yesterday" on 10 Feb). Civil record is the legal document, so 8 Feb 1889 is the official date.',
       'Father at birth: Sebastiano Patanè (39, castaldo/farm manager). Mother: Rosaria D\'Agata (his legitimate wife).',
       'Witnesses at registration: Sebastiano Intelisano (60, bracciante) & Giuseppe Intelisano (30, bracciante). Both illiterate.',
@@ -815,11 +815,12 @@ export const initialPeople: Person[] = [
       'Age 34 in May 1924, per Rosaria\'s birth record.',
       'Baptism certificate (10 Feb 1889, Calatabiano) found in marriage processetti packet. Baptized by Sac. Salvatore Catalano, godfather Giuseppe Caruso.',
       'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person.',
+      'RULED OUT: Calatabiano Nati 1884 atto 103 — Rosario Patanè (son of Giuseppe Patanè, bracciante × Francesca Prestipino) — a different Rosario Patanè born in the same town five years earlier. Flag for collision risk in later records.',
       'NAA file A446, 1967/39646 (Item ID 7775953) requested — access application RK26/00009589 submitted 28 Jun 2026.',
       'Giuseppe Patanè (born 4 Feb 1887, atto 31 Calatabiano) shares same parents (Sebastiano & Rosaria D\'Agata) — confirmed as Rosario\'s brother via civil birth act.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trappitelli. Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
+      { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trifilippi (originally read as Trappitelli — corrected per cross-comparison with Venera 1885 and Giuseppe 1887). Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
       { type: 'Baptismal Record', status: 'Found', notes: '9/10 Feb 1889, Calatabiano. Baptized by Sac. Salvatore Catalano at Chiesa dell\'Amministrazione della Beata Vergine e S. Giorgio Martire. Godfather: Giuseppe Caruso.' },
       { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Banns 2, 9, 16 Apr 1911. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella at Chiesa del S. Rosario.' },
       { type: 'Marriage Record (Civil)', status: 'Found', notes: '27 Apr 1911, Fiumefreddo — noted in margin of Calatabiano birth act n. 28' },
@@ -968,8 +969,8 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Patanè',
     gender: 'F',
-    birthDate: 'c. 1888',
-    birthPlace: 'Calatabiano, Province of Catania, Sicily, Italy',
+    birthDate: '22 October 1885',
+    birthPlace: 'Contrada Trifilippi, Calatabiano, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     occupations: ['Casalinga (homemaker)'],
     residences: ['Fiumefreddo di Sicilia'],
@@ -978,25 +979,24 @@ export const initialPeople: Person[] = [
     children: [],
     notes: [
       'Sister of Rosario Patanè.',
-      '23 years old at time of marriage publications (Sep 1911) — born ~1888.',
+      'Civil birth act found: Calatabiano Nati 1885, atto n. 160. Born 22 October 1885 at 4:20 PM, Contrada Trifilippi, Calatabiano. Declared 24 October 1885 at 9:15 AM before Filippo Dottor Leo (assessore delegato) by father Sebastiano Patanè (35, castaldo). Mother: Rosaria D\'Agata, his lawful wife living with him. Witnesses: Leonardo Fazio (70, possidente) and Salvatore Scalora (70, agricoltore). All illiterate. No marriage margin note visible on this copy (may be on the comune copy only).',
+      '"Anni 23" at 1911 banns was wrong by ~3 years — confirms banns ages are unreliable.',
       'Marriage banns filed 8 Sep 1911, Fiumefreddo civil registry. Marriage celebrated 17 Sep 1911 in Calatabiano.',
       'Groom: Orazio Pagano (25, bracciante, son of Santo Pagano & Rosaria Pennisi).',
       'Mother recorded as "Ignazia D\'Agata" on the civil banns (variation of Rosaria D\'Agata).',
-      'NOT found in Calatabiano Nati 1887 or 1888. Likely born 1884–1886 — scan Nati 1884, 1885, 1886 indexes for Patanè entries (same parent rule).',
-      'If still absent, pull her civil marriage act (Calatabiano, 17 Sep 1911) — it states her exact age and birthplace. If born outside Calatabiano, that comuni dates the family\'s arrival and points to the marriage act location.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'Not in Calatabiano Nati 1887-88 — scan 1884-86 indexes, or pull civil marriage act' },
+      { type: 'Birth Record', status: 'Found', notes: '22 Oct 1885, Calatabiano — atto n. 160, Nati 1885. Contrada Trifilippi. Father: Sebastiano Patanè (35, castaldo). Mother: Rosaria D\'Agata. Officer: Filippo Dottor Leo. Witnesses: Leonardo Fazio (70), Salvatore Scalora (70).' },
       { type: 'Marriage Record', status: 'Found', notes: '8 Sep 1911 (banns filed) / 17 Sep 1911 (celebrated), Fiumefreddo/Calatabiano. Groom: Orazio Pagano (25, son of Santo Pagano & Rosaria Pennisi).' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Marriage confirmed via Fiumefreddo civil marriage banns. Not found in Calatabiano Nati 1887-88. Four Salvatore births 1875-1879 all excluded as siblings — Calatabiano likely not the family\'s residence pre-1887.',
+      status: 'Confirmed',
+      details: 'Civil birth act found (atto 160/1885, Calatabiano). Parents confirmed: Sebastiano Patanè (35, castaldo) + Rosaria D\'Agata. Born Contrada Trifilippi same as brother Giuseppe (1887). Father castaldo by 1885 (earlier than previously known).',
       nextSteps: [
-        'Scan Calatabiano Nati 1884-1886 indexes for Venera Patanè di Sebastiano (last cheap Calatabiano check).',
-        'If absent, pull her civil marriage act (17 Sep 1911, Calatabiano) — states birthplace, which points to the family\'s pre-1887 comune.',
-        'Then pivot to Fiumefreddo Matrimoni ~1874-1886 and Fiumefreddo Nati ~1876-1886.'
+        'Scan Calatabiano Nati 1880-1883 indexes for Patanè — any child of Sebastiano there pushes the marriage window earlier.',
+        'If 1880-83 clean, search Calatabiano Matrimoni + pubblicazioni 1878-1885 (start 1883-85 highest probability).',
+        'If marriage not in Calatabiano, pivot to Fiumefreddo Matrimoni 1878-1885.'
       ]
     }
   },
@@ -1391,11 +1391,12 @@ export const initialPeople: Person[] = [
     notes: [
       'Father of Rosario Patanè, confirmed via 1911 parish marriage certificate.',
       'Also father of Giuseppe Patanè (married Sebastiana Cogliandolo, 20 Feb 1911, Liber Matrimoniorum N.11/12 — also recorded as "Sebastiana Guglielmino" on civil banns) and Venera Patanè (married Orazio Pagano, 17 Sep 1911) — both confirmed via Fiumefreddo records.',
-      'Age at Giuseppe\'s birth (Feb 1887): 37, bracciante. Age at Rosario\'s birth (Feb 1889): 39, castaldo (farm manager) — a promotion between births, consistent with an estate-manager career arc.',
-      'Contrada at Giuseppe\'s birth: Trifilippi (Calatabiano). Contrada at Rosario\'s birth: Trappitelli (Calatabiano) — likely two different farms in the same area.',
+      'Age at Venera\'s birth (Oct 1885): 35, castaldo. Age at Giuseppe\'s birth (Feb 1887): 37, bracciante. Age at Rosario\'s birth (Feb 1889): 39, castaldo. Perfectly consistent stack → born ~1849-50. Note the bracciante dip in 1887 between two castaldo entries — likely his occupation was castaldo throughout and the 1887 clerk simplified it.',
+      'All three children born at Contrada Trifilippi, Calatabiano (settles the reading — Trifilippi, not Trappitelli). Same contrada, same estate, four years of documented residence.',
       'From Calatabiano area; resided in Fiumefreddo by 1911.',
-      'Marriage to Rosaria D\'Agata: window now 1878–1886, probably in Calatabiano. Salvatore fork fully resolved — four Salvatore Patanè births in Calatabiano 1875-1879 (Antonino, Paolo ×2, Mario), NONE di Sebastiano. Calatabiano exhausted for births of this couple before 1887. Marriage likely shortly before Giuseppe\'s birth (Feb 1887) — maybe 1885-1886.',
-      'Sebastiano reads as an outsider posted to an estate. The local Patanè cluster in Calatabiano is all falegnami/sarti (carpenters/tailors); Sebastiano was a bracciante turned castaldo (farm manager). Different social niche, no overlap in the birth registers.',
+      'Marriage to Rosaria D\'Agata: window now 1878–1885. Family documented in Calatabiano from Oct 1885 onward with a ~15-16 month conception rhythm (Venera Oct 1885 → Giuseppe Feb 1887 → Rosario Feb 1889). No gaps suggesting missing children. If 1880-83 Calatabiano Nati are clean of Sebastiano children, marriage likely ~1883-85 shortly before Venera\'s birth.',
+      'Sebastiano reads as an outsider posted to an estate. The local Patanè cluster in Calatabiano is all falegnami/sarti/caolzai (carpenters/tailors/shoemakers); Sebastiano was a castaldo (farm manager). Different social niche, no overlap in the birth registers. The elderly landowner Leonardo Fazio witnessed births across multiple years (1885, 1887) — plausibly the estate owner Sebastiano managed for.',
+      'Exclusion log — Calatabiano Nati 1884-1886: Atto 103/1884 (Rosario di Giuseppe Patanè, bracciante × Francesca Prestipino — same couple as Salvatore 1886 — two Rosarios in same town, flag for future collision); Atto 155/1884 (Filippo di Mariano Patanè, falegname × Carmela Patanè); Atto 54/1884 (Carmela di Paolo Patanè di Salvatore, calzolaio × Antonina Manitta); Atto 144/1885 (Salvatore di Giuseppe Patanè, sarto × Vincenza Falcone); Atto 137/1885 (Filippo di Francesco Patanè, falegname × Maria Oliveri); Atto 15/1886 (Sebastiana di Paolo Patanè di Salvatore, calzolaio × Antonina Manitta); Atto 62/1886 (Salvatore di Giuseppe Patanè, bracciante × Francesca Paola Prestipino). Six-plus distinct Patanè households mapped — none connected to Sebastiano.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: '~1849–1850 — search Calatabiano pre-1866 Borbonic records' },
@@ -1406,8 +1407,9 @@ export const initialPeople: Person[] = [
       details: 'Name confirmed as father of Rosario and Giuseppe Patanè via civil birth acts. Birth year now narrowed to ~1849–1850. Occupation: bracciante (1887), promoted to castaldo (1889). Contrada: Trifilippi then Trappitelli, Calatabiano.',
       nextSteps: [
         'Search Calatabiano Nati 1849–1850 for Sebastiano\'s birth record.',
-        'If Venera not in Calatabiano 1884-86, pivot to Fiumefreddo Matrimoni ~1874–1886 and Fiumefreddo Nati ~1876–1886.',
-        'Pull Venera\'s civil marriage act (Calatabiano, 17 Sep 1911) for her birthplace — cheapest pointer to the family\'s pre-1887 comune.'
+        'Scan Calatabiano Nati 1880-1883 indexes for Patanè — if clean, marriage likely ~1883-85.',
+        'Search Calatabiano Matrimoni + pubblicazioni 1878-1885 (start 1883-85 highest probability).',
+        'If marriage not in Calatabiano, pivot to Fiumefreddo Matrimoni 1878-1885.'
       ]
     }
   },
