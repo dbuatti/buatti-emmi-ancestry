@@ -22,10 +22,10 @@ const LINE_HEX: Record<string, string> = {
   Patanè: '#1e3a5f',
 };
 
-const CARD_W = 160;
-const CARD_H = 56;
-const GEN_GAP = 80;
-const ROW_GAP = 12;
+const CARD_W = 190;
+const CARD_H = 62;
+const GEN_GAP = 100;
+const ROW_GAP = 16;
 
 function cleanDate(d: string | undefined): string {
   if (!d) return '';
@@ -178,22 +178,22 @@ export function TreeConnected({ people, selectedPersonId, onSelectPerson }: Tree
                 </g>
               )}
               {/* Line dot */}
-              <circle cx={node.x + 8} cy={node.y + CARD_H / 2} r={4} fill={dot} />
+              <circle cx={node.x + 10} cy={node.y + CARD_H / 2} r={4} fill={dot} />
               {/* Name */}
-              <text x={node.x + 16} y={node.y + 20} fontSize={11} fontWeight="bold"
+              <text x={node.x + 20} y={node.y + 22} fontSize={12} fontWeight="bold"
                 fill={selected ? '#fff' : '#292524'} className="font-sans">
-                {p.name.length > 20 ? p.name.slice(0, 18) + '…' : p.name}
+                {p.name.length > 22 ? p.name.slice(0, 20) + '…' : p.name}
               </text>
               {/* Dates */}
-              <text x={node.x + 16} y={node.y + 36} fontSize={9}
+              <text x={node.x + 20} y={node.y + 38} fontSize={9}
                 fill={selected ? '#fff' : '#78716c'} className="font-sans">
-                {bd || '?'}{dd ? ` – ${dd}` : p.isLiving ? ' – Living' : ''}
+                {(bd || '?').length > 22 ? (bd || '?').slice(0, 20) + '…' : (bd || '?')}{dd ? ` – ${dd.length > 18 ? dd.slice(0, 16) + '…' : dd}` : p.isLiving ? ' – Living' : ''}
               </text>
               {/* Occupation */}
               {p.occupations?.[0] && (
-                <text x={node.x + 16} y={node.y + 48} fontSize={8}
+                <text x={node.x + 20} y={node.y + 52} fontSize={8}
                   fill={selected ? '#e7e5e4' : '#a8a29e'} className="font-sans italic">
-                  {p.occupations[0].length > 22 ? p.occupations[0].slice(0, 20) + '…' : p.occupations[0]}
+                  {p.occupations[0].length > 24 ? p.occupations[0].slice(0, 22) + '…' : p.occupations[0]}
                 </text>
               )}
             </g>
