@@ -59,7 +59,7 @@ export function AppHeader({ people, leads, questions, onReset, onAddPerson }: Ap
         </div>
         <div className="bg-[#FAF6F0]/80 p-3 rounded-lg border border-stone-200/40">
           <span className="block text-xs text-stone-500 font-sans uppercase tracking-wider">Generations</span>
-          <span className="text-xl font-bold text-[#800020]">5 Generations</span>
+          <span className="text-xl font-bold text-[#800020]">{people.length > 0 ? new Set(people.map(p => p.generation)).size : 0} Generations</span>
         </div>
         <div className="bg-[#FAF6F0]/80 p-3 rounded-lg border border-stone-200/40">
           <span className="block text-xs text-stone-500 font-sans uppercase tracking-wider">Open Questions</span>

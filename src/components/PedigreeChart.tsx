@@ -43,11 +43,22 @@ function genLabel(gen: number): string {
   return labels[gen] || `Generation ${gen}`;
 }
 
+function cleanDate(d: string | undefined): string {
+  if (!d) return '';
+  // Strip parenthetical notes: "19 March 1893 (foglio 5120 — ...)" → "19 March 1893"
+  const cleaned = d.replace(/\s*\(.*?\)\s*/g, '').trim();
+  // Shorten "Unknown — likely 1810s–1820s" → "~1810s–1820s"
+  const shortened = cleaned.replace(/^Unknown\s*[—–-]\s*(likely\s+)?/i, '~');
+  return shortened;
+}
+
 function PersonCard({ person, selected, onSelect }: { person: Person; selected: boolean; onSelect: () => void }) {
   const line = person.line;
   const confirmed = isProperlyIdentified(person);
   const borderColor = LINE_COLORS[line] || 'border-stone-200';
   const selectedStyle = selected ? (LINE_SELECTED[line] || LINE_SELECTED.Buatti) : 'bg-white';
+  const birthClean = cleanDate(person.birthDate);
+  const deathClean = cleanDate(person.deathDate);
 
   return (
     <div
@@ -61,7 +72,7 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
       )}
       <p className="font-bold truncate pr-1">{person.name}</p>
       <p className="text-[10px] font-sans opacity-80">
-        {person.birthDate || 'Unknown'}{person.deathDate ? ` – ${person.deathDate}` : person.isLiving ? ' – Living' : ''}
+        {birthClean || 'Unknown'}{deathClean ? ` – ${deathClean}` : person.isLiving ? ' – Living' : ''}
       </p>
       {person.occupations && person.occupations.length > 0 && (
         <p className="text-[9px] font-sans italic opacity-60 truncate">{person.occupations[0]}</p>
