@@ -140,21 +140,15 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
       </div>
 
       <div className="space-y-6 relative z-10">
-        {gens.map((gen, gi) => {
-          const activeLines = allLines.filter(line => (byGenAndLine[gen]?.[line]?.length ?? 0) > 0);
-          return (
+        {gens.map((gen, gi) => (
           <div key={gen} className="space-y-2">
             <div className="text-center">
               <span className="text-[10px] font-sans uppercase tracking-widest text-stone-400 font-bold">{genLabel(gen)}</span>
             </div>
-            {activeLines.length === 0 ? (
-              <div className="flex justify-center py-3">
-                <p className="text-[10px] font-sans text-stone-400 italic">No records in this generation</p>
-              </div>
-            ) : (
-            <div className="grid gap-1 px-1" style={{ gridTemplateColumns: `repeat(${activeLines.length}, 1fr)` }}>
-              {activeLines.map((line, li) => {
+            <div className="grid grid-cols-4 gap-1 px-1">
+              {allLines.map((line, li) => {
                 const cards = byGenAndLine[gen]?.[line] ?? [];
+                const hasCards = cards.length > 0;
                 const lineDot = {
                   Buatti: 'bg-[#800020]',
                   Chiappini: 'bg-amber-700',
@@ -162,41 +156,40 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
                   Patanè: 'bg-blue-900',
                 }[line];
                 return (
-                  <div key={line} className={`flex flex-col gap-1.5 ${li > 0 ? 'border-l border-stone-200/30 pl-2' : ''}`}>
+                  <div key={line} className={`flex flex-col gap-1.5 ${li > 0 ? 'border-l border-stone-200/30 pl-2' : ''} ${!hasCards ? 'opacity-15' : ''}`}>
                     <div className="flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-full ${lineDot} shrink-0" />
+                      <span className={`inline-block w-2 h-2 rounded-full ${lineDot} shrink-0`} />
                       <span className="text-[9px] font-sans uppercase tracking-wider text-stone-400 font-semibold">{line}</span>
                     </div>
-                    <div className="space-y-1.5">
-                      {cards.map(p => (
-                        <PersonCard
-                          key={p.id}
-                          person={p}
-                          selected={selectedPersonId === p.id}
-                          onSelect={() => onSelectPerson(p.id)}
-                        />
-                      ))}
-                    </div>
+                    {hasCards ? (
+                      <div className="space-y-1.5">
+                        {cards.map(p => (
+                          <PersonCard
+                            key={p.id}
+                            person={p}
+                            selected={selectedPersonId === p.id}
+                            onSelect={() => onSelectPerson(p.id)}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="min-h-[32px]" />
+                    )}
                   </div>
                 );
               })}
             </div>
-            )}
-            {gi < gens.length - 1 && activeLines.length > 0 && (
-              <div className="grid gap-1 px-1 mt-1" style={{ gridTemplateColumns: `repeat(${activeLines.length}, 1fr)` }}>
-                {activeLines.map((line, li) => {
-                  const hasInNext = (byGenAndLine[gens[gi + 1]]?.[line]?.length ?? 0) > 0;
-                  return (
-                    <div key={line} className={`flex justify-center ${li > 0 ? 'border-l border-transparent pl-2' : ''}`}>
-                      <div className={`w-px h-3 border-r border-dashed ${hasInNext ? 'border-stone-400' : 'border-stone-300'}`} />
-                    </div>
-                  );
-                })}
+            {gi < gens.length - 1 && (
+              <div className="grid grid-cols-4 gap-1 px-1 mt-1">
+                {allLines.map((line, li) => (
+                  <div key={line} className={`flex justify-center ${li > 0 ? 'border-l border-transparent pl-2' : ''}`}>
+                    <div className="w-px h-3 border-r border-dashed border-stone-300" />
+                  </div>
+                ))}
               </div>
             )}
           </div>
-          );
-        })}
+        ))}
       </div>
 
       <div className="text-center mt-4 text-[10px] text-stone-500 font-sans border-t border-stone-200/60 pt-2">
