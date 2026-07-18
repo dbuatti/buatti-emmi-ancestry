@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin, ExternalLink, Ship, Shield, Users } from 'lucide-react';
+import { Calendar, Clock, MapPin, ExternalLink, Ship, Shield, Users, GraduationCap, Ruler, FileText, Home } from 'lucide-react';
 import { getLineBadgeColor } from '@/lib/constants';
 import { calculateCompleteness, getScoreLabel, getScoreBadgeColor } from '@/lib/research';
 import type { Person } from '@/types';
@@ -15,98 +15,147 @@ interface PersonModalProps {
   onSelectPerson: (id: string) => void;
 }
 
+function Section({ icon: Icon, label, children }: { icon: React.ElementType; label: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-2 pt-2 first:pt-0 border-t first:border-t-0 border-stone-200/60">
+      <Icon className="w-4 h-4 text-[#800020] mt-0.5 shrink-0" />
+      <div className="min-w-0 flex-1">
+        <span className="font-bold block text-xs text-stone-500 font-sans uppercase tracking-wider mb-0.5">{label}</span>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 function ModalOverview({ person, people, onSelectPerson }: { person: Person; people: Person[]; onSelectPerson: (id: string) => void }) {
   return (
     <div className="space-y-3 text-sm">
-      <div className="flex items-start gap-2">
-        <Calendar className="w-4 h-4 text-[#800020] mt-0.5 shrink-0" />
-        <div>
-          <span className="font-bold block text-xs text-stone-500 font-sans uppercase">Birth</span>
-          <p>{person.birthDate || 'Unknown'}</p>
+      {person.birthDate && (
+        <Section icon={Calendar} label="Birth">
+          <p>{person.birthDate}</p>
           {person.birthPlace && <p className="text-xs text-stone-600 italic">{person.birthPlace}</p>}
-        </div>
-      </div>
-      {!person.isLiving && (
-        <div className="flex items-start gap-2 pt-2 border-t border-stone-200/60">
-          <Clock className="w-4 h-4 text-[#800020] mt-0.5 shrink-0" />
-          <div>
-            <span className="font-bold block text-xs text-stone-500 font-sans uppercase">Death</span>
-            <p>{person.deathDate || 'Unknown'}</p>
-            {person.deathPlace && <p className="text-xs text-stone-600 italic">{person.deathPlace}</p>}
-          </div>
-        </div>
+        </Section>
+      )}
+      {!person.isLiving && person.deathDate && (
+        <Section icon={Clock} label="Death">
+          <p>{person.deathDate}</p>
+          {person.deathPlace && <p className="text-xs text-stone-600 italic">{person.deathPlace}</p>}
+        </Section>
       )}
       {person.burialPlace && (
-        <div className="flex items-start gap-2 pt-2 border-t border-stone-200/60">
-          <MapPin className="w-4 h-4 text-[#800020] mt-0.5 shrink-0" />
-          <div>
-            <span className="font-bold block text-xs text-stone-500 font-sans uppercase">Burial</span>
-            <p className="font-semibold">{person.burialPlace}</p>
-            {person.burialDetails && <p className="text-xs text-stone-600 mt-0.5">{person.burialDetails}</p>}
-            {person.burialLink && (
-              <a href={person.burialLink} target="_blank" rel="noopener noreferrer" className="text-xs text-[#800020] hover:underline flex items-center gap-1 mt-1 font-sans">
-                View Record <ExternalLink className="w-3 h-3" />
-              </a>
-            )}
-          </div>
-        </div>
+        <Section icon={MapPin} label="Burial">
+          <p className="font-semibold">{person.burialPlace}</p>
+          {person.burialDetails && <p className="text-xs text-stone-600 mt-0.5">{person.burialDetails}</p>}
+          {person.burialLink && (
+            <a href={person.burialLink} target="_blank" rel="noopener noreferrer" className="text-xs text-[#800020] hover:underline flex items-center gap-1 mt-1 font-sans">
+              View Record <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
+        </Section>
       )}
       {person.occupations && person.occupations.length > 0 && (
-        <div className="flex items-start gap-2 pt-2 border-t border-stone-200/60">
-          <Users className="w-4 h-4 text-[#800020] mt-0.5 shrink-0" />
-          <div>
-            <span className="font-bold block text-xs text-stone-500 font-sans uppercase">Occupation</span>
-            {person.occupations.map((o, i) => <p key={i} className="text-sm">{o}</p>)}
-          </div>
-        </div>
+        <Section icon={Users} label="Occupation">
+          {person.occupations.map((o, i) => <p key={i}>{o}</p>)}
+        </Section>
       )}
-      <div className="pt-3 border-t border-stone-200 space-y-2">
-        <h4 className="text-xs font-bold text-stone-500 font-sans uppercase tracking-wider">Family</h4>
-        {person.spouses.length > 0 && (
-          <div>
-            <span className="text-xs text-stone-600 font-sans">Spouse:</span>
-            <div className="mt-1">
-              {person.spouses.map(sid => {
-                const s = people.find(p => p.id === sid);
-                return s ? (
-                  <Button key={sid} variant="link" onClick={() => { onSelectPerson(sid); }} className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif font-bold">
-                    {s.name}
-                  </Button>
-                ) : null;
-              })}
+      {person.education && person.education.length > 0 && (
+        <Section icon={GraduationCap} label="Education">
+          {person.education.map((e, i) => <p key={i} className="text-sm">{e}</p>)}
+        </Section>
+      )}
+      {person.physicalDescription && (
+        <Section icon={Ruler} label="Physical Description">
+          {person.physicalDescription.height && <p className="text-sm">Height: {person.physicalDescription.height}</p>}
+          {person.physicalDescription.build && <p className="text-sm">Build: {person.physicalDescription.build}</p>}
+          {person.physicalDescription.hair && <p className="text-sm">Hair: {person.physicalDescription.hair}</p>}
+          {person.physicalDescription.eyes && <p className="text-sm">Eyes: {person.physicalDescription.eyes}</p>}
+          {person.physicalDescription.other && <p className="text-sm text-stone-600">{person.physicalDescription.other}</p>}
+        </Section>
+      )}
+      {person.military && (
+        <Section icon={Shield} label="Military Service">
+          {person.military.service && <p className="text-sm">{person.military.service}</p>}
+          {person.military.captured && <p className="text-xs text-stone-600 mt-0.5">Captured: {person.military.captured}</p>}
+          {person.military.internment && <p className="text-xs text-stone-600">{person.military.internment}</p>}
+          {person.military.repatriation && <p className="text-xs text-stone-600">Repatriated: {person.military.repatriation}</p>}
+          {person.military.details && <p className="text-xs text-stone-600 mt-0.5">{person.military.details}</p>}
+        </Section>
+      )}
+      {person.italianAddress && (
+        <Section icon={Home} label="Italian Address">
+          <p className="text-sm">{person.italianAddress}</p>
+        </Section>
+      )}
+      {person.passport && (
+        <Section icon={FileText} label="Passport">
+          <p className="text-sm">No. {person.passport.number}</p>
+          <p className="text-xs text-stone-600">Issued: {person.passport.issued} by {person.passport.issuedBy}</p>
+        </Section>
+      )}
+      {person.alienRegistration && (
+        <Section icon={FileText} label="Alien Registration">
+          <p className="text-sm">No. {person.alienRegistration}</p>
+        </Section>
+      )}
+      <div className="pt-2 border-t border-stone-200">
+        <h4 className="text-xs font-bold text-stone-500 font-sans uppercase tracking-wider mb-2">Family</h4>
+        <div className="space-y-1.5">
+          {person.spouses.length > 0 && (
+            <div>
+              <span className="text-xs text-stone-600 font-sans font-semibold">Spouse:</span>
+              <div className="mt-0.5 flex flex-wrap gap-1">
+                {person.spouses.map(sid => {
+                  const s = people.find(p => p.id === sid);
+                  return s ? (
+                    <Button key={sid} variant="link" onClick={() => onSelectPerson(sid)} className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif font-bold">
+                      {s.name}
+                    </Button>
+                  ) : null;
+                })}
+              </div>
             </div>
-          </div>
-        )}
-        {person.parents.length > 0 && (
-          <div>
-            <span className="text-xs text-stone-600 font-sans">Parents:</span>
-            <div className="mt-1 flex flex-col">
-              {person.parents.map(pid => {
-                const p = people.find(x => x.id === pid);
-                return p ? (
-                  <Button key={pid} variant="link" onClick={() => { onSelectPerson(pid); }} className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif text-left justify-start">
-                    {p.name}
-                  </Button>
-                ) : null;
-              })}
+          )}
+          {person.parents.length > 0 && (
+            <div>
+              <span className="text-xs text-stone-600 font-sans font-semibold">Parents:</span>
+              <div className="mt-0.5 flex flex-col">
+                {person.parents.map(pid => {
+                  const p = people.find(x => x.id === pid);
+                  return p ? (
+                    <Button key={pid} variant="link" onClick={() => onSelectPerson(pid)} className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif text-left justify-start">
+                      {p.name}
+                    </Button>
+                  ) : null;
+                })}
+              </div>
             </div>
-          </div>
-        )}
-        {person.children.length > 0 && (
-          <div>
-            <span className="text-xs text-stone-600 font-sans">Children:</span>
-            <div className="mt-1 flex flex-col">
-              {person.children.map(cid => {
-                const c = people.find(x => x.id === cid);
-                return c ? (
-                  <Button key={cid} variant="link" onClick={() => { onSelectPerson(cid); }} className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif text-left justify-start">
-                    {c.name}
-                  </Button>
-                ) : null;
-              })}
+          )}
+          {person.children.length > 0 && (
+            <div>
+              <span className="text-xs text-stone-600 font-sans font-semibold">Children:</span>
+              <div className="mt-0.5 flex flex-col">
+                {person.children.map(cid => {
+                  const c = people.find(x => x.id === cid);
+                  return c ? (
+                    <Button key={cid} variant="link" onClick={() => onSelectPerson(cid)} className="p-0 h-auto text-sm text-[#800020] hover:underline font-serif text-left justify-start">
+                      {c.name}
+                    </Button>
+                  ) : null;
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          {person.siblings && person.siblings.length > 0 && (
+            <div>
+              <span className="text-xs text-stone-600 font-sans font-semibold">Siblings:</span>
+              <div className="mt-0.5 flex flex-col">
+                {person.siblings.map((s, i) => (
+                  <span key={i} className="text-sm text-stone-600">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -155,23 +204,6 @@ function ModalMigration({ person }: { person: Person }) {
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-function ModalMilitary({ person }: { person: Person }) {
-  if (!person.military) return null;
-  return (
-    <div className="flex items-start gap-2 pt-2 border-t border-stone-200/60">
-      <Shield className="w-4 h-4 text-[#800020] mt-0.5 shrink-0" />
-      <div>
-        <span className="font-bold block text-xs text-stone-500 font-sans uppercase">Military</span>
-        {person.military.service && <p className="text-sm">{person.military.service}</p>}
-        {person.military.captured && <p className="text-xs text-stone-600">Captured: {person.military.captured}</p>}
-        {person.military.internment && <p className="text-xs text-stone-600">{person.military.internment}</p>}
-        {person.military.repatriation && <p className="text-xs text-stone-600">Repatriated: {person.military.repatriation}</p>}
-        {person.military.details && <p className="text-xs text-stone-600 mt-0.5">{person.military.details}</p>}
-      </div>
     </div>
   );
 }
@@ -244,7 +276,6 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
           </TabsList>
           <TabsContent value="overview" className="flex-1 overflow-y-auto mt-0 p-4">
             <ModalOverview person={person} people={people} onSelectPerson={onSelectPerson} />
-            <ModalMilitary person={person} />
           </TabsContent>
           <TabsContent value="bio" className="flex-1 overflow-y-auto mt-0 p-4">
             <ModalBio person={person} />
