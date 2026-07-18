@@ -11,67 +11,35 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Buatti',
     gender: 'M',
-    birthDate: 'Unknown / to be confirmed',
-    birthPlace: 'Likely Ascoli Piceno area, late 1800s/early 1900s',
+    birthDate: '18 March 1888',
+    birthPlace: 'Ascoli Piceno, Duomo parish (family home: Borgo Solestà)',
     deathDate: '9 May 1964',
     burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
     burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1. Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
     burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp',
     spouses: ['ida-galanti'],
-    parents: [],
+    parents: ['giovanni-buatti', 'emidia-bruni'],
     children: ['ezio-buatti'],
     notes: [
-      'Parents of Ezio Buatti.',
-      'Marriage or birth record may predate the 1919 digitisation cutoff and could be searchable on Antenati.'
+      'Birth date confirmed 18 Mar 1888 via foglio famiglia N. 1527 (Registro di Popolazione, Comune di Ascoli Piceno) and cartellino individuale — received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 17 Jul 2026.',
+      'Foglio famiglia N. 1527 shows Alfredo in his grandparents\' household (head: Lenzi Antonia, widow of Buatti Emidio). Parents: Giovanni Buatti (muratore) + Emidia Bruni.',
+      'Giovanni\'s later residence noted as Roma — the family may have relocated for work.',
+      'Aunt Ida Buatti (b. 20 Mar 1886) — potential source of confusion with his wife Ida Galanti in future records.',
+      'Siblings: Attilio (1885), Ida (1886), Adolfo (1887), Sperandia (1889), Antonio (1894), Elisa (1899). Two infant deaths: Elisa (1883–1884) and Arturo (1892).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Searching', notes: 'Likely pre-1919 Ascoli Piceno — after digital cutoff, searching Antenati' },
-      { type: 'Marriage Record', status: 'Searching', notes: 'Pre-1919, same digital cutoff issue as birth' },
+      { type: 'Birth Record', status: 'Found', notes: '18 Mar 1888 — foglio famiglia N. 1527 + cartellino individuale (Archivio di Stato di Ascoli Piceno, 17 Jul 2026). Links: foglio https://antenati.cultura.gov.it/ark:/12657/an_ua8378/oLplvkL cartellino https://antenati.cultura.gov.it/ark:/12657/an_ua8562/5gKpOz5' },
+      { type: 'Marriage Record', status: 'Searching', notes: 'To Ida Galanti — likely ~1920–1922. Requested from Comune di Ascoli Piceno (prot. 0062771).' },
       { type: 'Death Record', status: 'Found', notes: '9 May 1964 — confirmed via Comune cemetery search (database shows 9/5/1964, Italian format)' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, Settore L, Blocco L074O' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Burial confirmed via online cemetery search. Birth and marriage records outstanding.',
+      details: 'Birth confirmed 18 Mar 1888 via foglio famiglia N. 1527 (Alessandra Buondi, 17 Jul 2026). Parents: Giovanni Buatti + Emidia Bruni. Grandparents: Emidio Buatti + Antonia Lenzi. Marriage to Ida Galanti and her parentage still outstanding.',
       nextSteps: [
-        'Search Antenati for birth/marriage records pre-1919 in Ascoli Piceno.',
-        'Check cemetery search tool for other Buatti-line relatives.'
-      ]
-    },
-    sources: [
-      {
-        title: 'Comune di Ascoli Piceno Cemetery Search',
-        type: 'Online Database',
-        link: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp'
-      }
-    ]
-  },
-  {
-    id: 'ida-galanti',
-    name: 'Ida Galanti',
-    generation: 1,
-    line: 'Buatti',
-    gender: 'F',
-    birthDate: '1898 (unsourced — calculated?)',
-    deathDate: '26 January 1970',
-    burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
-    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1 (same plot as her husband Alfredo Buatti Sr.). Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
-    burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp',
-    spouses: ['alfredo-buatti-sr'],
-    parents: [],
-    children: ['ezio-buatti'],
-    records: [
-      { type: 'Birth Record', status: 'Searching', notes: 'Birth year 1898 unsourced. Two candidates from Archivio di Stato: Ida b. 1893 (d/o Antonio + Rosati Virginia) or Ida b. 1904 (d/o Ignazio + Currozzi Clementina). Marriage cert will settle.' },
-      { type: 'Marriage Record', status: 'Requested', notes: 'To Alfredo Buatti Sr., ~1920–1922. Requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771, assigned Sergio De Angelis). Will settle Ida\'s birth year and parentage definitively.' },
-      { type: 'Death Record', status: 'Found', notes: '26 Jan 1970 — confirmed via cemetery search' },
-      { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, same plot as Alfredo' }
-    ],
-    researchStatus: {
-      status: 'In Progress — Marriage Cert Requested',
-      details: 'Burial and death date confirmed. Birth year 1898 unsourced — two rival candidates (1893, 1904) from Archivio di Stato. Marriage cert officially requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771).',
-      nextSteps: [
-        'Await marriage cert reply from Comune di Ascoli Piceno (protocol 0062771 — Sergio De Angelis).',
-        'Marriage cert will settle Ida\'s parentage and exact birth date.'
+        'Search Antenati anagrafe series for Alfredo and Ida\'s marriage record.',
+        'Ida Galanti\'s birth year (1898) still unsourced — marriage cert from Comune will settle it.',
+        'Note the Ida Buatti (b. 1886, Alfredo\'s sister) as potential confusion with Ida Galanti in old indexes.'
       ]
     },
     sources: [
@@ -81,12 +49,237 @@ export const initialPeople: Person[] = [
         link: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp'
       },
       {
+        title: 'Foglio Famiglia N. 1527 — Archivio di Stato di Ascoli Piceno',
+        type: 'Civil Registry',
+        reference: 'Registro di Popolazione, Comune di Ascoli Piceno. Received via Alessandra Buondi 17 Jul 2026.'
+      },
+      {
+        title: 'Cartellino Individuale — Alfredo Buatti',
+        type: 'Civil Registry',
+        reference: 'Archivio di Stato di Ascoli Piceno. Cross-referenced to foglio 1527. Received 17 Jul 2026.'
+      }
+    ]
+  },
+  {
+    id: 'ida-galanti',
+    name: 'Ida Galanti',
+    generation: 1,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: '19 March 1893 (foglio 5120 — marriage to Alfredo unconfirmed)',
+    birthPlace: 'Ascoli Piceno',
+    deathDate: '26 January 1970',
+    burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
+    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1 (same plot as her husband Alfredo Buatti Sr.). Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
+    burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp',
+    spouses: ['alfredo-buatti-sr'],
+    parents: ['antonio-galanti', 'virginia-rosati'],
+    children: ['ezio-buatti'],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '19 Mar 1893 — foglio famiglia 5120 (Registro 55, Ascoli Piceno). Daughter of Antonio Galanti (b. 1857, Lisciano, possidente) + Virginia Rosati (b. 1867, Maltignano). Confirmed as a real person — marriage to Alfredo Buatti unconfirmed (right-hand columns not visible). Family from Lisciano (frazione of Ascoli). 1904 Ida candidate (f. 5545) still unchecked.' },
+      { type: 'Marriage Record', status: 'Requested', notes: 'To Alfredo Buatti Sr., ~1920–1922. Requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771, assigned Sergio De Angelis). Will settle whether 1893 Ida is THE Ida. CAUTION: Alfredo\'s sister Ida Buatti (b. 20 Mar 1886) is a different person.' },
+      { type: 'Death Record', status: 'Found', notes: '26 Jan 1970 — confirmed via cemetery search' },
+      { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, same plot as Alfredo' }
+    ],
+    researchStatus: {
+      status: 'In Progress — Marriage Cert Requested',
+      details: '1893 Ida confirmed as real person (foglio 5120, 18 Jul 2026): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Still unconfirmed as Alfredo\'s wife — right-hand columns of f. 5120 unreadable. 1904 Ida candidate (f. 5545) not yet checked. Antenati dead end for 1919-1923 records. New strategy: FamilySearch catalog + Comune birth act request for Ezio.',
+      nextSteps: [
+        'Draft Comune email for Ezio\'s copia integrale di nascita (27 Apr 1923) — Ida\'s age at his birth will settle the question.',
+        'Check FamilySearch Catalog for Ascoli Piceno Matrimoni 1919–1923 and Nati 1923.',
+        'Check foglio 5545 (Registro 59) for the 1904 Ida candidate on Antenati.',
+        'Await marriage cert reply from Comune (protocol 0062771 — Sergio De Angelis).'
+      ]
+    },
+    sources: [
+      {
+        title: 'Comune di Ascoli Piceno Cemetery Search',
+        type: 'Online Database',
+        link: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp'
+      },
+      {
+        title: 'Foglio Famiglia 5120 — Registro 55, Ascoli Piceno',
+        type: 'Civil Registry',
+        reference: 'Antenati, Censimento series. Ida Galanti, born 19 Mar 1893, daughter of Antonio Galanti + Virginia Rosati. Viewed 18 Jul 2026.'
+      },
+      {
         title: 'Comune di Ascoli Piceno — Marriage Cert Request',
         type: 'Civil Registration Request',
         reference: 'Protocol 0062771, 10 Jul 2026. Alfredo Buatti + Ida Galanti. Assigned to Sergio De Angelis, Settore 4 - Servizi al Cittadino.'
       }
     ]
   },
+  // --- GENERATION 0: Great-Great-Grandparents (Buatti Line) ---
+  {
+    id: 'giovanni-buatti',
+    name: 'Giovanni Buatti',
+    generation: 0,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: '25 June 1852',
+    birthPlace: 'Ascoli Piceno, Duomo parish',
+    occupations: ['Muratore (bricklayer/mason)'],
+    deathDate: 'Unknown',
+    spouses: ['emidia-bruni'],
+    parents: ['emidio-buatti', 'antonia-lenzi'],
+    children: ['alfredo-buatti-sr'],
+    notes: [
+      'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno, Alessandra Buondi).',
+      'Son of Emidio Buatti and Antonia Lenzi. Married Emidia Bruni.',
+      'Occupation originally listed as "domestico," corrected to "muratore" on the foglio famiglia.',
+      'Later residence noted as Roma — suggests the family relocated for work.',
+      'Children: Elisa (1883–1884), Attilio (1885), Ida (1886), Adolfo (1887), Alfredo (1888), Sperandia (1889), Arturo (1892), Antonio (1894), Elisa (1899).',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '25 Jun 1852, Ascoli Piceno (Duomo parish) — per foglio famiglia N. 1527' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Unknown — likely post-1899' }
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Identified via foglio famiglia N. 1527 (17 Jul 2026). Son of Emidio Buatti + Antonia Lenzi. Father of Alfredo Buatti (b. 18 Mar 1888). Later residence: Roma.',
+    }
+  },
+  {
+    id: 'emidia-bruni',
+    name: 'Emidia Bruni',
+    generation: 0,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: '28 November 1857',
+    birthPlace: 'Ascoli Piceno, S. Vittore parish',
+    deathDate: 'Unknown',
+    spouses: ['giovanni-buatti'],
+    parents: [],
+    children: ['alfredo-buatti-sr'],
+    notes: [
+      'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno, Alessandra Buondi).',
+      'Wife of Giovanni Buatti. Daughter of Antonio Bruni and Sperandia Pasqualini.',
+      'Mother of Alfredo Buatti (b. 18 Mar 1888) and his eight siblings.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '28 Nov 1857, Ascoli Piceno (S. Vittore parish) — per foglio famiglia N. 1527' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Identified via foglio famiglia N. 1527 (17 Jul 2026). Daughter of Antonio Bruni + Sperandia Pasqualini.',
+    }
+  },
+
+  // --- GENERATION -1: Great-Great-Great-Grandparents (Buatti Line) ---
+  {
+    id: 'emidio-buatti',
+    name: 'Emidio Buatti',
+    generation: -1,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: 'Unknown — likely 1810s–1820s',
+    birthPlace: 'Likely Ascoli Piceno area',
+    deathDate: 'Before 4 October 1899 (predeceased wife)',
+    spouses: ['antonia-lenzi'],
+    parents: [],
+    children: ['giovanni-buatti'],
+    notes: [
+      'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno).',
+      'Predeceased his wife Antonia Lenzi — she is listed as "widow of Buatti Emidio" (head of household).',
+      'Father of Rosa (b. 1846), Rita (b. 1850), and Giovanni (b. 1852).',
+      'Pushes the known Buatti line back six generations from Daniele Buatti.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Likely pre-unitary records (pre-1861) — search Archivio di Stato di Ascoli Piceno' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Before 1899 — not yet located' }
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Direct ancestor confirmed via foglio famiglia N. 1527 (17 Jul 2026). Birth/death records outstanding.',
+    }
+  },
+  {
+    id: 'antonia-lenzi',
+    name: 'Antonia Lenzi',
+    generation: -1,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Rotella (Province of Ascoli Piceno)',
+    deathDate: '4 October 1899',
+    spouses: ['emidio-buatti'],
+    parents: [],
+    children: ['giovanni-buatti'],
+    notes: [
+      'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno).',
+      'Listed as head of household (Capo) as widow of Buatti Emidio. Daughter of fu Domenico and fu Luigia.',
+      'Born in Rotella (~20km from Ascoli Piceno). Occupation: casalinga (housewife).',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Rotella — search pre-unitary records' },
+      { type: 'Death Record', status: 'Found', notes: '4 Oct 1899 — per foglio famiglia N. 1527' }
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Direct ancestor confirmed via foglio famiglia N. 1527 (17 Jul 2026). Birth record outstanding (Rotella pre-unitary series).',
+    }
+  },
+
+  // --- GENERATION -1: Possible Great-Great-Great-Grandparents (Galanti Line — unconfirmed) ---
+  {
+    id: 'antonio-galanti',
+    name: 'Antonio Galanti',
+    generation: -1,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: '29 October 1857',
+    birthPlace: 'Lisciano (frazione of Ascoli Piceno)',
+    occupations: ['Possidente (landowner)'],
+    deathDate: 'Unknown',
+    spouses: ['virginia-rosati'],
+    parents: [],
+    children: ['ida-galanti'],
+    notes: [
+      'CONFIRMED as father of Ida Galanti (b. 19 Mar 1893) via foglio famiglia 5120 (Registro 55, 18 Jul 2026).',
+      'Son of Domenico Galanti (b. 29 Oct 1816, Lisciano, possidente, d. 9 Mar 1889) and fu Vincenza Michetti.',
+      'Son of a large landowning family from Lisciano (hill frazione of Ascoli Piceno).',
+      'Father Domenico was a widower of Feliciani Angela Maria. Antonio\'s brothers: Annibale (b. 1855, moved to Folignano 1901) and Ottavio (b. 1863).',
+      'Siblings with Ida on foglio 5120: Tito (b. 18 Nov 1891), Emidia (b. 3 Aug 1894), Linda (b. 18 Aug 1897).',
+      'IMPORTANT: Marriage to Alfredo Buatti unconfirmed. Ida (daughter of Antonio) might not be the Ida who married Alfredo. The 1904 Ida candidate (d/o Ignazio Galanti, foglio 5545) still unchecked.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '29 Oct 1857, Lisciano — per foglio famiglia 5120' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' }
+    ],
+    researchStatus: {
+      status: 'In Progress',
+      details: 'Confirmed father of Ida Galanti (b. 1893). Landowning family from Lisciano. Marriage connection to Alfredo Buatti unconfirmed.',
+    }
+  },
+  {
+    id: 'virginia-rosati',
+    name: 'Virginia Rosati',
+    generation: -1,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: '7 February 1867',
+    birthPlace: 'Maltignano (Province of Ascoli Piceno)',
+    deathDate: 'Unknown',
+    spouses: ['antonio-galanti'],
+    parents: [],
+    children: ['ida-galanti'],
+    notes: [
+      'CONFIRMED as mother of Ida Galanti (b. 19 Mar 1893) via foglio famiglia 5120 (Registro 55, 18 Jul 2026).',
+      'Daughter of Luigi Rosati and Filippini (surname uncertain).',
+      'Born in Maltignano, a comune ~8km from Ascoli Piceno. Entered the household 4 Feb 1891 (marriage to Antonio).',
+      'Marriage connection to Alfredo Buatti unconfirmed.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '7 Feb 1867, Maltignano — per foglio famiglia 5120' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' }
+    ],
+    researchStatus: {
+      status: 'In Progress',
+      details: 'Confirmed mother of Ida Galanti (b. 1893). From Maltignano. Marriage connection to Alfredo Buatti unconfirmed.',
+    }
+  },
+
   // Chiappini Line
   {
     id: 'remo-chiappini',
@@ -1801,17 +1994,24 @@ export const initialResearchLeads: ResearchLead[] = [
 export const initialOpenQuestions: OpenQuestion[] = [
   {
     id: 'q-buatti-parents',
-    question: 'Who are the parents of Alfredo Buatti (Sr.) and Ida Galanti?',
+    question: 'Who are the parents of Alfredo Buatti (Sr.)?',
     category: 'Buatti/Chiappini',
-    status: 'Pending',
-    notes: 'Their marriage or birth records likely predate the 1919 digitisation cutoff and could be searchable on Antenati.'
+    status: 'Resolved',
+    notes: 'RESOLVED 17 Jul 2026: Parents = Giovanni Buatti (b. 25 Jun 1852) + Emidia Bruni (b. 28 Nov 1857), per foglio famiglia N. 1527. Grandparents = Emidio Buatti + Antonia Lenzi (Rotella).'
+  },
+  {
+    id: 'q-ida-galanti-parents',
+    question: 'Which Ida Galanti (1893 vs 1904) married Alfredo Buatti?',
+    category: 'Buatti/Chiappini',
+    status: 'In Progress',
+    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti) still unchecked. Antenati dead end for 1919-1923 records. New strategy: (1) Comune birth act request for Ezio (copia integrale gives Ida\'s age), (2) FamilySearch catalog for Ascoli Piceno Matrimoni 1919-1923.'
   },
   {
     id: 'q-ezio-birth',
     question: 'Where is Ezio Buatti\'s birth record (27 Apr 1923)?',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    notes: 'Ascoli Piceno civil registry is digitised only up to 1919. 100-year privacy embargo lifted in 2023. Next step: contact Comune di Ascoli Piceno or Archivio di Stato directly. Full NAA file ordered 27 June 2026 may also contain clues.'
+    notes: 'Ascoli Piceno civil registry digitised only to 1919 on Antenati. 100-year embargo lifted 2023. Strategy shift: request copia integrale directly from Comune (single specific act, not research — no fee). Ezio\'s birth record will name mother Ida Galanti with her age — settles 1893 vs 1904 in one document.'
   },
   {
     id: 'q-bruna-birth',

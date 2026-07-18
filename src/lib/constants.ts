@@ -132,7 +132,7 @@ export const TIMELINE_EVENTS = [
   { year: '1952', title: 'Ezio & Lilia Migrate', desc: 'Arrive in Sydney aboard Toscana. Lilia listed as "Servant".', line: 'Buatti' as const, icon: 'Ship' as const },
   { year: '1956', title: 'Alfred Buatti Born', desc: 'Born 8 November in Broadford, Victoria, Australia.', line: 'Buatti' as const, icon: 'Calendar' as const },
   { year: '1962', title: 'Buatti Family Moves to Italy', desc: 'Ezio, Lilia, Alfred, and John move back to Italy.', line: 'Buatti' as const, icon: 'Ship' as const },
-  { year: '1964', title: 'Alfredo Buatti Sr. Dies', desc: 'Dies 5 September, buried at Cimitero di Borgo Solestà, Ascoli Piceno.', line: 'Buatti' as const, icon: 'Clock' as const },
+  { year: '1964', title: 'Alfredo Buatti Sr. Dies', desc: 'Dies 9 May, buried at Cimitero di Borgo Solestà, Ascoli Piceno.', line: 'Buatti' as const, icon: 'Clock' as const },
   { year: '1970', title: 'Ida Galanti Dies', desc: 'Dies 26 January, buried in shared grave with Alfredo Sr. in Ascoli Piceno.', line: 'Buatti' as const, icon: 'Clock' as const },
   { year: '1975', title: 'Alfred Buatti Returns to Australia', desc: 'Returns to Australia after living in Italy for ~13 years.', line: 'Buatti' as const, icon: 'Ship' as const },
   { year: '1979', title: 'Gregorio Emmi Dies', desc: 'Dies late November, buried at Rookwood Catholic Cemetery, Sydney on 30 November.', line: 'Emmi' as const, icon: 'Clock' as const },

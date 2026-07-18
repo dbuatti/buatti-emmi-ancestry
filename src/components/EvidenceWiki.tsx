@@ -261,7 +261,7 @@ export function EvidenceWiki() {
           <p><strong>Linguaglossa Marriage Proclamation Records 1900</strong> — atto № 59 (Egidio Emmi & Concetta Sgroi)</p>
           <p><strong>Gregorio Emmi 1943 POW Report</strong> — NAA: MP1103/2, 55491 (confirms mother Concetta Sgroi, father deceased)</p>
           <p><strong>Comune di Fiumefreddo, Nati 1924</strong> — atto n. 71, Sezione Castello (Rosaria Patanè)</p>
-          <p><strong>Comune di Ascoli Piceno Cemetery Search</strong> — Alfredo Buatti burial (5 Sep 1964, Borgo Solestà)</p>
+          <p><strong>Comune di Ascoli Piceno Cemetery Search</strong> — Alfredo Buatti burial (9 May 1964, Borgo Solestà)</p>
         </div>
       </div>
     </div>
