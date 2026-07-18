@@ -138,7 +138,13 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
             <div className="flex justify-center gap-3 px-2">
               {allLines.map(line => {
                 const cards = byGenAndLine[gen]?.[line];
-                if (!cards || cards.length === 0) return null;
+                if (!cards || cards.length === 0) {
+                  return (
+                    <div key={line} className="flex-1 max-w-[200px] min-w-[100px] p-2 rounded-lg border border-dashed border-stone-200 bg-stone-50/30">
+                      <p className="text-[10px] font-sans text-stone-300 text-center italic">No records</p>
+                    </div>
+                  );
+                }
                 return (
                   <div key={line} className="flex-1 max-w-[200px] min-w-[100px] space-y-2">
                     {cards.map(p => (
