@@ -12,7 +12,6 @@ import { MadeWithDyad } from '@/components/made-with-dyad';
 import { AppHeader } from '@/components/AppHeader';
 import { PedigreeChart } from '@/components/PedigreeChart';
 import { PersonModal } from '@/components/PersonModal';
-import { PersonProfile } from '@/components/PersonProfile';
 import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { ResearchLog } from '@/components/ResearchLog';
 import { TimelineTab } from '@/components/TimelineTab';
@@ -192,25 +191,14 @@ const Index = () => {
           </div>
 
           <TabsContent value="tree" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <PedigreeChart
-                people={people}
-                selectedPersonId={selectedPersonId}
-                onSelectPerson={(id) => {
-                  setSelectedPersonId(id);
-                  setModalPersonId(id);
-                }}
-              />
-              <div className="lg:col-span-1">
-                <PersonProfile
-                  people={people}
-                  selectedPersonId={selectedPersonId}
-                  onSelectPerson={setSelectedPersonId}
-                  onDelete={deletePerson}
-                  initialPeople={initialPeople}
-                />
-              </div>
-            </div>
+            <PedigreeChart
+              people={people}
+              selectedPersonId={selectedPersonId}
+              onSelectPerson={(id) => {
+                setSelectedPersonId(id);
+                setModalPersonId(id);
+              }}
+            />
           </TabsContent>
 
           <TabsContent value="directory" className="space-y-6">
