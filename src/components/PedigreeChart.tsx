@@ -1,6 +1,5 @@
-import { Users } from 'lucide-react';
+import { Users, BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
-import { getLineColor } from '@/lib/constants';
 
 interface PedigreeChartProps {
   people: Person[];
@@ -8,55 +7,87 @@ interface PedigreeChartProps {
   onSelectPerson: (id: string) => void;
 }
 
-function PersonNode({ person, isSelected, lineColor, onClick }: {
-  person: Person;
-  isSelected: boolean;
-  lineColor: string;
-  onClick: () => void;
-}) {
+const LINE_COLORS: Record<string, string> = {
+  Buatti: 'border-[#800020] hover:border-[#800020]',
+  Chiappini: 'border-amber-700 hover:border-amber-700',
+  Emmi: 'border-emerald-800 hover:border-emerald-800',
+  Patanè: 'border-blue-900 hover:border-blue-900',
+};
+
+const LINE_SELECTED: Record<string, string> = {
+  Buatti: 'bg-[#800020] text-white border-[#800020] shadow-md',
+  Chiappini: 'bg-amber-700 text-white border-amber-700 shadow-md',
+  Emmi: 'bg-emerald-800 text-white border-emerald-800 shadow-md',
+  Patanè: 'bg-blue-900 text-white border-blue-900 shadow-md',
+};
+
+function isConfirmed(status: string): boolean {
+  return status === 'Confirmed' || status.startsWith('Confirmed');
+}
+
+function genLabel(gen: number): string {
+  const labels: Record<number, string> = {
+    [-3]: 'Generation -3 — 5th Great-Grandparents',
+    [-2]: 'Generation -2 — 4th Great-Grandparents',
+    [-1]: 'Generation -1 — 3rd Great-Grandparents',
+    [0]: 'Generation 0 — Great-Great-Grandparents',
+    [1]: 'Generation 1 — Great-Grandparents',
+    [2]: 'Generation 2 — Grandparents',
+    [3]: 'Generation 3 — Parents',
+    [4]: 'Generation 4 — Children',
+  };
+  return labels[gen] || `Generation ${gen}`;
+}
+
+function PersonCard({ person, selected, onSelect }: { person: Person; selected: boolean; onSelect: () => void }) {
+  const line = person.line;
+  const confirmed = isConfirmed(person.researchStatus.status);
+  const borderColor = LINE_COLORS[line] || 'border-stone-200';
+  const selectedStyle = selected ? (LINE_SELECTED[line] || LINE_SELECTED.Buatti) : 'bg-white';
+
   return (
     <div
-      onClick={onClick}
-      className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${
-        isSelected ? lineColor : 'bg-white border-stone-200'
-      }`}
+      onClick={onSelect}
+      className={`relative p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${selectedStyle} ${borderColor}`}
     >
-      <p className="font-bold truncate">{person.name}</p>
-      <p className={`text-[10px] font-sans ${isSelected ? 'opacity-80' : 'opacity-80'}`}>
-        {person.birthDate || 'Unknown'} – {person.deathDate || (person.isLiving ? 'Living' : 'Unknown')}
+      {confirmed && (
+        <div className="absolute -top-1.5 -right-1.5 z-10">
+          <BadgeCheck className="w-4 h-4 text-emerald-600 bg-white rounded-full" />
+        </div>
+      )}
+      <p className="font-bold truncate pr-1">{person.name}</p>
+      <p className="text-[10px] font-sans opacity-80">
+        {person.birthDate || 'Unknown'}{person.deathDate ? ` – ${person.deathDate}` : person.isLiving ? ' – Living' : ''}
       </p>
+      {person.occupations && person.occupations.length > 0 && (
+        <p className="text-[9px] font-sans italic opacity-60 truncate">{person.occupations[0]}</p>
+      )}
     </div>
   );
 }
 
-function GenerationLabel({ label }: { label: string }) {
+function ConnectingLine() {
   return (
-    <div className="text-center">
-      <span className="text-[10px] font-sans uppercase tracking-widest text-stone-400 font-bold">{label}</span>
-    </div>
-  );
-}
-
-function ConnectingLine({ count }: { count: number }) {
-  return (
-    <div className="hidden md:flex justify-around text-stone-300 h-4 pointer-events-none">
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className={`${count === 1 ? 'w-full' : `w-1/${count}`} border-r-2 border-dashed border-stone-300 h-full`} />
-      ))}
+    <div className="hidden md:flex justify-center text-stone-300 h-4 pointer-events-none">
+      <div className="w-px border-r-2 border-dashed border-stone-300 h-full" />
     </div>
   );
 }
 
 export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: PedigreeChartProps) {
-  const lineColorMap: Record<string, string> = {
-    Buatti: 'bg-[#800020] text-white border-[#800020] shadow-md',
-    Chiappini: 'bg-amber-700 text-white border-amber-700 shadow-md',
-    Emmi: 'bg-emerald-800 text-white border-emerald-800 shadow-md',
-    Patanè: 'bg-blue-900 text-white border-blue-900 shadow-md',
-  };
+  const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
-  function getSelectedStyle(id: string, line: string): string {
-    return selectedPersonId === id ? (lineColorMap[line] || lineColorMap.Buatti) : '';
+  const showPerson = (p: Person) =>
+    p.children.length > 0 || p.parents.length > 0;
+
+  const filtered = people.filter(showPerson);
+  const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);
+
+  const byGenAndLine: Record<number, Record<string, Person[]>> = {};
+  for (const p of filtered) {
+    if (!byGenAndLine[p.generation]) byGenAndLine[p.generation] = {};
+    if (!byGenAndLine[p.generation][p.line]) byGenAndLine[p.generation][p.line] = [];
+    byGenAndLine[p.generation][p.line].push(p);
   }
 
   return (
@@ -67,197 +98,36 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
 
       <div className="text-center mb-4 relative z-10">
         <h3 className="text-lg font-bold text-[#800020] tracking-wide">Pedigree Chart</h3>
-        <p className="text-xs text-stone-500 font-sans">Interactive lineage showing the connection between the Buatti-Chiappini and Emmi-Patanè lines.</p>
+        <p className="text-xs text-stone-500 font-sans">Interactive lineage — verified ancestors marked with <BadgeCheck className="w-3 h-3 inline text-emerald-600" /></p>
       </div>
 
-      <div className="space-y-8 relative z-10 my-auto">
-        {/* Generation 0 */}
-        <div className="space-y-4">
-          <GenerationLabel label="Generation 0 — Great-Great-Grandparents" />
-          <div className="grid grid-cols-8 gap-2 text-center">
-            <div className="col-span-2 space-y-2">
-              <div onClick={() => onSelectPerson('giovanni-buatti')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('giovanni-buatti', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
-                <p className="font-bold truncate">Giovanni Buatti</p>
-                <p className="text-[10px] opacity-80 font-sans">25 Jun 1852</p>
-              </div>
-              <div onClick={() => onSelectPerson('emidia-bruni')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('emidia-bruni', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
-                <p className="font-bold truncate">Emidia Bruni</p>
-                <p className="text-[10px] opacity-80 font-sans">28 Nov 1857</p>
-              </div>
+      <div className="space-y-6 relative z-10 my-auto overflow-x-auto">
+        {gens.map((gen, gi) => (
+          <div key={gen} className="space-y-3">
+            <div className="text-center">
+              <span className="text-[10px] font-sans uppercase tracking-widest text-stone-400 font-bold">{genLabel(gen)}</span>
             </div>
-            <div className="col-span-2 p-2 rounded-lg border text-xs bg-stone-100 border-stone-200 opacity-50">
-              <p className="font-bold truncate text-stone-400">Unknown</p>
-              <p className="text-[10px] opacity-80 font-sans text-stone-300">•</p>
+            <div className="flex justify-center gap-3 px-2">
+              {allLines.map(line => {
+                const cards = byGenAndLine[gen]?.[line];
+                if (!cards || cards.length === 0) return null;
+                return (
+                  <div key={line} className="flex-1 max-w-[200px] min-w-[100px] space-y-2">
+                    {cards.map(p => (
+                      <PersonCard
+                        key={p.id}
+                        person={p}
+                        selected={selectedPersonId === p.id}
+                        onSelect={() => onSelectPerson(p.id)}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
             </div>
-            <div className="col-span-2 space-y-2">
-              <div onClick={() => onSelectPerson('antonino-emmi')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('antonino-emmi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-                <p className="font-bold truncate">Antonino Emmi</p>
-                <p className="text-[10px] opacity-80 font-sans">d. pre-1900 • Linguaglossa</p>
-              </div>
-              <div onClick={() => onSelectPerson('rosaria-nasti')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-nasti', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-                <p className="font-bold truncate">Rosaria Nasti/Raiti</p>
-                <p className="text-[10px] opacity-80 font-sans">Surname disputed • Linguaglossa</p>
-              </div>
-              <div onClick={() => onSelectPerson('gregorio-sgroi')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('gregorio-sgroi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-                <p className="font-bold truncate">Gregorio Sgroi</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Linguaglossa</p>
-              </div>
-              <div onClick={() => onSelectPerson('santa-cali')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('santa-cali', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-                <p className="font-bold truncate">Santa Cali</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Linguaglossa</p>
-              </div>
-            </div>
-            <div className="col-span-2 space-y-2">
-              <div onClick={() => onSelectPerson('sebastiano-patane-sr')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('sebastiano-patane-sr', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Sebastiano Patanè</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Calatabiano</p>
-              </div>
-              <div onClick={() => onSelectPerson('rosaria-dagata')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-dagata', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Rosaria D'Agata</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Calatabiano</p>
-              </div>
-              <div onClick={() => onSelectPerson('vincenzo-vecchio')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('vincenzo-vecchio', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Vincenzo Vecchio</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Fiumefreddo</p>
-              </div>
-              <div onClick={() => onSelectPerson('rosaria-raciti')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosaria-raciti', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Rosaria Raciti</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Fiumefreddo</p>
-              </div>
-            </div>
+            {gi < gens.length - 1 && <ConnectingLine />}
           </div>
-        </div>
-
-        <ConnectingLine count={4} />
-
-        {/* Generation 1 */}
-        <div className="space-y-4">
-          <GenerationLabel label="Generation 1 — Great-Grandparents" />
-          <div className="grid grid-cols-4 gap-2 text-center">
-            <div className="space-y-2">
-              <div onClick={() => onSelectPerson('alfredo-buatti-sr')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('alfredo-buatti-sr', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
-                <p className="font-bold truncate">Alfredo Buatti Sr.</p>
-                <p className="text-[10px] opacity-80 font-sans">d. 1964 • Ascoli Piceno</p>
-              </div>
-              <div onClick={() => onSelectPerson('ida-galanti')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('ida-galanti', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
-                <p className="font-bold truncate">Ida Galanti</p>
-                <p className="text-[10px] opacity-80 font-sans">19 Mar 1893 – 1970</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div onClick={() => onSelectPerson('remo-chiappini')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('remo-chiappini', 'Chiappini') || 'bg-white border-stone-200 hover:border-amber-700'}`}>
-                <p className="font-bold truncate">Remo Chiappini</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Marche</p>
-              </div>
-              <div onClick={() => onSelectPerson('irma-pirri')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('irma-pirri', 'Chiappini') || 'bg-white border-stone-200 hover:border-amber-700'}`}>
-                <p className="font-bold truncate">Irma Pirri</p>
-                <p className="text-[10px] opacity-80 font-sans">Unknown • Ascoli Piceno</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div onClick={() => onSelectPerson('egidio-emmi')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('egidio-emmi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-                <p className="font-bold truncate">Egidio Emmi</p>
-                <p className="text-[10px] opacity-80 font-sans">~1870 – pre-1943 • Linguaglossa</p>
-              </div>
-              <div onClick={() => onSelectPerson('concetta-sgroi')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('concetta-sgroi', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-                <p className="font-bold truncate">Concetta Sgroi</p>
-                <p className="text-[10px] opacity-80 font-sans">~1880 – pre-1967 • Linguaglossa</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div onClick={() => onSelectPerson('rosario-patane-sr')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('rosario-patane-sr', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Rosario Patanè</p>
-                <p className="text-[10px] opacity-80 font-sans">8 Feb 1889 • Calatabiano</p>
-              </div>
-              <div onClick={() => onSelectPerson('venera-vecchio')}
-                className={`p-2 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('venera-vecchio', 'Patanè') || 'bg-white border-stone-200 hover:border-blue-900'}`}>
-                <p className="font-bold truncate">Venera Vecchio</p>
-                <p className="text-[10px] opacity-80 font-sans">b. 8 Jan 1888 • Fiumefreddo</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <ConnectingLine count={4} />
-
-        {/* Generation 2 */}
-        <div className="space-y-4">
-          <GenerationLabel label="Generation 2 — Grandparents" />
-          <div className="grid grid-cols-4 gap-4 text-center">
-            {[
-              { id: 'ezio-buatti', name: 'Ezio Buatti', dates: '1923 – 1991', subtitle: 'Ascoli Piceno → Sydney', color: 'Buatti' },
-              { id: 'bruna-lilia-chiappini', name: 'Bruna Lilia Chiappini', dates: '1930 – 1998', subtitle: 'San Benedetto → Victoria', color: 'Chiappini' },
-              { id: 'gregorio-emmi', name: 'Gregorio Emmi', dates: '1915 – 1979', subtitle: 'Linguaglossa → Ingham → Sydney', color: 'Emmi' },
-              { id: 'rosaria-patane', name: 'Rosaria Patanè', dates: '1924 – 1994', subtitle: 'Fiumefreddo → Ingham → Victoria', color: 'Patanè' },
-            ].map(p => (
-              <div key={p.id} onClick={() => onSelectPerson(p.id)}
-                className={`col-span-1 p-3 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle(p.id, p.color) || 'bg-white border-stone-200'}`}
-                style={{ borderColor: selectedPersonId === p.id ? undefined : undefined }}>
-                <p className="font-bold">{p.name}</p>
-                <p className="text-[10px] opacity-80 font-sans">{p.dates}</p>
-                <p className="text-[9px] font-sans italic mt-1">{p.subtitle}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <ConnectingLine count={2} />
-
-        {/* Generation 3 */}
-        <div className="space-y-4">
-          <GenerationLabel label="Generation 3 — Parents" />
-          <div className="grid grid-cols-2 gap-8 text-center max-w-2xl mx-auto">
-            <div onClick={() => onSelectPerson('alfred-buatti')}
-              className={`p-3 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('alfred-buatti', 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
-              <p className="font-bold">Alfred (Alfredo) Buatti</p>
-              <p className="text-[10px] opacity-80 font-sans">b. 1956 • Broadford, VIC</p>
-              <p className="text-[9px] font-sans italic mt-1">Moved to Italy 1962, returned 1975</p>
-            </div>
-            <div onClick={() => onSelectPerson('venera-buatti')}
-              className={`p-3 rounded-lg border text-xs cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle('venera-buatti', 'Emmi') || 'bg-white border-stone-200 hover:border-emerald-800'}`}>
-              <p className="font-bold">Venera Buatti (née Emmi)</p>
-              <p className="text-[10px] opacity-80 font-sans">Living • Named after grandmother</p>
-              <p className="text-[9px] font-sans italic mt-1">Daughter of Gregorio & Rosaria</p>
-            </div>
-          </div>
-        </div>
-
-        <ConnectingLine count={1} />
-
-        {/* Generation 4 */}
-        <div className="space-y-4">
-          <GenerationLabel label="Generation 4 — Children" />
-          <div className="grid grid-cols-4 gap-2 text-center max-w-xl mx-auto">
-            {['daniele-buatti', 'roberto-buatti', 'stefano-buatti', 'marco-buatti'].map(id => {
-              const child = people.find(p => p.id === id);
-              if (!child) return null;
-              return (
-                <div key={id} onClick={() => onSelectPerson(id)}
-                  className={`p-2 rounded-lg border text-[11px] cursor-pointer transition-all duration-200 hover:scale-105 ${getSelectedStyle(id, 'Buatti') || 'bg-white border-stone-200 hover:border-[#800020]'}`}>
-                  <p className="font-bold truncate">{child.name.split(' ')[0]}</p>
-                  <p className="text-[9px] opacity-80 font-sans">Buatti</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        ))}
       </div>
 
       <div className="text-center mt-4 text-[10px] text-stone-500 font-sans border-t border-stone-200/60 pt-2">
@@ -266,6 +136,7 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
         <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-700 ml-3 mr-1" /> Chiappini
         <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-800 ml-3 mr-1" /> Emmi
         <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-900 ml-3 mr-1" /> Patanè
+        <span className="ml-3"><BadgeCheck className="w-3 h-3 inline text-emerald-600" /> Verified</span>
       </div>
     </div>
   );

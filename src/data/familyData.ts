@@ -149,7 +149,7 @@ export const initialPeople: Person[] = [
     birthPlace: 'Ascoli Piceno, S. Vittore parish',
     deathDate: 'Unknown',
     spouses: ['giovanni-buatti'],
-    parents: [],
+    parents: ['antonio-bruni', 'sperandia-pasqualini'],
     children: ['alfredo-buatti-sr'],
     notes: [
       'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno, Alessandra Buondi).',
@@ -204,7 +204,7 @@ export const initialPeople: Person[] = [
     birthPlace: 'Rotella (Province of Ascoli Piceno)',
     deathDate: '4 October 1899',
     spouses: ['emidio-buatti'],
-    parents: [],
+    parents: ['domenico-lenzi', 'luigia'],
     children: ['giovanni-buatti'],
     notes: [
       'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno).',
@@ -233,7 +233,7 @@ export const initialPeople: Person[] = [
     occupations: ['Possidente (landowner)'],
     deathDate: 'Unknown',
     spouses: ['virginia-rosati'],
-    parents: [],
+    parents: ['domenico-galanti', 'feliciani-angela-maria'],
     children: ['ida-galanti'],
     notes: [
       'CONFIRMED as father of Ida Galanti (b. 19 Mar 1893) via foglio famiglia 5120 (Registro 55, 18 Jul 2026).',
@@ -262,7 +262,7 @@ export const initialPeople: Person[] = [
     birthPlace: 'Maltignano (Province of Ascoli Piceno)',
     deathDate: 'Unknown',
     spouses: ['antonio-galanti'],
-    parents: [],
+    parents: ['luigi-rosati', 'filippini'],
     children: ['ida-galanti'],
     notes: [
       'CONFIRMED as mother of Ida Galanti (b. 19 Mar 1893) via foglio famiglia 5120 (Registro 55, 18 Jul 2026).',
@@ -277,6 +277,223 @@ export const initialPeople: Person[] = [
     researchStatus: {
       status: 'In Progress',
       details: 'Confirmed mother of Ida Galanti (b. 1893). From Maltignano. Marriage connection to Alfredo Buatti unconfirmed.',
+    }
+  },
+
+  // --- GENERATION -2: Great-Great-Great-Great-Grandparents (Buatti/Galanti/Bruni/Lenzi/Rosati Lines) ---
+  {
+    id: 'domenico-galanti',
+    name: 'Domenico Galanti',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: '29 October 1816',
+    birthPlace: 'Lisciano (frazione of Ascoli Piceno)',
+    occupations: ['Possidente (landowner)'],
+    deathDate: '9 March 1889',
+    spouses: ['feliciani-angela-maria'],
+    parents: ['luigi-galanti', 'vincenza-michetti'],
+    children: ['antonio-galanti'],
+    notes: [
+      'CONFIRMED via foglio famiglia 5120 (Registro 55, 18 Jul 2026): father of Antonio Galanti, grandfather of Ida Galanti (1893).',
+      'Son of fu Luigi Galanti and fu Vincenza Michetti. Widower of Feliciani Angela Maria.',
+      'Landowning family from Lisciano, a hillside frazione of Ascoli Piceno.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '29 Oct 1816, Lisciano — per foglio famiglia 5120' },
+      { type: 'Death Record', status: 'Found', notes: '9 Mar 1889 — per foglio famiglia 5120' }
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Identified via foglio 5120. Landowner, Lisciano. Father of Antonio Galanti. Pre-1861 records.',
+    }
+  },
+  {
+    id: 'feliciani-angela-maria',
+    name: 'Feliciani Angela Maria',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Before 1889 (predeceased husband)',
+    spouses: ['domenico-galanti'],
+    parents: [],
+    children: ['antonio-galanti'],
+    notes: [
+      'CONFIRMED via foglio famiglia 5120: wife of Domenico Galanti (he is listed as "widower of Feliciani Angela Maria").',
+      'Presumed mother of Antonio Galanti (b. 1857), Annibale Galanti (b. 1855), and Ottavio Galanti (b. 1863).',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Wife of Domenico Galanti. Mother of Antonio. Predeceased 1889.',
+    }
+  },
+  {
+    id: 'luigi-rosati',
+    name: 'Luigi Rosati',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: 'Unknown',
+    birthPlace: 'Maltignano (Province of Ascoli Piceno)',
+    deathDate: 'Unknown',
+    spouses: ['filippini'],
+    parents: [],
+    children: ['virginia-rosati'],
+    notes: [
+      'CONFIRMED via foglio famiglia 5120: father of Virginia Rosati (b. 1867).',
+      'From Maltignano, a comune ~8km from Ascoli Piceno.',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Father of Virginia Rosati. From Maltignano.',
+    }
+  },
+  {
+    id: 'filippini',
+    name: 'Filippini (first name unknown)',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['luigi-rosati'],
+    parents: [],
+    children: ['virginia-rosati'],
+    notes: [
+      'CONFIRMED via foglio famiglia 5120: mother of Virginia Rosati, wife of Luigi Rosati.',
+      'Only the surname Filippini is recorded — first name not given on foglio 5120.',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Mother of Virginia Rosati. Surname only — first name unknown.',
+    }
+  },
+  {
+    id: 'domenico-lenzi',
+    name: 'Domenico Lenzi',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: 'Unknown',
+    birthPlace: 'Rotella (Province of Ascoli Piceno)',
+    deathDate: 'Before 1899 (listed as "fu" on foglio 1527)',
+    spouses: ['luigia'],
+    parents: [],
+    children: ['antonia-lenzi'],
+    notes: [
+      'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): father of Antonia Lenzi, listed as "fu Domenico".',
+      'From Rotella (~20km from Ascoli Piceno).',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Father of Antonia Lenzi. From Rotella. Predeceased 1899.',
+    }
+  },
+  {
+    id: 'luigia',
+    name: 'Luigia (surname unknown)',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Before 1899 (listed as "fu" on foglio 1527)',
+    spouses: ['domenico-lenzi'],
+    parents: [],
+    children: ['antonia-lenzi'],
+    notes: [
+      'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): mother of Antonia Lenzi, listed as "fu Luigia".',
+      'Only the given name Luigia is recorded — surname not given on foglio 1527.',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Mother of Antonia Lenzi. Given name only — surname unknown.',
+    }
+  },
+  {
+    id: 'antonio-bruni',
+    name: 'Antonio Bruni',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: 'Unknown',
+    birthPlace: 'Likely Ascoli Piceno area',
+    deathDate: 'Unknown',
+    spouses: ['sperandia-pasqualini'],
+    parents: [],
+    children: ['emidia-bruni'],
+    notes: [
+      'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): father of Emidia Bruni.',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Father of Emidia Bruni. All details unknown.',
+    }
+  },
+  {
+    id: 'sperandia-pasqualini',
+    name: 'Sperandia Pasqualini',
+    generation: -2,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['antonio-bruni'],
+    parents: [],
+    children: ['emidia-bruni'],
+    notes: [
+      'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): mother of Emidia Bruni, wife of Antonio Bruni.',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Mother of Emidia Bruni. All details unknown.',
+    }
+  },
+
+  // --- GENERATION -3: Great-Great-Great-Great-Great-Grandparents (Galanti Line) ---
+  {
+    id: 'luigi-galanti',
+    name: 'Luigi Galanti',
+    generation: -3,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: 'Unknown — likely late 1700s',
+    birthPlace: 'Lisciano (frazione of Ascoli Piceno)',
+    deathDate: 'Before 1816 (listed as "fu" on foglio 5120)',
+    spouses: ['vincenza-michetti'],
+    parents: [],
+    children: ['domenico-galanti'],
+    notes: [
+      'CONFIRMED via foglio famiglia 5120: father of Domenico Galanti (b. 1816), listed as "fu Luigi" (the late Luigi).',
+      'Likely born late 1700s in Lisciano.',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Father of Domenico Galanti. Pre-unitary records. Predeceased 1816.',
+    }
+  },
+  {
+    id: 'vincenza-michetti',
+    name: 'Vincenza Michetti',
+    generation: -3,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Before 1816 (listed as "fu" on foglio 5120)',
+    spouses: ['luigi-galanti'],
+    parents: [],
+    children: ['domenico-galanti'],
+    notes: [
+      'CONFIRMED via foglio famiglia 5120: mother of Domenico Galanti, listed as "fu Vincenza Michetti".',
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Mother of Domenico Galanti. Predeceased 1816.',
     }
   },
 
