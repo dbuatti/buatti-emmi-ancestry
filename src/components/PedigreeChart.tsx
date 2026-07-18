@@ -137,16 +137,12 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
                   Patanè: 'bg-blue-900',
                 }[line];
                 return (
-                  <div key={line} className="flex flex-col gap-1.5 border-l border-stone-200/40 pl-2 first:border-l-0">
+                  <div key={line} className={`flex flex-col gap-1.5 border-l border-stone-200/30 pl-2 first:border-l-0 ${!cards || cards.length === 0 ? 'opacity-30' : ''}`}>
                     <div className="flex items-center gap-1">
-                      <span className={`inline-block w-2 h-2 rounded-full ${lineDot} shrink-0`} />
+                      <span className={`inline-block w-2 h-2 rounded-full ${lineDot} shrink-0 ${!cards || cards.length === 0 ? 'opacity-20' : ''}`} />
                       <span className="text-[9px] font-sans uppercase tracking-wider text-stone-400 font-semibold">{line}</span>
                     </div>
-                    {!cards || cards.length === 0 ? (
-                      <div className="p-2 rounded-lg border border-dashed border-stone-200 bg-stone-50/30 min-h-[48px] flex items-center justify-center">
-                        <p className="text-[10px] font-sans text-stone-300 text-center italic">No records</p>
-                      </div>
-                    ) : (
+                    {cards && cards.length > 0 && (
                       <div className="space-y-1.5">
                         {cards.map(p => (
                           <PersonCard
@@ -164,11 +160,16 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
             </div>
             {gi < gens.length - 1 && (
               <div className="grid grid-cols-4 gap-1 px-1 mt-1">
-                {allLines.map(line => (
-                  <div key={line} className="flex justify-center">
-                    <div className="w-px h-3 border-r border-dashed border-stone-300" />
-                  </div>
-                ))}
+                {allLines.map(line => {
+                  const hasInCurrent = byGenAndLine[gen]?.[line]?.length > 0;
+                  const hasInNext = byGenAndLine[gens[gi + 1]]?.[line]?.length > 0;
+                  const connected = hasInCurrent || hasInNext;
+                  return (
+                    <div key={line} className="flex justify-center">
+                      <div className={`w-px h-3 border-r border-dashed transition-opacity ${connected ? 'border-stone-400' : 'border-stone-200'}`} />
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
