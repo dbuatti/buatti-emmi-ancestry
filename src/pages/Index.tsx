@@ -213,10 +213,7 @@ const Index = () => {
             <TreeEgo
               people={people}
               selectedPersonId={selectedPersonId}
-              onSelectPerson={(id) => {
-                setSelectedPersonId(id);
-                setModalPersonId(id);
-              }}
+              onSelectPerson={setSelectedPersonId}
             />
           </TabsContent>
 
