@@ -41,8 +41,8 @@ const antenatiCoverage: Record<string, AntenatiInfo> = {
   'Randazzo': { available: true, years: '1820–1929' },
   'Piedimonte Etneo': { available: true, years: '1820–1929' },
   'Milo': { available: true, years: '1820–1929' },
-  'Ascoli Piceno': { available: false, years: 'up to 1880 (FS), 1915–1919 (Antenati)', note: 'gap 1881–1914' },
-  'San Benedetto del Tronto': { available: false, years: 'none digitised' },
+  'Ascoli Piceno': { available: false, years: 'up to 1880 (FS), 1915–1919 (Antenati), anagrafe storica on Antenati (fogli famiglia)', note: 'gap 1881–1914 for civil records, but population registers available' },
+  'San Benedetto del Tronto': { available: false, years: 'none digitised on Antenati — try Archivio di Stato or FamilySearch' },
   'Giarre': { available: true, years: '1820–1929' },
   'Acireale': { available: true, years: '1820–1929' },
 };
@@ -282,108 +282,60 @@ export function generateGoals(person: Person): ResearchGoal[] {
 
   // Egidio Emmi
   if (person.id === 'egidio-emmi' && !hasFoundRecord(person, 'Birth Record')) {
-    // === ALREADY CHECKED (Not Found — strikethrough) ===
-    push(
-      `Searched Linguaglossa Nati 1868, 1869, 1870, 1871, 1873, 1874 — all images browsed, Egidio not found`,
-      `Antenati — 6 years fully checked`,
-      'Not Found'
-    );
-    push(
-      `Searched Randazzo Nati 1868-1874, Castiglione di Sicilia 1868-1874, Piedimonte Etneo 1870, Calatabiano 1870 — not found`,
-      `Antenati — 5 comuni checked`,
-      'Not Found'
-    );
-    push(
-      `Milo: confirmed no civil records on Antenati at all`,
-      `Antenati — no records for this comune`,
-      'Not Found'
-    );
-    push(
-      `Checked Matrimoni allegati on Antenati — series stops at 1893, 1900 allegati not available online`,
-      `Antenati — serie 81163, Matrimoni allegati only 1866-1893`,
-      'Not Found'
-    );
-    push(
-      `Checked Matrimoni indexes 1866-1872 for Antonino Emmi × Rosaria — found three Antonino marriages, none to a Nasti. Conclusion: they married pre-1866 (Borbonic series)`,
-      `Antenati — Matrimoni 1866-1872`,
-      'Not Found'
-    );
+    // === ALL CHECKED (not found) ===
+    const checked: [string, string][] = [
+      ['Linguaglossa Nati 1868, 1869, 1870, 1871, 1873, 1874 — all browsed', 'Antenati — 6 years fully checked'],
+      ['Randazzo, Castiglione, Piedimonte, Calatabiano Nati 1868-1874', 'Antenati — 5 comuni checked'],
+      ['Milo — no civil records on Antenati', 'Antenati'],
+      ['Matrimoni allegati series stops at 1893', 'Antenati — serie 81163'],
+      ['Matrimoni indexes 1866-1872: three Antonino marriages, none to Nasti', 'Antenati — Matrimoni 1866-1872'],
+      ['Antonino Emmi death act: Morti 1889 atto 27 — FOUND (Via S. Egidio, Nasti confirmed)', 'Linguaglossa Morti 1889'],
+    ];
+    checked.forEach(([desc, where]) => {
+      push(desc, where, 'Not Found');
+    });
 
-    // === STILL TO DO (Pending) ===
+    // === STILL TO DO ===
     push(
-      `KILLER MOVE: Request marriage allegati from TRIBUNALE di Catania
-ASCt confirmed 13 Jul 2026: 1894-1910 Linguaglossa records are held by the Tribunale di Catania, NOT ASCt. This is the correct target.
-1. Send email to: Tribunale di Catania (find PEC on their website)
-2. Subject: "Richiesta copia allegati al matrimonio — Linguaglossa 1900 atto n. 59"
-3. Body: request copy of "allegati al matrimonio atto n. 59 del 1900, Comune di Linguaglossa, sposi: Emmi Egidio e Sgroi Concetta"
-4. This retrieves: Egidio's certified birth-act copy (year + act number), Concetta's birth-act copy
-5. Expect: small reproduction fee, digital copy by email`,
+      `Send corrected follow-up to Comune di Linguaglossa — correct mother's surname to Nasti, reference atto 59/1900`,
+      `Comune di Linguaglossa, Ufficio di Stato Civile`,
+      hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
+    );
+    push(
+      `KILLER MOVE: Request marriage allegati from TRIBUNALE di Catania — ASCt confirmed 1894-1910 records held by the Tribunal. Email to: archiviocivile.tribunale.catania@giustizia.it`,
       `Tribunale di Catania — ASCt confirmed 1894-1910 records are held there`,
       'Pending'
     );
     const remainingNatiYears = [
-      { year: '1867', note: 'BEST BET — clerk rounded other Egidio to 32 (was 31), so our "30" could be 29 → born 1867' },
+      { year: '1867', note: 'BEST BET' },
       { year: '1872', note: 'second priority' },
-      { year: '1866', note: 'third priority — index shows an "Egidio son of Antonino + Giuseppa Gullo"' },
+      { year: '1866', note: 'third priority' },
     ];
     remainingNatiYears.forEach(({ year, note }) => {
       push(
-        `1. On Antenati, open Linguaglossa > Nati > ${year}\n2. Go to the index at the back of the register\n3. Look for "Emmi" in the E section\n4. ${note}\n5. If you find "Emmi Egidio" or "Emmi Antonino", check parents (mother must be Rosaria Nasti, father "fu" Antonino)`,
+        `Linguaglossa > Nati > ${year} — ${note}: look for Emmi, check parents (mother must be Rosaria Nasti)`,
         antenatiUrl('Linguaglossa', 'nati', year),
         'Pending'
       );
     });
     push(
-      `1. On Antenati, look for the pre-1866 Borbonic series for Linguaglossa\n2. These are in a different serie from the unified Nati (1866-1929)\n3. Births before Italian unification used a different numbering system\n4. Browse starting from 1865 and work backwards`,
+      `Browse pre-1866 Borbonic Nati series for Linguaglossa on Antenati`,
       `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=nati`,
       'Pending'
     );
     push(
-      `HOUSEHOLD HUNT: Stop looking only for Egidio — look for his SIBLINGS
-1. In every Nati index you open, scan ALL "Emmi" entries
-2. Log any child whose father is "Antonino" and mother is "Rosaria"
-3. A sibling tells you: the quartiere, Antonino's patronymic, and whether the family had a consistent naming pattern
-4. Once you find one sibling, Egidio's act becomes findable by triangulation`,
+      `Household hunt: in every Nati index scan ALL Emmi entries, log siblings of Antonino + Rosaria`,
       `Linguaglossa Nati 1866-1875 on Antenati`,
       'Pending'
     );
     push(
-      `SCAN MORTI for Antonino Emmi (died between ~1872 and Sep 1900)
-Found: Linguaglossa Morti 1889, atto n. 27. Died 11 Mar 1889, age 40, bracciante, husband of Rosaria Nasti, son of fu Antonino + fu Nunzia Pavone. Via S. Egidio. Officer: Carmelo Vecchio.
-FULLY RESOLVED:
-- Nasti confirmed (independent clerk Vecchio — not Scarlata's "Raiti" slip)
-- Occupation: bracciante (not the same Antonino who was industrioso, son of Francesco)
-- Parents: Antonino Sr. + Nunzia Pavone — pushes Emmi line back another gen
-- Street: Via S. Egidio — explains Egidio's name`,
-      `https://antenati.cultura.gov.it/search-registry/?comune=Linguaglossa&tipologia=morti`,
-      'Done'
-    );
-    push(
-      `CHURCH ROUTE: Santa Maria delle Grazie baptisms
-1. On FamilySearch, search Catalog for "Linguaglossa"
-2. Filter: Church Records
-3. Look for "Registri ecclesiastici di Linguaglossa 1539-1928"
-4. Find the Battesimi register covering ~1866-1872
-5. Search for Egidio Emmi — or any child of Antonino + Rosaria Nasti
-6. Baptismal records are independent of civil records — may survive even if civil act is lost`,
+      `Church route: Santa Maria delle Grazie baptisms on FamilySearch — look for Egidio or any child of Antonino + Rosaria`,
       `https://www.familysearch.org/search/catalog/results?q=Linguaglossa&filter=recordType%3AChurch%20Records`,
       'Pending'
     );
     push(
-      `Send corrected follow-up to Comune di Linguaglossa:
-1. Reference your earlier email
-2. Correct mother's surname: Nasti (not Raiti — handwriting confirms across Acts 41 & 59)
-3. Marriage date: 4 Nov 1900 (atto 59) — not 8 Sep (that was the banns)
-4. Father: "fu" Antonino (deceased by 1900)
-5. Warn them: the Egidio born 1868 to Antonino + Rosa Vecchio (atto 141) is NOT the one you want
-6. Ask them to search Nati 1866-1872 for our Egidio`,
-      `Comune di Linguaglossa, Ufficio di Stato Civile`,
-      hasSearchingRecord(person, 'Birth Record') ? 'Searching' : 'Pending'
-    );
-    push(
-      `LOW PRIORITY: Visit FamilySearch center for DGS 7841071 (Nati 1866-1875)
-Note: likely the SAME Archivio di Stato Catania images already browsed on Antenati, but may have different annotations`,
-      `FamilySearch center — DGS 7841071, segnatura 8541 on Antenati`,
+      `Visit FamilySearch center for DGS 7841071 (Nati 1866-1875) — likely same AS-CT images but may differ`,
+      `FamilySearch center — DGS 7841071`,
       'Pending'
     );
   }

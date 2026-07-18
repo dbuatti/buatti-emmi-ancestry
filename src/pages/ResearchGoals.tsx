@@ -21,14 +21,8 @@ const statusIcon = (status: ResearchGoal['status']) => {
 };
 
 const generationalLabel = (gen: number): string => {
-  switch (gen) {
-    case 0: return 'G-neg 0';
-    case 1: return 'G-neg 1';
-    case 2: return 'G-neg 2';
-    case 3: return 'G-neg 3';
-    case 4: return 'G-neg 4';
-    default: return `G-neg ${gen}`;
-  }
+  if (gen < 0) return `G-neg ${gen}`;
+  return `Gen ${gen}`;
 };
 
 export default function ResearchGoals() {
