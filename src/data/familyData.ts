@@ -1394,8 +1394,8 @@ export const initialPeople: Person[] = [
       'Age at Venera\'s birth (Oct 1885): 35, castaldo. Age at Giuseppe\'s birth (Feb 1887): 37, bracciante. Age at Rosario\'s birth (Feb 1889): 39, castaldo. Perfectly consistent stack → born ~1849-50. Note the bracciante dip in 1887 between two castaldo entries — likely his occupation was castaldo throughout and the 1887 clerk simplified it.',
       'All three children born at Contrada Trifilippi, Calatabiano (settles the reading — Trifilippi, not Trappitelli). Same contrada, same estate, four years of documented residence.',
       'From Calatabiano area; resided in Fiumefreddo by 1911.',
-      'Marriage to Rosaria D\'Agata: window now ~1883–1885. All nine Patanè entries in Calatabiano Nati 1880-1883 checked and excluded (belong to the six other Patanè households). Family record starts cleanly at Venera, 22 Oct 1885. Arrival at Trifilippi ~1884-85. Marriage likely shortly before, possibly 1883-1885, possibly in Fiumefreddo.',
-      'NAMING CONVENTION: Venera as firstborn daughter suggests "Venera" is the name of Sebastiano Sr.\'s mother (paternal grandmother). This is your best current hypothesis for a Generation -1 name.',
+      'Marriage to Rosaria D\'Agata: Calatabiano is COMPLETELY EXHAUSTED. Matrimoni 1870-1885 all checked — every Patanè marriage accounted for by other households (Mario × Sciacca 1878, Giuseppe × Prestipino 1878, Salvatore × Caruso 1878, Paolo × Manitta 1880/1882, Giuseppe × Fallone 1882, Salvatore × Vinciguerra 1885). Sebastiano × Rosaria appear exactly three times in Calatabiano records — as parents in 1885, 1887, 1889 — and never otherwise. They did not marry, were not born, and had no known kin here. The castaldo arrived at Trifilippi ~1884-85 with a wife from elsewhere, and left by ~1893.',
+      'NAMING CONVENTION: Venera (firstborn daughter) suggests "Venera" as paternal grandmother\'s name. Giuseppe (firstborn son) suggests "Giuseppe" as paternal grandfather\'s name. When a Fiumefreddo or Giarre index shows "Sebastiano Patanè di Giuseppe," that\'s your man with odds strongly in favour.',
       'Sebastiano reads as an outsider posted to an estate. The local Patanè cluster in Calatabiano is all falegnami/sarti/calzolai (carpenters/tailors/shoemakers); Sebastiano was a castaldo (farm manager). Different social niche, no overlap in the birth registers. The elderly landowner Leonardo Fazio witnessed births across multiple years (1885, 1887) — plausibly the estate owner Sebastiano managed for.',
       'Exclusion log — Calatabiano Nati 1880-1884: Atto 102/1880 (Rosario di Giuseppe Patanè, bracciante × Francesca Prestipino — died young, name reused 1884); Atto 4/1880 (Maria Catena di Mariano Patanè, falegname × Carmela Patanè); Atto 33/1881 (Francesca di Mario Patanè, sarto × Sebastiana Sciacca); Atto 74/1881 (Concetta di Salvatore Patanè di Rosario, bracciante × Maria Caruso — seventh household mapped); Atto 157/1882 (Francesca di Paolo Patanè, calzolaio × Antonina Manitta); Atto 158/1882 (Concetta di Giuseppe Patanè, bracciante × Francesca Prestipino); Atto 89/1882 (Francesco di Mariano Patanè, falegname × Carmela Patanè); Atto 24/1883 (Carmela di Francesco Patanè, falegname × Maria Oliveri); Atto 32/1883 (Rosario di Salvatore Patanè, bracciante × Maria Caruso). Seven distinct Patanè households mapped across 1880s Calatabiano — none connected to Sebastiano.',
     ],
@@ -1405,11 +1405,11 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'Name confirmed as father of Venera, Giuseppe, and Rosario via Calatabiano civil birth acts. Birth year ~1849-50 (35 in 1885, 37 in 1887, 39 in 1889). All Patanè births 1880-1884 checked and excluded — family arrives in Calatabiano ~1884-85. Occupation: castaldo (farm manager) throughout, one clerk wrote bracciante in 1887.',
+      details: 'Calatabiano fully exhausted. Name confirmed as father of Venera (1885), Giuseppe (1887), Rosario (1889) — these three appearances are the ONLY trace of this couple in 15 years of Calatabiano records. Married elsewhere ~1883-85, arrived Trifilippi ~1884-85 as castaldo, departed ~1893. Occupation: castaldo (farm manager) throughout.',
       nextSteps: [
-        'Search Calatabiano Matrimoni + pubblicazioni 1883-1885 (highest probability window).',
-        'Search Calatabiano Nati 1849–1850 for Sebastiano\'s own birth record.',
-        'If marriage not in Calatabiano, pivot to Fiumefreddo Matrimoni 1878-1885, then D\'Agata coastal towns (Giarre, Mascali, Riposto, Acireale).'
+        'PRIMARY: Fiumefreddo di Sicilia Matrimoni + pubblicazioni 1878-1885 — scan for Patanè groom × D\'Agata bride.',
+        'SECONDARY: Giarre (sweeps Milo, etc.), then Mascali, Riposto, Acireale — same drill.',
+        'Sebastiano\'s own birth (~1849-50): search same comuni\'s Nati 1848-1852 once marriage is found (marriage act names his birthplace).'
       ]
     }
   },
