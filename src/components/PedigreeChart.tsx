@@ -87,10 +87,10 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
 export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: PedigreeChartProps) {
   const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
-  // Data-driven: walk ancestors from root, include spouses
+  // Always show the full tree from Daniele — selectedPersonId only highlights
   const directLineIds = useMemo(
-    () => collectAncestorIds(people, selectedPersonId),
-    [people, selectedPersonId]
+    () => collectAncestorIds(people, 'daniele-buatti'),
+    [people]
   );
 
   const filtered = people.filter(p => directLineIds.has(p.id));

@@ -77,7 +77,7 @@ function buildLayout(people: Person[], rootId: string): LayoutNode[] {
 }
 
 export function TreeConnected({ people, selectedPersonId, onSelectPerson }: TreeConnectedProps) {
-  const layout = useMemo(() => buildLayout(people, selectedPersonId), [people, selectedPersonId]);
+  const layout = useMemo(() => buildLayout(people, 'daniele-buatti'), [people]);
 
   if (layout.length === 0) {
     return <div className="text-center py-10 text-stone-500">No data to display.</div>;
