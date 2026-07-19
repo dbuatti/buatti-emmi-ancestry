@@ -1383,33 +1383,37 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Patanè',
     gender: 'M',
-    birthDate: '~1849–1850 (age 37 at Giuseppe\'s birth Feb 1887, age 39 at Rosario\'s birth Feb 1889)',
+    birthDate: '~1849–1850 (age 26 at marriage Apr 1876, age 35 at Venera\'s birth 1885)',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     spouses: ['rosaria-dagata'],
-    parents: [],
+    parents: ['mariano-patane', 'leonarda-buonaventura'],
     children: ['rosario-patane-sr', 'giuseppe-patane-sibling', 'venera-patane-sibling'],
     notes: [
-      'Father of Rosario Patanè, confirmed via 1911 parish marriage certificate.',
-      'Also father of Giuseppe Patanè (married Sebastiana Cogliandolo, 20 Feb 1911, Liber Matrimoniorum N.11/12 — also recorded as "Sebastiana Guglielmino" on civil banns) and Venera Patanè (married Orazio Pagano, 17 Sep 1911) — both confirmed via Fiumefreddo records.',
-      'Age at Venera\'s birth (Oct 1885): 35, castaldo. Age at Giuseppe\'s birth (Feb 1887): 37, bracciante. Age at Rosario\'s birth (Feb 1889): 39, castaldo. Perfectly consistent stack → born ~1849-50. Note the bracciante dip in 1887 between two castaldo entries — likely his occupation was castaldo throughout and the 1887 clerk simplified it.',
-      'All three children born at Contrada Trifilippi, Calatabiano (settles the reading — Trifilippi, not Trappitelli). Same contrada, same estate, four years of documented residence.',
-      'From Calatabiano area; resided in Fiumefreddo by 1911.',
-      'Marriage to Rosaria D\'Agata: Calatabiano is COMPLETELY EXHAUSTED. Matrimoni 1870-1885 all checked — every Patanè marriage accounted for by other households (Mario × Sciacca 1878, Giuseppe × Prestipino 1878, Salvatore × Caruso 1878, Paolo × Manitta 1880/1882, Giuseppe × Fallone 1882, Salvatore × Vinciguerra 1885). Sebastiano × Rosaria appear exactly three times in Calatabiano records — as parents in 1885, 1887, 1889 — and never otherwise. They did not marry, were not born, and had no known kin here. The castaldo arrived at Trifilippi ~1884-85 with a wife from elsewhere, and left by ~1893.',
-      'NAMING CONVENTION: Venera (firstborn daughter) suggests "Venera" as paternal grandmother\'s name. Giuseppe (firstborn son) suggests "Giuseppe" as paternal grandfather\'s name. When a Fiumefreddo or Giarre index shows "Sebastiano Patanè di Giuseppe," that\'s your man with odds strongly in favour.',
-      'Sebastiano reads as an outsider posted to an estate. The local Patanè cluster in Calatabiano is all falegnami/sarti/calzolai (carpenters/tailors/shoemakers); Sebastiano was a castaldo (farm manager). Different social niche, no overlap in the birth registers. The elderly landowner Leonardo Fazio witnessed births across multiple years (1885, 1887) — plausibly the estate owner Sebastiano managed for.',
-      'Exclusion log — Calatabiano Nati 1880-1884: Atto 102/1880 (Rosario di Giuseppe Patanè, bracciante × Francesca Prestipino — died young, name reused 1884); Atto 4/1880 (Maria Catena di Mariano Patanè, falegname × Carmela Patanè); Atto 33/1881 (Francesca di Mario Patanè, sarto × Sebastiana Sciacca); Atto 74/1881 (Concetta di Salvatore Patanè di Rosario, bracciante × Maria Caruso — seventh household mapped); Atto 157/1882 (Francesca di Paolo Patanè, calzolaio × Antonina Manitta); Atto 158/1882 (Concetta di Giuseppe Patanè, bracciante × Francesca Prestipino); Atto 89/1882 (Francesco di Mariano Patanè, falegname × Carmela Patanè); Atto 24/1883 (Carmela di Francesco Patanè, falegname × Maria Oliveri); Atto 32/1883 (Rosario di Salvatore Patanè, bracciante × Maria Caruso). Seven distinct Patanè households mapped across 1880s Calatabiano — none connected to Sebastiano.',
+      'MARRIAGE FOUND: Fiumefreddo Matrimoni 1876, atto 5 (3 May 1876). Pubblicazioni atto 4 (13 Apr 1876). Before Sindaco Carmelo Fichera. Both spouses born in and resident in Fiumefreddo. Age 26, bracciante. Banns published 16 and 23 Apr 1876. Birth extracts issued by the comune 21 Apr 1876 and deposited in the allegati (atto 5 bundle). Witnesses: Mariano Lo Scavo (26) and Domenico Torrisi (39), braccianti. All illiterate.',
+      'Parents named in marriage act: fu Mariano Patanè (deceased before Apr 1876) and Leonarda Buonaventura (industriosa, living in Fiumefreddo).',
+      'Father of Rosario Patanè, Giuseppe Patanè, and Venera Patanè — all confirmed.',
+      'Age stack: 26 (Apr 1876) → 35/37/39 (Oct 1885/Feb 1887/Feb 1889) — perfectly consistent, born ~1849-50.',
+      'Occupation: bracciante at marriage (1876), then castaldo (farm manager) by 1885 Calatabiano posting — a career progression.',
+      'Born and married in Fiumefreddo. The Calatabiano years (1884–~1893) were a temporary posting as castaldo at Contrada Trifilippi. The family\'s 1911 return to Fiumefreddo was a return, not a migration.',
+      'Giuseppe\'s Calatabiano 1887 act briefly recorded him as bracciante (likely clerk simplification); all other acts read castaldo.',
+      'Sibling confirmed: Giuseppa Patanè married Alfio Vecchio in Fiumefreddo 1880 — Patanè-Vecchio connection runs two generations deep before Rosario × Venera (1911).',
+      '9-year gap (1876–1885) almost certainly contains children born in Fiumefreddo. Predicted names: Mariano, Leonarda, Salvatore.',
+      'Exclusion log — Calatabiano Nati 1880-1884 all excluded (nine entries across seven households, none connected). Calatabiano Matrimoni 1870-1885 all excluded.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: '~1849–1850 — search Calatabiano pre-1866 Borbonic records' },
+      { type: 'Marriage Record', status: 'Found', notes: '3 May 1876, Fiumefreddo — atto 5 (Matrimoni). Pubblicazioni atto 4 (13 Apr 1876). Sindaco: Carmelo Fichera. Groom: Sebastiano Patanè (26, bracciante, born Fiumefreddo). Bride: Rosaria D\'Agata (21, industriosa, born Fiumefreddo). Parents: fu Mariano Patanè + Leonarda Buonaventura (groom); Salvatore D\'Agata + Venera Maccarrone (bride).' },
+      { type: 'Birth Record', status: 'Not Found', notes: '~1849–1850, Fiumefreddo — copy in allegati atto 5/1876 bundle' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Calatabiano fully exhausted. Name confirmed as father of Venera (1885), Giuseppe (1887), Rosario (1889) — these three appearances are the ONLY trace of this couple in 15 years of Calatabiano records. Married elsewhere ~1883-85, arrived Trifilippi ~1884-85 as castaldo, departed ~1893. Occupation: castaldo (farm manager) throughout.',
+      status: 'Confirmed',
+      details: 'Marriage found 3 May 1876, Fiumefreddo atto 5. Born in Fiumefreddo, son of Mariano Patanè (fu) + Leonarda Buonaventura. All prior ages confirmed. Calatabiano was a temporary castaldo posting. Fiumefreddo Nati 1877-1884 likely holds children from the 9-year gap.',
       nextSteps: [
-        'PRIMARY: Fiumefreddo di Sicilia Matrimoni + pubblicazioni 1878-1885 — scan for Patanè groom × D\'Agata bride.',
-        'SECONDARY: Giarre (sweeps Milo, etc.), then Mascali, Riposto, Acireale — same drill.',
-        'Sebastiano\'s own birth (~1849-50): search same comuni\'s Nati 1848-1852 once marriage is found (marriage act names his birthplace).'
+        'Pull the allegati for Fiumefreddo Matrimoni 1876 atto 5 — contains birth extracts of both spouses (issued 21 Apr 1876), giving exact dates, act numbers, and possibly grandparents.',
+        'Search Fiumefreddo Nati 1877-1884 for Patanè children of Sebastiano × Rosaria (gap years).',
+        'Search Fiumefreddo Morti for Mariano Patanè (died before Apr 1876) — names his parents (Generation -2).',
+        'Search Fiumefreddo Morti for Salvatore D\'Agata (b. ~1817) and Venera Maccarrone — each names their parents.',
       ]
     }
   },
@@ -1419,23 +1423,203 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Patanè',
     gender: 'F',
-    birthDate: 'Unknown',
+    birthDate: '~1855 (age 21 at marriage Apr 1876)',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     spouses: ['sebastiano-patane-sr'],
-    parents: [],
+    parents: ['salvatore-dagata', 'venera-maccarrone'],
     children: ['rosario-patane-sr', 'giuseppe-patane-sibling', 'venera-patane-sibling'],
     notes: [
-      'Mother of Rosario Patanè, Giuseppe Patanè, and Venera Patanè, confirmed via 1911 Fiumefreddo civil marriage banns.',
-      'First direct documentary sighting in a civil act: Giuseppe\'s birth (atto 31/1887, Calatabiano) names her as "Rosaria D\'Agata, sua legittima sposa convivente" (his legitimate wife living with him).',
-      'Living with Sebastiano in Contrada Trifilippi, Calatabiano at the time of Giuseppe\'s birth (Feb 1887). Still there at Rosario\'s birth in Contrada Trappitelli (Feb 1889).',
+      'Mother of Rosario Patanè, Giuseppe Patanè, and Venera Patanè.',
+      'Marriage to Sebastiano Patanè: 3 May 1876, Fiumefreddo atto 5. Age 21, industriosa (home-based textile work), born in Fiumefreddo, resident there.',
+      'Parents named in marriage act: Salvatore D\'Agata (59, bracciante, living) and Venera Maccarrone (industriosa, living), both resident Fiumefreddo.',
+      'First civil documentary sighting: Giuseppe\'s birth (atto 31/1887, Calatabiano) names her as "Rosaria D\'Agata, sua legittima sposa convivente."',
+      'Naming convention: firstborn daughter Venera (1885) named for maternal grandmother Venera Maccarrone.',
+      'All three children born at Contrada Trifilippi, Calatabiano during the family\'s temporary posting there (~1884–1893).',
+      'Also recorded as "Ignazia D\'Agata" on Venera\'s 1911 marriage banns (scribal variation).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Birth Record', status: 'Not Found', notes: '~1855, Fiumefreddo — copy in allegati atto 5/1876 bundle' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Name confirmed as mother of Rosario and Giuseppe Patanè via Calatabiano civil birth acts. First documentary sighting 4 Feb 1887 (Giuseppe\'s birth).'
+      status: 'Confirmed',
+      details: 'Parents and marriage confirmed via Fiumefreddo Matrimoni atto 5, 3 May 1876. Daughter of Salvatore D\'Agata (bracciante, b. ~1817) + Venera Maccarrone (industriosa). Born in Fiumefreddo. First documentary sighting: marriage act.'
+    }
+  },
+  // --- GENERATION -1: Great-Great-Great-Grandparents (Patanè Line — newly opened) ---
+  {
+    id: 'mariano-patane',
+    name: 'Mariano Patanè',
+    generation: -1,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: 'Unknown — possibly ~1810-1820',
+    birthPlace: 'Likely Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Before April 1876 (recorded as "fu" at son\'s marriage)',
+    spouses: ['leonarda-buonaventura'],
+    parents: [],
+    children: ['sebastiano-patane-sr', 'giuseppa-patane-sibling'],
+    notes: [
+      'CONFIRMED as father of Sebastiano Patanè via Fiumefreddo Matrimoni atto 5, 3 May 1876. Recorded as "fu Mariano" (the late Mariano) — died before Apr 1876.',
+      'Also father of Giuseppa Patanè (married Alfio Vecchio in Fiumefreddo, Dec 1880) — confirmed via 1880 banns.',
+      'Occupation unknown — likely bracciante (son Sebastiano was bracciante then castaldo).',
+      'Death act (pre-1876, Fiumefreddo Morti) would name his parents — Generation -2 target.',
+      'Not the same as Mariano Patanè (falegname, b. ~1845, × Carmela) of the Calatabiano carpenter cluster — those are a different household.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Pre-1866 Borbonic — Fiumefreddo not yet searched' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Before Apr 1876 — search Fiumefreddo Morti pre-1876' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Leonarda Buonaventura — not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
+    researchStatus: {
+      status: 'Confirmed — Named Only',
+      details: 'Named as deceased father of Sebastiano Patanè in Fiumefreddo Matrimoni atto 5 (3 May 1876). All details unknown beyond name.',
+    }
+  },
+  {
+    id: 'leonarda-buonaventura',
+    name: 'Leonarda Buonaventura',
+    generation: -1,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Likely Fiumefreddo di Sicilia or nearby',
+    deathDate: 'Unknown — living in 1876 (not "fu" at son\'s marriage)',
+    spouses: ['mariano-patane'],
+    parents: [],
+    children: ['sebastiano-patane-sr', 'giuseppa-patane-sibling'],
+    notes: [
+      'CONFIRMED as mother of Sebastiano Patanè via Fiumefreddo Matrimoni atto 5, 3 May 1876. Occupation: industriosa (home-based textile work). Living at time of son\'s marriage (not recorded as "fu").',
+      'Also mother of Giuseppa Patanè (married Alfio Vecchio 1880).',
+      'Naming convention note: firstborn granddaughter (Rosario\'s daughter Venera, 1885) was named Venera after the maternal grandmother, not Leonarda — suggesting either a Leonarda was born and died in the 1877-1884 gap, or the naming convention wasn\'t strictly followed.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'After 1876 — search Fiumefreddo Morti' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Mariano Patanè — not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
+    researchStatus: {
+      status: 'Confirmed — Named Only',
+      details: 'Named as living mother of Sebastiano Patanè in Fiumefreddo Matrimoni atto 5 (3 May 1876). Industrious. All other details unknown.',
+    }
+  },
+  {
+    id: 'salvatore-dagata',
+    name: 'Salvatore D\'Agata',
+    generation: -1,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '~1817 (age 59 at daughter\'s marriage Apr 1876)',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    spouses: ['venera-maccarrone'],
+    parents: [],
+    children: ['rosaria-dagata'],
+    notes: [
+      'CONFIRMED as father of Rosaria D\'Agata via Fiumefreddo Matrimoni atto 5, 3 May 1876. Age 59 at wedding → born ~1817. Occupation: bracciante (day labourer). Resident in Fiumefreddo.',
+      'Wife: Venera Maccarrone (industriosa, living 1876).',
+      'Death act would name his parents — Generation -2 target for the D\'Agata line.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Pre-1866 Borbonic — search Fiumefreddo' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Search Fiumefreddo Morti post-1876' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Venera Maccarrone — not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
+    researchStatus: {
+      status: 'Confirmed — Named Only',
+      details: 'Named as living father of Rosaria D\'Agata in Fiumefreddo Matrimoni atto 5 (3 May 1876). Age 59, bracciante, Fiumefreddo.',
+    }
+  },
+  {
+    id: 'venera-maccarrone',
+    name: 'Venera Maccarrone',
+    generation: -1,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Likely Fiumefreddo di Sicilia area',
+    deathDate: 'Unknown — living in 1876',
+    spouses: ['salvatore-dagata'],
+    parents: [],
+    children: ['rosaria-dagata'],
+    notes: [
+      'CONFIRMED as mother of Rosaria D\'Agata via Fiumefreddo Matrimoni atto 5, 3 May 1876. Occupation: industriosa (home-based textile work). Living at daughter\'s marriage.',
+      'Naming convention: firstborn great-granddaughter Venera Patanè (b. 1885, daughter of Rosaria) was named after this grandmother.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Search Fiumefreddo Morti post-1876' },
+      { type: 'Marriage Record', status: 'Not Found', notes: 'To Salvatore D\'Agata — not yet located' },
+      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
+      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
+    ],
+    researchStatus: {
+      status: 'Confirmed — Named Only',
+      details: 'Named as living mother of Rosaria D\'Agata in Fiumefreddo Matrimoni atto 5 (3 May 1876). Daughter Venera named after her.',
+    }
+  },
+  {
+    id: 'giuseppa-patane-sibling',
+    name: 'Giuseppa Patanè',
+    generation: 0,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: 'Unknown — likely ~1850s',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    spouses: ['alfio-vecchio-sibling'],
+    parents: ['mariano-patane', 'leonarda-buonaventura'],
+    children: [],
+    siblings: ['sebastiano-patane-sr'],
+    notes: [
+      'CONFIRMED sister of Sebastiano Patanè — same parents: fu Mariano Patanè and Leonarda Bonaventura.',
+      'Originally identified in Fiumefreddo Pubblicazioni Dec 1880: marriage banns of Alfio Vecchio (24, bracciante, born Fiumefreddo, son of Sebastiano Vecchio and Sebastiana Panebianco) × Giuseppa Patanè (daughter of fu Mariano and Leonarda Bonaventura).',
+      'Links the Patanè and Vecchio families two generations before Rosario Patanè married Venera Vecchio in 1911.',
+      'Husband Alfio Vecchio (b. ~1856) is NOT the same as Don Alfio Vecchio (b. ~1843, Riposto, civile) who married Teresa Pianella in 1877 — different birth year, birthplace, class, and parents entirely.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located — search Fiumefreddo Nati' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Dec 1880, Fiumefreddo — pubblicazioni. Groom: Alfio Vecchio (24, bracciante, son of Sebastiano Vecchio + Sebastiana Panebianco).' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Confirmed as sister of Sebastiano Patanè via Fiumefreddo pubblicazioni Dec 1880. Patanè-Vecchio connection now traced two generations deep.',
+    }
+  },
+  {
+    id: 'alfio-vecchio-sibling',
+    name: 'Alfio Vecchio',
+    generation: 0,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '~1856 (age 24 in Dec 1880)',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    spouses: ['giuseppa-patane-sibling'],
+    parents: [],
+    children: [],
+    notes: [
+      'Husband of Giuseppa Patanè (sister of Sebastiano Patanè Sr.), married Dec 1880 in Fiumefreddo.',
+      'Son of Sebastiano Vecchio and Sebastiana Panebianco.',
+      'Occupation: bracciante.',
+      'NOT the same person as Don Alfio Vecchio (b. ~1843, Riposto, civile class, son of fu Giovanni and Maria Castorina) who married Teresa Pianella in 1877 — different birth year, birthplace, class, and parents.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Not Found', notes: '~1856, Fiumefreddo — not yet located' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Dec 1880, Fiumefreddo — pubblicazioni. Married Giuseppa Patanè.' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Marriage to Giuseppa Patanè confirmed via Fiumefreddo pubblicazioni Dec 1880. Son of Sebastiano Vecchio + Sebastiana Panebianco.',
     }
   },
   {
