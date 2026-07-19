@@ -115,9 +115,11 @@ export function AncestorsDirectory({
             </CardContent>
             <div className="p-3 bg-stone-100/60 border-t border-stone-200/60 flex justify-between items-center text-xs font-sans text-stone-500">
               <div className="flex items-center gap-2">
-                <Badge className={getScoreBadgeColor(calculateCompleteness(person).score) + ' text-[9px]'}>
-                  {calculateCompleteness(person).score}%
-                </Badge>
+                {(() => { const c = calculateCompleteness(person).score; return (
+                  <Badge className={getScoreBadgeColor(c) + ' text-[9px]'}>
+                    {c}%
+                  </Badge>
+                ); })()}
                 <span>Status: <strong>{person.researchStatus.status}</strong></span>
               </div>
               <span className="text-[#800020] hover:underline flex items-center gap-0.5">

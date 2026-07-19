@@ -105,15 +105,16 @@ const Index = () => {
       return matchesSearch && matchesLine && matchesGen;
     });
 
-    return filtered.sort((a, b) => {
-      if (sortBy === 'priority') {
-        return calculateCompleteness(a).score - calculateCompleteness(b).score;
-      }
-      if (sortBy === 'completeness') {
-        return calculateCompleteness(b).score - calculateCompleteness(a).score;
-      }
-      return a.name.localeCompare(b.name);
-    });
+    if (sortBy === 'priority' || sortBy === 'completeness') {
+      const scores = new Map(filtered.map(p => [p.id, calculateCompleteness(p).score]));
+      filtered.sort((a, b) => {
+        const diff = (scores.get(a.id) ?? 0) - (scores.get(b.id) ?? 0);
+        return sortBy === 'completeness' ? -diff : diff;
+      });
+    } else {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return filtered;
   }, [people, searchQuery, lineFilter, genFilter, sortBy]);
 
   return (

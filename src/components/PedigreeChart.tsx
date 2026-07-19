@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Users, BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
 import { collectAncestorIds, isIdentified, cleanDate } from '@/lib/tree';
+import { LINE_BORDER_LEFT, LINE_BG } from '@/lib/constants';
 
 interface PedigreeChartProps {
   people: Person[];
@@ -9,18 +10,20 @@ interface PedigreeChartProps {
   onSelectPerson: (id: string) => void;
 }
 
-const LINE_COLORS: Record<string, string> = {
+const LINE_BORDER_HOVER: Record<string, string> = {
   Buatti: 'border-[#800020] hover:border-[#800020]',
   Chiappini: 'border-amber-700 hover:border-amber-700',
   Emmi: 'border-emerald-800 hover:border-emerald-800',
   Patanè: 'border-blue-900 hover:border-blue-900',
+  Other: 'border-stone-600 hover:border-stone-600',
 };
 
-const LINE_SELECTED: Record<string, string> = {
+const LINE_SELECTED_BG: Record<string, string> = {
   Buatti: 'bg-[#800020] text-white border-[#800020] shadow-md',
   Chiappini: 'bg-amber-700 text-white border-amber-700 shadow-md',
   Emmi: 'bg-emerald-800 text-white border-emerald-800 shadow-md',
   Patanè: 'bg-blue-900 text-white border-blue-900 shadow-md',
+  Other: 'bg-stone-600 text-white border-stone-600 shadow-md',
 };
 
 function genLabel(gen: number): string {
@@ -37,19 +40,12 @@ function genLabel(gen: number): string {
   return labels[gen] || `Generation ${gen}`;
 }
 
-const LINE_BORDER: Record<string, string> = {
-  Buatti: 'border-l-[#800020]',
-  Chiappini: 'border-l-amber-700',
-  Emmi: 'border-l-emerald-800',
-  Patanè: 'border-l-blue-900',
-};
-
 function PersonCard({ person, selected, onSelect }: { person: Person; selected: boolean; onSelect: () => void }) {
   const line = person.line;
   const confirmed = isIdentified(person);
-  const borderColor = LINE_COLORS[line] || 'border-stone-200';
-  const selectedStyle = selected ? (LINE_SELECTED[line] || LINE_SELECTED.Buatti) : 'bg-white';
-  const lineStripe = LINE_BORDER[line] || 'border-l-stone-300';
+  const borderColor = LINE_BORDER_HOVER[line] || 'border-stone-200 hover:border-stone-200';
+  const selectedStyle = selected ? (LINE_SELECTED_BG[line] || LINE_SELECTED_BG.Other) : 'bg-white';
+  const lineStripe = LINE_BORDER_LEFT[line] || 'border-l-stone-300';
   const birthClean = cleanDate(person.birthDate);
   const deathClean = cleanDate(person.deathDate);
   const found = person.records?.filter(r => r.status === 'Found').length ?? 0;
@@ -126,16 +122,11 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
               {allLines.map((line, li) => {
                 const cards = byGenAndLine[gen]?.[line] ?? [];
                 const hasCards = cards.length > 0;
-                const lineDot = {
-                  Buatti: 'bg-[#800020]',
-                  Chiappini: 'bg-amber-700',
-                  Emmi: 'bg-emerald-800',
-                  Patanè: 'bg-blue-900',
-                }[line];
+                const lineDot = LINE_BG[line];
                 return (
                   <div key={line} className={`flex flex-col gap-1.5 ${li > 0 ? 'border-l-2 border-stone-200 pl-4' : 'pr-1'} ${!hasCards ? 'opacity-30' : ''}`}>
                     <div className="flex items-center gap-1">
-                      <span className="inline-block w-2 h-2 rounded-full ${lineDot} shrink-0" />
+                      <span className={`inline-block w-2 h-2 rounded-full shrink-0 ${lineDot ?? 'bg-stone-400'}`} />
                       <span className="text-[9px] font-sans uppercase tracking-wider text-stone-400 font-semibold">{line}</span>
                     </div>
                     <div className="space-y-1.5">

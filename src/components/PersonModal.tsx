@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin, ExternalLink, Ship, Shield, Users, GraduationCap, Ruler, FileText, Home } from 'lucide-react';
-import { getLineBadgeColor } from '@/lib/constants';
+import { getLineBadgeColor, LINE_BG } from '@/lib/constants';
 import { calculateCompleteness, getScoreLabel, getScoreBadgeColor } from '@/lib/research';
 import type { Person } from '@/types';
 
@@ -233,19 +233,12 @@ function ModalRecords({ person }: { person: Person }) {
 export function PersonModal({ person, people, open, onOpenChange, onSelectPerson }: PersonModalProps) {
   if (!person) return null;
 
-  const lineColors: Record<string, string> = {
-    Buatti: 'bg-[#800020]',
-    Chiappini: 'bg-amber-700',
-    Emmi: 'bg-emerald-800',
-    Patanè: 'bg-blue-900',
-  };
-
   const c = calculateCompleteness(person);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl h-[80vh] p-0 gap-0 flex flex-col bg-[#FAF6F0]">
-        <div className={`${lineColors[person.line] || 'bg-stone-800'} p-5 text-white`}>
+        <div className={`${LINE_BG[person.line] ?? LINE_BG.Other} p-5 text-white`}>
           <div className="flex items-center justify-between mb-2">
             <Badge className="bg-white/20 text-white border-0 text-[10px] font-sans">
               {person.line} Line · Gen {person.generation}

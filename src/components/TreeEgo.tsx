@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Users, BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Person } from '@/types';
 import { isIdentified, cleanDate } from '@/lib/tree';
+import { LINE_BORDER_LEFT, LINE_BG } from '@/lib/constants';
 
 interface TreeEgoProps {
   people: Person[];
@@ -9,22 +10,8 @@ interface TreeEgoProps {
   onSelectPerson: (id: string) => void;
 }
 
-const LINE_COLORS: Record<string, string> = {
-  Buatti: 'border-l-[#800020]',
-  Chiappini: 'border-l-amber-700',
-  Emmi: 'border-l-emerald-800',
-  Patanè: 'border-l-blue-900',
-};
-
-const LINE_BG: Record<string, string> = {
-  Buatti: 'bg-[#800020]',
-  Chiappini: 'bg-amber-700',
-  Emmi: 'bg-emerald-800',
-  Patanè: 'bg-blue-900',
-};
-
 function PersonMiniCard({ person, onClick }: { person: Person; onClick: () => void }) {
-  const stripe = LINE_COLORS[person.line] || 'border-l-stone-300';
+  const stripe = LINE_BORDER_LEFT[person.line] || 'border-l-stone-300';
   const dot = LINE_BG[person.line] || 'bg-stone-400';
   const confirmed = isIdentified(person);
 
@@ -133,7 +120,7 @@ export function TreeEgo({ people, selectedPersonId, onSelectPerson }: TreeEgoPro
 
         {/* Root person */}
         <div className="scale-110 relative">
-          <div className={`absolute -top-1 -left-1 right-0 bottom-0 rounded-lg border-2 ${LINE_COLORS[root.line].replace('border-l-', 'border-')} opacity-30`} />
+          <div className={`absolute -top-1 -left-1 right-0 bottom-0 rounded-lg border-2 ${LINE_BORDER_LEFT[root.line]?.replace('border-l-', 'border-') ?? 'border-stone-300'} opacity-30`} />
           <PersonMiniCard person={root} onClick={() => {}} />
         </div>
 

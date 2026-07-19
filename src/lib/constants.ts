@@ -107,6 +107,38 @@ export const DEFAULT_NEW_QUESTION = {
   notes: '',
 };
 
+export const LINE_BG: Record<FamilyLine, string> = {
+  Buatti: 'bg-[#800020]',
+  Chiappini: 'bg-amber-700',
+  Emmi: 'bg-emerald-800',
+  Patanè: 'bg-blue-900',
+  Other: 'bg-stone-600',
+};
+
+export const LINE_BORDER: Record<FamilyLine, string> = {
+  Buatti: 'border-[#800020]',
+  Chiappini: 'border-amber-700',
+  Emmi: 'border-emerald-800',
+  Patanè: 'border-blue-900',
+  Other: 'border-stone-600',
+};
+
+export const LINE_BORDER_LEFT: Record<FamilyLine, string> = {
+  Buatti: 'border-l-[#800020]',
+  Chiappini: 'border-l-amber-700',
+  Emmi: 'border-l-emerald-800',
+  Patanè: 'border-l-blue-900',
+  Other: 'border-l-stone-600',
+};
+
+export const LINE_HEX: Record<FamilyLine, string> = {
+  Buatti: '#800020',
+  Chiappini: '#b45309',
+  Emmi: '#065f46',
+  Patanè: '#1e3a5f',
+  Other: '#57534e',
+};
+
 export function getLineColor(line: string): string {
   return LINE_COLORS[line as FamilyLine]?.primary ?? LINE_COLORS.Other.primary;
 }

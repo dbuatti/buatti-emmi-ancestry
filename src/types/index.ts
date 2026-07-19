@@ -1,6 +1,6 @@
 export interface RecordStatus {
   type: string;
-  status: 'Found' | 'Not Found' | 'Searching' | 'Ruled Out';
+  status: 'Found' | 'Not Found' | 'Searching' | 'Ruled Out' | 'Requested';
   notes?: string;
 }
 

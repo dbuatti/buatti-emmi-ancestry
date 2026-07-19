@@ -2,26 +2,13 @@ import { useMemo } from 'react';
 import { BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
 import { collectAncestorIds, cleanDate } from '@/lib/tree';
+import { LINE_HEX } from '@/lib/constants';
 
 interface TreeConnectedProps {
   people: Person[];
   selectedPersonId: string;
   onSelectPerson: (id: string) => void;
 }
-
-const LINE_DOT: Record<string, string> = {
-  Buatti: '#800020',
-  Chiappini: '#b45309',
-  Emmi: '#065f46',
-  Patanè: '#1e3a5f',
-};
-
-const LINE_HEX: Record<string, string> = {
-  Buatti: '#800020',
-  Chiappini: '#b45309',
-  Emmi: '#065f46',
-  Patanè: '#1e3a5f',
-};
 
 const CARD_W = 190;
 const CARD_H = 62;
@@ -141,7 +128,7 @@ export function TreeConnected({ people, selectedPersonId, onSelectPerson }: Tree
         {layout.map(node => {
           const p = node.person;
           const selected = p.id === selectedPersonId;
-          const dot = LINE_DOT[p.line] || '#999';
+          const dot = LINE_HEX[p.line] || '#999';
           const confirmed = p.birthDate && p.deathDate && (p.parents.length > 0 || p.children.length > 0);
           const bd = cleanDate(p.birthDate);
           const dd = cleanDate(p.deathDate);
