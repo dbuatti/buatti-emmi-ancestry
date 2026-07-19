@@ -807,32 +807,36 @@ export const initialPeople: Person[] = [
     parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
     children: ['rosaria-patane', 'sebastiano-patane'],
     notes: [
-      'Civil birth record found (28 Jun 2026): Antenati, Calatabiano Nati 1889, atto n. 28. Born 8 Feb 1889 at 4:15 AM in Contrada Trifilippi, Calatabiano (originally read as "Trappitelli" — corrected to Trifilippi per comparison with Venera 1885 and Giuseppe 1887 acts, which use the same contrada). Declared 10 Feb 1889.',
+      'Civil birth record found (28 Jun 2026): Antenati, Calatabiano Nati 1889, atto n. 28. Born 8 Feb 1889 at 4:15 AM in Contrada Trifilippi, Calatabiano. Declared 10 Feb 1889.',
       'DATE DISCREPANCY: Civil record says 8 Feb (4:15 AM); baptism extract says 9 Feb ("born yesterday" on 10 Feb). Civil record is the legal document, so 8 Feb 1889 is the official date.',
       'Father at birth: Sebastiano Patanè (39, castaldo/farm manager). Mother: Rosaria D\'Agata (his legitimate wife).',
       'Witnesses at registration: Sebastiano Intelisano (60, bracciante) & Giuseppe Intelisano (30, bracciante). Both illiterate.',
-      'Margin note on civil birth act: "Joined in marriage with Venera Vecchio by act of 27 April 1911. Registered in Fiumefreddo." — suggests civil marriage was 27 Apr 1911 (vs church marriage 24 Apr 1911).',
+      'MARRIAGE ACT FOUND: Atto 12, 23 April 1911, Fiumefreddo Matrimoni 1911 Parte I. Married Venera Vecchio (23, casalinga, born Fiumefreddo). Officer: Luigi Continella, assessore titolare. Time: 7:10 PM. Witnesses: Giuseppe Cardone (27, calzolaio) & Rosario Pagano (23, bracciante). Groom\'s parents present, giving consent. Bride\'s father Vincenzo Vecchio (47, bracciante) present. LITERATE: Rosario signed his own name — first literate generation; his father Sebastiano could not write.',
+      'Banns (atto 8, 2 Apr 1911): confirmed Rosario born Calatabiano, age 22, bracciante. Bride\'s mother named as Rosaria Raiti (not Raciti). Both spouses resident Fiumefreddo over a year. Publications affixed 9 and 16 April, completed 19 April.',
+      'Church marriage: 24 Apr 1911, Fiumefreddo. Liber Matrimoniorum N.18. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella.',
+      'Second witness Rosario Pagano — almost certainly kin of Orazio Pagano, who married Rosario\'s sister Venera six months later. The two families were already interlinked in April.',
       'Age 34 in May 1924, per Rosaria\'s birth record.',
       'Baptism certificate (10 Feb 1889, Calatabiano) found in marriage processetti packet. Baptized by Sac. Salvatore Catalano, godfather Giuseppe Caruso.',
-      'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco was investigated and confirmed to be a different person.',
-      'RULED OUT: Calatabiano Nati 1884 atto 103 — Rosario Patanè (son of Giuseppe Patanè, bracciante × Francesca Prestipino) — a different Rosario Patanè born in the same town five years earlier. Flag for collision risk in later records.',
+      'RULED OUT (28 June 2026): A 1923 marriage banns for a Rosario Patanè (son of Michele Patanè & Caterina Mangano) marrying Grazia Coco — different person.',
+      'RULED OUT: Calatabiano Nati 1884 atto 103 — Rosario Patanè (son of Giuseppe Patanè × Francesca Prestipino) — different person.',
       'NAA file A446, 1967/39646 (Item ID 7775953) requested — access application RK26/00009589 submitted 28 Jun 2026.',
-      'Giuseppe Patanè (born 4 Feb 1887, atto 31 Calatabiano) shares same parents (Sebastiano & Rosaria D\'Agata) — confirmed as Rosario\'s brother via civil birth act.',
+      'Giuseppe Patanè (born 4 Feb 1887) confirmed as brother via civil birth act.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trifilippi (originally read as Trappitelli — corrected per cross-comparison with Venera 1885 and Giuseppe 1887). Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
-      { type: 'Baptismal Record', status: 'Found', notes: '9/10 Feb 1889, Calatabiano. Baptized by Sac. Salvatore Catalano at Chiesa dell\'Amministrazione della Beata Vergine e S. Giorgio Martire. Godfather: Giuseppe Caruso.' },
-      { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Banns 2, 9, 16 Apr 1911. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella at Chiesa del S. Rosario.' },
-      { type: 'Marriage Record (Civil)', status: 'Found', notes: '27 Apr 1911, Fiumefreddo — noted in margin of Calatabiano birth act n. 28' },
-      { type: 'Death Record', status: 'Not Found', notes: 'Unknown — possibly pre-1950 if he did not migrate to Australia' },
+      { type: 'Birth Record', status: 'Found', notes: '8 Feb 1889, Calatabiano — atto n. 28, Antenati. Born at 4:15 AM in Contrada Trifilippi. Father: Sebastiano Patanè (39, castaldo). Mother: Rosaria D\'Agata.' },
+      { type: 'Baptismal Record', status: 'Found', notes: '9/10 Feb 1889, Calatabiano. Baptized by Sac. Salvatore Catalano. Godfather: Giuseppe Caruso.' },
+      { type: 'Marriage Banns (Civil)', status: 'Found', notes: 'Atto 8, 2 Apr 1911, Fiumefreddo Matrimoni 1911 Parte I. Confirms Rosario born Calatabiano, age 22, bracciante. Bride\'s mother: Rosaria Raiti. Publications affixed 9 & 16 Apr, completed 19 Apr.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 12, 23 Apr 1911, Fiumefreddo Matrimoni 1911 Parte I. Married Venera Vecchio (23). Officer: Luigi Continella. Witnesses: Giuseppe Cardone (27, calzolaio), Rosario Pagano (23, bracciante). Groom signed (literate). Bride, second witness, and parents could not write.' },
+      { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Liber Matrimoniorum N.18. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella.' },
+      { type: 'Death Record', status: 'Not Found', notes: 'Unknown — Morti search window opens Nov 1911 (film 2278546 / DGS 7851868)' },
       { type: 'NAA File (A446 1967/39646)', status: 'Searching', notes: 'Requested 28 Jun 2026 — due 2 Nov 2026' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Both civil birth act (8 Feb 1889, Calatabiano n. 28) and baptism extract (9/10 Feb 1889) found and cross-referenced. Parents, marriage, and children all confirmed from primary sources.',
+      details: 'Birth act (8 Feb 1889, Calatabiano n. 28), baptism (9/10 Feb 1889), banns (atto 8, 2 Apr 1911), and marriage act (atto 12, 23 Apr 1911) all found. Literate (signed his name). Married Venera Vecchio. Parents and children confirmed from primary sources.',
       nextSteps: [
-        'Investigate connection to Pietro Patanè (cane farm owner in Ingham) — both from Patanè lines in Milo/Calatabiano area.',
-        'Search for Rosario\'s death record.',
+        'Search Fiumefreddo Morti 1911–1928 (film 2278546 / DGS 7851868) for Rosario\'s death.',
+        'Investigate connection to Pietro Patanè (cane farm owner in Ingham).',
         'Await NAA file A446, 1967/39646.'
       ]
     },
@@ -871,42 +875,40 @@ export const initialPeople: Person[] = [
     line: 'Patanè',
     gender: 'F',
     birthDate: '8 January 1888',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
     deathDate: 'Deceased by 1953',
     occupations: ['Casalinga (housewife)', 'Tailor (sartora)'],
     residences: ['Sezione Castello, Fiumefreddo di Sicilia'],
     spouses: ['rosario-patane-sr'],
-    parents: ['vincenzo-vecchio', 'rosaria-raciti'],
+    parents: ['vincenzo-vecchio', 'rosaria-raiti'],
     children: ['rosaria-patane', 'sebastiano-patane'],
     notes: [
       'Surname confirmed via Rosaria\'s civil birth record (1924).',
       'Recalled in family memory as a tailor (sartora).',
       'Recorded as "fu Venera" (the late Venera) on a 1953 Comune di Fiumefreddo photo-identity certificate.',
       'Note the recurrence of the name "Venera" in this family line, later given to her granddaughter Venera Buatti.',
-      'Marriage record found (24 Apr 1911, Fiumefreddo, Liber Matrimoniorum N.18). Parents confirmed: Vincenzo Vecchio & Rosaria Raciti.',
-      'RULED OUT (28 June 2026): A 1923 marriage banns for a Venera Vecchio (daughter of Carmelo Vecchio & Rosaria Ragonesi) marrying Giuseppe Di Blasi was investigated and confirmed to be a different person.',
-      'Surname confirmed as Raciti (NOT Rapisardi) via Liber Matrimoniorum entry N.18 (fol. 240), viewed 29 Jun 2026. "Rapisardi" was a scribal error on the marriage certificate.',
-      'BREAKTHROUGH (28 Jun 2026): Baptism register entry found — Fiumefreddo Battesimi 1762-1904, folio 240, entry n. 8. Image 007490026_01391.jpg.',
-      'Exact birth date: 8 January 1888. Baptized same day. Full name recorded as "Veneranda Vecchio" (Veneranda, not Venera).',
-      'Baptized by Rev. Nicola Sgarlata (with permission of the Economus Pastor).',
-      'Godparents: Alfio Musumeci Casalino & Maria Raciti (daughter of Giuseppe) — confirms connection to the Raciti family through the godmother.',
-      'Midwife: Concetta Marano delivered her.',
-      'Margin note in baptism register: "Matrim. fuit de [---] cum Rosario Patanè die 24 Aprilis 1911" — cross-referencing to the marriage record already found.',
-      'Liber Matrimoniorum N.18 (29 Jun 2026): confirms Venera = daughter of Vincentii et Rosariae Raciti. "Rapisardi" was a scribal error on the marriage certificate.',
-      'Nickname: "Ni Ni Na" (Nenina?) per family memory (Connie Emmi, 28 Jun 2026).'
+      'BREAKTHROUGH (28 Jun 2026): Baptism register entry found — Fiumefreddo Battesimi 1762-1904, folio 240, entry n. 8. Exact birth date: 8 January 1888. Full name recorded as "Veneranda Vecchio." Baptized same day by Rev. Nicola Sgarlata. Godparents: Alfio Musumeci Casalino & Maria Raciti (daughter of Giuseppe). Midwife: Concetta Marano.',
+      'Margin note in baptism register: "Matrim. fuit de [---] cum Rosario Patanè die 24 Aprilis 1911."',
+      'Nickname: "Ni Ni Na" (Nenina?) per family memory (Connie Emmi, 28 Jun 2026).',
+      'RULED OUT (28 Jun 2026): A 1923 marriage banns for a Venera Vecchio (daughter of Carmelo Vecchio & Rosaria Ragonesi) marrying Giuseppe Di Blasi was investigated and confirmed to be a different person.',
+      'SURNAME CORRECTION: Earlier sources (Liber Matrimoniorum N.18, parish marriage cert) recorded mother as "Raciti." The 1911 civil banns (atto 8) and marriage act (atto 12, both by officer Continella) both clearly read Raiti. Two independent acts settle it: mother is Rosaria Raiti, not Raciti. "Rapisardi" on the marriage certificate was a separate scribal error.',
+      'Marriage: 23 April 1911, atto 12, Fiumefreddo Matrimoni 1911 Parte I. Groom: Rosario Patanè (22, bracciante, born Calatabiano). Bride: Venera Vecchio (23, casalinga, born Fiumefreddo). Officer: Luigi Continella, assessore titolare. Witnesses: Giuseppe Cardone (27, calzolaio) & Rosario Pagano (23, bracciante). Both spouses resident Fiumefreddo over a year. Groom\'s parents present, giving consent. Signed: Rosario Patanè and Giuseppe Cardone (bride, second witness, and parents could not write).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: '8 Jan 1888, Fiumefreddo — civil equivalent not yet searched' },
+      { type: 'Birth Record', status: 'Not Found', notes: '8 Jan 1888, Fiumefreddo — civil equivalent not yet searched (DGS 7836468)' },
       { type: 'Baptism Record', status: 'Found', notes: '8 Jan 1888, Fiumefreddo. Baptized same day by Rev. Nicola Sgarlata. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano. Full name: Veneranda. Entry n. 8, folio 240.' },
-      { type: 'Marriage Record', status: 'Found', notes: '24 Apr 1911, Fiumefreddo (church). Parents named: Vincenzo Vecchio & Rosaria Raciti.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 12, 23 Apr 1911, Fiumefreddo Matrimoni 1911 Parte I. Groom: Rosario Patanè (22, bracciante, born Calatabiano). Bride: Venera Vecchio (23, casalinga, born Fiumefreddo). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti (casalinga) — bride\'s parents; Sebastiano Patanè (61, bracciante) & Rosaria D\'Agata (casalinga) — groom\'s parents. Witnesses: Giuseppe Cardone (27, calzolaio), Rosario Pagano (23, bracciante). Officer: Luigi Continella.' },
+      { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Liber Matrimoniorum N.18. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella.' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1953 — recorded as "fu Venera" on 1953 photo-identity cert' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Baptism found 28 Jun 2026 (Fiumefreddo Battesimi 1762-1904, fol. 240 n. 8). Exact birth date: 8 Jan 1888. Full name: Veneranda Vecchio. Mother\'s surname: Raciti. Death pre-1953.',
+      details: 'Baptism found 28 Jun 2026 (Fiumefreddo Battesimi 1762-1904, fol. 240 n. 8). Marriage act found: atto 12, 23 Apr 1911 (Fiumefreddo Matrimoni 1911). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti. Mother\'s surname corrected from Raciti to Raiti per two independent 1911 acts. Death pre-1953.',
       nextSteps: [
-        'Search Fiumefreddo civil births 1888 for the civil birth act.',
-        'Investigate connection to Leonardo Vecchio (co-signer of Rosaria\'s accommodation guarantee in Ingham) — same surname, possibly relative.',
-        'Explore the Raciti family lead via godmother Maria Raciti (daughter of Giuseppe).'
+        'Search Fiumefreddo Nati ~1887–88 (DGS 7836468) for civil birth act — confirms Vincenzo × Raiti directly.',
+        'Search Fiumefreddo Matrimoni ~1880s (DGS 7836468) for Vincenzo Vecchio × Rosaria Raiti marriage.',
+        'Investigate connection to Leonardo Vecchio (co-signer of Rosaria\'s accommodation guarantee in Ingham).',
+        'Investigate Salvatore Raiti — witness at three of Sebastiano Patanè\'s children\'s births (1877–1880), possible maternal-side link.'
       ]
     },
     sources: [
@@ -921,9 +923,19 @@ export const initialPeople: Person[] = [
         reference: '1953 (records "fu Venera")'
       },
       {
-        title: 'Parish Marriage Certificate (28 Mar 1911)',
+        title: 'Fiumefreddo Matrimoni 1911, Atto 12 (Civil Marriage)',
+        type: 'Civil Registry',
+        reference: '23 Apr 1911. Rosario Patanè (22) × Venera Vecchio (23). Officer: Luigi Continella. Witnesses: Giuseppe Cardone, Rosario Pagano.'
+      },
+      {
+        title: 'Fiumefreddo Matrimoni 1911, Pubblicazioni Atto 8 (Banns)',
+        type: 'Civil Registry',
+        reference: '2 Apr 1911. Groom born Calatabiano. Bride\'s mother: Rosaria Raiti.'
+      },
+      {
+        title: 'Parish Marriage Certificate (24 Apr 1911)',
         type: 'Ecclesiastical Record',
-        reference: 'Parrocchia Maria SS.ma Immacolata, Fiumefreddo di Sicilia'
+        reference: 'Liber Matrimoniorum N.18, Fiumefreddo di Sicilia'
       },
       {
         title: 'Parish Baptism Register (1888)',
@@ -947,20 +959,23 @@ export const initialPeople: Person[] = [
     children: [],
     notes: [
       'Brother of Rosario Patanè.',
-      'Civil birth act found: Calatabiano Nati 1887, atto n. 31. Born 4 February 1887 at 7:20 AM in Contrada Trifilippi, Calatabiano. Declared 6 February 1887 by father Sebastiano Patanè (37, bracciante). Mother: Rosaria D\'Agata, his legitimate wife living with him. Witnesses: Leonardo Fazio (72, possidente) and Giuseppe Napoli (30, bracciante). All illiterate. Officer: Francesco Raineri Vecchio, assessor delegate.',
-      'Margin note: married Sebastiana Gugliandalo di fu Michele, act of 19 February 1911, registered in Fiumefreddo, N. 8 — resolves the date tangle between parish marriage (20 Feb 1911) and civil banns (5 Feb 1911). Bride\'s surname appears as "Gugliandalo" — a third variant alongside Guglielmino and Cogliandolo.',
-      '23 years old, bracciante, residing in Fiumefreddo in 1911 — age consistent with February 1887 birth to within days.',
+      'Civil birth act found: Calatabiano Nati 1887, atto n. 31. Born 4 February 1887 at 7:20 AM in Contrada Trifilippi, Calatabiano. Declared 6 February 1887 by father Sebastiano Patanè (37, bracciante). Mother: Rosaria D\'Agata. Witnesses: Leonardo Fazio (72, possidente) and Giuseppe Napoli (30, bracciante). All illiterate. Officer: Francesco Raineri Vecchio.',
+      'MARRIAGE ACT FOUND: Atto 5, Fiumefreddo Matrimoni 1911 Parte I. Married Gugliandolo Sebastiana (20, casalinga) on ~early February 1911. Publications 5 and 12 February. Groom\'s parents present, consenting. LITERATE: Giuseppe signed — a second literate son after Rosario.',
+      'Bride\'s father: the late Michele (death act dated 31 January 1911 among the documents). Mother: Caterina Mangano (not Strangano — corrected per marriage act).',
+      'Age 23 at marriage — consistent with February 1887 birth to within days.',
       'First direct documentary sighting of Rosaria D\'Agata as a living named mother in a civil act.',
+      'Three of Sebastiano and Rosaria\'s children married in 1911: Giuseppe (~Feb), Rosario (~Apr), Venera III (~Oct). Parents attended all three.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '4 Feb 1887, Calatabiano — atto n. 31, Nati 1887. Born Contrada Trifilippi. Father: Sebastiano Patanè (37, bracciante). Mother: Rosaria D\'Agata. Officer: Francesco Raineri Vecchio. Margin: married Sebastiana Gugliandalo 19 Feb 1911, Fiumefreddo n. 8.' },
-      { type: 'Marriage Record', status: 'Found', notes: '5 Feb 1911 (civil banns) / 19 Feb 1911 (civil marriage, atto n. 8 Fiumefreddo) / 20 Feb 1911 (parish). Bride: Sebastiana Guglielmino/Gugliandalo/Cogliandolo (21, daughter of late Michele Guglielmino & Caterina Strangano).' },
+      { type: 'Birth Record', status: 'Found', notes: '4 Feb 1887, Calatabiano — atto n. 31, Nati 1887. Father: Sebastiano Patanè (37, bracciante). Mother: Rosaria D\'Agata.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 5, Fiumefreddo Matrimoni 1911 Parte I (~early Feb 1911). Bride: Gugliandolo Sebastiana (20, casalinga, daughter of the late Michele & Caterina Mangano). Publications 5 & 12 Feb. Parents present, consenting. Giuseppe signed (literate).' },
+      { type: 'Marriage Record (Church)', status: 'Found', notes: '20 Feb 1911, Fiumefreddo (parish). Groom: Giuseppe Patanè. Bride: Sebastiana Guglielmino.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Civil birth act found (atto 31/1887, Calatabiano). Parents confirmed: Sebastiano Patanè (37, bracciante) + Rosaria D\'Agata. Marriage margin note confirms civil marriage 19 Feb 1911, Fiumefreddo n. 8.',
-      nextSteps: ['Fetch Fiumefreddo Matrimoni 1911 atto n. 8 for secondary parent confirmation and bride\'s family details.']
+      details: 'Civil birth act (atto 31/1887, Calatabiano) and marriage act (atto 5, Fiumefreddo Matrimoni 1911) both found. Parents confirmed. Bride\'s mother: Caterina Mangano (not Strangano). Giuseppe was literate.',
+      nextSteps: []
     }
   },
   {
@@ -1009,13 +1024,16 @@ export const initialPeople: Person[] = [
     notes: [
       'THIRD Venera Patanè — the survivor. First two Veneras (b. 1879, b. 1885) both died before age 4.',
       'Civil birth act: Calatabiano Nati 1891, atto n. 31. Born 14 February 1891 in Calatabiano.',
-      'Margin note on civil birth act: "unita in matrimonio con Pagano Orazio di Santo, atto dell\'8 ottobre 1911, trascritto in Fiumefreddo, n. 26" — civil marriage 8 Oct 1911, registered in Fiumefreddo.',
-      'Marriage banns 8 Sep 1911, Fiumefreddo. Marriage celebrated 17 Sep 1911 in Calatabiano to Orazio Pagano (25, bracciante, son of Santo Pagano & Rosaria Pennisi).',
+      'MARRIAGE ACT: Atto 21, 23 September 1911, Fiumefreddo Matrimoni 1911 Parte I. Age 20, casalinga, born Calatabiano, resident Fiumefreddo. Groom: Orazio Pagano (25, bracciante, born Acireale, son of Santo Pagano & late Rosaria Leonardi). Father Sebastiano Patanè (61, bracciante) present, giving consent. Publications 24 Sep & 1 Oct, completed 4 Oct.',
+      'The 8 October 1911 civil wedding was celebrated outside Fiumefreddo (likely Acireale — groom\'s birthplace) and transcribed home as Parte II n. 26.',
       'Mother recorded as "Ignazia D\'Agata" on civil banns (scribal variation for Rosaria).',
+      'Margin note on civil birth act: "unita in matrimonio con Pagano Orazio di Santo, atto dell\'8 ottobre 1911, trascritto in Fiumefreddo, n. 26."',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '14 Feb 1891, Calatabiano — atto n. 31, Nati 1891. Margin note: married Orazio Pagano, atto 8 Oct 1911, Fiumefreddo n. 26.' },
-      { type: 'Marriage Record', status: 'Found', notes: '8 Sep 1911 (banns) / 17 Sep 1911 (celebrated) / 8 Oct 1911 (civil, Fiumefreddo n. 26). Groom: Orazio Pagano (25, son of Santo Pagano & Rosaria Pennisi).' },
+      { type: 'Marriage Banns (Civil)', status: 'Found', notes: 'Atto 21, Sep 1911, Fiumefreddo Matrimoni 1911 Parte I. Publications 24 Sep & 1 Oct, completed 4 Oct.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 21, 23 Sep 1911, Fiumefreddo Matrimoni 1911 Parte I. Groom: Orazio Pagano (25, born Acireale). Bride: Venera Patanè (20, born Calatabiano). Bride\'s father Sebastiano (61) present, consenting.' },
+      { type: 'Marriage Transcription', status: 'Found', notes: '8 Oct 1911, Parte II n. 26, Fiumefreddo. Celebration in Acireale, transcribed.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
@@ -1136,7 +1154,7 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Patanè',
     gender: 'F',
-    birthDate: 'c. 1890',
+    birthDate: 'c. 1891 (age 20 at marriage, Feb 1911)',
     birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     spouses: ['giuseppe-patane-sibling'],
@@ -1144,17 +1162,19 @@ export const initialPeople: Person[] = [
     children: [],
     notes: [
       'Wife of Giuseppe Patanè (brother of Rosario).',
-      '21 years old, casalinga, residing in Fiumefreddo in 1911.',
-      'Daughter of late Michele Guglielmino & Caterina Strangano.',
+      '20 years old, casalinga, residing in Fiumefreddo in 1911.',
+      'Daughter of the late Michele Guglielmino/Gugliandolo & Caterina Mangano (not Strangano — corrected per marriage act atto 5).',
+      'Surname variants across records: Guglielmino, Gugliandalo, Gugliandolo, Cogliandolo.',
+      'Father\'s death act (dated 31 January 1911) was among the marriage documents.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1890, likely Fiumefreddo' },
-      { type: 'Marriage Record', status: 'Found', notes: '5 Feb 1911, Fiumefreddo (civil banns) — married Giuseppe Patanè.' },
+      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1891, likely Fiumefreddo' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Atto 5, Fiumefreddo Matrimoni 1911 Parte I (~early Feb 1911). Married Giuseppe Patanè (23). Publications 5 & 12 Feb.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Marriage confirmed via Fiumefreddo civil marriage banns.',
+      status: 'Confirmed',
+      details: 'Marriage confirmed via Fiumefreddo Matrimoni 1911 atto 5. Parents: the late Michele & Caterina Mangano.',
       nextSteps: ['Search Fiumefreddo records for her birth.']
     }
   },
@@ -1165,25 +1185,29 @@ export const initialPeople: Person[] = [
     line: 'Patanè',
     gender: 'M',
     birthDate: 'c. 1886',
-    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    birthPlace: 'Acireale, Province of Catania, Sicily, Italy',
     deathDate: 'Unknown',
     spouses: ['venera-patane-pagano'],
     parents: [],
     children: [],
     notes: [
       'Husband of Venera Patanè (third, b. 1891, sister of Rosario) — the survivor who married in 1911.',
-      '25 years old, bracciante, residing in Fiumefreddo in 1911.',
-      'Son of Santo Pagano & Rosaria Pennisi.',
+      '25 years old, bracciante, resident Fiumefreddo in 1911. Born Acireale (stated explicitly in banns and marriage act).',
+      'Son of Santo Pagano (54, fruttaiuolo/fruit grower) & the late Rosaria Leonardi.',
+      'MARRIAGE ACT: Atto 21, 23 September 1911, Fiumefreddo Matrimoni 1911 Parte I. Publications 24 Sep & 1 Oct, completed 4 Oct. Bride\'s father Sebastiano Patanè (61) present, giving consent. The 8 October civil wedding was evidently celebrated outside Fiumefreddo (likely Acireale) and transcribed home as Parte II n. 26.',
+      'Second witness at Rosario × Venera Vecchio\'s wedding (23 Apr 1911) was Rosario Pagano (23, bracciante) — almost certainly kin of Orazio.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1886, likely Fiumefreddo' },
-      { type: 'Marriage Record', status: 'Found', notes: '17 Sep 1911, Fiumefreddo (civil banns) — married Venera Patanè (third), ceremony in Calatabiano.' },
+      { type: 'Birth Record', status: 'Not Found', notes: 'c. 1886, Acireale — not yet located' },
+      { type: 'Marriage Banns (Civil)', status: 'Found', notes: 'Atto 21, Sep 1911, Fiumefreddo Matrimoni 1911 Parte I. Groom born Acireale. Publications 24 Sep & 1 Oct, completed 4 Oct.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 21, 23 Sep 1911, Fiumefreddo Matrimoni 1911 Parte I. Groom: Pagano Orazio (25, bracciante, born Acireale, son of Santo & late Rosaria Leonardi). Bride: Patanè Venera (20, casalinga, born Calatabiano). Bride\'s father Sebastiano (61) present, consenting.' },
+      { type: 'Marriage Transcription', status: 'Found', notes: '8 Oct 1911, Parte II n. 26, Fiumefreddo. Celebration in Acireale, transcribed to Fiumefreddo.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
-      status: 'In Progress',
-      details: 'Marriage confirmed via Fiumefreddo civil marriage banns.',
-      nextSteps: ['Search Fiumefreddo records for his birth.']
+      status: 'Confirmed',
+      details: 'Marriage act found: atto 21, 23 Sep 1911 (Fiumefreddo Matrimoni 1911 Parte I). Born Acireale, son of Santo Pagano & late Rosaria Leonardi. Transcription: Parte II n. 26 (8 Oct 1911).',
+      nextSteps: ['Search Acireale records for his birth (~1886).']
     }
   },
 
@@ -1523,9 +1547,12 @@ export const initialPeople: Person[] = [
       'BIRTH ACT FOUND: Fiumefreddo Nati 1850, atto n. 15. Born 13 March 1850 at 11 PM. Declared 14 Mar 1850 by midwife Antonina Nicotra (48). Parents: Mariano Patanè (33, bracciante) + Leonarda Buonaventura (31). Baptised 14 Mar 1850.',
       'MARRIAGE FOUND: Fiumefreddo Matrimoni 1876, atto 5 (3 May 1876). Pubblicazioni atto 4 (13 Apr 1876). Age 26, bracciante.',
       'ALLEGATI (fasc. 5): 5 documents — birth extracts (21 Apr 1876), banns cert, two poverty certs.',
-      'FATHER of 8 known children: Leonarda (1877), Venera I (1879-d. infancy), Mariano (1880), Salvatore (1883), Venera II (1885-d. age 3), Giuseppe (1887), Rosario (1889), Venera III (1891-survivor). Fiumefreddo Nati 1877-1885 fully swept — 4 children found, gap resolved.',
+      'FATHER of 8 known children: Leonarda (1877), Venera I (1879-d. infancy), Mariano (1880), Salvatore (1883), Venera II (1885-d. age 3), Giuseppe (1887), Rosario (1889), Venera III (1891-survivor). Five of six surviving children have documented marriages (all in Fiumefreddo): Mariano (1905), Salvatore (1906), Giuseppe (Feb 1911), Rosario (Apr 1911), Venera III (Sep 1911). Only Leonarda (b. 1877) remains unaccounted for.',
+      'ALIVE through at least October 1911 — physically present at three weddings (Giuseppe, Rosario, Venera III), consistently age 61 (born ~1849–50, triple-confirmed). No "fu" anywhere. Rosaria also present at all three.',
+      'MORTI SEARCH WINDOW: November 1911 onward. Skip the 1894–1910 film entirely for deaths. Go straight to film 2278546 (DGS 7851868) — Morti 1911, 1913–1928 (mind the missing 1912). Comune as fallback if either survived past 1929. Sebastiano would be ~79 in 1928, Rosaria ~76 — decent odds both fall inside the free film.',
       'Occupation: bracciante → castaldo (by 1885). The Calatabiano years (~1884–1893) were a temporary posting at Contrada Trifilippi.',
       'Sibling: Giuseppa Patanè × Alfio Vecchio (1880).',
+      'The 1877–1880 witness Salvatore Raiti at three of Sebastiano\'s children\'s births may be a maternal-side connection — the Raiti surname is now confirmed as Venera Vecchio\'s mother\'s maiden name (Rosaria Raiti, corrected from Raciti per two 1911 acts).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '13 Mar 1850, Fiumefreddo — atto n. 15 (Nati 1850). Declared by midwife Antonina Nicotra. Parents: Mariano Patanè (33, bracciante) + Leonarda Buonaventura (31). Baptised 14 Mar 1850.' },
@@ -1535,12 +1562,13 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'All Fiumefreddo records exhausted. 7 known children across Fiumefreddo (4) and Calatabiano (3). Family left Fiumefreddo ~1884 for Calatabiano castaldo posting.',
+      details: 'All Fiumefreddo and Calatabiano records exhausted. 8 known children across Fiumefreddo (4) and Calatabiano (3+1 post-return). Five of six surviving children have documented marriages. Both parents alive through Oct 1911, attending three weddings. Literate: Rosario and Giuseppe signed; Sebastiano and Rosaria could not.',
       nextSteps: [
+        'Search Fiumefreddo Morti 1911–1928 (film 2278546 / DGS 7851868) for Sebastiano and Rosaria. Window opens Nov 1911. Mind missing 1912.',
+        'Search for Leonarda Patanè (b. 1877) — the only child without a documented marriage.',
         'Search Fiumefreddo Morti for Mariano Patanè (pre-1876) — Generation -2 parents.',
         'Search Fiumefreddo Morti for Salvatore D\'Agata and Venera Maccarrone.',
-        'Back to Calatabiano Nati from 1885 onward — confirm Venera II, Giuseppe, Rosario records are complete.',
-        'Pull collateral marriages: Mariano Patanè × Stefana Andolaro (1905 atto 2), Salvatore Patanè × Rosa Bottaro (1906).'
+        'Borbonic dig for Generation -2 (pre-1866 Fiumefreddo) waits behind the Morti hunt.'
       ]
     }
   },
@@ -1560,7 +1588,8 @@ export const initialPeople: Person[] = [
       'BIRTH ACT FOUND: Fiumefreddo Nati 1855, atto n. 28. Born 20 April 1855 at 9 AM. Declared by midwife Donna Rosaria Nicotra (37, prattica ostetrica). Father: Salvatore D\'Agata (38, bracciante). Mother: Venera Maccarrone (37). Baptised 21 April 1855, parish of Fiumefreddo. Witnesses: Santo Puglisi (30, borgese) and Giovanni Raiti (38, bracciante). All illiterate. Sindaco: Rosario Fichera. Full copy in allegati fasc. 5/1876.',
       'Mother of 8 known children: Leonarda (1877), Venera I (1879-d. infancy), Mariano (1880), Salvatore (1883), Venera II (1885-d. age 3), Giuseppe (1887), Rosario (1889), Venera III (1891-survivor).',
       'Marriage: 3 May 1876, Fiumefreddo atto 5. Age 21, industriosa. First child born 13 months later.',
-      'Naming conventions confirmed: Leonarda (paternal grandmother), Venera I (maternal grandmother), Mariano (paternal grandfather), Salvatore (maternal grandfather), Venera II (reuse after Venera I\'s infant death — died age 3 in 1889), Giuseppe (unknown — possibly paternal great-grandfather), Rosario (unknown), Venera III (reuse again after Venera II\'s death at age 3 — the survivor who married Pagano 1911).',
+      'Naming conventions confirmed: Leonarda (paternal grandmother), Venera I (maternal grandmother), Mariano (paternal grandfather), Salvatore (maternal grandfather), Venera II (reuse after Venera I\'s infant death — died age 3, 1889), Giuseppe (unknown — possibly paternal great-grandfather), Rosario (unknown), Venera III (reuse again after Venera II\'s death — the survivor who married Pagano 1911).',
+      'Both parents alive and physically present at three weddings in 1911 (Giuseppe Feb, Rosario Apr, Venera III Sep), giving consent each time.',
       'Her great-granddaughter Rosaria Patanè Emmi (1924-1994) carries the name four generations.',
       'Also "Ignazia D\'Agata" on Venera\'s 1911 banns (scribal variation).',
       'Probable brother: Giovanni D\'Agata (b. ~1840, contadino, literate) — named son Salvatore 1879 (atto 107).',
@@ -1783,27 +1812,30 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Patanè',
     gender: 'M',
-    birthDate: 'Unknown',
+    birthDate: '~1863–1864 (age 47 at daughter\'s marriage, Apr 1911)',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    occupations: ['Bracciante (day labourer)'],
     deathDate: 'Unknown',
-    spouses: ['rosaria-raciti'],
+    spouses: ['rosaria-raiti'],
     parents: [],
     children: ['venera-vecchio'],
     notes: [
-      'Father of Venera Vecchio, confirmed via 1911 parish marriage certificate.',
+      'Father of Venera Vecchio — confirmed via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911).',
+      'Age 47 in April 1911, bracciante, resident Fiumefreddo. Present in person at daughter\'s wedding (gave consent at banns).',
       'From Fiumefreddo di Sicilia.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
+      { type: 'Birth Record', status: 'Not Found', notes: '~1863–1864, Fiumefreddo — not yet located' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as father of Venera Vecchio.'
+      status: 'Confirmed',
+      details: 'Name and age confirmed via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911). Bracciante, ~47 years old. Wife: Rosaria Raiti.'
     }
   },
   {
-    id: 'rosaria-raciti',
-    name: 'Rosaria Raciti',
+    id: 'rosaria-raiti',
+    name: 'Rosaria Raiti',
     generation: 0,
     line: 'Patanè',
     gender: 'F',
@@ -1813,16 +1845,18 @@ export const initialPeople: Person[] = [
     parents: [],
     children: ['venera-vecchio'],
     notes: [
-      'Mother of Venera Vecchio, confirmed via 1888 baptism register and Liber Matrimoniorum N.18 (24 Apr 1911).',
-      'Surname definitively Raciti — "Rapisardi" on marriage certificate was a scribal error. Baptism godmother was Maria Raciti (daughter of Giuseppe), likely a relative.',
+      'Mother of Venera Vecchio. Surname corrected from Raciti to Raiti — two independent 1911 acts (banns atto 8 and marriage atto 12, both by officer Continella) both clearly read Raiti.',
+      'Earlier sources (Liber Matrimoniorum N.18, parish marriage cert) recorded "Raciti" — likely a misreading of the same handwriting. "Rapisardi" on the marriage certificate was a separate scribal error.',
+      'The 1877–1880 witness Salvatore Raiti at three of Sebastiano Patanè\'s children\'s births may be a maternal-side connection — possible family link between the Raiti and Patanè households a generation before Rosario married Venera.',
+      'Baptism godmother was Maria Raciti (daughter of Giuseppe) — could be a different Rosaria or the same woman with variant spelling; needs resolution via Vecchio-side records.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
-      status: 'Outstanding',
-      details: 'Name confirmed as mother of Venera Vecchio. Slight variation (Brancati) in one source.'
+      status: 'Confirmed — Surname Corrected',
+      details: 'Name confirmed as mother of Venera Vecchio via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911). Surname: Raiti (not Raciti — corrected per two independent 1911 acts).'
     }
   },
   {
