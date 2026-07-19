@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Users, BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
 
@@ -102,21 +103,42 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
 export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: PedigreeChartProps) {
   const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
-  const directLineIds = new Set([
-    'daniele-buatti', 'roberto-buatti', 'stefano-buatti', 'marco-buatti',
-    'alfred-buatti', 'venera-buatti',
-    'ezio-buatti', 'bruna-lilia-chiappini', 'gregorio-emmi', 'rosaria-patane',
-    'alfredo-buatti-sr', 'ida-galanti', 'remo-chiappini', 'irma-pirri',
-    'egidio-emmi', 'concetta-sgroi', 'rosario-patane-sr', 'venera-vecchio',
-    'giovanni-buatti', 'emidia-bruni',
-    'antonino-emmi', 'rosaria-nasti', 'gregorio-sgroi', 'santa-cali',
-    'sebastiano-patane-sr', 'rosaria-dagata', 'vincenzo-vecchio', 'rosaria-raciti',
-    'emidio-buatti', 'antonia-lenzi', 'antonino-emmi-sr', 'nunzia-pavone',
-    'antonio-galanti', 'virginia-rosati',
-    'domenico-galanti', 'feliciani-angela-maria', 'luigi-rosati', 'filippini',
-    'domenico-lenzi', 'luigia', 'antonio-bruni', 'sperandia-pasqualini',
-    'luigi-galanti', 'vincenza-michetti',
-  ]);
+  // Data-driven: walk ancestors from root, include spouses
+  const directLineIds = useMemo(() => {
+    const root = people.find(p => p.id === selectedPersonId);
+    if (!root) return new Set<string>();
+    const ids = new Set<string>([root.id]);
+    let currentGen = [root];
+    for (let g = 0; g < 8; g++) {
+      const nextGen: Person[] = [];
+      for (const p of currentGen) {
+        for (const pid of p.parents) {
+          if (!ids.has(pid)) {
+            const parent = people.find(x => x.id === pid);
+            if (parent) {
+              ids.add(pid);
+              nextGen.push(parent);
+            }
+          }
+        }
+      }
+      if (nextGen.length === 0) break;
+      currentGen = nextGen;
+    }
+    // Include spouses of everyone collected
+    for (const id of [...ids]) {
+      const p = people.find(x => x.id === id);
+      if (p) {
+        for (const sid of p.spouses) {
+          if (!ids.has(sid)) {
+            const spouse = people.find(x => x.id === sid);
+            if (spouse) ids.add(sid);
+          }
+        }
+      }
+    }
+    return ids;
+  }, [people, selectedPersonId]);
 
   const filtered = people.filter(p => directLineIds.has(p.id));
   const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);

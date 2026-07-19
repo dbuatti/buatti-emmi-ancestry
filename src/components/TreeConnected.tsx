@@ -40,24 +40,43 @@ interface LayoutNode {
   gen: number;
 }
 
-function buildLayout(people: Person[]): LayoutNode[] {
-  const directIds = new Set([
-    'daniele-buatti', 'roberto-buatti', 'stefano-buatti', 'marco-buatti',
-    'alfred-buatti', 'venera-buatti',
-    'ezio-buatti', 'bruna-lilia-chiappini', 'gregorio-emmi', 'rosaria-patane',
-    'alfredo-buatti-sr', 'ida-galanti', 'remo-chiappini', 'irma-pirri',
-    'egidio-emmi', 'concetta-sgroi', 'rosario-patane-sr', 'venera-vecchio',
-    'giovanni-buatti', 'emidia-bruni',
-    'antonino-emmi', 'rosaria-nasti', 'gregorio-sgroi', 'santa-cali',
-    'sebastiano-patane-sr', 'rosaria-dagata', 'vincenzo-vecchio', 'rosaria-raciti',
-    'emidio-buatti', 'antonia-lenzi', 'antonino-emmi-sr', 'nunzia-pavone',
-    'antonio-galanti', 'virginia-rosati',
-    'domenico-galanti', 'feliciani-angela-maria', 'luigi-rosati', 'filippini',
-    'domenico-lenzi', 'luigia', 'antonio-bruni', 'sperandia-pasqualini',
-    'luigi-galanti', 'vincenza-michetti',
-  ]);
+function buildLayout(people: Person[], rootId: string): LayoutNode[] {
+  // Data-driven: walk ancestors from root, include spouses
+  const ids = new Set<string>();
+  const root = people.find(p => p.id === rootId);
+  if (!root) return [];
+  ids.add(root.id);
+  let currentGen = [root];
+  for (let g = 0; g < 8; g++) {
+    const nextGen: Person[] = [];
+    for (const p of currentGen) {
+      for (const pid of p.parents) {
+        if (!ids.has(pid)) {
+          const parent = people.find(x => x.id === pid);
+          if (parent) {
+            ids.add(pid);
+            nextGen.push(parent);
+          }
+        }
+      }
+    }
+    if (nextGen.length === 0) break;
+    currentGen = nextGen;
+  }
+  // Include spouses of everyone collected
+  for (const id of [...ids]) {
+    const p = people.find(x => x.id === id);
+    if (p) {
+      for (const sid of p.spouses) {
+        if (!ids.has(sid)) {
+          const spouse = people.find(x => x.id === sid);
+          if (spouse) ids.add(sid);
+        }
+      }
+    }
+  }
 
-  const filtered = people.filter(p => directIds.has(p.id));
+  const filtered = people.filter(p => ids.has(p.id));
   const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);
 
   if (gens.length === 0) return [];
@@ -95,7 +114,7 @@ function buildLayout(people: Person[]): LayoutNode[] {
 }
 
 export function TreeConnected({ people, selectedPersonId, onSelectPerson }: TreeConnectedProps) {
-  const layout = useMemo(() => buildLayout(people), [people]);
+  const layout = useMemo(() => buildLayout(people, selectedPersonId), [people, selectedPersonId]);
 
   if (layout.length === 0) {
     return <div className="text-center py-10 text-stone-500">No data to display.</div>;
