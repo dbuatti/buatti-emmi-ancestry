@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
+import { collectAncestorIds, cleanDate } from '@/lib/tree';
 
 interface TreeConnectedProps {
   people: Person[];
@@ -27,12 +28,6 @@ const CARD_H = 62;
 const GEN_GAP = 100;
 const ROW_GAP = 16;
 
-function cleanDate(d: string | undefined): string {
-  if (!d) return '';
-  const c = d.replace(/\s*\(.*?\)\s*/g, '').trim();
-  return c.replace(/^Unknown\s*[—–-]\s*(likely\s+)?/i, '~');
-}
-
 interface LayoutNode {
   person: Person;
   x: number;
@@ -41,40 +36,8 @@ interface LayoutNode {
 }
 
 function buildLayout(people: Person[], rootId: string): LayoutNode[] {
-  // Data-driven: walk ancestors from root, include spouses
-  const ids = new Set<string>();
-  const root = people.find(p => p.id === rootId);
-  if (!root) return [];
-  ids.add(root.id);
-  let currentGen = [root];
-  for (let g = 0; g < 8; g++) {
-    const nextGen: Person[] = [];
-    for (const p of currentGen) {
-      for (const pid of p.parents) {
-        if (!ids.has(pid)) {
-          const parent = people.find(x => x.id === pid);
-          if (parent) {
-            ids.add(pid);
-            nextGen.push(parent);
-          }
-        }
-      }
-    }
-    if (nextGen.length === 0) break;
-    currentGen = nextGen;
-  }
-  // Include spouses of everyone collected
-  for (const id of [...ids]) {
-    const p = people.find(x => x.id === id);
-    if (p) {
-      for (const sid of p.spouses) {
-        if (!ids.has(sid)) {
-          const spouse = people.find(x => x.id === sid);
-          if (spouse) ids.add(sid);
-        }
-      }
-    }
-  }
+  const ids = collectAncestorIds(people, rootId);
+  if (ids.size === 0) return [];
 
   const filtered = people.filter(p => ids.has(p.id));
   const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);

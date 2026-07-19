@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Users, BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
+import { collectAncestorIds, isIdentified, cleanDate } from '@/lib/tree';
 
 interface PedigreeChartProps {
   people: Person[];
@@ -21,14 +22,6 @@ const LINE_SELECTED: Record<string, string> = {
   Emmi: 'bg-emerald-800 text-white border-emerald-800 shadow-md',
   Patanè: 'bg-blue-900 text-white border-blue-900 shadow-md',
 };
-
-function isProperlyIdentified(person: Person): boolean {
-  const birth = person.birthDate || '';
-  const hasKnownBirth = birth.length > 0 && !/^Unknown/i.test(birth) && !/to be confirmed/i.test(birth);
-  const hasDeath = !!person.deathDate || !!person.isLiving;
-  const hasFamily = person.parents.length > 0 || person.children.length > 0;
-  return hasKnownBirth && hasDeath && hasFamily;
-}
 
 function genLabel(gen: number): string {
   const labels: Record<number, string> = {
@@ -51,18 +44,9 @@ const LINE_BORDER: Record<string, string> = {
   Patanè: 'border-l-blue-900',
 };
 
-function cleanDate(d: string | undefined): string {
-  if (!d) return '';
-  // Strip parenthetical notes: "19 March 1893 (foglio 5120 — ...)" → "19 March 1893"
-  const cleaned = d.replace(/\s*\(.*?\)\s*/g, '').trim();
-  // Shorten "Unknown — likely 1810s–1820s" → "~1810s–1820s"
-  const shortened = cleaned.replace(/^Unknown\s*[—–-]\s*(likely\s+)?/i, '~');
-  return shortened;
-}
-
 function PersonCard({ person, selected, onSelect }: { person: Person; selected: boolean; onSelect: () => void }) {
   const line = person.line;
-  const confirmed = isProperlyIdentified(person);
+  const confirmed = isIdentified(person);
   const borderColor = LINE_COLORS[line] || 'border-stone-200';
   const selectedStyle = selected ? (LINE_SELECTED[line] || LINE_SELECTED.Buatti) : 'bg-white';
   const lineStripe = LINE_BORDER[line] || 'border-l-stone-300';
@@ -104,41 +88,10 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
   const allLines: string[] = ['Buatti', 'Chiappini', 'Emmi', 'Patanè'];
 
   // Data-driven: walk ancestors from root, include spouses
-  const directLineIds = useMemo(() => {
-    const root = people.find(p => p.id === selectedPersonId);
-    if (!root) return new Set<string>();
-    const ids = new Set<string>([root.id]);
-    let currentGen = [root];
-    for (let g = 0; g < 8; g++) {
-      const nextGen: Person[] = [];
-      for (const p of currentGen) {
-        for (const pid of p.parents) {
-          if (!ids.has(pid)) {
-            const parent = people.find(x => x.id === pid);
-            if (parent) {
-              ids.add(pid);
-              nextGen.push(parent);
-            }
-          }
-        }
-      }
-      if (nextGen.length === 0) break;
-      currentGen = nextGen;
-    }
-    // Include spouses of everyone collected
-    for (const id of [...ids]) {
-      const p = people.find(x => x.id === id);
-      if (p) {
-        for (const sid of p.spouses) {
-          if (!ids.has(sid)) {
-            const spouse = people.find(x => x.id === sid);
-            if (spouse) ids.add(sid);
-          }
-        }
-      }
-    }
-    return ids;
-  }, [people, selectedPersonId]);
+  const directLineIds = useMemo(
+    () => collectAncestorIds(people, selectedPersonId),
+    [people, selectedPersonId]
+  );
 
   const filtered = people.filter(p => directLineIds.has(p.id));
   const gens = [...new Set(filtered.map(p => p.generation))].sort((a, b) => a - b);

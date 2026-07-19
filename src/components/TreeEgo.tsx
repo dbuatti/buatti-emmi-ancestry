@@ -1,19 +1,12 @@
 import { useState } from 'react';
 import { Users, BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Person } from '@/types';
+import { isIdentified, cleanDate } from '@/lib/tree';
 
 interface TreeEgoProps {
   people: Person[];
   selectedPersonId: string;
   onSelectPerson: (id: string) => void;
-}
-
-function isIdentified(p: Person): boolean {
-  const birth = p.birthDate || '';
-  const hasBirth = birth.length > 0 && !/^Unknown/i.test(birth) && !/to be confirmed/i.test(birth);
-  const hasDeath = !!p.deathDate || !!p.isLiving;
-  const hasFamily = p.parents.length > 0 || p.children.length > 0;
-  return hasBirth && hasDeath && hasFamily;
 }
 
 const LINE_COLORS: Record<string, string> = {
@@ -29,12 +22,6 @@ const LINE_BG: Record<string, string> = {
   Emmi: 'bg-emerald-800',
   Patanè: 'bg-blue-900',
 };
-
-function cleanDate(d: string | undefined): string {
-  if (!d) return '';
-  const cleaned = d.replace(/\s*\(.*?\)\s*/g, '').trim();
-  return cleaned.replace(/^Unknown\s*[—–-]\s*(likely\s+)?/i, '~');
-}
 
 function PersonMiniCard({ person, onClick }: { person: Person; onClick: () => void }) {
   const stripe = LINE_COLORS[person.line] || 'border-l-stone-300';
