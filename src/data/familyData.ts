@@ -977,27 +977,131 @@ export const initialPeople: Person[] = [
     spouses: ['orazio-pagano-sibling'],
     parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
     children: [],
+    name: 'Venera Patanè (second, married Pagano)',
+    birthPlace: 'Contrada Trifilippi, Calatabiano, Province of Catania, Sicily, Italy',
     notes: [
-      'Sister of Rosario Patanè.',
-      'Civil birth act found: Calatabiano Nati 1885, atto n. 160. Born 22 October 1885 at 4:20 PM, Contrada Trifilippi, Calatabiano. Declared 24 October 1885 at 9:15 AM before Filippo Dottor Leo (assessore delegato) by father Sebastiano Patanè (35, castaldo). Mother: Rosaria D\'Agata, his lawful wife living with him. Witnesses: Leonardo Fazio (70, possidente) and Salvatore Scalora (70, agricoltore). All illiterate. No marriage margin note visible on this copy (may be on the comune copy only).',
-      '"Anni 23" at 1911 banns was wrong by ~3 years — confirms banns ages are unreliable.',
-      'Marriage banns filed 8 Sep 1911, Fiumefreddo civil registry. Marriage celebrated 17 Sep 1911 in Calatabiano.',
-      'Groom: Orazio Pagano (25, bracciante, son of Santo Pagano & Rosaria Pennisi).',
-      'Mother recorded as "Ignazia D\'Agata" on the civil banns (variation of Rosaria D\'Agata).',
+      'Sister of Rosario Patanè — born after the family\'s move from Fiumefreddo to Calatabiano.',
+      'SECOND Venera — the first (b. 13 Mar 1879, Fiumefreddo) died aged 9 months. This daughter received the reused name.',
+      'Civil birth act: Calatabiano Nati 1885, atto n. 160. Born 22 October 1885 at 4:20 PM, Contrada Trifilippi, Calatabiano. Declared 24 October 1885 by father Sebastiano Patanè (35, castaldo). Mother: Rosaria D\'Agata. Witnesses: Leonardo Fazio (70) and Salvatore Scalora (70).',
+      '"Anni 23" at 1911 banns was wrong by ~3 years — banns ages unreliable.',
+      'Marriage banns 8 Sep 1911, Fiumefreddo. Marriage celebrated 17 Sep 1911 in Calatabiano to Orazio Pagano (25, bracciante, son of Santo Pagano & Rosaria Pennisi).',
+      'Mother recorded as "Ignazia D\'Agata" on civil banns (scribal variation).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '22 Oct 1885, Calatabiano — atto n. 160, Nati 1885. Contrada Trifilippi. Father: Sebastiano Patanè (35, castaldo). Mother: Rosaria D\'Agata. Officer: Filippo Dottor Leo. Witnesses: Leonardo Fazio (70), Salvatore Scalora (70).' },
-      { type: 'Marriage Record', status: 'Found', notes: '8 Sep 1911 (banns filed) / 17 Sep 1911 (celebrated), Fiumefreddo/Calatabiano. Groom: Orazio Pagano (25, son of Santo Pagano & Rosaria Pennisi).' },
+      { type: 'Birth Record', status: 'Found', notes: '22 Oct 1885, Calatabiano — atto n. 160, Nati 1885. Contrada Trifilippi. Father: Sebastiano Patanè (35, castaldo). Mother: Rosaria D\'Agata.' },
+      { type: 'Marriage Record', status: 'Found', notes: '8 Sep 1911 (banns) / 17 Sep 1911 (celebrated), Fiumefreddo/Calatabiano. Groom: Orazio Pagano (25, son of Santo Pagano & Rosaria Pennisi).' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Civil birth act found (atto 160/1885, Calatabiano). Parents confirmed: Sebastiano Patanè (35, castaldo) + Rosaria D\'Agata. Born Contrada Trifilippi same as brother Giuseppe (1887). Father castaldo by 1885 (earlier than previously known).',
-      nextSteps: [
-        'Scan Calatabiano Nati 1880-1883 indexes for Patanè — any child of Sebastiano there pushes the marriage window earlier.',
-        'If 1880-83 clean, search Calatabiano Matrimoni + pubblicazioni 1878-1885 (start 1883-85 highest probability).',
-        'If marriage not in Calatabiano, pivot to Fiumefreddo Matrimoni 1878-1885.'
-      ]
+      details: 'Second bearer of the name Venera (first died 1879). Born Calatabiano 1885 after the family\'s Fiumefreddo→Calatabiano move. All siblings now documented (4 Fiumefreddo + 3 Calatabiano).',
+      nextSteps: []
+    }
+  },
+  // --- ADDITIONAL CHILDREN OF SEBASTIANO × ROSARIA (Fiumefreddo-born, before the Calatabiano posting) ---
+  {
+    id: 'leonarda-patane-fiumefreddo',
+    name: 'Leonarda Patanè',
+    generation: 1,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: '25 May 1877',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
+    children: [],
+    notes: [
+      'Firstborn daughter of Sebastiano Patanè and Rosaria D\'Agata — named for paternal grandmother Leonarda Buonaventura.',
+      'Fiumefreddo Nati 1877, atto 40. Born 25 May 1877 in Fiumefreddo.',
+      'First of four children born in Fiumefreddo before the family\'s move to Calatabiano (~1884).',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '25 May 1877, Fiumefreddo — atto 40, Nati 1877.' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Birth confirmed Fiumefreddo Nati 1877 atto 40. Firstborn, named for paternal grandmother.',
+    }
+  },
+  {
+    id: 'venera-patane-infant',
+    name: 'Venera Patanè (first, died in infancy)',
+    generation: 1,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: '13 March 1879',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: '13 December 1879',
+    deathPlace: 'Sezione Feudogrande, Fiumefreddo di Sicilia',
+    parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
+    children: [],
+    notes: [
+      'First Venera Patanè — named for maternal grandmother Venera Maccarrone.',
+      'Birth: Fiumefreddo Nati 1879, atto 20. Born 13 March 1879.',
+      'DEATH: Fiumefreddo Morti 1879, atto 58. Died 13 December 1879 at 9 PM, aged 9 months (exactly 9 months to the day). Declared 14 Dec 1879. Parents confirmed in death act: Sebastiano Patanè (bracciante) and Rosaria D\'Agata (bracciante). Declarants: Nicolò Panarello (gravedigger) and Salvatore Raiti.',
+      'Name reuse: the name Venera was given to the next daughter born in Calatabiano (22 Oct 1885) — Venera Patanè, later married Orazio Pagano.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '13 Mar 1879, Fiumefreddo — atto 20, Nati 1879.' },
+      { type: 'Death Record', status: 'Found', notes: '13 Dec 1879, Fiumefreddo — atto 58, Morti 1879. Aged 9 months. Declared by Nicolò Panarello and Salvatore Raiti. Confirms parents Sebastiano Patanè + Rosaria D\'Agata.' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Birth and death both confirmed in Fiumefreddo records. Name reuse for Calatabiano-born sister (Venera II, 1885).',
+    }
+  },
+  {
+    id: 'mariano-patane-jr',
+    name: 'Mariano Patanè',
+    generation: 1,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '20 September 1880',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
+    children: [],
+    notes: [
+      'Firstborn son of Sebastiano Patanè and Rosaria D\'Agata — named for paternal grandfather Mariano Patanè.',
+      'Fiumefreddo Nati 1880, atto 62. Born 20 September 1880.',
+      'Married Stefana Andolaro in Fiumefreddo (Matrimoni 1905, atto 2). Marriage act would restate his parents — free triple-confirmation.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '20 Sep 1880, Fiumefreddo — atto 62, Nati 1880.' },
+      { type: 'Marriage Record', status: 'Found', notes: '1905, Fiumefreddo — atto 2. Married Stefana Andolaro.' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Birth confirmed Fiumefreddo Nati 1880 atto 62. Married 1905 to Stefana Andolaro.',
+    }
+  },
+  {
+    id: 'salvatore-patane-fiumefreddo',
+    name: 'Salvatore Patanè',
+    generation: 1,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: '12 October 1883',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
+    children: [],
+    notes: [
+      'Named for maternal grandfather Salvatore D\'Agata.',
+      'Fiumefreddo Nati 1883, atto [circa 37-38]. Born 12 October 1883.',
+      'Last child born in Fiumefreddo before the family\'s move to Calatabiano (~1884-85).',
+      'Married Rosa Bottaro in Fiumefreddo (Matrimoni 1906, 17 December). Marriage act restates parents.',
+    ],
+    records: [
+      { type: 'Birth Record', status: 'Found', notes: '12 Oct 1883, Fiumefreddo — Nati 1883.' },
+      { type: 'Marriage Record', status: 'Found', notes: '17 Dec 1906, Fiumefreddo — married Rosa Bottaro.' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'Birth confirmed Fiumefreddo Nati 1883. Married 1906 to Rosa Bottaro. Last Fiumefreddo-born child before the Calatabiano move.',
     }
   },
   {
@@ -1388,31 +1492,29 @@ export const initialPeople: Person[] = [
     deathDate: 'Unknown',
     spouses: ['rosaria-dagata'],
     parents: ['mariano-patane', 'leonarda-buonaventura'],
-    children: ['rosario-patane-sr', 'giuseppe-patane-sibling', 'venera-patane-sibling'],
+    children: ['leonarda-patane-fiumefreddo', 'venera-patane-infant', 'mariano-patane-jr', 'salvatore-patane-fiumefreddo', 'venera-patane-sibling', 'giuseppe-patane-sibling', 'rosario-patane-sr'],
     notes: [
-      'BIRTH ACT FOUND: Fiumefreddo Nati 1850, atto n. 15. Born 13 March 1850 at 11 PM. Declared 14 Mar 1850 by midwife Antonina Nicotra (48, prattica ostetrica). Father: Mariano Patanè (33, bracciante). Mother: Leonarda Buonaventura (31). Baptised 14 March 1850, parish of Fiumefreddo. Witnesses: Rosario Ucciardello (38, bracciante) and Sebastiano Castorina (43, bottegaio). All illiterate. Sindaco: Alessandro Grassi.',
-      'MARRIAGE FOUND: Fiumefreddo Matrimoni 1876, atto 5 (3 May 1876). Pubblicazioni atto 4 (13 Apr 1876). Before Sindaco Carmelo Fichera. Age 26, bracciante. Banns 16 and 23 Apr 1876.',
-      'ALLEGATI (fasc. 5): 5 documents including birth extracts (both 21 Apr 1876), banns certificate, and two poverty certificates ("povero ai sensi di legge" — certified poor, carta libera).',
-      'Father of Rosario Patanè, Giuseppe Patanè, and Venera Patanè.',
-      'Age stack: 26 (1876) → 35/37/39 (1885/87/89) — exact.',
-      'Occupation: bracciante (1850/1876), castaldo (1885-89 Fiumefreddo promotion).',
-      'The Calatabiano years (1884–~1893) were a temporary posting at Contrada Trifilippi. The 1911 return to Fiumefreddo was a return home.',
-      'Sibling confirmed: Giuseppa Patanè × Alfio Vecchio (1880).',
-      '9-year gap (1876–1885) likely contains Fiumefreddo-born children: predicted Mariano, Leonarda, Salvatore, Venera.',
+      'BIRTH ACT FOUND: Fiumefreddo Nati 1850, atto n. 15. Born 13 March 1850 at 11 PM. Declared 14 Mar 1850 by midwife Antonina Nicotra (48). Parents: Mariano Patanè (33, bracciante) + Leonarda Buonaventura (31). Baptised 14 Mar 1850.',
+      'MARRIAGE FOUND: Fiumefreddo Matrimoni 1876, atto 5 (3 May 1876). Pubblicazioni atto 4 (13 Apr 1876). Age 26, bracciante.',
+      'ALLEGATI (fasc. 5): 5 documents — birth extracts (21 Apr 1876), banns cert, two poverty certs.',
+      'FATHER of 7 known children: Leonarda (1877), Venera I (1879-d. infancy), Mariano (1880), Salvatore (1883), Venera II (1885), Giuseppe (1887), Rosario (1889). Fiumefreddo Nati 1877-1885 fully swept — 4 children found, gap resolved.',
+      'Occupation: bracciante → castaldo (by 1885). The Calatabiano years (~1884–1893) were a temporary posting at Contrada Trifilippi.',
+      'Sibling: Giuseppa Patanè × Alfio Vecchio (1880).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '13 Mar 1850, Fiumefreddo — atto n. 15 (Nati 1850). Declared by midwife Antonina Nicotra. Parents: Mariano Patanè (33, bracciante) + Leonarda Buonaventura (31). Baptised 14 Mar 1850. Full copy in allegati fasc. 5/1876.' },
-      { type: 'Marriage Record', status: 'Found', notes: '3 May 1876, Fiumefreddo — atto 5 (Matrimoni). Pubblicazioni atto 4 (13 Apr 1876). Groom: Sebastiano Patanè (26, bracciante). Bride: Rosaria D\'Agata (21, industriosa). Parents: fu Mariano Patanè + Leonarda Buonaventura; Salvatore D\'Agata + Venera Maccarrone.' },
-      { type: 'Marriage Allegati', status: 'Found', notes: 'Fascicolo n. 5, 5 documents: banns cert, poverty certs (×2), birth extract Sebastiano (atto 15/1850), birth extract Rosaria (atto 28/1855). All issued 21 Apr 1876.' },
+      { type: 'Birth Record', status: 'Found', notes: '13 Mar 1850, Fiumefreddo — atto n. 15 (Nati 1850). Declared by midwife Antonina Nicotra. Parents: Mariano Patanè (33, bracciante) + Leonarda Buonaventura (31). Baptised 14 Mar 1850.' },
+      { type: 'Marriage Record', status: 'Found', notes: '3 May 1876, Fiumefreddo — atto 5. Pubblicazioni atto 4 (13 Apr 1876). Groom: 26, bracciante. Bride: Rosaria D\'Agata (21, industriosa).' },
+      { type: 'Marriage Allegati', status: 'Found', notes: 'Fascicolo n. 5, 5 documents: banns, poverty certs (×2), birth extracts of both spouses (21 Apr 1876).' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Birth 13 Mar 1850 Fiumefreddo (atto 15), marriage 3 May 1876 (atto 5). Both birth extracts in allegati. Father of Venera, Giuseppe, Rosario. Bracciante → castaldo career.',
+      details: 'All Fiumefreddo records exhausted. 7 known children across Fiumefreddo (4) and Calatabiano (3). Family left Fiumefreddo ~1884 for Calatabiano castaldo posting.',
       nextSteps: [
-        'Search Fiumefreddo Nati 1877-1884 for Patanè children of Sebastiano × Rosaria (9-year gap). Naming convention targets: Leonarda (1877 atto 40), Mariano (1880 atto 62), Venera (1879 atto 20), Giuseppe (1878 atto 39).',
-        'Search Fiumefreddo Morti for Mariano Patanè (pre-1876) — names his parents (Generation -2).',
-        'Search Fiumefreddo Morti for Salvatore D\'Agata (b. ~1817) and Venera Maccarrone (b. ~1818).'
+        'Search Fiumefreddo Morti for Mariano Patanè (pre-1876) — Generation -2 parents.',
+        'Search Fiumefreddo Morti for Salvatore D\'Agata and Venera Maccarrone.',
+        'Back to Calatabiano Nati from 1885 onward — confirm Venera II, Giuseppe, Rosario records are complete.',
+        'Pull collateral marriages: Mariano Patanè × Stefana Andolaro (1905 atto 2), Salvatore Patanè × Rosa Bottaro (1906).'
       ]
     }
   },
@@ -1427,15 +1529,15 @@ export const initialPeople: Person[] = [
     deathDate: 'Unknown',
     spouses: ['sebastiano-patane-sr'],
     parents: ['salvatore-dagata', 'venera-maccarrone'],
-    children: ['rosario-patane-sr', 'giuseppe-patane-sibling', 'venera-patane-sibling'],
+    children: ['leonarda-patane-fiumefreddo', 'venera-patane-infant', 'mariano-patane-jr', 'salvatore-patane-fiumefreddo', 'venera-patane-sibling', 'giuseppe-patane-sibling', 'rosario-patane-sr'],
     notes: [
       'BIRTH ACT FOUND: Fiumefreddo Nati 1855, atto n. 28. Born 20 April 1855 at 9 AM. Declared by midwife Donna Rosaria Nicotra (37, prattica ostetrica). Father: Salvatore D\'Agata (38, bracciante). Mother: Venera Maccarrone (37). Baptised 21 April 1855, parish of Fiumefreddo. Witnesses: Santo Puglisi (30, borgese) and Giovanni Raiti (38, bracciante). All illiterate. Sindaco: Rosario Fichera. Full copy in allegati fasc. 5/1876.',
-      'Mother of Rosario Patanè, Giuseppe Patanè, and Venera Patanè.',
-      'Marriage to Sebastiano Patanè: 3 May 1876, Fiumefreddo atto 5. Age 21, industriosa.',
-      'Naming convention: firstborn daughter Venera (1885) named for maternal grandmother Venera Maccarrone.',
-      'Her great-granddaughter Rosaria Patanè Emmi (1924-1994) carries the name four generations later.',
-      'Also recorded as "Ignazia D\'Agata" on Venera\'s 1911 marriage banns (scribal variation).',
-      'Probable brother: Giovanni D\'Agata (b. ~1840, contadino, literate) who named a son Salvatore in 1879 (atto 107/1879).',
+      'Mother of 7 known children: Leonarda (1877), Venera I (1879-d. infancy), Mariano (1880), Salvatore (1883), Venera II (1885), Giuseppe (1887), Rosario (1889).',
+      'Marriage: 3 May 1876, Fiumefreddo atto 5. Age 21, industriosa. First child born 13 months later.',
+      'Naming conventions confirmed: Leonarda (paternal grandmother), Venera I (maternal grandmother), Mariano (paternal grandfather), Salvatore (maternal grandfather), Venera II (reuse after infant death), Giuseppe (unknown — possibly paternal great-grandfather), Rosario (unknown).',
+      'Her great-granddaughter Rosaria Patanè Emmi (1924-1994) carries the name four generations.',
+      'Also "Ignazia D\'Agata" on Venera\'s 1911 banns (scribal variation).',
+      'Probable brother: Giovanni D\'Agata (b. ~1840, contadino, literate) — named son Salvatore 1879 (atto 107).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '20 Apr 1855, Fiumefreddo — atto n. 28 (Nati 1855). Declared by midwife Rosaria Nicotra. Parents: Salvatore D\'Agata (38, bracciante) + Venera Maccarrone (37). Baptised 21 Apr 1855. Full copy in allegati fasc. 5/1876.' },
@@ -1443,7 +1545,8 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Parents and marriage confirmed via Fiumefreddo Matrimoni atto 5, 3 May 1876. Daughter of Salvatore D\'Agata (bracciante, b. ~1817) + Venera Maccarrone (industriosa). Born in Fiumefreddo. First documentary sighting: marriage act.'
+      details: 'Parents and marriage confirmed. Mother of 7 known children (4 Fiumefreddo, 3 Calatabiano). Born Fiumefreddo 20 Apr 1855, daughter of Salvatore D\'Agata + Venera Maccarrone.',
+      nextSteps: []
     }
   },
   // --- ROSARIA'S PROBABLE BROTHER: Giovanni D'Agata ---
