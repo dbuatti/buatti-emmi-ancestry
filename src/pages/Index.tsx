@@ -30,7 +30,7 @@ const Index = () => {
 
   const [questions, setQuestions] = useState<OpenQuestion[]>(initialOpenQuestions);
 
-  const [selectedPersonId, setSelectedPersonId] = useState<string>('ezio-buatti');
+  const [selectedPersonId, setSelectedPersonId] = useState<string>('daniele-buatti');
   const [modalPersonId, setModalPersonId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [lineFilter, setLineFilter] = useState<string>('all');

@@ -2,8 +2,8 @@ import type { Person } from '@/types';
 
 /**
  * Walk ancestors from a root person and collect all direct-line IDs
- * (ancestors + their spouses). Used by PedigreeChart and TreeConnected
- * to dynamically determine who to display.
+ * (ancestors + their spouses). Excludes siblings (same generation, different person).
+ * Used by PedigreeChart and TreeConnected to dynamically determine who to display.
  */
 export function collectAncestorIds(people: Person[], rootId: string): Set<string> {
   const root = people.find(p => p.id === rootId);
@@ -38,6 +38,14 @@ export function collectAncestorIds(people: Person[], rootId: string): Set<string
           ids.add(sid);
         }
       }
+    }
+  }
+
+  // Exclude siblings: people at the same or higher generation as root who aren't the root
+  for (const id of [...ids]) {
+    const p = people.find(x => x.id === id);
+    if (p && p.generation >= root.generation && p.id !== rootId) {
+      ids.delete(id);
     }
   }
 
