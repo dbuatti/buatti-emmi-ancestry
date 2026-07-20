@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Clock, MapPin, ExternalLink, Ship, Shield, Users, GraduationCap, Ruler, FileText, Home } from 'lucide-react';
 import { getLineBadgeColor, LINE_BG } from '@/lib/constants';
 import { calculateCompleteness, getScoreLabel, getScoreBadgeColor } from '@/lib/research';
+import { calculateAge } from '@/lib/tree';
 import type { Person } from '@/types';
 
 interface PersonModalProps {
@@ -234,6 +235,7 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
   if (!person) return null;
 
   const c = calculateCompleteness(person);
+  const age = calculateAge(person.birthDate, person.deathDate, person.isLiving);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -251,6 +253,11 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
           <DialogTitle className="text-xl font-serif flex items-center gap-2">
             {person.name}
             <span>{person.gender === 'M' ? '♂' : '♀'}</span>
+            {age && (
+              <span className="text-[10px] font-sans bg-white/20 rounded-full px-2 py-0.5 font-bold" title={age.estimated ? `Estimated ~${age.age} years` : `${age.age} years`}>
+                {age.estimated ? '~' : ''}{age.age}y
+              </span>
+            )}
           </DialogTitle>
           <p className="text-sm opacity-80 mt-0.5">
             {person.birthDate || 'Unknown'}{person.deathDate ? ` – ${person.deathDate}` : person.isLiving ? ' – Living' : ''}

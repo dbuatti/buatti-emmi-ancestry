@@ -67,3 +67,44 @@ export function cleanDate(d: string | undefined): string {
   const cleaned = d.replace(/\s*\(.*?\)\s*/g, '').trim();
   return cleaned.replace(/^Unknown\s*[—–-]\s*(likely\s+)?/i, '~');
 }
+
+/** Parse a flexible date string into a year (returns null if unparseable). */
+function parseYear(d: string | undefined): number | null {
+  if (!d) return null;
+  const cleaned = d.replace(/\s*\(.*?\)\s*/g, '').trim();
+  // Match a 4-digit year, possibly preceded by ~ or c. or circa
+  const m = cleaned.match(/(?:~|c\.?\s*|circa\s*)?(\d{4})/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+/**
+ * Calculate age at death or current age.
+ * Returns { age, estimated } or null if insufficient data.
+ */
+export function calculateAge(
+  birthDate: string | undefined,
+  deathDate?: string | undefined,
+  isLiving?: boolean,
+): { age: number; estimated: boolean } | null {
+  const birthYear = parseYear(birthDate);
+  if (birthYear === null) return null;
+
+  let refYear: number | null = null;
+  let estimated = false;
+
+  if (isLiving) {
+    refYear = new Date().getFullYear();
+    estimated = true;
+  } else if (deathDate) {
+    refYear = parseYear(deathDate);
+    // If death date is only a year, age is estimated
+    if (deathDate && !/^\d{1,2}\s+\w+\s+\d{4}/.test(deathDate.replace(/\s*\(.*?\)\s*/g, '').trim())) {
+      estimated = true;
+    }
+  }
+
+  if (refYear === null) return null;
+  if (refYear < birthYear) return null;
+
+  return { age: refYear - birthYear, estimated };
+}

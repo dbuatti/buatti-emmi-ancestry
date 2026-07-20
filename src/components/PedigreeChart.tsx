@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Users, BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
-import { collectAncestorIds, isIdentified, cleanDate } from '@/lib/tree';
+import { collectAncestorIds, isIdentified, cleanDate, calculateAge } from '@/lib/tree';
 import { LINE_BORDER_LEFT, LINE_BG } from '@/lib/constants';
 
 interface PedigreeChartProps {
@@ -50,6 +50,7 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
   const deathClean = cleanDate(person.deathDate);
   const found = person.records?.filter(r => r.status === 'Found').length ?? 0;
   const total = person.records?.length ?? 0;
+  const age = calculateAge(person.birthDate, person.deathDate, person.isLiving);
 
   return (
     <div
@@ -59,6 +60,11 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
       {confirmed && (
         <div className="absolute -top-1.5 -right-1.5 z-10">
           <BadgeCheck className="w-4 h-4 text-emerald-600 bg-white rounded-full" />
+        </div>
+      )}
+      {age && (
+        <div className="absolute -top-1 -left-1 z-10 w-5 h-5 rounded-full bg-stone-700 text-white flex items-center justify-center text-[8px] font-sans font-bold leading-none" title={age.estimated ? `Est. ~${age.age} years` : `${age.age} years`}>
+          {age.estimated ? '~' : ''}{age.age}
         </div>
       )}
       <p className="font-bold truncate pr-1">{person.name}</p>

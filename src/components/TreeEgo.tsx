@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Users, BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Person } from '@/types';
-import { isIdentified, cleanDate } from '@/lib/tree';
+import { isIdentified, cleanDate, calculateAge } from '@/lib/tree';
 import { LINE_BORDER_LEFT, LINE_BG } from '@/lib/constants';
 
 interface TreeEgoProps {
@@ -14,6 +14,7 @@ function PersonMiniCard({ person, onClick }: { person: Person; onClick: () => vo
   const stripe = LINE_BORDER_LEFT[person.line] || 'border-l-stone-300';
   const dot = LINE_BG[person.line] || 'bg-stone-400';
   const confirmed = isIdentified(person);
+  const age = calculateAge(person.birthDate, person.deathDate, person.isLiving);
 
   return (
     <div
@@ -23,6 +24,11 @@ function PersonMiniCard({ person, onClick }: { person: Person; onClick: () => vo
       {confirmed && (
         <div className="absolute -top-1.5 -right-1.5 z-10">
           <BadgeCheck className="w-3.5 h-3.5 text-emerald-600 bg-white rounded-full" />
+        </div>
+      )}
+      {age && (
+        <div className="absolute -top-1 -left-1 z-10 w-5 h-5 rounded-full bg-stone-700 text-white flex items-center justify-center text-[8px] font-sans font-bold leading-none" title={age.estimated ? `Est. ~${age.age} years` : `${age.age} years`}>
+          {age.estimated ? '~' : ''}{age.age}
         </div>
       )}
       <div className="flex items-center gap-1.5 mb-1">
