@@ -889,7 +889,7 @@ export const initialPeople: Person[] = [
       'Marriage: 23 April 1911, atto 12, Fiumefreddo Matrimoni 1911 Parte I. Groom: Rosario Patanè (22, bracciante, born Calatabiano). Bride: Venera Vecchio (23, casalinga, born Fiumefreddo). Officer: Luigi Continella, assessore titolare. Witnesses: Giuseppe Cardone (27, calzolaio) & Rosario Pagano (23, bracciante). Both spouses resident Fiumefreddo over a year. Groom\'s parents present, giving consent. Signed: Rosario Patanè and Giuseppe Cardone (bride, second witness, and parents could not write).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: '8 Jan 1888, Fiumefreddo — civil equivalent not yet searched (DGS 7836468)' },
+      { type: 'Birth Record', status: 'Found', notes: '6 Jan 1888, atto 6, Fiumefreddo Nati 1888 (DGS 7836468). Father: Vincenzo Vecchio (24, bracciante). Mother: Rosaria Raiti (raciti in this act — variant of Raiti). Margin note: marriage 23 Apr 1911.' },
       { type: 'Baptism Record', status: 'Found', notes: '8 Jan 1888, Fiumefreddo. Baptized same day by Rev. Nicola Sgarlata. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano. Full name: Veneranda. Entry n. 8, folio 240.' },
       { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 12, 23 Apr 1911, Fiumefreddo Matrimoni 1911 Parte I. Groom: Rosario Patanè (22, bracciante, born Calatabiano). Bride: Venera Vecchio (23, casalinga, born Fiumefreddo). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti (casalinga) — bride\'s parents; Sebastiano Patanè (61, bracciante) & Rosaria D\'Agata (casalinga) — groom\'s parents. Witnesses: Giuseppe Cardone (27, calzolaio), Rosario Pagano (23, bracciante). Officer: Luigi Continella.' },
       { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Liber Matrimoniorum N.18. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella.' },
@@ -897,12 +897,11 @@ export const initialPeople: Person[] = [
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Baptism found 28 Jun 2026 (Fiumefreddo Battesimi 1762-1904, fol. 240 n. 8). Marriage act found: atto 12, 23 Apr 1911 (Fiumefreddo Matrimoni 1911). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti. Mother\'s surname corrected from Raciti to Raiti per two independent 1911 acts. Death pre-1953.',
+      details: 'Baptism found 28 Jun 2026 (Fiumefreddo Battesimi 1762-1904, fol. 240 n. 8). Civil birth found: atto 6, 6 Jan 1888 (Fiumefreddo Nati 1888, DGS 7836468). Marriage act found: atto 12, 23 Apr 1911 (Fiumefreddo Matrimoni 1911). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti. Mother\'s surname corrected from Raciti to Raiti per two independent 1911 acts. Death pre-1953.',
       nextSteps: [
-        'Search Fiumefreddo Nati ~1887–88 (DGS 7836468) for civil birth act — confirms Vincenzo × Raiti directly.',
-        'Search Fiumefreddo Matrimoni ~1880s (DGS 7836468) for Vincenzo Vecchio × Rosaria Raiti marriage.',
+        'Search Fiumefreddo Nati ~1886–1887 indices for possible elder siblings (Sebastiana or Sebastiano Vecchio — naming-convention hypothesis).',
+        'Death: pre-1953 (fu Venera on 1953 cert). Ask Connie Emmi whether Venera came to Australia or died in Sicily.',
         'Investigate connection to Leonardo Vecchio (co-signer of Rosaria\'s accommodation guarantee in Ingham).',
-        'Investigate Salvatore Raiti — witness at three of Sebastiano Patanè\'s children\'s births (1877–1880), possible maternal-side link.'
       ]
     },
     sources: [
@@ -1813,31 +1812,36 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Patanè',
     gender: 'M',
-    birthDate: '~1863–1864 (age 47 at daughter\'s marriage, Apr 1911)',
+    birthDate: '~1863–1864 (age 21 in Feb 1886 marriage; age 24 in Jan 1888 birth act — clerk drift noted)',
     birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
     occupations: ['Bracciante (day labourer)'],
     deathDate: 'Unknown',
     spouses: ['rosaria-raiti'],
-    parents: [],
+    parents: ['sebastiano-vecchio', 'sebastiana-panebianco'],
     children: ['venera-vecchio'],
     notes: [
       'Father of Venera Vecchio — confirmed via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911).',
       'Age 47 in April 1911, bracciante, resident Fiumefreddo. Present in person at daughter\'s wedding (gave consent at banns).',
       'From Fiumefreddo di Sicilia.',
-      'PARENTS UNKNOWN: Neither banns nor marriage act names his parents (Italian civil marriage acts only reach one generation up from the spouses).',
-      'NEXT STEP: His own marriage to Rosaria Raiti (~1884–1887, Fiumefreddo Matrimoni 1866–1893, film DGS 7841136) would name both spouses\' parents — opening the entire Vecchio-side generation in one act.',
-      'Prior-session thread: Giuseppa Patanè (fu Mariano\'s daughter, Sebastiano\'s sister) married a Vecchio in 1880, and there was an Alfio Vecchio whose mother was a Panebianco. Vecchio is common in Fiumefreddo, so none of that connects to Vincenzo yet — but when his parents are found, check against those names.',
+      'MARRIAGE FOUND (20 Jul 2026): Married Rosaria Raiti on 8 Feb 1886, atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136). Banns published 17 + 24 Jan 1886. Both spouses Fiumefreddo-born — d\'ufficio verification, no extracts needed. Allegati thin by design.',
+      'PARENTS CONFIRMED (20 Jul 2026): Per marriage act atto 8 — father: Sebastiano Vecchio (villica?); mother: Sebastiana Panebianco (villica).',
+      'Age discrepancy across acts: 21 at marriage (Feb 1886) vs 24 at daughter\'s birth (Jan 1888) — typical Sicilian clerk drift. Actual birth ~1863–1864.',
+      'Both alive 23 Apr 1911 (daughter\'s marriage). Absent from Fiumefreddo Morti 1911–1929 → died 1930+ or elsewhere (same pattern as Sebastiano Patanè).',
+      'Naming convention note: eldest daughter named Venera (for maternal grandmother Venera Previtera) rather than Sebastiana (for paternal grandmother Sebastiana Panebianco) — suggests either a bent convention or an earlier first daughter named Sebastiana (hypothesis: check Nati 1886–1887 indices).',
+      'Disambiguation: Alfio Vecchio (× Giuseppa Patanè, 1880) and Dr. Alfio Vecchio (× Ravella Teresa, 1887) are different people — neither connects to Vincenzo yet.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: '~1863–1864, Fiumefreddo — not yet located' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+      { type: 'Birth Record', status: 'Not Found', notes: '~1863–1864, Fiumefreddo — not yet located. Check Nati 1861–1865 (DGS 7853312) if unlocked.' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 8, 8 Feb 1886, Fiumefreddo Matrimoni 1886 (DGS 7841136). Banns published 17 + 24 Jan 1886. Both spouses Fiumefreddo-born. Allegati: certificato di pubblicazioni + carta libera per povertà (fascicolo n. 8). Parents named: Sebastiano Vecchio × Sebastiana Panebianco (groom); Salvatore Raiti × Venera Previtera (bride).' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found. Both alive 23 Apr 1911. Absent from Fiumefreddo Morti 1911–1929 → likely died 1930+.' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Name and age confirmed via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911). Bracciante, ~47 years old. Wife: Rosaria Raiti. Parents unknown.',
+      details: 'Name and age confirmed via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911). Bracciante, ~47 years old. Wife: Rosaria Raiti. Marriage found: 8 Feb 1886, atto 8 (DGS 7841136). Parents: Sebastiano Vecchio × Sebastiana Panebianco.',
       nextSteps: [
-        'Search Vincenzo Vecchio × Rosaria Raiti marriage in Fiumefreddo Matrimoni ~1884–1887 (DGS 7841136) — names both spouses\' parents.',
-        'Check whether Vecchio surname connects to Giuseppa Patanè\'s husband Alfio Vecchio (1880) or Alfio\'s family.',
+        'Nati 1861–1865 (DGS 7853312): browse indices for Vincenzo\'s own birth act — if locked, add to centre-visit list.',
+        'Nati 1886–1887 indices: test hypothesis of an elder Sebastiana Vecchio (first daughter) before Venera.',
+        'Death: absent from Fiumefreddo Morti 1911–1929 — check later films or comune.',
       ]
     }
   },
@@ -1847,24 +1851,27 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Patanè',
     gender: 'F',
-    birthDate: 'Unknown',
+    birthDate: '~1863–1864 (age 21–22 across two 1886 documents)',
     deathDate: 'Unknown',
     spouses: ['vincenzo-vecchio'],
-    parents: [],
+    parents: ['salvatore-raiti', 'venera-previtera'],
     children: ['venera-vecchio'],
     notes: [
       'Mother of Venera Vecchio. Surname corrected from Raciti to Raiti — two independent 1911 acts (banns atto 8 and marriage atto 12, both by officer Continella) both clearly read Raiti.',
-      'Earlier sources (Liber Matrimoniorum N.18, parish marriage cert) recorded "Raciti" — likely a misreading of the same handwriting. "Rapisardi" on the marriage certificate was a separate scribal error.',
-      'The 1877–1880 witness Salvatore Raiti at three of Sebastiano Patanè\'s children\'s births may be a maternal-side connection — possible family link between the Raiti and Patanè households a generation before Rosario married Venera.',
+      'SURNAME VARIANTS: Raiti in Matrimoni 1886 atto 8 + pubblicazioni certificato + Matrimoni 1911 atto 12. Raciti in Nati 1888 atto 6 + parish Liber Matrimoniorum. The variant split across independent scribes confirms the spelling is Raiti; "Raciti" is a misreading. "Rapisardi" on the marriage certificate was a separate scribal error.',
+      'Salvatore Raiti (1877–1880 Patanè household acts witness) upgraded from speculative to probable — he is Rosaria\'s father, per marriage act atto 8, Fiumefreddo Matrimoni 1886.',
       'Baptism godmother was Maria Raciti (daughter of Giuseppe) — could be a different Rosaria or the same woman with variant spelling; needs resolution via Vecchio-side records.',
+      'MARRIAGE FOUND (20 Jul 2026): Married Vincenzo Vecchio on 8 Feb 1886, atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136). Parents named: Salvatore Raiti (bracciante) × Venera Previtera (villica).',
+      'Both alive 23 Apr 1911 (daughter\'s marriage). Absent from Fiumefreddo Morti 1911–1929 → died 1930+ or elsewhere.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Not Found', notes: 'No records found yet' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+      { type: 'Birth Record', status: 'Not Found', notes: '~1863–1864, Fiumefreddo — not yet located' },
+      { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 8, 8 Feb 1886, Fiumefreddo Matrimoni 1886 (DGS 7841136). Banns published 17 + 24 Jan 1886. Parents named: Salvatore Raiti (bracciante) × Venera Previtera (villica).' },
+      { type: 'Death Record', status: 'Not Found', notes: 'No records found. Both alive 23 Apr 1911. Absent from Fiumefreddo Morti 1911–1929 → likely died 1930+.' }
     ],
     researchStatus: {
       status: 'Confirmed — Surname Corrected',
-      details: 'Name confirmed as mother of Venera Vecchio via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911). Surname: Raiti (not Raciti — corrected per two independent 1911 acts).'
+      details: 'Name confirmed as mother of Venera Vecchio via banns (atto 8) and marriage act (atto 12, Fiumefreddo Matrimoni 1911). Surname: Raiti (not Raciti — corrected per two independent 1911 acts). Marriage found: 8 Feb 1886, atto 8 (DGS 7841136). Parents: Salvatore Raiti (bracciante) × Venera Previtera (villica).'
     }
   },
   {
@@ -2608,6 +2615,121 @@ export const initialPeople: Person[] = [
     children: [],
     notes: ['Son of Pietro Patanè and Maria Patane. His son Jordan Christopher Patanè (1987-1987) predeceased him.'],
     researchStatus: { status: 'Confirmed' }
+  },
+  {
+    id: 'sebastiano-vecchio',
+    name: 'Sebastiano Vecchio',
+    generation: -2,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['sebastiana-panebianco'],
+    parents: [],
+    children: ['vincenzo-vecchio'],
+    notes: [
+      'Father of Vincenzo Vecchio — per marriage act atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136).',
+      'Profession recorded as villica? (unclear reading on marriage act).',
+      'No further records found yet — Vincenzo\'s own birth act (Nati 1861–1865, DGS 7853312) would confirm.',
+      'Possible connection to Alfio Vecchio (× Giuseppa Patanè, 1880) or Dr. Alfio Vecchio (× Ravella Teresa, 1887) — Vecchio is common in Fiumefreddo.',
+    ],
+    records: [
+      { type: 'Marriage Record (Civil)', status: 'Found (indirect)', notes: 'Named in son Vincenzo\'s marriage act (atto 8, 8 Feb 1886) as father of groom. Not a party to the act — listed as Sebastiano Vecchio (villica?).' },
+    ],
+    researchStatus: {
+      status: 'Confirmed (indirect)',
+      details: 'Named in son Vincenzo\'s marriage act (atto 8, 8 Feb 1886). No direct records yet.',
+      nextSteps: [
+        'Vincenzo\'s birth act (Nati 1861–1865, DGS 7853312) would confirm both parents.',
+        'Check Nati indices for other Vecchio children — may reveal more of the family.',
+      ]
+    }
+  },
+  {
+    id: 'sebastiana-panebianco',
+    name: 'Sebastiana Panebianco',
+    generation: -2,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['sebastiano-vecchio'],
+    parents: [],
+    children: ['vincenzo-vecchio'],
+    notes: [
+      'Mother of Vincenzo Vecchio — per marriage act atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136).',
+      'Profession recorded as villica? (unclear reading on marriage act).',
+      'Naming convention: Vincenzo\'s eldest daughter (if any before Venera) would be named Sebastiana after her. Venera (named for maternal grandmother) was born Jan 1888 — hypothesis of an earlier Sebastiana in 1886–1887 is untested.',
+    ],
+    records: [
+      { type: 'Marriage Record (Civil)', status: 'Found (indirect)', notes: 'Named in son Vincenzo\'s marriage act (atto 8, 8 Feb 1886) as mother of groom.' },
+    ],
+    researchStatus: {
+      status: 'Confirmed (indirect)',
+      details: 'Named in son Vincenzo\'s marriage act (atto 8, 8 Feb 1886). No direct records yet.',
+      nextSteps: [
+        'Vincenzo\'s birth act (Nati 1861–1865, DGS 7853312) would confirm both parents.',
+      ]
+    }
+  },
+  {
+    id: 'salvatore-raiti',
+    name: 'Salvatore Raiti',
+    generation: -2,
+    line: 'Patanè',
+    gender: 'M',
+    birthDate: 'Unknown',
+    birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
+    deathDate: 'Unknown',
+    occupations: ['Bracciante (day labourer)'],
+    spouses: ['venera-previtera'],
+    parents: [],
+    children: ['rosaria-raiti'],
+    notes: [
+      'Father of Rosaria Raiti — per marriage act atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136).',
+      'Profession: bracciante.',
+      'PROBABLE WITNESS LINK (20 Jul 2026): Salvatore Raiti witnessed three of Sebastiano Patanè\'s children\'s births in 1877–1880 (Leonarda, Venera I, Mariano). Now confirmed as Rosaria\'s father via marriage act — the witness appearances are no longer speculative but probable family connections.',
+    ],
+    records: [
+      { type: 'Marriage Record (Civil)', status: 'Found (indirect)', notes: 'Named in daughter Rosaria\'s marriage act (atto 8, 8 Feb 1886) as father of bride.' },
+    ],
+    researchStatus: {
+      status: 'Confirmed (indirect)',
+      details: 'Named in daughter Rosaria\'s marriage act (atto 8, 8 Feb 1886). Bracciante. Witness appearances at Patanè births (1877–1880) now confirmed as probable family link.',
+      nextSteps: [
+        'Rosaria\'s birth act (Nati ~1863–1864, DGS 7853312) would confirm both parents.',
+      ]
+    }
+  },
+  {
+    id: 'venera-previtera',
+    name: 'Venera Previtera',
+    generation: -2,
+    line: 'Patanè',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['salvatore-raiti'],
+    parents: [],
+    children: ['rosaria-raiti'],
+    notes: [
+      'Mother of Rosaria Raiti — per marriage act atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136).',
+      'Profession recorded as villica? (unclear reading on marriage act).',
+      'Her name "Venera" was given to granddaughter Venera Vecchio (b. 1888) — following the Sicilian naming convention of honouring the maternal grandmother.',
+    ],
+    records: [
+      { type: 'Marriage Record (Civil)', status: 'Found (indirect)', notes: 'Named in daughter Rosaria\'s marriage act (atto 8, 8 Feb 1886) as mother of bride.' },
+    ],
+    researchStatus: {
+      status: 'Confirmed (indirect)',
+      details: 'Named in daughter Rosaria\'s marriage act (atto 8, 8 Feb 1886). No direct records yet.',
+      nextSteps: [
+        'Rosaria\'s birth act (Nati ~1863–1864, DGS 7853312) would confirm both parents.',
+      ]
+    }
   }
 ];
 
@@ -2735,9 +2857,9 @@ export const initialResearchLeads: ResearchLead[] = [
     id: 'lead-vincenzo-vecchio-marriage',
     title: 'Vincenzo Vecchio × Rosaria Raiti Marriage (~1884–1887)',
     category: 'Emmi/Patanè',
-    status: 'To Investigate',
-    description: 'Vincenzo Vecchio (b. ~1863–64, bracciante, Fiumefreddo) married Rosaria Raiti. Their daughter Venera was born ~1887–88, so the marriage falls ~1884–1887. Film: Fiumefreddo Matrimoni 1866–1893 (DGS 7841136). This single act names both spouses\' parents — opening the entire Vecchio-side generation. Companion allegati films: DGS 7841152 (1868–1883/1885) and DGS 7841153 (1886–1893) may contain both their birth extracts.',
-    nextSteps: 'Browse DGS 7841136 for Matrimoni ~1884–1887, looking for Vincenzo Vecchio + Rosaria Raiti. Check allegati films if marriage falls in covered year.',
+    status: 'Completed',
+    description: 'FOUND (20 Jul 2026): Atto 8, 8 Feb 1886, Fiumefreddo Matrimoni 1886 (DGS 7841136). Banns published 17 + 24 Jan 1886. Both spouses Fiumefreddo-born — d\'ufficio verification, no extracts needed. Allegati: certificato di pubblicazioni + carta libera per povertà (fascicolo n. 8). Parents named: Sebastiano Vecchio (villica?) × Sebastiana Panebianco (villica?) — groom\'s parents; Salvatore Raiti (bracciante) × Venera Previtera (villica?) — bride\'s parents.',
+    nextSteps: 'Marriage and parents resolved. Next: Vincenzo\'s birth act (Nati 1861–1865, DGS 7853312); Rosaria\'s birth act (same film); possible elder siblings of Venera (Nati 1886–1887 indices).',
   },
   {
     id: 'lead-antenati-anagrafe-buatti',
@@ -2755,6 +2877,38 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'In Progress',
     description: 'Two emails sent 18 Jul 2026 to resolve the Ida Galanti question: (1) Comune di Ascoli Piceno — Ezio\'s copia integrale di nascita (Ida\'s age at his birth settles 1893 vs 1904); (2) Tribunale di Ascoli Piceno — Alfredo\'s marriage act + allegati. Plus marriage cert request via protocol 0062771 (Sergio De Angelis).',
     nextSteps: 'Await replies from Comune AP, Tribunale AP, and Anagrafe. Also search Antenati anagrafe cartellini for Galanti Ida card.',
+  },
+  {
+    id: 'lead-vecchio-sibling-hypothesis',
+    title: 'Vecchio Naming-Convention Hypothesis: Elder Siblings of Venera',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Venera Vecchio (b. 6 Jan 1888) was named for her maternal grandmother Venera Previtera, not her paternal grandmother Sebastiana Panebianco — the pattern expected for a second daughter. With the marriage now fixed at 8 Feb 1886, there is a ~23-month window for an earlier first child. Hypothesis: a Sebastiana Vecchio (or Sebastiano) may exist in Nati 1886 (March onward) or 1887. Additionally, Nati 1888 atto 55 lists a Vecchio Sebastiano — parents need checking.',
+    nextSteps: 'Antenati → Fiumefreddo Nati 1887 index → V column → any Vecchio child of Vincenzo × Raiti (photograph index). Same for Nati 1886 (post-February). Nati 1888 atto 55 — Vecchio Sebastiano → open act → parents? Log outcome: naming-convention hypothesis confirmed, or bent convention noted.',
+  },
+  {
+    id: 'lead-vincenzo-rosaria-births',
+    title: 'Vincenzo Vecchio & Rosaria Raiti Birth Acts',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Both born ~1863–1864, Fiumefreddo. Best route: Nati 1861–1865 (DGS 7853312). If locked, add to centre-visit list. Alternatively, Liste di leva (Catania province, classe 1864/1865) on Antenati for Vecchio Vincenzo.',
+    nextSteps: 'Check lock status of DGS 7853312 on FamilySearch. If open → browse indices 1863, 1864, 1865 → find Vecchio Vincenzo (parents: Sebastiano Vecchio × Sebastiana Panebianco) and Raiti Rosaria (parents: Salvatore Raiti × Venera Previtera) → photograph indexes + acts. If locked → add to centre-visit list. Antenati fallback: Liste di leva, Catania province, classe 1864/1865.',
+  },
+  {
+    id: 'lead-centre-visit-films',
+    title: 'Centre-Visit Film List (Moorabbin or Heidelberg)',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Four films queued for in-person archive visit: (1) DGS 5429284 — Fiumefreddo parish baptisms (Rosaria Patanè 1924; Venera Vecchio 1888 fol. 240 n. 8; ask if coverage reaches the 1860s for Vincenzo/Rosaria Raiti); (2) DGS 7851969 — Linguaglossa Nati (Gregorio Emmi b. 1915); (3) DGS 7967575 — Annotazioni su atti di nascita 1857–1893 (death-annotation lottery: Venera Vecchio n. 6/1888, Vincenzo ~1864, Rosaria Raiti ~1863–64); (4) DGS 7853312 — Nati 1861–1865 (only if it proves locked).',
+    nextSteps: 'Confirm centre locations and hours. Bring camera/phone for photography. Priority order: annotations first (chance of death dates), then birth acts, then parish baptisms.',
+  },
+  {
+    id: 'lead-vecchio-vincenzo-death',
+    title: 'Vincenzo Vecchio & Rosaria Raiti Deaths',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Both alive 23 Apr 1911 (daughter Venera\'s marriage). Absent from Fiumefreddo Morti 1911–1929 → died 1930+ or elsewhere. Same pattern as Sebastiano Patanè (under 100-year comune embargo).',
+    nextSteps: 'Comune email can cover both: request death dates/annotations for Vincenzo Vecchio (b. ~1864) and Rosaria Raiti (b. ~1863–64). Also check Emmi × Patanè 1948 marriage act — Venera\'s fu/living status may reveal parents\' death dates.',
   }
 ];
 
@@ -2868,7 +3022,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     id: 'q-vincenzo-vecchio-parents',
     question: 'Who are Vincenzo Vecchio\'s parents?',
     category: 'Emmi/Patanè',
-    status: 'Pending',
-    notes: 'Vincenzo Vecchio (b. ~1863–64, bracciante, Fiumefreddo) married Rosaria Raiti. Parents not named in any act yet — Italian civil marriage acts only reach one generation up from the spouses. Best route: find their own marriage act (~1884–1887, Fiumefreddo Matrimoni 1866–1893, DGS 7841136), which names both spouses\' parents. Prior context: Giuseppa Patanè (Sebastiano\'s sister) married an Alfio Vecchio in 1880 — possible family connection when Vincenzo\'s parents are found.'
+    status: 'Resolved',
+    notes: 'RESOLVED 20 Jul 2026: Parents = Sebastiano Vecchio (villica?) × Sebastiana Panebianco (villica?), per marriage act atto 8, Fiumefreddo Matrimoni 1886 (DGS 7841136). Rosaria Raiti\'s parents also confirmed in same act: Salvatore Raiti (bracciante) × Venera Previtera (villica?). Next: find their own birth acts (Nati 1861–1865, DGS 7853312) to push generation -2 further back.'
   }
 ];
