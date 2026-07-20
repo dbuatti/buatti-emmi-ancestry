@@ -1108,22 +1108,23 @@ export const initialPeople: Person[] = [
     gender: 'M',
     birthDate: '20 September 1880',
     birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
-    deathDate: 'Unknown',
+    deathDate: '21 November 1928',
     parents: ['sebastiano-patane-sr', 'rosaria-dagata'],
     children: [],
     notes: [
       'Firstborn son of Sebastiano Patanè and Rosaria D\'Agata — named for paternal grandfather Mariano Patanè.',
       'Fiumefreddo Nati 1880, atto 62. Born 20 September 1880.',
       'Married Stefana Andolaro in Fiumefreddo (Matrimoni 1905, atto 2). Marriage act would restate his parents — free triple-confirmation.',
+      'DEATH ACT FOUND: Fiumefreddo Morti 1928, atto n. 60 (DGS 7851868). Died 21 November 1928, age ~48. Death act lists father Sebastiano Patanè as domiciliato in Fiumefreddo (confirming Sebastiano was still alive at age ~78).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '20 Sep 1880, Fiumefreddo — atto 62, Nati 1880.' },
       { type: 'Marriage Record', status: 'Found', notes: '1905, Fiumefreddo — atto 2. Married Stefana Andolaro.' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+      { type: 'Death Record', status: 'Found', notes: '21 Nov 1928, Fiumefreddo — atto n. 60, Morti 1928 (DGS 7851868). Age ~48. Father listed as domiciliato in Fiumefreddo.' },
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Birth confirmed Fiumefreddo Nati 1880 atto 62. Married 1905 to Stefana Andolaro.',
+      details: 'Birth (atto 62/1880), marriage (atto 2/1905 to Stefana Andolaro), and death (atto 60/1928) all found. Death act confirms father Sebastiano still alive, domiciliato in Fiumefreddo.',
     }
   },
   {
@@ -1553,8 +1554,9 @@ export const initialPeople: Person[] = [
       'MARRIAGE FOUND: Fiumefreddo Matrimoni 1876, atto 5 (3 May 1876). Pubblicazioni atto 4 (13 Apr 1876). Age 26, bracciante.',
       'ALLEGATI (fasc. 5): 5 documents — birth extracts (21 Apr 1876), banns cert, two poverty certs.',
       'FATHER of 8 known children: Leonarda (1877), Venera I (1879-d. infancy), Mariano (1880), Salvatore (1883), Venera II (1885-d. age 3), Giuseppe (1887), Rosario (1889), Venera III (1891-survivor). Five of six surviving children have documented marriages (all in Fiumefreddo): Mariano (1905), Salvatore (1906), Giuseppe (Feb 1911), Rosario (Apr 1911), Venera III (Sep 1911). Only Leonarda (b. 1877) remains unaccounted for.',
-      'ALIVE through at least October 1911 — physically present at three weddings (Giuseppe, Rosario, Venera III), consistently age 61 (born ~1849–50, triple-confirmed). No "fu" anywhere. Rosaria also present at all three.',
-      'MORTI SEARCH WINDOW: November 1911 onward. Skip the 1894–1910 film entirely for deaths. Go straight to film 2278546 (DGS 7851868) — Morti 1911, 1913–1928 (mind the missing 1912). Comune as fallback if either survived past 1929. Sebastiano would be ~79 in 1928, Rosaria ~76 — decent odds both fall inside the free film.',
+      'ALIVE through at least November 1928 — listed as domiciliato in Fiumefreddo on his son Mariano\'s death act (atto 60, 21 Nov 1928), age ~78. Physically present at three weddings in 1911 (Giuseppe, Rosario, Venera III), consistently age 61 (born ~1849–50, triple-confirmed). No "fu" anywhere. Rosaria died 3 Mar 1916; Sebastiano survived her by at least 12 years.',
+      'MORTI: Rosaria D\'Agata found — Morti 1916, atto 11 (DGS 7851868), died 3 Mar 1916, parents named: Salvatore D\'Agata + Venera Maccarrone. Sebastiano NOT found on film (DGS 7851868 covers Morti 1911, 1913–1928, 1912 missing). Comune email sent requesting death date or annotazione di morte on birth act (atto 15/1850).',
+      'Son Mariano\'s death act (atto 60, 21 Nov 1928, Fiumefreddo Morti 1928) confirms Sebastiano was still alive at age ~78, domiciliato in Fiumefreddo.',
       'Occupation: bracciante → castaldo (by 1885). The Calatabiano years (~1884–1893) were a temporary posting at Contrada Trifilippi.',
       'Sibling: Giuseppa Patanè × Alfio Vecchio (1880).',
       'The 1877–1880 witness Salvatore Raiti at three of Sebastiano\'s children\'s births may be a maternal-side connection — the Raiti surname is now confirmed as Venera Vecchio\'s mother\'s maiden name (Rosaria Raiti, corrected from Raciti per two 1911 acts).',
@@ -1563,16 +1565,14 @@ export const initialPeople: Person[] = [
       { type: 'Birth Record', status: 'Found', notes: '13 Mar 1850, Fiumefreddo — atto n. 15 (Nati 1850). Declared by midwife Antonina Nicotra. Parents: Mariano Patanè (33, bracciante) + Leonarda Buonaventura (31). Baptised 14 Mar 1850.' },
       { type: 'Marriage Record', status: 'Found', notes: '3 May 1876, Fiumefreddo — atto 5. Pubblicazioni atto 4 (13 Apr 1876). Groom: 26, bracciante. Bride: Rosaria D\'Agata (21, industriosa).' },
       { type: 'Marriage Allegati', status: 'Found', notes: 'Fascicolo n. 5, 5 documents: banns, poverty certs (×2), birth extracts of both spouses (21 Apr 1876).' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+      { type: 'Death Record', status: 'Searching', notes: 'Not found on Fiumefreddo Morti 1911–1928 film (DGS 7851868). Last confirmed alive 21 Nov 1928 (domiciliato in Fiumefreddo per atto 60 — son Mariano\'s death act). Comune email sent requesting death date or annotazione di morte on birth act (atto 15/1850).' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'All Fiumefreddo and Calatabiano records exhausted. 8 known children across Fiumefreddo (4) and Calatabiano (3+1 post-return). Five of six surviving children have documented marriages. Both parents alive through Oct 1911, attending three weddings. Literate: Rosario and Giuseppe signed; Sebastiano and Rosaria could not.',
+      details: 'All Fiumefreddo and Calatabiano records exhausted. 8 known children. Five of six surviving children have documented marriages. Alive through at least Nov 1928 (on son Mariano\'s death act, atto 60). Rosaria died 3 Mar 1916; Sebastiano survived her by 12+ years. Not found on free Morti film — likely died 1929+ (under 100-year embargo at comune).',
       nextSteps: [
-        'Search Fiumefreddo Morti 1911–1928 (film 2278546 / DGS 7851868) for Sebastiano and Rosaria. Window opens Nov 1911. Mind missing 1912.',
+        'Await comune reply for Sebastiano\'s death date or annotazione on birth act.',
         'Search for Leonarda Patanè (b. 1877) — the only child without a documented marriage.',
-        'Search Fiumefreddo Morti for Mariano Patanè (pre-1876) — Generation -2 parents.',
-        'Search Fiumefreddo Morti for Salvatore D\'Agata and Venera Maccarrone.',
         'Borbonic dig for Generation -2 (pre-1866 Fiumefreddo) waits behind the Morti hunt.'
       ]
     }
@@ -1585,7 +1585,7 @@ export const initialPeople: Person[] = [
     gender: 'F',
     birthDate: '20 April 1855',
     birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
-    deathDate: 'Unknown',
+    deathDate: '3 March 1916',
     spouses: ['sebastiano-patane-sr'],
     parents: ['salvatore-dagata', 'venera-maccarrone'],
     children: ['leonarda-patane-fiumefreddo', 'venera-patane-infant', 'mariano-patane-jr', 'salvatore-patane-fiumefreddo', 'venera-patane-sibling', 'giuseppe-patane-sibling', 'rosario-patane-sr', 'venera-patane-pagano'],
@@ -1595,20 +1595,19 @@ export const initialPeople: Person[] = [
       'Marriage: 3 May 1876, Fiumefreddo atto 5. Age 21, industriosa. First child born 13 months later.',
       'Naming conventions confirmed: Leonarda (paternal grandmother), Venera I (maternal grandmother), Mariano (paternal grandfather), Salvatore (maternal grandfather), Venera II (reuse after Venera I\'s infant death — died age 3, 1889), Giuseppe (unknown — possibly paternal great-grandfather), Rosario (unknown), Venera III (reuse again after Venera II\'s death — the survivor who married Pagano 1911).',
       'Both parents alive and physically present at three weddings in 1911 (Giuseppe Feb, Rosario Apr, Venera III Sep), giving consent each time. LAST DOCUMENTED LIVING APPEARANCE: 8 October 1911, at Venera III\'s wedding in Fiumefreddo.',
+      'DEATH ACT FOUND: Fiumefreddo Morti 1916, atto n. 11 (DGS 7851868). Died 3 March 1916. Age ~60. Death act names parents: Salvatore D\'Agata and Venera Maccarrone — first documentary confirmation of Generation -2 from the death side.',
       'Her great-granddaughter Rosaria Patanè Emmi (1924-1994) carries the name four generations.',
       'Also "Ignazia D\'Agata" on Venera\'s 1911 banns (scribal variation).',
       'Probable brother: Giovanni D\'Agata (b. ~1840, contadino, literate) — named son Salvatore 1879 (atto 107).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '20 Apr 1855, Fiumefreddo — atto n. 28 (Nati 1855). Declared by midwife Rosaria Nicotra. Parents: Salvatore D\'Agata (38, bracciante) + Venera Maccarrone (37). Baptised 21 Apr 1855. Full copy in allegati fasc. 5/1876.' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
+      { type: 'Death Record', status: 'Found', notes: '3 Mar 1916, Fiumefreddo — atto n. 11, Morti 1916 (DGS 7851868). Parents named: Salvatore D\'Agata + Venera Maccarrone (Generation -2 confirmed).' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Parents and marriage confirmed. Mother of 8 known children (4 Fiumefreddo, 3 Calatabiano). Born Fiumefreddo 20 Apr 1855, daughter of Salvatore D\'Agata + Venera Maccarrone. Last documented alive 8 Oct 1911.',
-      nextSteps: [
-        'Search Fiumefreddo Morti 1911–1928 (film 2278546 / DGS 7851868) for Rosaria\'s death. Window opens Nov 1911. Indexed under D\'Agata (maiden name).',
-      ]
+      details: 'Birth, marriage, and death all confirmed. Parents: Salvatore D\'Agata + Venera Maccarrone (confirmed from both birth and death acts). Mother of 8 children. Died 3 Mar 1916, age ~60.',
+      nextSteps: []
     }
   },
   // --- ROSARIA'S PROBABLE BROTHER: Giovanni D'Agata ---
@@ -1764,7 +1763,7 @@ export const initialPeople: Person[] = [
     gender: 'F',
     birthDate: 'Unknown — likely ~1850s',
     birthPlace: 'Fiumefreddo di Sicilia, Province of Catania, Sicily, Italy',
-    deathDate: 'Unknown',
+    deathDate: '17 February 1919',
     spouses: ['alfio-vecchio-sibling'],
     parents: ['mariano-patane', 'leonarda-buonaventura'],
     children: [],
@@ -1774,15 +1773,16 @@ export const initialPeople: Person[] = [
       'Originally identified in Fiumefreddo Pubblicazioni Dec 1880: marriage banns of Alfio Vecchio (24, bracciante, born Fiumefreddo, son of Sebastiano Vecchio and Sebastiana Panebianco) × Giuseppa Patanè (daughter of fu Mariano and Leonarda Bonaventura).',
       'Links the Patanè and Vecchio families two generations before Rosario Patanè married Venera Vecchio in 1911.',
       'Husband Alfio Vecchio (b. ~1856) is NOT the same as Don Alfio Vecchio (b. ~1843, Riposto, civile) who married Teresa Pianella in 1877 — different birth year, birthplace, class, and parents entirely.',
+      'DEATH ACT FOUND: Fiumefreddo Morti 1919, atto n. 8 (DGS 7851868). Died 17 February 1919.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located — search Fiumefreddo Nati' },
       { type: 'Marriage Record', status: 'Found', notes: 'Dec 1880, Fiumefreddo — pubblicazioni. Groom: Alfio Vecchio (24, bracciante, son of Sebastiano Vecchio + Sebastiana Panebianco).' },
-      { type: 'Death Record', status: 'Not Found', notes: 'No records found' },
+      { type: 'Death Record', status: 'Found', notes: '17 Feb 1919, Fiumefreddo — atto n. 8, Morti 1919 (DGS 7851868).' },
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Confirmed as sister of Sebastiano Patanè via Fiumefreddo pubblicazioni Dec 1880. Patanè-Vecchio connection now traced two generations deep.',
+      details: 'Confirmed as sister of Sebastiano Patanè via pubblicazioni Dec 1880. Marriage and death confirmed. Died 17 Feb 1919. Patanè-Vecchio connection traced two generations deep.',
     }
   },
   {
@@ -2733,9 +2733,9 @@ export const initialResearchLeads: ResearchLead[] = [
     id: 'lead-morti-patane-dagata',
     title: 'Morti Hunt: Sebastiano Patanè & Rosaria D\'Agata Deaths',
     category: 'Emmi/Patanè',
-    status: 'To Investigate',
-    description: 'Both confirmed alive at Venera III\'s wedding on 8 Oct 1911 (Sebastiano ~61, Rosaria ~56). Death search window opens November 1911. Film: DGS 7851868 (film 2278546) — Morti 1911, 1913–1928 (1912 missing from film). Sebastiano would be ~79 by 1928, Rosaria ~73 — decent odds both fall inside the free film.',
-    nextSteps: 'Year-end indice annuale of each Morti register in sequence: 1911 rump first (Oct–Dec, quick check), then 1913, 1914, onward. Under P for Patanè Sebastiano, under D for D\'Agata Rosaria (women indexed under maiden surname). Verify: age consistent, and death act should name parents — Sebastiano: fu Mariano e fu Leonarda Buonaventura; Rosaria: Salvatore D\'Agata e Venera Maccarrone. If sweep is clean, 1912 becomes the prime suspect, with Annotazioni film (DGS 7069729) or comune request as fallback.',
+    status: 'Completed',
+    description: 'Rosaria D\'Agata found — Morti 1916, atto 11 (DGS 7851868), died 3 Mar 1916. Parents named: Salvatore D\'Agata + Venera Maccarrone (Generation -2 confirmed from the death side). Sebastiano NOT found on the free film (DGS 7851868 covers Morti 1911, 1913–1928). Last confirmed alive 21 Nov 1928 (domiciliato in Fiumefreddo per atto 60 — son Mariano\'s death act). Likely died 1929+, under 100-year embargo at comune. Comune email sent requesting death date or annotazione di morte on birth act (atto 15/1850).',
+    nextSteps: 'Await comune reply. The annotazione di morte on his birth act covers all scenarios (died in Fiumefreddo, died elsewhere and transcribed, or moved late in life).',
   },
   {
     id: 'lead-vincenzo-vecchio-marriage',
@@ -2823,7 +2823,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'When and where did Rosario Patanè & Venera Vecchio marry, and who were their parents?',
     category: 'Emmi/Patanè',
     status: 'Resolved',
-    notes: 'RESOLVED 28 Jun 2026: Married 24 Apr 1911 at Parrocchia Maria SS.ma Immacolata, Fiumefreddo (Liber Matrimoniorum N.18). Parents: Rosario = Sebastiano Patanè & Rosaria D\'Agata; Venera = Vincenzo Vecchio & Rosaria Raciti. Baptism certificate in processetti also confirmed Rosario born 9 Feb 1889 in Calatabiano. Giuseppe Patanè (married Sebastiana Cogliandolo 20 Feb 1911) shares the same parents — likely Rosario\'s brother.'
+    notes: 'RESOLVED 28 Jun 2026: Married 24 Apr 1911 at Parrocchia Maria SS.ma Immacolata, Fiumefreddo (Liber Matrimoniorum N.18). Parents: Rosario = Sebastiano Patanè & Rosaria D\'Agata; Venera = Vincenzo Vecchio & Rosaria Raiti (corrected from Raciti). Baptism certificate in processetti also confirmed Rosario born 9 Feb 1889 in Calatabiano. Giuseppe Patanè (married Sebastiana Gugliandolo 19 Feb 1911) shares the same parents — Rosario\'s brother.'
   },
   {
     id: 'q-venera-birth',
@@ -2850,8 +2850,8 @@ export const initialOpenQuestions: OpenQuestion[] = [
     id: 'q-sebastiano-rosaria-deaths',
     question: 'When and where did Sebastiano Patanè (b. ~1850) and Rosaria D\'Agata (b. ~1855) die?',
     category: 'Emmi/Patanè',
-    status: 'Pending',
-    notes: 'Both confirmed alive at Venera III\'s wedding, 8 Oct 1911 (Sebastiano ~61, Rosaria ~56). Death search window: November 1911 onward, Fiumefreddo Morti 1911–1928 (film 2278546 / DGS 7851868, 1912 missing). Expected parent names on death acts would be Generation -2 confirmation: for Sebastiano fu Mariano e fu Leonarda Buonaventura; for Rosaria Salvatore D\'Agata e Venera Maccarrone. Annotazioni film (DGS 7069729) or comune request as fallback if not on the film.'
+    status: 'In Progress',
+    notes: 'PARTIALLY RESOLVED 20 Jul 2026: Rosaria D\'Agata found — Morti 1916, atto 11 (DGS 7851868), died 3 Mar 1916. Parents confirmed: Salvatore D\'Agata + Venera Maccarrone (Generation -2). Sebastiano NOT found on free film (DGS 7851868, Morti 1911–1928). Last alive 21 Nov 1928 (domiciliato per atto 60 — son Mariano\'s death act). Likely died 1929+, under comune embargo. Comune email sent (annotazione on birth act atto 15/1850 covers all scenarios).'
   },
   {
     id: 'q-vincenzo-vecchio-parents',
