@@ -893,14 +893,17 @@ export const initialPeople: Person[] = [
       { type: 'Baptism Record', status: 'Found', notes: '8 Jan 1888, Fiumefreddo. Baptized same day by Rev. Nicola Sgarlata. Godparents: Alfio Musumeci Casalino & Maria Raciti. Midwife: Concetta Marano. Full name: Veneranda. Entry n. 8, folio 240.' },
       { type: 'Marriage Record (Civil)', status: 'Found', notes: 'Atto 12, 23 Apr 1911, Fiumefreddo Matrimoni 1911 Parte I. Groom: Rosario Patanè (22, bracciante, born Calatabiano). Bride: Venera Vecchio (23, casalinga, born Fiumefreddo). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti (casalinga) — bride\'s parents; Sebastiano Patanè (61, bracciante) & Rosaria D\'Agata (casalinga) — groom\'s parents. Witnesses: Giuseppe Cardone (27, calzolaio), Rosario Pagano (23, bracciante). Officer: Luigi Continella.' },
       { type: 'Marriage Record (Church)', status: 'Found', notes: '24 Apr 1911, Fiumefreddo. Liber Matrimoniorum N.18. Witnesses: Ascenzio Giuliano & Rosario Pagano. Celebrated by Fr. Eutichio Scarcella.' },
-      { type: 'Death Record', status: 'Found', notes: 'Pre-1953 — recorded as "fu Venera" on 1953 photo-identity cert' }
+      { type: 'Death Record', status: 'Searching', notes: 'Death window: 1930–1953 (absent from Morti 1911–1929; "fu Venera" on 1953 cert confirms deceased by 1953). Under 100-year embargo. QLD BDM search needed if she emigrated.' }
     ],
     researchStatus: {
       status: 'Confirmed',
       details: 'Baptism found 28 Jun 2026 (Fiumefreddo Battesimi 1762-1904, fol. 240 n. 8). Civil birth found: atto 6, 6 Jan 1888 (Fiumefreddo Nati 1888, DGS 7836468). Marriage act found: atto 12, 23 Apr 1911 (Fiumefreddo Matrimoni 1911). Parents: Vincenzo Vecchio (47, bracciante) & Rosaria Raiti. Mother\'s surname corrected from Raciti to Raiti per two independent 1911 acts. Death pre-1953.',
       nextSteps: [
         'Search Fiumefreddo Nati ~1886–1887 indices for possible elder siblings (Sebastiana or Sebastiano Vecchio — naming-convention hypothesis).',
-        'Death: pre-1953 (fu Venera on 1953 cert). Ask Connie Emmi whether Venera came to Australia or died in Sicily.',
+        'Death window: 1930–1953 (absent from Fiumefreddo Morti through 1929; "fu Venera" on 1953 cert). Every year under 100-year embargo — no film will show it. Two scenarios: died in Fiumefreddo 1930–1953 (comune territory) or followed Rosario to Australia and died there pre-1953 (QLD BDM, free index).',
+        'QLD BDM historical index search (free, online): Deaths — surname Patane/Patanè, given Venera/Veneranda, ~1930–1953; also try maiden Vecchio.',
+        'Ask Connie Emmi: did Venera ever leave Sicily? What was the 1953 certificate for and whose? (Smells like paperwork for someone\'s emigration — possibly Rosaria and Gregorio\'s, or Sebastiano\'s.)',
+        'Ryerson + Trove: Patane, Ingham QLD — funeral notices for the whole family cluster.',
         'Investigate connection to Leonardo Vecchio (co-signer of Rosaria\'s accommodation guarantee in Ingham).',
       ]
     },
@@ -2909,6 +2912,14 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'To Investigate',
     description: 'Both alive 23 Apr 1911 (daughter Venera\'s marriage). Absent from Fiumefreddo Morti 1911–1929 → died 1930+ or elsewhere. Same pattern as Sebastiano Patanè (under 100-year comune embargo).',
     nextSteps: 'Comune email can cover both: request death dates/annotations for Vincenzo Vecchio (b. ~1864) and Rosaria Raiti (b. ~1863–64). Also check Emmi × Patanè 1948 marriage act — Venera\'s fu/living status may reveal parents\' death dates.',
+  },
+  {
+    id: 'lead-venera-qlb-bdm',
+    title: 'Venera Vecchio: QLD BDM Death Index Search',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Venera Vecchio\'s death window is 1930–1953 (absent from Fiumefreddo Morti through 1929; "fu Venera" on 1953 cert). If she followed Rosario to Queensland, her death could be in QLD BDM — free and searchable online for deaths 30+ years past. No embargo, no comune, no film. Same approach covers Rosario Patanè\'s death if pre-~1994.',
+    nextSteps: 'QLD BDM historical index search (free, online): Deaths — surname Patane/Patanè, given Venera/Veneranda, ~1930–1953; also try maiden Vecchio. Same index: Rosario Patanè death. Ryerson Index: Patane, Ingham QLD — funeral notices. Trove: "Patane Ingham" — Italian-community and cane-district papers. NAA RecordSearch: confirm whose file A446, 1967/39646 actually is (search "Patane Rosario" and "Emmi") — if Rosario\'s, it will state arrival date and whether wife accompanied.',
   }
 ];
 
