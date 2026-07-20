@@ -24,8 +24,8 @@ export const initialPeople: Person[] = [
       'Birth date confirmed 18 Mar 1888 via foglio famiglia N. 1527 (Registro di Popolazione, Comune di Ascoli Piceno) and cartellino individuale — received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 17 Jul 2026.',
       'Foglio famiglia N. 1527 shows Alfredo in his grandparents\' household (head: Lenzi Antonia, widow of Buatti Emidio). Parents: Giovanni Buatti (muratore) + Emidia Bruni.',
       'Giovanni\'s later residence noted as Roma — the family may have relocated for work.',
-      'Aunt Ida Buatti (b. 20 Mar 1886) — potential source of confusion with his wife Ida Galanti in future records.',
-      'Siblings: Attilio (1885), Ida (1886), Adolfo (1887), Sperandia (1889), Antonio (1894), Elisa (1899). Two infant deaths: Elisa (1883–1884) and Arturo (1892).',
+      'Aunt Ida Buatti (b. ~Mar 1886) — lettura incerta on foglio (could read Ida or Lela). Potential source of confusion with his wife Ida Galanti in future records.',
+      'Siblings: Attilio (5 Jan 1885), Ida/Lela (~Mar 1886, lettura incerta), Adolfo (26 Feb 1887), Sperandia (27 Mar 1889), Antonio (24 Feb 1894), Elvira (30 Jul 1899). Two infant deaths: Elisa (13 Apr 1883–21 Jul 1884) and Arturo (2 Jan 1892–11 Oct 1892).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '18 Mar 1888 — foglio famiglia N. 1527 + cartellino individuale (Archivio di Stato di Ascoli Piceno, 17 Jul 2026). Links: foglio https://antenati.cultura.gov.it/ark:/12657/an_ua8378/oLplvkL cartellino https://antenati.cultura.gov.it/ark:/12657/an_ua8562/5gKpOz5' },
@@ -132,7 +132,7 @@ export const initialPeople: Person[] = [
       'Son of Emidio Buatti and Antonia Lenzi. Married Emidia Bruni.',
       'Occupation originally listed as "domestico," corrected to "muratore" on the foglio famiglia.',
       'Later residence noted as Roma — suggests the family relocated for work.',
-      'Children: Elisa (1883–1884), Attilio (1885), Ida (1886), Adolfo (1887), Alfredo (1888), Sperandia (1889), Arturo (1892), Antonio (1894), Elisa (1899).',
+      'Children: Rosa (1846), Rita (1850), Giovanni (1852) from Emidio & Antonia; then by Giovanni & Emidia: Elisa (1883–1884), Attilio (1885), Ida (1886, lettura incerta — could read Lela), Adolfo (1887), Alfredo (1888), Sperandia (1889), Arturo (1892), Antonio (1894), Elvira (1899).',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '25 Jun 1852, Ascoli Piceno (Duomo parish) — per foglio famiglia N. 1527' },
@@ -152,19 +152,20 @@ export const initialPeople: Person[] = [
     generation: 0,
     line: 'Buatti',
     gender: 'F',
-    birthDate: '28 November 1857',
+    birthDate: '26 November 1857',
     birthPlace: 'Ascoli Piceno, S. Vittore parish',
     deathDate: 'Unknown',
     spouses: ['giovanni-buatti'],
-    parents: ['antonio-bruni', 'sperandia-pasqualini'],
+    parents: ['achille-bruni', 'sperandia-sagretani'],
     children: ['alfredo-buatti-sr'],
     notes: [
       'CONFIRMED 17 Jul 2026 via foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno, Alessandra Buondi).',
-      'Wife of Giovanni Buatti. Daughter of Antonio Bruni and Sperandia Pasqualini.',
-      'Mother of Alfredo Buatti (b. 18 Mar 1888) and his eight siblings.',
+      'Wife of Giovanni Buatti. Daughter of Achille Bruni and Sperandia Sagretani (lettura incerta on mother\'s maiden name — may read Sagretani or similar).',
+      'Mother of Alfredo Buatti (b. 18 Mar 1888) and his siblings.',
+      'Born 26 Nov 1857 in S. Vittore parish, Ascoli Piceno.',
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '28 Nov 1857, Ascoli Piceno (S. Vittore parish) — per foglio famiglia N. 1527' },
+      { type: 'Birth Record', status: 'Found', notes: '26 Nov 1857, Ascoli Piceno (S. Vittore parish) — per foglio famiglia N. 1527' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ,
       { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
@@ -172,7 +173,7 @@ export const initialPeople: Person[] = [
       { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Identified via foglio famiglia N. 1527 (17 Jul 2026). Daughter of Antonio Bruni + Sperandia Pasqualini.',
+      details: 'Identified via foglio famiglia N. 1527 (17 Jul 2026). Daughter of Achille Bruni + Sperandia Sagretani (lettura incerta).',
     }
   },
 
@@ -480,59 +481,52 @@ export const initialPeople: Person[] = [
     }
   },
   {
-    id: 'antonio-bruni',
-    name: 'Antonio Bruni',
+    id: 'achille-bruni',
+    name: 'Achille Bruni',
     generation: -2,
     line: 'Buatti',
     gender: 'M',
     birthDate: 'Unknown',
     birthPlace: 'Likely Ascoli Piceno area',
     deathDate: 'Unknown',
-    spouses: ['sperandia-pasqualini'],
+    spouses: ['sperandia-sagretani'],
     parents: [],
     children: ['emidia-bruni'],
     notes: [
-      'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): father of Emidia Bruni.',
+      'Father of Emidia Bruni per foglio famiglia N. 1527 (Archivio di Stato di Ascoli Piceno, 17 Jul 2026).',
+      'Name from foglio: "Bruni Emidia di Achille e Sperandia Sag[retani?]".',
     ],
-
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
       { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
-      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
-      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Father of Emidia Bruni. All details unknown.',
+      details: 'Father of Emidia Bruni per foglio famiglia N. 1527. All other details unknown.',
     }
   },
   {
-    id: 'sperandia-pasqualini',
-    name: 'Sperandia Pasqualini',
+    id: 'sperandia-sagretani',
+    name: 'Sperandia Sagretani',
     generation: -2,
     line: 'Buatti',
     gender: 'F',
     birthDate: 'Unknown',
     birthPlace: 'Unknown',
     deathDate: 'Unknown',
-    spouses: ['antonio-bruni'],
+    spouses: ['achille-bruni'],
     parents: [],
     children: ['emidia-bruni'],
     notes: [
-      'CONFIRMED via foglio famiglia N. 1527 (17 Jul 2026): mother of Emidia Bruni, wife of Antonio Bruni.',
+      'Mother of Emidia Bruni per foglio famiglia N. 1527. Maiden name from foglio: "Sperandia Sag[retani?]" — lettura incerta, may read differently.',
     ],
-
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Not yet located' },
       { type: 'Death Record', status: 'Not Found', notes: 'Not yet located' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'Not yet located' },
-      { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
-      { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Mother of Emidia Bruni. All details unknown.',
+      details: 'Mother of Emidia Bruni per foglio famiglia N. 1527. Maiden name lettura incerta.',
     }
   },
 
@@ -2744,6 +2738,23 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'To Investigate',
     description: 'Vincenzo Vecchio (b. ~1863–64, bracciante, Fiumefreddo) married Rosaria Raiti. Their daughter Venera was born ~1887–88, so the marriage falls ~1884–1887. Film: Fiumefreddo Matrimoni 1866–1893 (DGS 7841136). This single act names both spouses\' parents — opening the entire Vecchio-side generation. Companion allegati films: DGS 7841152 (1868–1883/1885) and DGS 7841153 (1886–1893) may contain both their birth extracts.',
     nextSteps: 'Browse DGS 7841136 for Matrimoni ~1884–1887, looking for Vincenzo Vecchio + Rosaria Raiti. Check allegati films if marriage falls in covered year.',
+  },
+  {
+    id: 'lead-antenati-anagrafe-buatti',
+    title: 'Antenati Anagrafe Archivio 189: Cartellini + Fogli Search',
+    category: 'Buatti/Chiappini',
+    status: 'To Investigate',
+    description: 'Ascoli Piceno anagrafe storica (archivio 189) on Antenati has both fogli di famiglia (household sheets) and cartellini individuali (alphabetical cards). Alfredo Buatti\'s cartellino (an_ua8562/5gKpOz5) cross-references foglio 1527. The next target: find Galanti Ida card(s) in the cartellini series — look for marriage annotation to Buatti or matching foglio number. Also search for Buatti Ezio cartellino. If a post-marriage foglio number is found, navigate to that sheet for the full marital household (Ida as moglie, Ezio and siblings).',
+    nextSteps: 'Open cartellini register (parent of an_ua8562) → page from Buatti Alfredo → screenshot any Buatti Ezio / other Buatti cards. Jump to G → find Galanti Ida card(s) → screenshot both if two exist. Decision: card with Buatti marriage annotation / matching foglio number = our Ida. Also watch for "Ida Buatti" (Alfredo\'s sister, b. ~1886) to avoid confusion.',
+    sources: ['https://antenati.cultura.gov.it/ark:/12657/an_ua8562/5gKpOz5 (cartellino)', 'https://antenati.cultura.gov.it/ark:/12657/an_ua8378/oLplvkL (foglio 1527)'],
+  },
+  {
+    id: 'lead-ida-1893-vs-1904-comune',
+    title: 'Ida Galanti: 1893 vs 1904 — Emails in Flight',
+    category: 'Buatti/Chiappini',
+    status: 'In Progress',
+    description: 'Two emails sent 18 Jul 2026 to resolve the Ida Galanti question: (1) Comune di Ascoli Piceno — Ezio\'s copia integrale di nascita (Ida\'s age at his birth settles 1893 vs 1904); (2) Tribunale di Ascoli Piceno — Alfredo\'s marriage act + allegati. Plus marriage cert request via protocol 0062771 (Sergio De Angelis).',
+    nextSteps: 'Await replies from Comune AP, Tribunale AP, and Anagrafe. Also search Antenati anagrafe cartellini for Galanti Ida card.',
   }
 ];
 
@@ -2753,21 +2764,21 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'Who are the parents of Alfredo Buatti (Sr.)?',
     category: 'Buatti/Chiappini',
     status: 'Resolved',
-    notes: 'RESOLVED 17 Jul 2026: Parents = Giovanni Buatti (b. 25 Jun 1852) + Emidia Bruni (b. 28 Nov 1857), per foglio famiglia N. 1527. Grandparents = Emidio Buatti + Antonia Lenzi (Rotella).'
+    notes: 'RESOLVED 17 Jul 2026: Parents = Giovanni Buatti (b. 25 Jun 1852) + Emidia Bruni (b. 26 Nov 1857), per foglio famiglia N. 1527. Grandparents = Emidio Buatti + Antonia Lenzi (Rotella). Great-grandparents: Achille Bruni × Sperandia Sagretani (lettura incerta).'
   },
   {
     id: 'q-ida-galanti-parents',
     question: 'Which Ida Galanti (1893 vs 1904) married Alfredo Buatti?',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti) still unchecked. Antenati dead end for 1919-1923 records. New strategy: (1) Comune birth act request for Ezio (copia integrale gives Ida\'s age), (2) FamilySearch catalog for Ascoli Piceno Matrimoni 1919-1923.'
+    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti) also checked. NEW STRATEGY (20 Jul 2026): Search Antenati anagrafe archivio 189 cartellini series — find Galanti Ida card(s), check for marriage annotation to Buatti and/or matching foglio number. Also search for Buatti Ezio cartellino. Foglio 1527 shows possible "Ida Buatti" (b. ~1886, lettura incerta) as Alfredo\'s sister — don\'t confuse with Ida Galanti under married-name filing. Two emails in flight: Ezio\'s birth act (Comune AP) + marriage act (Tribunale AP).'
   },
   {
     id: 'q-ezio-birth',
     question: 'Where is Ezio Buatti\'s birth record (27 Apr 1923)?',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    notes: 'Ascoli Piceno civil registry digitised only to 1919 on Antenati. 100-year embargo lifted 2023. Strategy shift: request copia integrale directly from Comune (single specific act, not research — no fee). Ezio\'s birth record will name mother Ida Galanti with her age — settles 1893 vs 1904 in one document.'
+    notes: 'Ascoli Piceno civil registry digitised only to 1919 on Antenati. 100-year embargo lifted 2023. Two emails in flight: (1) Comune AP — Ezio\'s copia integrale (sent 18 Jul 2026, protocollo@comune.ap.it); (2) Tribunale AP — marriage act + allegati (sent 18 Jul 2026). Fallback: Antenati anagrafe archivio 189 cartellini — search for Buatti Ezio card. Also search Galanti Ida cards for marriage annotation.'
   },
   {
     id: 'q-bruna-birth',
