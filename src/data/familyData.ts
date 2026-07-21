@@ -87,12 +87,12 @@ export const initialPeople: Person[] = [
       { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress — Marriage Cert Requested',
-      details: '1893 Ida confirmed as real person (foglio 5120): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Right-hand columns visible but BLANK — no marriage annotation. Register closed ~1901 (last entries: Ersilia b. 1901, Annibale departed for Folignano 1901). At Ezio\'s birth (1923) she\'d be 30 — sensible. 1904 Ida (f. 5545, d/o Ignazio Galanti the barber + Clementina Curcozzi) also documented — both candidates still alive. Two emails sent 18 Jul 2026: (1) Comune AP — Ezio\'s copia integrale di nascita; (2) Tribunale AP — marriage act + allegati. Tiebreaker now depends on correspondence.',
+      details: '1893 Ida confirmed as real person (foglio 5120): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Right-hand columns visible but BLANK — no marriage annotation. Register closed ~1901. 1904 Ida (f. 5545, d/o Ignazio Galanti the barber + Clementina Curcozzi) also documented. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati confirms Ignazio + Clementina as a real couple with children — first hard evidence beyond the single birth entry. Makes 1904 candidate more credible. Tiebreaker still awaits marriage cert.',
       nextSteps: [
-        'Await Comune AP reply for Ezio\'s birth act (sent 18 Jul 2026 to protocollo@comune.ap.it). Ida\'s age at his birth settles 1893 vs 1904.',
-        'Await Tribunale AP reply for marriage act + allegati (sent 18 Jul 2026 to cancelleria.civile.tribunale.ascolipiceno@giustizia.it).',
-        'Await marriage cert reply from Comune (protocol 0062771 — Sergio De Angelis).',
-        'Check FamilySearch Catalog for Ascoli Piceno Matrimoni 1919–1923 and Nati 1923.'
+        'Await Comune AP reply for Ezio\'s birth act (sent 18 Jul 2026). Ida\'s age at his birth settles 1893 vs 1904.',
+        'Await Tribunale AP reply for marriage act + allegati (sent 18 Jul 2026).',
+        'Await marriage cert reply from Comune (protocol 0062771).',
+        'Check remaining Morti allegati divisions (5-Div 1, 5-Div 2, 6-Div 1) for any other Galanti siblings — clustering common in war-dead lists.',
       ]
     },
     sources: [
@@ -258,7 +258,7 @@ export const initialPeople: Person[] = [
       'Son of a large landowning family from Lisciano (hill frazione of Ascoli Piceno).',
       'Father Domenico was a widower of Feliciani Angela Maria. Antonio\'s brothers: Annibale (b. 1855, moved to Folignano 1901) and Ottavio (b. 1863).',
       'Siblings with Ida on foglio 5120: Tito (b. 18 Nov 1891), Emidia (b. 3 Aug 1894), Linda (b. 18 Aug 1897), Ersilia (b. 16 Jun 1901).',
-      'IMPORTANT: Marriage to Alfredo Buatti unconfirmed. 1904 Ida candidate (d/o Ignazio Galanti + Clementina Curcozzi, foglio 5545, Registro 59) also checked — both candidates unconfirmed. Two emails in flight: Ezio\'s birth act (Comune AP) + marriage act/allegati (Tribunale AP).',
+      'IMPORTANT: Marriage to Alfredo Buatti unconfirmed. 1904 Ida candidate (d/o Ignazio Galanti + Clementina Curcozzi, foglio 5545, Registro 59) also checked — both candidates unconfirmed. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati (an_ua8575, 6-Div 2) — fu Ignazio Galanti, mother Clementina Curcozzi. First hard evidence that Ignazio + Clementina were a real couple with children in Ascoli Piceno. Makes 1904 Ida candidate more credible (second confirmed child of same parents). Alessandro born ~1895 (dates disagree between documents: 13 Jul vs 8 Nov 1895). Still awaiting marriage cert tiebreaker.',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '29 Oct 1857, Lisciano — per foglio famiglia 5120' },
@@ -302,7 +302,58 @@ export const initialPeople: Person[] = [
       details: 'Confirmed mother of Ida Galanti (b. 1893). From Maltignano. Marriage connection to Alfredo Buatti unconfirmed.',
     }
   },
-
+  // --- 1904 Ida Candidate's Parents (unconfirmed — awaiting marriage cert tiebreaker) ---
+  {
+    id: 'ignazio-galanti',
+    name: 'Ignazio Galanti',
+    generation: -1,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: 'Unknown',
+    birthPlace: 'Ascoli Piceno (assumed)',
+    occupations: ['Barber (barbiere)'],
+    deathDate: 'Unknown',
+    spouses: ['clementina-curcozzi'],
+    parents: [],
+    children: ['ida-galanti-1904-candidate', 'galanti-alessandro'],
+    notes: [
+      'Father of 1904 Ida Galanti candidate (foglio 5545, Registro 59, Ascoli Piceno). Occupation: barber.',
+      'BREAKTHROUGH (22 Jul 2026): Confirmed as real person via WWI Morti allegati — son Galanti Alessandro (fu Ignazio) died 16 Oct 1917. First hard evidence beyond single birth entry that Ignazio + Clementina were a real couple with children in Ascoli Piceno.',
+      'PENDING: 1904 Ida candidate is NOT confirmed as Alfredo\'s wife — marriage cert tiebreaker still awaited.',
+    ],
+    records: [
+      { type: 'Population Register', status: 'Found (indirect)', notes: 'Named in son Alessandro\'s WWI death record (an_ua8575, 6-Div 2) and in foglio 5545 as father of Ida (b. 1904).' },
+    ],
+    researchStatus: {
+      status: 'Confirmed (indirect)',
+      details: 'Named in son Alessandro\'s WWI death record and foglio 5545. Barber. Father of Ida Galanti (1904 candidate) and Alessandro (b. ~1895, d. 1917).',
+      nextSteps: ['Marriage cert tiebreaker will confirm or rule out as Ida\'s father.']
+    }
+  },
+  {
+    id: 'clementina-curcozzi',
+    name: 'Clementina Curcozzi',
+    generation: -1,
+    line: 'Buatti',
+    gender: 'F',
+    birthDate: 'Unknown',
+    birthPlace: 'Unknown',
+    deathDate: 'Unknown',
+    spouses: ['ignazio-galanti'],
+    parents: [],
+    children: ['ida-galanti-1904-candidate', 'galanti-alessandro'],
+    notes: [
+      'Mother of 1904 Ida Galanti candidate (foglio 5545). Surname spelled variously: Curcozzi, Curiozzi, Furcozzi across documents — all clearly the same name.',
+      'BREAKTHROUGH (22 Jul 2026): Confirmed as real person via WWI Morti allegati — recorded as mother of Galanti Alessandro (d. 1917). First hard evidence beyond single birth entry.',
+    ],
+    records: [
+      { type: 'Population Register', status: 'Found (indirect)', notes: 'Named in son Alessandro\'s WWI death record (an_ua8575, 6-Div 2) as "Clementina" with surname variant Curcozzi/Curiozzi/Furcozzi.' },
+    ],
+    researchStatus: {
+      status: 'Confirmed (indirect)',
+      details: 'Named in son Alessandro\'s WWI death record and foglio 5545. Mother of Ida Galanti (1904 candidate) and Alessandro.',
+    }
+  },
   // --- GENERATION -2: Great-Great-Great-Great-Grandparents (Buatti/Galanti/Bruni/Lenzi/Rosati Lines) ---
   {
     id: 'domenico-galanti',
@@ -1299,6 +1350,39 @@ export const initialPeople: Person[] = [
     researchStatus: {
       status: 'Ruled Out',
       details: 'Birth record confirmed. Salvatore\'s birth act (atto 93/1875 Calatabiano) names parents Antonino Patanè + Maria Catena Panessi — separate Patanè line from Rosario\'s family.',
+    }
+  },
+  // --- 1904 Ida Candidate's Siblings (unconfirmed — awaiting marriage cert tiebreaker) ---
+  {
+    id: 'galanti-alessandro',
+    name: 'Alessandro Galanti',
+    generation: 0,
+    line: 'Buatti',
+    gender: 'M',
+    birthDate: '~1895 (13 Jul vs 8 Nov — document disagreement; trust official stato civile extract)',
+    birthPlace: 'Ascoli Piceno',
+    deathDate: '16 October 1917',
+    deathPlace: 'Hospital in Cividale, Italy',
+    deathCause: 'Septic gangrene in both legs',
+    occupations: ['Soldier, 238° Reggimento Fanteria, 10ª Compagnia'],
+    spouses: [],
+    parents: ['ignazio-galanti', 'clementina-curcozzi'],
+    children: [],
+    notes: [
+      'BREAKTHROUGH (22 Jul 2026): First hard evidence that Ignazio Galanti + Clementina Curcozzi were a real couple with children in Ascoli Piceno — makes 1904 Ida candidate more credible.',
+      'WWI Morti allegati (an_ua8575, 6-Div 2): fu Ignazio Galanti, mother Clementina Curcozzi. Soldier, 238° Reggimento Fanteria, 10ª Compagnia. Died 16 Oct 1917 at hospital in Cividale from septic gangrene. Remains repatriated to Ascoli Piceno 28 Jul 1923.',
+      'Official birth certificate extract confirms: son of Ignazio + Curcozzi Clementina, born Ascoli Piceno.',
+      'Two documents disagree on birth date: handwritten allegato says 13 Jul 1895, official certificate says 8 Nov 1895. Both agree on year.',
+      'PENDING: Brother of 1904 Ida Galanti candidate — NOT confirmed as Alfredo\'s wife\'s brother yet.',
+    ],
+    records: [
+      { type: 'Death Record (WWI)', status: 'Found', notes: '16 Oct 1917, Cividale. Morti allegati, an_ua8575 (6-Div 2). Soldier, 238° Rgt Fanteria, 10ª Compagnia. Septic gangrene. Remains repatriated 28 Jul 1923.' },
+      { type: 'Birth Record', status: 'Found (extract)', notes: '~1895, Ascoli Piceno. Official certificate extract: son of Ignazio + Curcozzi Clementina.' },
+    ],
+    researchStatus: {
+      status: 'Confirmed',
+      details: 'WWI death record and birth certificate extract confirm identity. Son of Ignazio Galanti + Clementina Curcozzi.',
+      nextSteps: ['Check remaining Morti allegati divisions for more Galanti siblings.']
     }
   },
 
@@ -2932,11 +3016,11 @@ export const initialResearchLeads: ResearchLead[] = [
   },
   {
     id: 'lead-galanti-wwi-checked',
-    title: 'Galanti WWI Casualties: Checked, Not Matches for Ida',
+    title: 'Galanti WWI Casualties: Alessandro Confirmed as 1904 Ida\'s Brother',
     category: 'Buatti/Chiappini',
-    status: 'Ruled Out',
-    description: 'Three Galanti entries found in Morti allegati (an_ua8575, 6-Div 2): (1) Galanti Nazzareno, b. 25 Dec 1875, son of Luigi Galanti + Filomena Marcolini; (2) Galanti Nazzareno, b. ~1885, son of Michele Galanti + Natalina Bollettini, Caporale 17° Rgt Fanteria, KIA 6 Sep 1915; (3) Galanti Alessandro — on "Morti sul Campo" list, no detail. None match Ida\'s two birth candidates (father Antonio Galanti or Ignazio Galanti). Same surname, same area, but no confirmed link.',
-    nextSteps: 'No further action — logged as checked. Keep in back pocket for future Galanti cross-referencing.',
+    status: 'Partially Confirmed',
+    description: 'Three Galanti entries found in Morti allegati (an_ua8575, 6-Div 2): (1) Galanti Nazzareno, b. 25 Dec 1875, son of Luigi Galanti + Filomena Marcolini — NOT a match; (2) Galanti Nazzareno, b. ~1885, son of Michele Galanti + Natalina Bollettini, Caporale 17° Rgt Fanteria, KIA 6 Sep 1915 — NOT a match; (3) BREAKTHROUGH: Galanti Alessandro, fu Ignazio Galanti, mother Clementina Curcozzi. Soldier, 238° Reggimento Fanteria, 10ª Compagnia, died 16 Oct 1917 at hospital in Cividale from septic gangrene. Birth certificate extract confirms: son of Ignazio + Curcozzi Clementina, born Ascoli Piceno (~1895). First hard evidence that Ignazio Galanti + Clementina Curcozzi were a real couple with children in Ascoli Piceno — makes 1904 Ida candidate more credible.',
+    nextSteps: 'Check remaining Morti allegati divisions (5-Div 1, 5-Div 2, 6-Div 1) for any other Galanti siblings — clustering common in war-dead lists. Alessandro\'s full record may contain more family detail.',
   },
   {
     id: 'lead-idenati-familysearch-catalog',
@@ -2961,7 +3045,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'Which Ida Galanti (1893 vs 1904) married Alfredo Buatti?',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti) also checked. NEW STRATEGY (20 Jul 2026): Search Antenati anagrafe archivio 189 cartellini series — find Galanti Ida card(s), check for marriage annotation to Buatti and/or matching foglio number. Also search for Buatti Ezio cartellino. Foglio 1527 shows possible "Ida Buatti" (b. ~1886, lettura incerta) as Alfredo\'s sister — don\'t confuse with Ida Galanti under married-name filing. Two emails in flight: Ezio\'s birth act (Comune AP) + marriage act (Tribunale AP).'
+    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti + Clementina Curcozzi) also checked. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati (an_ua8575, 6-Div 2) — fu Ignazio Galanti, mother Clementina Curcozzi. First hard evidence that Ignazio + Clementina were a real couple with children in Ascoli Piceno. Makes 1904 Ida candidate more credible (second confirmed child of same parents). Alessandro born ~1895 (13 Jul vs 8 Nov — document disagreement, trust official extract). Still awaiting marriage cert tiebreaker (Comune AP protocol 0062771 + Tribunale AP email). FamilySearch catalog confirmed: no digitized marriage register exists for 1919-1923. Remaining Morti allegati divisions (5-Div 1, 5-Div 2, 6-Div 1) may contain more Galanti siblings.'
   },
   {
     id: 'q-ezio-birth',
