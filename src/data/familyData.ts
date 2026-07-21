@@ -2920,6 +2920,31 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'To Investigate',
     description: 'Venera Vecchio\'s death window is 1930–1953 (absent from Fiumefreddo Morti through 1929; "fu Venera" on 1953 cert). If she followed Rosario to Queensland, her death could be in QLD BDM — free and searchable online for deaths 30+ years past. No embargo, no comune, no film. Same approach covers Rosario Patanè\'s death if pre-~1994.',
     nextSteps: 'QLD BDM historical index search (free, online): Deaths — surname Patane/Patanè, given Venera/Veneranda, ~1930–1953; also try maiden Vecchio. Same index: Rosario Patanè death. Ryerson Index: Patane, Ingham QLD — funeral notices. Trove: "Patane Ingham" — Italian-community and cane-district papers. NAA RecordSearch: confirm whose file A446, 1967/39646 actually is (search "Patane Rosario" and "Emmi") — if Rosario\'s, it will state arrival date and whether wife accompanied.',
+  },
+  {
+    id: 'lead-buatti-antonio-wwi',
+    title: 'Buatti Antonio: WWI Death Record (Morti, Allegati)',
+    category: 'Buatti/Chiappini',
+    status: 'To Investigate',
+    description: '"Buatti Antonio" appears on a WWI mortality list (Morti, allegati) in Antenati doc an_ua8575 (Archivio di Stato di Ascoli Piceno, 6-Div 2). This closely matches Antonio Buatti, b. 14 Feb 1894, son of Giovanni Buatti and Emidia Bruni — Alfredo\'s younger brother, identified on foglio di famiglia N. 1527. Age fits (20–24 during WWI). If confirmed via the specific allegato/index card (same format as Galanti Nazzareno notification letter), this would be a new death record for one of Alfredo\'s siblings — death date, circumstances, and military unit.',
+    nextSteps: 'Check remaining 3 divisions of Morti allegati 1915–1919 for Buatti Antonio\'s individual record card: 5-Div 1, 5-Div 2, 6-Div 1. (6-Div 2 already scanned — list entry only found so far.) This is a bounded search: once all 4 are checked, lead is either confirmed or exhausted.',
+    sources: ['https://antenati.cultura.gov.it/ark:/12657/an_ua8575 (6-Div 2 — already scanned)'],
+  },
+  {
+    id: 'lead-galanti-wwi-checked',
+    title: 'Galanti WWI Casualties: Checked, Not Matches for Ida',
+    category: 'Buatti/Chiappini',
+    status: 'Ruled Out',
+    description: 'Three Galanti entries found in Morti allegati (an_ua8575, 6-Div 2): (1) Galanti Nazzareno, b. 25 Dec 1875, son of Luigi Galanti + Filomena Marcolini; (2) Galanti Nazzareno, b. ~1885, son of Michele Galanti + Natalina Bollettini, Caporale 17° Rgt Fanteria, KIA 6 Sep 1915; (3) Galanti Alessandro — on "Morti sul Campo" list, no detail. None match Ida\'s two birth candidates (father Antonio Galanti or Ignazio Galanti). Same surname, same area, but no confirmed link.',
+    nextSteps: 'No further action — logged as checked. Keep in back pocket for future Galanti cross-referencing.',
+  },
+  {
+    id: 'lead-idenati-familysearch-catalog',
+    title: 'FamilySearch Catalog: Ascoli Piceno Civil Registration Confirmed',
+    category: 'Buatti/Chiappini',
+    status: 'Completed',
+    description: 'FamilySearch catalog "Italy, Ascoli Piceno, Civil Registration (State Archive), 1740-1880, 1915-1919" confirmed: the "1915-1919" portion is specifically "Morti, prima guerra mondiale" (WWI war dead) — not general civil marriages, births, or deaths. The "Matrimoni" series only runs 1808-1815 (Napoleonic era). No digitized register anywhere covers Ascoli Piceno marriages in 1919-1923. The marriage-record dead end is real, not just assumed.',
+    nextSteps: 'Marriage trail closed on free routes. Await Comune AP and Tribunale AP email replies.',
   }
 ];
 
