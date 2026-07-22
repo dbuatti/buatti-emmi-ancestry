@@ -2045,7 +2045,8 @@ export const initialPeople: Person[] = [
     education: [
       'Diploma di Perito Agrario, R. Ist. Tecn. "Celso Ulpiani", Ascoli Piceno, July 1942',
       'Certificato di cultura generale, Liceo Scientifico di Ascoli Piceno (c. 1944 — for university entry qualification)',
-      'Laurea in Scienze Agrarie, Università di Perugia, 26 November 1949'
+      'Laurea in Scienze Agrarie, Università di Perugia, 26 November 1949',
+      'SCHOOL OUTREACH (22 Jul 2026): IIS "Ulpiani" (successor to R. Ist. Tecn. Celso Ulpiani) contacted — protocol 0021194/2026, requesting possible teacher file (fascicolo docente) for Ezio Buatti, former student graduated 1942. If they hold historical records, may contain biographical details, family information, or wartime context.'
     ],
     military: {
       service: 'Italian Army',
@@ -3037,6 +3038,22 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'To Investigate',
     description: 'Tribunale di Catania confirmed (22 Jul 2026, Dott. Stefano Marino) that officials are not authorized to search the archive. Directed to Comune di Catania (likely boilerplate). Antenati coverage for Catania province stops at 1893 — no digital route. Best remaining option: ask Comune di Linguaglossa directly whether they hold a local duplicate of the atto 59/1900 allegati (which would contain certified copies of both Egidio\'s and Concetta\'s birth acts).',
     nextSteps: 'Email anagrafe@comune.linguaglossa.ct.it — draft prepared. Attach passport scan. Ask if they hold local duplicate of atto 59/1900 allegati. CC Francesca Liuzzo / Foti Maria Angela if direct addresses available from 10 Jul thread.',
+  },
+  {
+    id: 'lead-ezio-school-outreach',
+    title: 'IIS "Ulpiani" — Ezio Buatti Teacher File Request',
+    category: 'Buatti/Chiappini',
+    status: 'In Progress',
+    description: 'IIS "Ulpiani" (successor to R. Ist. Tecn. "Celso Ulpiani", where Ezio Buatti graduated as Perito Agrario in July 1942) contacted — protocol 0021194/2026 (22 Jul 2026). Requesting possible fascicolo docente (teacher file) for Ezio Buatti. If they hold historical records, may contain biographical details, family information, wartime context, or classmates/teachers who could provide oral history leads.',
+    nextSteps: 'Await reply from IIS Ulpiani. If they hold records, ask for copies. Also ask whether any wartime-era matricole (enrollment registers) survive for the 1938-1942 cohort.',
+  },
+  {
+    id: 'lead-sb-marriage-dead-end',
+    title: 'San Benedetto del Tronto Marriage Request — Likely Dead End',
+    category: 'Buatti/Chiappini',
+    status: 'Ruled Out',
+    description: 'Marriage record request sent to Comune di San Benedetto del Tronto (protocol 0054400/2026, 22 Jul 2026) for Buatti Alfredo × Galanti Ida. However, this was based on a thread mix-up — no evidence the couple had any San Benedetto connection. The marriage request was also sent to Comune di Ascoli Piceno (protocol 0062771), which is the correct jurisdiction.',
+    nextSteps: 'No action needed — request was sent in error. The Comune di Ascoli Piceno request (protocol 0062771) is the one that matters.',
   }
 ];
 
@@ -3067,7 +3084,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'Where is Bruna Lilia Chiappini\'s birth record (3 Jul 1930) and who was her mother?',
     category: 'Buatti/Chiappini',
     status: 'Pending',
-    notes: 'San Benedetto del Tronto is a separate comune. 1930 record covered by privacy embargo until 2030. Next step: contact Comune di San Benedetto del Tronto directly.'
+    notes: 'San Benedetto del Tronto is a separate comune. 1930 record covered by privacy embargo until 2030. Comune protocol 0054400/2026 (22 Jul 2026) — receipt confirmed. NOTE: This was based on a thread mix-up (Alfredo × Ida marriage request sent to San Benedetto). No evidence the couple had any San Benedetto connection — likely a dead end. The marriage request was also sent to Comune di Ascoli Piceno (protocol 0062771).'
   },
   {
     id: 'q-remo-wife',
