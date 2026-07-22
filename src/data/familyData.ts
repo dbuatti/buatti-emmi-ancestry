@@ -740,11 +740,11 @@ export const initialPeople: Person[] = [
       status: 'Confirmed',
       details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi (bracciante, d. 1889) + Rosaria Nasti. Surname Nasti confirmed by independent clerks Vecchio (1889) and Scarlata (1900). Age ~30 (born ~1870). Farmer. Illiterate.',
       nextSteps: [
-        'Request allegati of marriage atto 59/1900 from Tribunale di Catania — contains certified copy of Egidio\'s birth act without needing to guess the year, plus Concetta\'s birth act in same folder.',
+        'TRIBUNALE DEAD END (22 Jul 2026): Dott. Stefano Marino confirmed officials are not authorized to search the archive. Directed to Comune di Catania (likely boilerplate). Allegati route via Tribunale closed.',
+        'NEW ROUTE: Email Comune di Linguaglossa anagrafe (anagrafe@comune.linguaglossa.ct.it) — ask if they hold a local duplicate of atto 59/1900 allegati. Draft email prepared.',
         'Search remaining Nati years: 1867 (first), 1872, 1866, and pre-1866 Borbonic series.',
         'Hunt the household: scan every Emmi birth for siblings of Antonino + Rosaria Nasti.',
         'Check Santa Maria delle Grazie baptism registers on FamilySearch.',
-        'Send corrected follow-up to Comune di Linguaglossa: mother Nasti (not Raiti), marriage 4 Nov 1900 atto 59, father fu Antonino, clarify atto 141 is not ours.',
       ]
     },
     sources: [
@@ -807,7 +807,7 @@ export const initialPeople: Person[] = [
       status: 'Confirmed',
       details: 'Birth record found 10 Jul 2026 (atto n. 58, 11 Mar 1877, Linguaglossa Nati). Parents confirmed: Gregorio Sgroi (falegname, b. ~1850) + Santa Calì (industriosa). Born 10 Mar 1877 at via Liotto 120. Married Egidio Emmi 4 Nov 1900.',
       nextSteps: [
-        'Concetta\'s birth act copy is also in the Egidio–Sgroi allegati folder (atto 59/1900) — request from ASCt alongside Egidio\'s.',
+        'Tribunale di Catania cannot search archives (confirmed 22 Jul 2026). Allegati route closed. Try Comune di Linguaglossa directly — ask if they hold local duplicate of atto 59/1900 allegati (contains both Egidio\'s and Concetta\'s birth acts).',
         'Search for Gregorio Sgroi\'s birth ~1850 in Linguaglossa.',
         'Search for Santa Calì\'s birth records.',
         'Search for Concetta\'s death record (pre-1967).'
@@ -3029,6 +3029,14 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'Completed',
     description: 'FamilySearch catalog "Italy, Ascoli Piceno, Civil Registration (State Archive), 1740-1880, 1915-1919" confirmed: the "1915-1919" portion is specifically "Morti, prima guerra mondiale" (WWI war dead) — not general civil marriages, births, or deaths. The "Matrimoni" series only runs 1808-1815 (Napoleonic era). No digitized register anywhere covers Ascoli Piceno marriages in 1919-1923. The marriage-record dead end is real, not just assumed.',
     nextSteps: 'Marriage trail closed on free routes. Await Comune AP and Tribunale AP email replies.',
+  },
+  {
+    id: 'lead-linguaglossa-allegati',
+    title: 'Comune di Linguaglossa: Allegati Atto 59/1900 Request',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Tribunale di Catania confirmed (22 Jul 2026, Dott. Stefano Marino) that officials are not authorized to search the archive. Directed to Comune di Catania (likely boilerplate). Antenati coverage for Catania province stops at 1893 — no digital route. Best remaining option: ask Comune di Linguaglossa directly whether they hold a local duplicate of the atto 59/1900 allegati (which would contain certified copies of both Egidio\'s and Concetta\'s birth acts).',
+    nextSteps: 'Email anagrafe@comune.linguaglossa.ct.it — draft prepared. Attach passport scan. Ask if they hold local duplicate of atto 59/1900 allegati. CC Francesca Liuzzo / Foti Maria Angela if direct addresses available from 10 Jul thread.',
   }
 ];
 
