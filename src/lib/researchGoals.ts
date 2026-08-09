@@ -42,7 +42,7 @@ const antenatiCoverage: Record<string, AntenatiInfo> = {
   'Piedimonte Etneo': { available: true, years: '1820–1929' },
   'Milo': { available: true, years: '1820–1929' },
   'Ascoli Piceno': { available: false, years: 'up to 1880 (FS), 1915–1919 (Antenati), anagrafe storica on Antenati (fogli famiglia)', note: 'gap 1881–1914 for civil records, but population registers available' },
-  'San Benedetto del Tronto': { available: false, years: 'none digitised on Antenati — try Archivio di Stato or FamilySearch' },
+  'San Benedetto del Tronto': { available: false, years: 'none digitised on Antenati — comune anagrafe holds stati di famiglia (AS-AP Buondi, prot. 1805-P 21 Jul 2026); apply to Ufficio Anagrafe e Servizi Demografici' },
   'Giarre': { available: true, years: '1820–1929' },
   'Acireale': { available: true, years: '1820–1929' },
 };
