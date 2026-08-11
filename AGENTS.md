@@ -21,6 +21,8 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
   1. Copia integrale atto di nascita BUATTI EZIO (27/04/1923, di Alfredo × Galanti Ida) — anchored by 1944 comune photo attestation from Perugia fascicolo (prot. 2026-USDPAMM-0309113, 04/08/2026).
   2. Copia integrale atto di matrimonio trascritto ad Ascoli Piceno 1963, parte 2, serie C, n. 36 (Ezio Buatti × Lilia Chiappini, married Australia 4 Ott 1952) — ref from SBT note prot. 0066017 del 06/08/2026.
   → **No further action. Wait for reply.**
+- **Comune di Ascoli Piceno — Ufficio Stato Civile** (Settore 4 - Servizi al Cittadino, Sergio De Angelis): `prot. 0062771/2026`, lodged 10 Jul 2026. Richiesta copia integrale atto di matrimonio BUATTI ALFREDO × GALANTI IDA (circa 1920-1922) — tiebreaker between 1893 Ida (d/o Antonio+Virginia) and 1904 Ida (d/o Ignazio+Clementina). **Sollecito sent 11 Aug 2026** (subject: "Sollecito — Richiesta copia integrale atto di matrimonio BUATTI ALFREDO × GALANTI IDA (prot. 0062771/2026)").
+  → **No further action. Wait for reply.**
 
 ## Timed / pending research threads (do NOT propose before their trigger date)
 - ~20 Aug 2026 — NAA delivery of Lilia naturalisation file MP1187/1 V1965/3748 (Item ID 16189462) expected. Already purchased; only action is to watch the inbox.
