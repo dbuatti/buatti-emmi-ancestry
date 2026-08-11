@@ -2180,6 +2180,7 @@ export const initialPeople: Person[] = [
         'NAA: purchase Lilia naturalisation file MP1187/1 V1965/3748 (Item ID 16189462) — confirmed as the only place her alien registration records sit (NAA1000454740).',
         'Gino Chiappini NAA sweep done 11 Aug 2026 (see notes). NEW lead: SP1121/1 item 9637786 — request digitisation / purchase copy to obtain Greta/Villawood intake paperwork (likely NoK field, employment, onward movements). BLOCKED on family-relationship confirmation (avoid $26.45 spend on speculation).',
         'Gino Chiappini Ryerson + Trove sweep done 11 Aug 2026: Ryerson = 0 notices (clean negative). Trove = no death/funeral notice for Gino; only unrelated hits (1939 cycling article, 1974/82 gazette entries for a different "Lucien John Antonio..." Chiappini family). Free Australian paper trail for Gino effectively exhausted; remaining avenues cost money (SP1121/1) or need papa.',
+        'Gino Chiappini NSW BDM historical death index search 11 Aug 2026 (1950–1995): only 1 hit — CHIAPPINI MARCO (43921/1968, father LUIGI × JUNE, Hamilton). NOT our Chiappini line (father Luigi, not Remo). Gino did not die in NSW 1950–1995 under any Chiappin(i) spelling. Next: try Victorian BDM historical death index.',
         'Ask papa (next visit) about Gino Chiappini — brother/cousin of Lilia? Also ask about Irma Pirri.',
         'Await NAA naturalisation case file V653748 (due 20 Aug 2026) — may contain birth details and parentage.',
         'Contact Comune di San Benedetto del Tronto for 1930 birth record.',

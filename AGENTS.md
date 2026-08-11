@@ -36,8 +36,7 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - [2026-08-11] Gino Chiappini Ryerson + Trove sweep: Ryerson = 0 notices. Trove = no death/funeral notice for Gino; only unrelated hits (1939 cycling, 1974/82 gazette for different Chiappini family). Free Australian paper trail for Gino effectively exhausted — remaining avenues cost money (SP1121/1 $26.45) or need papa. Committed + pushed.
 
 ## Open next-step candidates
-- Free NSW BDM historical death index: `Chiappin(i)` search — historical deaths (50+ yrs ago) freely searchable. Gino b.1927; if he died before ~1977 in NSW (where he settled, did fruit-picking Mildura/Bonalgo), a record exists at no cost. Browser-doable.
-- Free Victorian BDM historical index: same `Chiappin(i)` search — covers VIC deaths (Ezio/Lilia later lived in Richmond, VIC).
+- Free Victorian BDM historical index: `Chiappin(i)` search — covers VIC deaths (Ezio/Lilia later lived in Richmond, VIC).
 - Family outreach: ask papa (next visit, not scheduled — long calls, unreliable recall) about Gino Chiappini (brother/cousin of Lilia?) and Irma Pirri TB story. **Aunt Angie ruled out — not related to Chiappini line.**
 - SP1121/1 item 9637786 ($26.45) — purchasable but **BLOCKED** pending family-relationship confirmation via papa or a free BDM hit.
 - Pre-existing lint debt: 3 errors in `src/components/ui/command.tsx`, `src/components/ui/textarea.tsx`, `tailwind.config.ts` (shadcn boilerplate / config — low priority, not blocking).
@@ -46,4 +45,5 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - ~~NAA RecordSearch sweep for Gino Chiappini~~ — done 11 Aug 2026; negatives logged; SP1121/1 identified.
 - ~~Neptunia outbound passenger list~~ — resolved 11 Aug 2026 via B78 departure annotation on item 5746087; PP222/4 item 10153223 *not* purchased (not needed).
 - ~~Ryerson + Trove: Gino Chiappini death/funeral notices~~ — done 11 Aug 2026; clean negatives logged.
+- ~~NSW BDM historical death index: Chiappin(i)~~ — done 11 Aug 2026; only MARCO 1968 (father LUIGI × JUNE, Hamilton — not our line). Gino not in NSW deaths 1950–1995.
 - ~~Ascoli Piceno sollecito (prot. 66127/2026)~~ — already sent 9 Aug 2026; do not chase.
