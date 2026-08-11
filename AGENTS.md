@@ -36,9 +36,10 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - [2026-08-11] Gino Chiappini Ryerson + Trove sweep: Ryerson = 0 notices. Trove = no death/funeral notice for Gino; only unrelated hits (1939 cycling, 1974/82 gazette for different Chiappini family). Free Australian paper trail for Gino effectively exhausted — remaining avenues cost money (SP1121/1 $26.45) or need papa. Committed + pushed.
 
 ## Open next-step candidates
-- Free Victorian BDM historical index: `Chiappin(i)` search — covers VIC deaths (Ezio/Lilia later lived in Richmond, VIC).
 - Family outreach: ask papa (next visit, not scheduled — long calls, unreliable recall) about Gino Chiappini (brother/cousin of Lilia?) and Irma Pirri TB story. **Aunt Angie ruled out — not related to Chiappini line.**
-- SP1121/1 item 9637786 ($26.45) — purchasable but **BLOCKED** pending family-relationship confirmation via papa or a free BDM hit.
+- SP1121/1 item 9637786 ($26.45) — purchasable but **BLOCKED** pending family-relationship confirmation via papa or a free BDM hit (NSW + VIC both now negative).
+- Antenati portal (Ascoli Piceno archive): search digitised civil registers for San Benedetto del Tronto / Ascoli Piceno — could find 1930 Remo×Irma marriage act or Irma Pirri birth record for free, in parallel with the SBT anagrafe request (Rosa De Falco) already in flight.
+- NAA RecordSearch: Ezio bankruptcy case file (No. 248 of 1957, Broadford VIC café/milk bar) — full financial schedules/affidavits at NAA (not just the Gazette notice); browser-doable, free.
 - Pre-existing lint debt: 3 errors in `src/components/ui/command.tsx`, `src/components/ui/textarea.tsx`, `tailwind.config.ts` (shadcn boilerplate / config — low priority, not blocking).
 
 ### Resolved / closed (kept here so not re-proposed)
@@ -46,4 +47,5 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - ~~Neptunia outbound passenger list~~ — resolved 11 Aug 2026 via B78 departure annotation on item 5746087; PP222/4 item 10153223 *not* purchased (not needed).
 - ~~Ryerson + Trove: Gino Chiappini death/funeral notices~~ — done 11 Aug 2026; clean negatives logged.
 - ~~NSW BDM historical death index: Chiappin(i)~~ — done 11 Aug 2026; only MARCO 1968 (father LUIGI × JUNE, Hamilton — not our line). Gino not in NSW deaths 1950–1995.
+- ~~Victorian BDM historical death index: Chiappin(i)~~ — done 11 Aug 2026; 0 hits. Gino not in VIC deaths to 1976.
 - ~~Ascoli Piceno sollecito (prot. 66127/2026)~~ — already sent 9 Aug 2026; do not chase.
