@@ -660,22 +660,25 @@ export const initialPeople: Person[] = [
       'Father of Bruna Lilia Chiappini — confirmed via Branxton Catholic Parish marriage register extract (4 Oct 1952, Ezio Buatti + Lilia Chiappini). Wife: Irma Pirri. Both residing in Ascoli Piceno, Italy.',
       'Family account (relayed by Alfred Buatti, originally from an aunt): Remo\'s wife (possibly Irma) survived childbirth — contrary to an earlier family assumption that she had died giving birth — but contracted an infection (tuberculosis).',
       'Remo was reportedly sent away to a port town referred to as "San Giorgio" to keep him away from their son, and his wife died about a month later.',
-      'Details (which son, exact location/town of "San Giorgio," and dates) still need confirming, as this was relayed informally.'
+      'Details (which son, exact location/town of "San Giorgio," and dates) still need confirming, as this was relayed informally.',
+      'NSW marriage certificate 27340/1952 (Ezio + Lilia, 4 Oct 1952) — check the copy for whether Remo is recorded as living or deceased in 1952 (Australian certificates of that era usually indicate this).'
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found — entirely unknown' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'To Irma Pirri — likely San Benedetto del Tronto or Ascoli Piceno' },
+      { type: 'Marriage Record', status: 'Requested', notes: 'To Irma Pirri — San Benedetto del Tronto, 1930. Copia integrale of the 1930 marriage act requested from SBT anagrafe (Rosa De Falco) — email sent Aug 2026. The act names both sets of parents. Also recorded as father on NSW marriage cert 27340/1952.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
       { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
       status: 'In Progress',
-      details: 'Name confirmed as father of Lilia via Branxton marriage extract 10 Jul 2026. Wife now named (Irma Pirri). Remo\'s own details still unknown.',
+      details: 'Name confirmed as father of Lilia via Branxton marriage extract 10 Jul 2026. Wife now named (Irma Pirri). 1930 marriage act (Remo × Irma) requested from SBT anagrafe (Rosa De Falco) — the act will name both sets of parents. Remo\'s own details still unknown.',
       nextSteps: [
+        'Check NSW marriage cert 27340/1952 copy for Remo\'s living/deceased status in 1952.',
+        'Await Rosa De Falco reply (SBT anagrafe) re copia integrale of the 1930 marriage act.',
         'Search for Remo Chiappini records in San Benedetto del Tronto or Ascoli Piceno.',
         'Confirm the "San Giorgio" story and locate the town (possibly Porto San Giorgio in Fermo, Marche).',
-        'Search for birth/marriage records of Remo Chiappini + Irma Pirri.'
+        'Search for birth records of Remo Chiappini in San Benedetto del Tronto or Ascoli Piceno.'
       ]
     }
   },
@@ -693,22 +696,38 @@ export const initialPeople: Person[] = [
     notes: [
       'Mother of Bruna Lilia Chiappini, confirmed via Branxton Catholic Parish marriage register extract (4 Oct 1952, Ezio Buatti + Lilia Chiappini). Listed as "Irma Pirri", residing in Ascoli Piceno, Italy.',
       'The family story about Remo\'s wife dying of tuberculosis after childbirth (relayed via Alfred Buatti from an aunt) may refer to Irma or may refer to a different wife — unclear whether the story involves the mother of a son (not Lilia) or Irma herself.',
+      'KEY FINDING (Aug 2026): Irma Pirri was ALREADY DEAD by 4 October 1952 — recorded on the NSW marriage certificate (reg. 27340/1952, Maitland district) for Ezio Buatti + Lilia Chiappini. Death window 1930–1952, almost certainly at San Benedetto del Tronto; she would have been at most about forty. The narrowest unexplored question in the Chiappini line — nobody has searched for her death record.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Name now known — search Ascoli Piceno area' },
-      { type: 'Marriage Record', status: 'Not Found', notes: 'To Remo Chiappini — likely San Benedetto del Tronto or Ascoli Piceno' },
-      { type: 'Death Record', status: 'Not Found', notes: 'Unknown date — possibly connected to TB story' }
+      { type: 'Marriage Record', status: 'Requested', notes: 'To Remo Chiappini — San Benedetto del Tronto, 1930 (Lilia born Jul 1930). Copia integrale of the 1930 marriage act requested from SBT anagrafe (Rosa De Falco) — email sent Aug 2026. The act names both sets of parents.' },
+      { type: 'Death Record', status: 'Searching', notes: 'DIED BEFORE 4 Oct 1952 (recorded on NSW marriage cert 27340/1952). Window 1930–1952, probably San Benedetto del Tronto. Route: Curia di San Benedetto del Tronto — Sig.ra Veccia already has a request circulating among the SBT parishes; a burial record would sit in those registers. Thread warm, do not poke before September.' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
       { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
     researchStatus: {
-      status: 'Confirmed — Name Only',
-      details: 'Name confirmed as Lilia Chiappini\'s mother via Branxton marriage extract 10 Jul 2026. All other details unknown.',
+      status: 'In Progress',
+      details: 'Name confirmed as Lilia Chiappini\'s mother via Branxton marriage extract 10 Jul 2026. KEY: already dead by 4 Oct 1952 (NSW marriage cert 27340/1952) — death window 1930–1952, probably San Benedetto del Tronto. 1930 marriage act (Remo × Irma) requested from SBT anagrafe.',
       nextSteps: [
-        'Search for birth/marriage records of Irma Pirri in Ascoli Piceno or San Benedetto del Tronto.',
+        'Act after September: ask Curia di San Benedetto del Tronto (Sig.ra Veccia) for Irma Pirri\'s death/burial record in the SBT parish registers.',
+        'Check the NSW marriage certificate copy (27340/1952) for what it records about Irma (deceased confirmed) and about Remo (living or deceased in 1952).',
+        'Await Rosa De Falco reply (SBT anagrafe) re copia integrale of the 1930 marriage act — it names both sets of parents.',
+        'Search for birth records of Irma Pirri in Ascoli Piceno or San Benedetto del Tronto.',
         'Ask papa about Irma Pirri and whether the TB story relates to her.'
       ]
-    }
+    },
+    sources: [
+      {
+        title: 'NSW Marriage Certificate (Ezio Buatti + Lilia Chiappini)',
+        type: 'Marriage Certificate',
+        reference: 'Reg. 27340/1952, Maitland district, NSW. Records Irma Pirri as deceased by 4 Oct 1952. Ordered via NSW BDM Jul 2026.'
+      },
+      {
+        title: 'Branxton Catholic Parish Marriage Extract',
+        type: 'Parish Register',
+        reference: 'Ezio Buatti + Lilia Chiappini, 4 Oct 1952, St Anthony\'s Greta. Names parents Remo Chiappini + Irma Pirri. Issued 10 Jul 2026.'
+      }
+    ]
   },
   // Emmi Line
   {
@@ -2069,7 +2088,7 @@ export const initialPeople: Person[] = [
       { type: 'Immigration File (NAA)', status: 'Found', notes: 'B78, ITALIAN/BUATTI EZIO — digitised copy received 9 Jul 2026 (Item 5746087). Full file: arrival form RA, marriage notification, passport photo.' },
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290718, issued Sydney 27 Sep 1952. Re-issued 23 Jan 1957 (entered register 22 Feb 1957).' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269. Also Fremantle customs stamp 15 Sep 1952.' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Branxton Parish extract (10 Jul 2026) confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' },
+      { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020; NSW BDM reg. 27340/1952 (Maitland district). Branxton Parish extract (10 Jul 2026) confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski. Greta = Greta Migrant Camp (largest post-war reception centre in NSW); the marriage also appears in the Ascoli Piceno civil register.' },
       { type: 'Bankruptcy Record', status: 'Found', notes: 'No. 248 of 1957. Café & milk bar proprietor, Broadford VIC. Petition & sequestration order 2 Oct 1957. Listed as "unemployed" at time. Public examination 2 Sep 1958 (Trove, Commonwealth Gazette 17 Oct 1957 & 28 Aug 1958).' },
       { type: 'Military Record (Ruolo Matricolare)', status: 'Found', notes: 'Foglio matricolare n. 20102, Distretto di Ascoli Piceno. Received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 13 Jul 2026. Confirms education, RSI recall/depennato, officer cadet at Rieti, discharge 1951.' },
       { type: 'University Student File', status: 'Found', notes: 'Fascicolo studente posiz. n. 2005, Università di Perugia (Facoltà di Agraria). 21 pages reproduced free by Monica Fiore (Ufficio Archivio), received via PEC 4 Aug 2026 (prot. 2026-USDPAMM-0309113, incoming 290425 of 21/07/2026). Full academic trajectory 1944-1949, exam transcript, laurea 95/110 (26 Nov 1949), legalised photograph 18 Dec 1944. Certificato di nascita (enclosure 3 of 1944 application) NOT among reproduced pages.' }
@@ -2141,7 +2160,10 @@ export const initialPeople: Person[] = [
     residences: ['303 Punt Road, Richmond, Victoria (1965)'],
     notes: [
       'Travelled on Toscana K269 line 178 — directly below line 177: Gino Chiappini (b. 1927, labourer, reg 290502, listed as "CHIAPPIN Gino" on manifest). Confirmed by NAA 10 Jul 2026 (A2571, barcode 203679026). NoK field blank on his ID card. He worked as transient fruit-picker in Mildura then Bonalgo NSW. No naturalisation found. 3-year age gap consistent with being her brother.',
-      'Branxton Catholic Parish marriage register extract (10 Jul 2026) confirms: married Ezio Buatti 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, by Rev Z Lewandowski. Witnesses: Emidio Pica and Domenico Michetti (both Greta Camp). Parents listed: Remo Chiappini and Irma Pirri, both of Ascoli Piceno, Italy.',
+      'Branxton Catholic Parish marriage register extract (10 Jul 2026) confirms: married Ezio Buatti 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, by Rev Z Lewandowski. Witnesses: Emidio Pica and Domenico Michetti (both Greta Camp). Parents listed: Remo Chiappini and Irma Pirri, both of Ascoli Piceno, Italy. NSW BDM reg. 27340/1952, Maitland district. Greta = Greta Migrant Camp, the largest post-war reception centre in NSW — the wedding anchors their first weeks in the country, and the marriage also appears in the Ascoli Piceno civil register.',
+      'Irma Pirri was recorded as DECEASED on the 1952 marriage certificate — death window 1930–1952, probably San Benedetto del Tronto. Check the certificate copy for Remo\'s living/deceased status too.',
+      'Clerical error worth preserving: Lilia\'s death annotation on the Italian side is dated 18/12/1963 for a death that occurred 1998.',
+      'Trove (Aug 2026): "Buatti Chiappini" and bare "Buatti" return nothing across Trove\'s digitised NSW papers — the surname Buatti is effectively absent from the digitised text. Weak negative (Trove AND-search plus patchy digitisation of Hunter Valley papers for the early 1950s).',
     ],
     records: [
       { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
@@ -2150,12 +2172,13 @@ export const initialPeople: Person[] = [
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290730 — issued same batch as Ezio (290718), Sydney 27 Sep 1952. Per Ezio\'s marriage notification (Form RA 6).' },
       { type: 'Naturalisation Record', status: 'Found', notes: 'Commonwealth Gazette notice, 18 Nov 1965 — lists address 303 Punt Rd, Richmond. Cert EF10155554, file V653748 (Victorian registry). Confirmed by NAA.' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — listed as "CHIAPPINI, Lilia"' },
-      { type: 'Marriage Record', status: 'Found', notes: 'Ezio Buatti, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020. Branxton Parish extract confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' }
+      { type: 'Marriage Record', status: 'Found', notes: 'Ezio Buatti, 4 Oct 1952 at St Anthony\'s Catholic Church, Greta, NSW — cert C810020; NSW BDM reg. 27340/1952 (Maitland district). Branxton Parish extract confirms parents Remo Chiappini + Irma Pirri, witnesses Emidio Pica + Domenico Michetti, celebrant Rev Z Lewandowski.' }
     ],
     researchStatus: {
       status: 'Confirmed',
       details: 'NAA B78 file received for Ezio — marriage to Lilia confirmed 4 Oct 1952 St Anthony\'s Greta. Lilia travelled same ship (Toscana), registered same batch (no. 290730). Naturalisation confirmed: 18 Nov 1965, cert EF10155554, file V653748 (Victorian registry). Branxton parish extract (10 Jul 2026) names parents: Remo Chiappini + Irma Pirri. Witnesses: Emidio Pica, Domenico Michetti. Celebrant: Rev Z Lewandowski. Toscana passenger list reveals Gino Chiappini (line 177) — same surname, same destination, likely relative. Birth record still outstanding (privacy embargo until 2030).',
       nextSteps: [
+        'Check marriage certificate 27340/1952 copy: Irma Pirri recorded as deceased; what does it say for Remo (living or deceased in 1952)?',
         'Search NAA RecordSearch for Gino Chiappini — B78 alien registration, naturalisation file, passenger lists.',
         'Ask papa and Aunt Angie about Gino Chiappini — brother/cousin of Lilia? Also ask about Irma Pirri.',
         'Await NAA naturalisation case file V653748 (due 20 Aug 2026) — may contain birth details and parentage.',
@@ -3062,11 +3085,11 @@ export const initialResearchLeads: ResearchLead[] = [
   },
   {
     id: 'lead-sb-marriage-dead-end',
-    title: 'Comune di San Benedetto del Tronto — Marriage Search & Stato di Famiglia Storico',
+    title: 'Comune di San Benedetto del Tronto — Stato di Famiglia Storico (Refused)',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    description: 'Request sent 22 Jul 2026 (prot. 0054400/2026, receipt confirmed) for the Alfredo Buatti × Ida Galanti marriage — possibly a thread mix-up (no confirmed San Benedetto connection for that couple; Ascoli Piceno is the correct jurisdiction). However, Buondi letter (AS-AP prot. 1805-P, 21 Jul 2026) confirms San Benedetto del Tronto is wholly undigitised on Antenati and that the comune\'s anagrafe holds the stati di famiglia — which is exactly the office written to. Recommendation: widen the request to a stato di famiglia storico for the Alfredo Buatti × Ida Galanti household and for the Chiappini–Pirri household (Remo Chiappini + Irma Pirri — Lilia\'s parents, San Benedetto natives), citing Buondi\'s letter.',
-    nextSteps: 'Send widened request to Comune di San Benedetto del Tronto, Ufficio Anagrafe e Servizi Demografici, citing prot. MIC|MIC_AS-AP_UO2|21/07/2026|0001805-P (Alessandra Buondi, AS-AP).',
+    description: 'Request sent 22 Jul 2026 (prot. 0054400/2026, receipt confirmed), originally for the Alfredo Buatti × Ida Galanti marriage — possibly a thread mix-up (no confirmed San Benedetto connection for that couple; Ascoli Piceno is the correct jurisdiction). Widened to a stato di famiglia storico for the Chiappini–Pirri household per Buondi letter (AS-AP prot. 1805-P, 21 Jul 2026). UPDATE (Aug 2026): SBT anagrafe REFUSED the stato di famiglia storico — returned a checklist with nothing ticked. The form asks the requester to state a motivation/purpose (Italian privacy law); the reason is a personal decision Claude cannot answer for the user.',
+    nextSteps: 'Answer the motivation question on the SBT anagrafe form (personal decision — Claude should not answer for you), then resubmit the stato di famiglia storico request for the Chiappini–Pirri household.',
   },
   {
     id: 'lead-perugia-birth-cert-followup',
@@ -3080,9 +3103,9 @@ export const initialResearchLeads: ResearchLead[] = [
     id: 'lead-naa-lilia-naturalisation',
     title: 'NAA: Lilia Naturalisation File — Purchase Decision (Item ID 16189462)',
     category: 'Buatti/Chiappini',
-    status: 'To Investigate',
-    description: 'NAA1000454740 (3 Aug 2026): Kevin Aston Hoey applied the price indicator to Lilia\'s naturalisation file MP1187/1, V1965/3748, Item ID 16189462 (11 pages, Small–Medium rate) — purchasable online now. Likely the richest document about her outside Italy (arrival details, addresses, employment, often photo and signature). CAUTION: the original enquiry asked for her MSD/ARD alien registration records — a different record series. Ask whether the alien registration file was located as a distinct item before paying, to avoid two separate orders.',
-    nextSteps: 'Email Kevin Aston Hoey: confirm whether Lilia\'s alien registration (MSD/ARD) records were located as a separate item; then decide whether to purchase both together.',
+    status: 'In Progress',
+    description: 'NAA1000454740 (3 Aug 2026): Kevin Aston Hoey applied the price indicator to Lilia\'s naturalisation file MP1187/1, V1965/3748, Item ID 16189462 (11 pages, Small–Medium rate) — purchasable online now. Likely the richest document about her outside Italy (arrival details, addresses, employment, often photo and signature). CAUTION: the original enquiry asked for her MSD/ARD alien registration records — a different record series. Clarification email sent to Kevin Aston Hoey (Aug 2026) asking whether the alien registration file was located as a distinct item. Purchase on hold pending his reply, to avoid two separate orders.',
+    nextSteps: 'Await Kevin Aston Hoey reply; then decide whether to purchase Item ID 16189462 (and any separate MSD/ARD alien-registration item).',
   },
   {
     id: 'lead-ezio-post-1963-italy',
@@ -3091,6 +3114,30 @@ export const initialResearchLeads: ResearchLead[] = [
     status: 'To Investigate',
     description: 'The 1975 Perugia certificate (20 Jan 1975) was issued "per uso ricostruzione di carriera" — implying Italian employment or a pension claim after Ezio left Australia in 1963 and before his return in 1975. The 1964 and 1975 certificates show he was transacting with the University well after his 1963 departure. This is the only real lead on his last sixteen years in Italy. Not time-sensitive.',
     nextSteps: 'Ask family about Ezio\'s work in Italy 1963–1975 (agronomist? teaching?). Consider requesting a carriera record from the pension authority or comune. Pull this thread when archive requests are settled.',
+  },
+  {
+    id: 'lead-irma-pirri-death',
+    title: 'Irma Pirri: Death Search (1930–1952)',
+    category: 'Buatti/Chiappini',
+    status: 'To Investigate',
+    description: 'Irma Pirri was already dead by 4 October 1952 — recorded on the NSW marriage certificate (reg. 27340/1952) for Ezio Buatti + Lilia Chiappini. Death window 1930–1952, almost certainly at San Benedetto del Tronto; she would have been at most about forty. The narrowest unexplored question in the Chiappini line — nobody has searched. Route: Curia di San Benedetto del Tronto (Sig.ra Veccia) — a burial record would sit in the same parish registers already circulating among the SBT parishes. Thread warm, do not poke before September.',
+    nextSteps: 'After September: ask the Curia (Sig.ra Veccia) for Irma Pirri\'s death/burial record. First check the NSW marriage cert copy (27340/1952) for the deceased notation and any detail on Irma, and whether Remo was recorded as living.',
+  },
+  {
+    id: 'lead-chiappini-1930-marriage',
+    title: 'Comune di SBT — Copia Integrale 1930 Marriage Act (Remo × Irma)',
+    category: 'Buatti/Chiappini',
+    status: 'In Progress',
+    description: 'Narrowed request emailed (Aug 2026) to Rosa De Falco (SBT anagrafe) for the copia integrale of the 1930 marriage act of Remo Chiappini × Irma Pirri (Lilia born Jul 1930). The marriage act names both sets of parents — the key to Remo and Irma\'s own parentage, converging with the Australian marriage transcript (reg. 27340/1952) from the other direction. Two independent sources converging on Remo and Irma\'s parents.',
+    nextSteps: 'Await reply from Rosa De Falco. The 1930 act will name the parents of both spouses.',
+  },
+  {
+    id: 'lead-trove-buatti-negative',
+    title: 'Trove: Buatti Surname — Negative Search',
+    category: 'Buatti/Chiappini',
+    status: 'Completed',
+    description: '"Buatti Chiappini" (no date/place) and bare "Buatti" return nothing across Trove\'s digitised NSW newspapers (Aug 2026) — the surname Buatti is effectively absent from the digitised text. Weak negative: Trove\'s default search is AND across all terms, and Hunter Valley papers (Maitland Daily Mercury, Newcastle Morning Herald) are patchily digitised for the early 1950s. Newspaper route closed; the stronger source was always NSW BDM (reg. 27340/1952, already obtained Jul 2026).',
+    nextSteps: 'None — route closed. Wedding date/location already confirmed via NSW BDM and the Branxton parish extract.',
   }
 ];
 
@@ -3121,14 +3168,21 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'Where is Bruna Lilia Chiappini\'s birth record (3 Jul 1930) and who was her mother?',
     category: 'Buatti/Chiappini',
     status: 'Pending',
-    notes: 'San Benedetto del Tronto is a separate comune. 1930 record covered by privacy embargo until 2030. Comune protocol 0054400/2026 (22 Jul 2026) — receipt confirmed. Buondi letter (AS-AP prot. 1805-P, 21 Jul 2026) confirms SBT is wholly undigitised on Antenati; the comune\'s anagrafe holds the stati di famiglia. Recommendation: widen the request to a stato di famiglia storico for the Chiappini–Pirri household (Remo Chiappini + Irma Pirri, Lilia\'s parents — SBT natives), citing Buondi\'s letter. Original Alfredo × Ida marriage angle was likely a thread mix-up (Ascoli Piceno is the correct jurisdiction).'
+    notes: 'San Benedetto del Tronto is a separate comune. 1930 record covered by privacy embargo until 2030. Comune protocol 0054400/2026 (22 Jul 2026) — receipt confirmed. Buondi letter (AS-AP prot. 1805-P, 21 Jul 2026) confirms SBT is wholly undigitised on Antenati; the comune\'s anagrafe holds the stati di famiglia. UPDATE (Aug 2026): SBT anagrafe REFUSED the stato di famiglia storico — returned a checklist with nothing ticked; the form requires the requester to answer a motivation question (Italian privacy law) before proceeding. Original Alfredo × Ida marriage angle was likely a thread mix-up (Ascoli Piceno is the correct jurisdiction).'
   },
   {
     id: 'q-remo-wife',
     question: 'Is the TB/"San Giorgio" story about Irma Pirri or a different wife of Remo?',
     category: 'Buatti/Chiappini',
-    status: 'Pending',
-    notes: 'Irma Pirri confirmed as Lilia\'s mother via Branxton Catholic Parish marriage extract (4 Oct 1952). Remo+s wife was Irma, but the TB story may relate to her or to a different marriage. "San Giorgio" likely Porto San Giorgio, Fermo, Marche. Need dates.'
+    status: 'In Progress',
+    notes: 'Irma Pirri confirmed as Lilia\'s mother via Branxton Catholic Parish marriage extract (4 Oct 1952). NEW (Aug 2026): Irma was already dead by 4 Oct 1952 (NSW marriage cert 27340/1952) — death window 1930–1952. The TB story (wife contracted an infection after childbirth, died about a month after being sent to "San Giorgio") may relate to Irma or to a different wife; the story involves a son, not Lilia. "San Giorgio" likely Porto San Giorgio, Fermo, Marche. Need dates.'
+  },
+  {
+    id: 'q-irma-pirri-death',
+    question: 'When and where did Irma Pirri die?',
+    category: 'Buatti/Chiappini',
+    status: 'In Progress',
+    notes: 'Already dead by 4 Oct 1952 (recorded on NSW marriage cert 27340/1952, Maitland district). Window 1930–1952, probably San Benedetto del Tronto; she would have been at most about forty. Route: Curia di San Benedetto del Tronto (Sig.ra Veccia) — a burial record would sit in the parish registers already circulating. Act after September (thread warm, don\'t poke before then). Check the marriage cert copy for the deceased notation and any detail.'
   },
   {
     id: 'q-bruna-servant',
