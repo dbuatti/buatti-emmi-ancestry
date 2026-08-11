@@ -2051,7 +2051,7 @@ export const initialPeople: Person[] = [
           departure: 'Melbourne',
           arrival: 'Italy',
           date: '13 September 1963',
-          details: 'Departed Melbourne with sons Alfred (6) and John. Lilia stayed in Australia. Intended as a 6-month visit to see ailing father Alfredo Sr. (colon cancer). "Noted for Return" stamp. After Alfredo died 9 May 1964, Ezio stayed because he would not uproot Ida. Stayed 12 years; returned 1975.'
+          details: 'Departed Melbourne with sons Alfred (6) and John. Lilia stayed in Australia. Intended as a 6-month visit to see ailing father Alfredo Sr. (colon cancer). "Noted for Return" stamp on 1952 arrival form. After Alfredo died 9 May 1964, Ezio stayed because he would not uproot Ida. Stayed 12 years; returned 1975. B78 file carries handwritten departure annotation: "LEFT PER NEPTUNIA ON 13/9/65 FROM MELB" — date reads as 1965 but is almost certainly 1963 (the 5 is a transcription artefact of a handwritten 3); aligns with Neptunia outbound manifest 18 Sep 1963 ex Fremantle (PP222/4 item 10153223).',
         }
       ]
     },
@@ -2101,7 +2101,7 @@ export const initialPeople: Person[] = [
         'Pull the 1975 "ricostruzione di carriera" thread — what did Ezio do in Italy 1963-1975?',
         'Marriage certificate C810020 received (Aug 2026) — reg. 27340/1952 confirms officiant Fr Zefferino Grisendi, witnesses Emidio Pica + Domenico Michetti, parents Remo Chiappini + Irma Pirri (deceased).',
         'RecordSearch BUATTI sweep — search for Lilia\'s naturalisation file V653748, Ezio\'s bankruptcy file 248/1957.',
-        'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled. NAA RecordSearch (11 Aug 2026): outbound manifest = PP222/4 item 10153223 ("Neptunia departed Fremantle 18 Sep 1963"), Perth, NOT digitised. Multiple B78/D4878 records confirm 13 Sep 1963 as a real Neptunia departure date (CUTURI, RIECHERT, RUSSO, TORRE). First check the B78 file already in hand (item 5746087) for a departure annotation — if present, ship/date confirmed without purchase.',
+        'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled. RESOLVED Aug 2026: B78 file (item 5746087) carries handwritten departure annotation "LEFT PER NEPTUNIA ON 13/9/65 FROM MELB" on the marriage-notification page — ship, port, and day confirmed; year reads as 65 but is almost certainly a misread/miswritten 63 (outbound manifest PP222/4 item 10153223 confirms Neptunia departed Fremantle 18 Sep 1963). No purchase of PP222/4 needed for this question.',
         'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?'
       ]
     },
