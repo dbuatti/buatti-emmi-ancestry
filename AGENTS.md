@@ -25,6 +25,8 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
   → **No further action. Wait for reply.**
 - **Comune di Maltignano — Ufficio Anagrafe** (Dott.ssa Paola D'Emidio): `prot. 0008863`, 11 Aug 2026. Delivered copie integrali of Ezio's 1991 death act and Lilia's 1998 death act. Reply sent same day (11 Aug) thanking + flagging Ezio death-location correction + 5 anagrafe questions (residency dates AIRE/registration, family composition) + confirmation of €16.52 (bollo + segreteria) payable via pagoPA. Reply ALSO raised open question: whether Lilia's riacquisto della cittadinanza (L. 91/1992) is recorded in Maltignano's registri di cittadinanza (held for next D'Emidio reply, not sent yet).
   → **No further action. Wait for reply.**
+- **Comune di San Benedetto del Tronto — Ufficio Stato Civile** (Sig.ra Rosa De Falco): `prot. 0067141/2026`, 11 Aug 2026. Richiesta copia integrale atto di matrimonio n. 45, anno 1930, parte 2 serie A — CHIAPPINI Remo × PIRRI Irma. Will name both sets of parents (the Irma Pirri / TB / San Giorgio thread).
+  → **No further action. Wait for reply.**
 
 ## Timed / pending research threads (do NOT propose before their trigger date)
 - ~20 Aug 2026 — NAA delivery of Lilia naturalisation file MP1187/1 V1965/3748 (Item ID 16189462) expected. Already purchased; only action is to watch the inbox.
