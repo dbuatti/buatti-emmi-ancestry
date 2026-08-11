@@ -31,10 +31,11 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - [2026-08-11] `pnpm lint` reviewed: 3 pre-existing errors in shadcn `ui/` files + `tailwind.config.ts` (not from our edits). `pnpm build` passes. Committed `faae84e` + pushed to origin/main. Working tree clean.
 - [2026-08-11] Ascoli Piceno sollecito verified: user already sent 9 Aug 2026 follow-up (prot. 66127/2026) and expanded it to two requests (birth act + 1963 marriage transcript ref SBT prot. 0066017). PM-proposed step was redundant — retracted. Logged here so it isn't re-proposed.
 - [2026-08-11] Gino Chiappini NAA sweep done: B78/A712/K1146/MP1187/B659/K266 all returned no hits (no naturalisation, no outbound voyage — confirmed negatives). General search returned 2 items; the only new lead is **SP1121/1 item 9637786** (Sydney migrant reception intake, Box 191, 1952, not digitised). Updated `familyData.ts` (Lilia notes + nextSteps). Pending commit.
+- [2026-08-11] Neptunia 1963 outbound NAA search: outbound manifest found = **PP222/4 item 10153223** (Fremantle, 18 Sep 1963, not digitised). 13 Sep 1963 departure date confirmed via multiple B78/D4878 records. Next: re-check Ezio's B78 file (item 5746087, already in hand) for departure annotation before spending on PP222/4.
 
 ## Open next-step candidates
 - NAA RecordSearch sweep for **Gino Chiappini** (line 177 Toscana, reg 290502, b.1927 labourer) — B78, naturalisation, passenger lists. Anchor: A2571 barcode 203679026 already in hand. Time-unrestricted, browser-doable.
 - NAA RecordSearch: Neptunia outbound 13 Sep 1963 passenger list — confirm who travelled back to Italy.
-- Family outreach: ask papa / Aunt Angie about Gino Chiappini (brother/cousin of Lilia?) and Irma Pirri TB story.
+- Family outreach: ask papa (next visit, not scheduled — long calls, unreliable recall) about Gino Chiappini (brother/cousin of Lilia?) and Irma Pirri TB story. **Aunt Angie ruled out — not related to Chiappini line.**
 - Ryerson Index + Trove: Gino Chiappini death/funeral notices.
 - Pre-existing lint debt: 3 errors in `src/components/ui/command.tsx`, `src/components/ui/textarea.tsx`, `tailwind.config.ts` (shadcn boilerplate / config — low priority, not blocking).

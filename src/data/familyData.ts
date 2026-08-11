@@ -2101,7 +2101,7 @@ export const initialPeople: Person[] = [
         'Pull the 1975 "ricostruzione di carriera" thread — what did Ezio do in Italy 1963-1975?',
         'Marriage certificate C810020 received (Aug 2026) — reg. 27340/1952 confirms officiant Fr Zefferino Grisendi, witnesses Emidio Pica + Domenico Michetti, parents Remo Chiappini + Irma Pirri (deceased).',
         'RecordSearch BUATTI sweep — search for Lilia\'s naturalisation file V653748, Ezio\'s bankruptcy file 248/1957.',
-        'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled.',
+        'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled. NAA RecordSearch (11 Aug 2026): outbound manifest = PP222/4 item 10153223 ("Neptunia departed Fremantle 18 Sep 1963"), Perth, NOT digitised. Multiple B78/D4878 records confirm 13 Sep 1963 as a real Neptunia departure date (CUTURI, RIECHERT, RUSSO, TORRE). First check the B78 file already in hand (item 5746087) for a departure annotation — if present, ship/date confirmed without purchase.',
         'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?'
       ]
     },
