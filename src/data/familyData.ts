@@ -734,13 +734,14 @@ export const initialPeople: Person[] = [
     generation: 1,
     line: 'Emmi',
     gender: 'M',
-    birthDate: '~1870 (age 30 at marriage on 4 Nov 1900)',
+    birthDate: '3 February 1870',
     birthPlace: 'Linguaglossa, Province of Catania, Sicily, Italy',
     occupation: 'Farmer (contadino)',
     deathDate: 'Deceased prior to 1943',
     notes: [
+      'Birth confirmed via Comune di Linguaglossa estratto: Nati 1870, atto n. 31, parte I (issued 27/10/2026 by Ufficiale delegato Foti Maria Angela). Born 03/02/1870, Linguaglossa. Parents Antonino Emmi × Rosaria Raiti. Margin: married Sgroi Concetta 04/11/1900, Linguaglossa (Matrimoni 1900 n. 59).',
       'Recorded as "DEC" on Gregorio\'s 1943 POW report, and as "fu Egidio" (the late Egidio) on the 1949 Comune di Linguaglossa certificate.',
-      'Parents: fu Antonino Emmi (bracciante, b. ~1849, d. 11 Mar 1889) + Rosaria Nasti (surname confirmed by two independent clerks: Carmelo Vecchio in Antonino\'s death act 1889, and Concetto Scarlata in marriage act 1900. The "Raiti" in the banns was a clerical slip). Given name "Rosaria" (reads "Rocaria/Rosaria" in both acts).',
+      'Parents recorded as fu Antonino Emmi (bracciante, b. ~1849, d. 11 Mar 1889) + Rosaria Nasti/Raiti. Extract gives mother as Raiti; earlier clerks read Nasti (Carmelo Vecchio death act 1889, Concetto Scarlata marriage act 1900) — preserve both until original act checked (Nasti also surname of namesake\'s bride).',
       'Married Concetta Sgroi on 4 Nov 1900 in Linguaglossa (atto № 59). Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40, contadino) and Arlotta Giuseppe (23). Both spouses illiterate.',
       'Father Antonino died when Egidio was ~19. Family lived on Via S. Egidio — Egidio\'s name likely derives from the street.',
       'Father was a bracciante (day labourer), NOT the same Antonino (industrioso, son of Francesco) who fathered the other Egidio Emmi (1868).',
@@ -752,19 +753,17 @@ export const initialPeople: Person[] = [
     parents: ['antonino-emmi', 'rosaria-nasti'],
     children: ['gregorio-emmi', 'emmi-older-brother-venezuela'],
     records: [
-      { type: 'Birth Record', status: 'Searching', notes: '~1870, Linguaglossa. Cited as issued in banns processetti — definitely exists in Nati registers (DGS 7841071). Allegati volume for 1900 not filmed (1894–1910 gap). Not yet located in Nati 1868-1871 or 1873-1874. Remaining years: 1866, 1867, 1872, and pre-1866 Borbonic series.' },
+      { type: 'Birth Record', status: 'Found', notes: '03/02/1870, Linguaglossa — Nati 1870, atto n. 31, parte I. Estratto issued 27/10/2026 by Comune di Linguaglossa (Foti Maria Angela). Parents: Antonino Emmi × Rosaria Raiti (variant Nasti). Margin: married Sgroi Concetta 04/11/1900.' },
       { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. Witnesses: Cassaniti Vincenzo (40), Arlotta Giuseppe (23). Both illiterate. Banns also atto № 59 (8 Sep 1900) — coincidental same number. CORRECTS earlier banns which had wrong mother (Raiti — clerical slip), father (Salvatore), age (20), and bride occupation (contadina vs industriosa).' },
       { type: 'Death Record', status: 'Found', notes: 'Pre-1943 per POW report — confirmed "fu Egidio" on 1949 certificate' }
     ],
     researchStatus: {
       status: 'Confirmed',
-      details: 'Marriage act found (4 Nov 1900, atto № 59). Parents: Antonino Emmi (bracciante, d. 1889) + Rosaria Nasti. Surname Nasti confirmed by independent clerks Vecchio (1889) and Scarlata (1900). Age ~30 (born ~1870). Farmer. Illiterate.',
+      details: 'Birth confirmed 03/02/1870 via Linguaglossa estratto (Nati 1870 n. 31, 27/10/2026). Parents Antonino Emmi × Rosaria Raiti (Nasti variant). Married Concetta Sgroi 04/11/1900 atto № 59. Father Antonino bracciante d. 1889.',
       nextSteps: [
-        'TRIBUNALE DEAD END (22 Jul 2026): Dott. Stefano Marino confirmed officials are not authorized to search the archive. Directed to Comune di Catania (likely boilerplate). Allegati route via Tribunale closed.',
-        'NEW ROUTE: Email Comune di Linguaglossa anagrafe (anagrafe@comune.linguaglossa.ct.it) — ask if they hold a local duplicate of atto 59/1900 allegati. Draft email prepared.',
-        'Search remaining Nati years: 1867 (first), 1872, 1866, and pre-1866 Borbonic series.',
-        'Hunt the household: scan every Emmi birth for siblings of Antonino + Rosaria Nasti.',
-        'Check Santa Maria delle Grazie baptism registers on FamilySearch.',
+        'Verify mother surname on original Nati 1870 act (Raiti vs Nasti) via Antenati.',
+        'Search Antenati Linguaglossa Morti 1870–1893 for Antonino Emmi death act.',
+        'Catania allegati for atto 59/1900 lower priority now that birth found; may contain Antonino death details.'
       ]
     },
     sources: [
@@ -1447,7 +1446,7 @@ export const initialPeople: Person[] = [
   },
   {
     id: 'rosaria-nasti',
-    name: 'Rosaria Nasti',
+    name: 'Rosaria Nasti (aka Raiti)',
     generation: 0,
     line: 'Emmi',
     gender: 'F',
@@ -1457,8 +1456,7 @@ export const initialPeople: Person[] = [
     parents: [],
     children: ['egidio-emmi'],
     notes: [
-      'Mother of Egidio Emmi. Surname now strongly corroborated as NASTI, not Raiti.',
-      'Recorded as "Nasti" in both Egidio\'s marriage act (atto 59, 4 Nov 1900, by Concetto Scarlata) and Antonino\'s death act (atto 27, 11 Mar 1889, by Carmelo Vecchio). Two independent clerks, 11 years apart, both read "Nasti". The banns "Raiti" (also by Scarlata) appears to be a clerical slip.',
+      'Mother of Egidio Emmi. Surname variant: Comune di Linguaglossa estratto for Egidio\'s birth (Nati 1870 n. 31, 27/10/2026) gives **RAITI**; earlier acts give **NASTI** — recorded as "Nasti" in both Egidio\'s marriage act (atto 59, 4 Nov 1900, by Concetto Scarlata) and Antonino\'s death act (atto 27, 11 Mar 1889, by Carmelo Vecchio). Two independent clerks read Nasti; the 1870 birth extract gives Raiti. Preserve both until original act checked.',
       'Given name uncertain: reads "Rocaria/Rosaria" in both acts.',
       'Living at the time of Egidio\'s marriage (not listed as "fu").',
       'Husband Antonino died when she was ~39-40, Egidio was ~19.',

@@ -103,7 +103,51 @@ Status legend: `PENDING` = draft ready, not sent · `SENT` · `ON HOLD` · `WAIT
 
 ---
 
-## Summary of open actions (as of 25 Aug 2026)
-1. ~~**PENDING (time-sensitive):** Send Email #1 reply to Perugia (Fiore awaiting refile).~~ **SENT 25 Aug 2026.**
-2. **ON HOLD:** Email #6 (Consulate) + Email #7 (Maltignano) nudges — revisit mid-Sept if still silent.
-3. **WAITING:** #2/#3 NAA (due 23/09), #4 Ascoli Piceno marriage, #5 SBT marriage.
+## Gmail Sweep — 24 Oct 2026 (20 Jun–24 Oct 2026)
+
+- **Silence:** last inbound family-history email 27 Aug 2026 (~10 weeks). All open threads overdue.
+- **Unprocessed Ascoli Piceno PECs:**
+  1. 14 Aug 2026 `comune.ap@pec.it` — "invio documentazione per richiesta copia integrale atto di nascita BUATTI Ezio (27/04/1923) rif. prot. 0066127/2026" (RIF.PROT. c_a462|REG_UFFICIALE|74898/2026). Thread `19fffc67227e162c`. Attachment: `doc06325120260814115219.pdf` (+ `_Marcato.pdf`) inside `postacert.eml`. **Not recorded in logs/memory.** Originally thought to be Ezio's birth act — see 27 Oct addendum (contains fee letter + 1963 marriage transcription).
+  2. 16 Jul 2026 `comune.ap@pec.it` — re Alfredo×Ida marriage (prot. 0062771), REG_UFFICIALE 65123/2026, thread `19f6a2e097353708`, scanned PDF present (likely same fee letter).
+- **Drafts created (ready to send/review):** D1 Maltignano (paola.demidio@comune.maltignano.ap.it), D2 Ascoli (protocollo@comune.ap.it), D3 SBT (comunesbt.it), D4 Catania Archivio Stato Civile, D5 Linguaglossa, D6 Fiumefreddo di Sicilia, D7 IIS Celso Ulpiani.
+- **Consulate Melbourne:** Form A (AIRE follow-up) and Form B (historical file L9952/36094, Chiappini Lilia + Buatti Ezio) prepared for web form (`consmelbourne.esteri.it`); PEC bounces.
+- **NAA:** `NAA1000457651` (bankruptcy 248/1957, B160 item 24838293, RK26/00010304) in access examination, due 23 Sep 2026 (90 business days possible late Nov). Lilia naturalisation `MP1187/1 V1965/3748` item 16189462 likely contains alien registration records.
+- **Stale drafts to delete:** `r1039523562236428157`, `r-1203493548502165931`, `r5780244801991295160`, `r-6781976099579368903`, `r3700721206953541974`.
+
+## Gmail Sweep Addendum — 27 Oct 2026 (24–27 Oct 2026)
+
+### Receipts/logs
+- **Linguaglossa (Sig.ra Foti Maria Angela):** Reply with PDF `doc04744820261027102908.pdf` received 27 Oct. Found 1900 marriage and determined Egidio Emmi's birth year; not in previously suggested volumes (1866–67, 1872–73).
+- **Maltignano:** Protocol receipt **n. 11237 del 27-10-2026** (D1).
+- **Ascoli Piceno:** PEC protocol receipt **REG_UFFICIALE 97722/2026** (D2).
+- **San Benedetto del Tronto:** Protocol receipt **0088026/2026 del 27/10/2026** (D3).
+- **IIS "Celso Ulpiani":** Protocol receipt **0029358/2026 del 27/10/2026** (D7).
+- **Catania / Fiumefreddo:** No receipts seen; presumed sent 27 Oct. Check Sent folder.
+
+### Documents transcribed / analyzed
+- **Linguaglossa (27 Oct)** `doc04744820261027102908.pdf` — two Vienna Convention extracts (personal use only), issued 27/10/2026 by Ufficiale delegato Foti Maria Angela.
+  - **Birth (Nati 1870, atto n. 31, parte I):** EMMI Egidio, born **03/02/1870**, Linguaglossa. Father: **EMMI Antonino**. Mother: **RAITI Rosaria**. Margin: married SGROI Concetta 04/11/1900, Linguaglossa (Matrimoni 1900 n. 59).
+  - **Marriage (Matrimoni 1900, atto n. 59, parte I):** 04/11/1900, Linguaglossa. Groom: EMMI Egidio b. 03/02/1870 Linguaglossa (CT). Bride: SGROI Concetta b. Linguaglossa (CT) — birth date blank on extract (known 10/03/1877).
+- **Result:** **Open question 3 RESOLVED.** Egidio Emmi born 03/02/1870, Linguaglossa, son of Antonino Emmi × Rosaria Raiti (note: earlier marriage act reading gave NASTI; extract gives RAITI — preserve both pending original act check). Act 31/1870 should exist on Antenati (coverage to 1893). 
+- **Ascoli Piceno 14 Aug 2026 (REG_UFFICIALE 74898/2026):** **Not Ezio's birth act.** Contains (1) fee letter from Dott.ssa Romina Pica (Dirigente Servizi Demografici): since 01/01/2025, pre-1926 civil acts for persons other than requester require administrative contribution €250/act if details exact, €300 if not (payable upfront, IBAN IT98I0200813507000102493318, causale "contributo amministrativo per richiesta di certificato storico stato civile + [nome richiedente]", form "Richiesta di ricerca storica e relativi certificati", ID/proof of kinship/payment receipt required; phone 0736-298548). (2) blank form. (3) **Copia integrale conforme per uso personale** of 1963 transcription of marriage BUATTI Ezio × CHIAPPINI Lilia (Matrimoni 1963 n. 36). Transcribed from Australian registration via MAE, certified by Consolato Generale d'Italia Sydney (c.24/..-1963). Australian reg: district (West?) Maitland NSW, reg no. **154** (*lettura incerta*). Married **04/10/1952** at **St Anthony's chapel, Greta** NSW (Roman Catholic). Groom: BUATTI Ezio, celibe, dottore in agraria, resident [illegible] Greta NSW, born Ascoli Piceno, age 29, son of Alfredo Buatti and Ida Galanti. Bride: CHIAPPINI Lilia, nubile, casalinga, resident [illegible] Greta NSW, born San Benedetto del Tronto, age 22, daughter of Remo Chiappini and Irma Pirri. Witnesses include **… Pica** and **Domenico Mi(c)hetti** (*lettura incerta*). Officiant/registrar partly legible. No age/parentage for Ida Galanti — Ida Galanti question remains open. **New free lead:** if Ida died in Ascoli Piceno after 1926, death act is under 100 years and should show parentage.
+- **Ascoli Piceno 16 Jul 2026 (REG_UFFICIALE 65123/2026):** likely same fee letter for Alfredo×Ida marriage.
+
+### Drafts
+- **D8** (info@danielebuatti.com mailbox) to anagrafe@comune.linguaglossa.ct.it — thank Sig.ra Foti, offer to pay fees. Draft ID `r-8878251019243220453`. Send from info@ or copy to keep thread consistent with daniele.buatti@gmail.com. Hold follow-ups until transcription complete (done).
+
+### Actions taken/next
+- **OpenCode updates required:** add Egidio Emmi birth 03/02/1870 Linguaglossa, parents Antonino Emmi × Rosaria Raiti (note Nasti variant); update Ezio×Lilia marriage place to St Anthony's chapel, Greta NSW with source Matrimoni 1963 n. 36 (Ascoli transcription); log Ascoli fee regime; update open questions/statuses.
+
+## Summary of open actions (as of 24 Oct 2026)
+1. **PRIORITY:** Open PDF in Gmail thread `19fffc67227e162c` (Ascoli AP, 14 Aug 2026 REG 74898) — Ezio birth act; may resolve Ida Galanti parentage.
+2. Re-check PDF in thread `19f6a2e097353708` (Ascoli AP, 16 Jul 2026 REG 65123).
+3. Send D1 (Maltignano) and D3 (SBT).
+4. Send D2 (Ascoli) after adjusting opening line based on 14 Aug PDF.
+5. Paste Form A + Form B into Consulate contact form.
+6. Send D4, D5, D6, D7 as convenient.
+7. Check RK26/00010304, RK26/00009591, RK26/00009589 in RecordSearch.
+8. Decide on NAA purchase MP1187/1 V1965/3748.
+9. Delete 5 stale drafts (section above).
+10. ~~**PENDING (time-sensitive):** Send Email #1 reply to Perugia (Fiore awaiting refile).~~ **SENT 25 Aug 2026.**
+11. **ON HOLD:** Email #6 (Consulate) + Email #7 (Maltignano) nudges — revisit mid-Sept if still silent (per 25 Aug decision).
+12. **WAITING:** #2/#3 NAA (due 23/09), #4 Ascoli Piceno marriage, #5 SBT marriage.
