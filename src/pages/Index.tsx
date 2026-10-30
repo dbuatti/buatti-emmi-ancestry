@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { calculateCompleteness } from '@/lib/research';
-import { MadeWithDyad } from '@/components/made-with-dyad';
+
 import { AppHeader } from '@/components/AppHeader';
 import { PedigreeChart } from '@/components/PedigreeChart';
 import { TreeEgo } from '@/components/TreeEgo';
@@ -275,7 +275,7 @@ const Index = () => {
           </p>
         </div>
       </footer>
-      <MadeWithDyad />
+
 
       <Dialog open={isAddPersonOpen} onOpenChange={setIsAddPersonOpen}>
         <DialogContent className="max-w-lg bg-[#FAF6F0] border-stone-300 font-sans">
