@@ -3,10 +3,9 @@
 Every document goes through 5 steps, tracked in its `record.md` front matter:
 
 ## Step 1: filed
-- Original copied untouched into `records/<id>/`
-- `id`: `YYYY_Comune_type_Surnames_attoN`
+- Copy into `records-local/<id>/` named as `<id>.<ext>` (single file) or `<id>_p1.<ext>`, `<id>_p2.<ext>`, … (multi-page/multiple files)
+- Record `original_filename` and `original_sha256` in record.md front matter
 - The source file in `~/Downloads/FAMILY TREE/` is **not** moved or altered
-- Record the SHA-256 hash for duplicate detection
 
 ## Step 2: transcribed
 
@@ -64,10 +63,9 @@ After a record is verified (`verified: true`), review it in the app:
 Run these steps whenever asked to **process <file>**:
 
 ### Step 1 — Copy
-- Copy the file into `records-local/<id>/` (never move or delete the original).
-- `id` follows the format: `YYYY_Comune_type_Surnames_attoN`.
-- Check the SHA-256 of the copy matches the original.
-- Create `records/<id>/record.md` with front matter: `filed: true`, everything else blank/false.
+- Copy into `records-local/<id>/` named as `<id>.<ext>` (single file) or `<id>_p1.<ext>`, `<id>_p2.<ext>`, … (multi-page/multiple files)
+- Record `original_filename` and `original_sha256` in record.md front matter
+- Create `records/<id>/record.md` with front matter: `filed: true`, everything else blank/false
 
 ### Step 2 — Transcribe
 

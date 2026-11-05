@@ -1,22 +1,25 @@
 ---
 id: 1915_Linguaglossa_birth_Emmi-Gregorio_atto202
 type: Birth Record
-date: "23/10/1915"
-place: "Linguaglossa"
+date: 23/10/1915
+place: Linguaglossa
 comune: Linguaglossa
-register: ""
-year: "1915"
-atto: "202"
-people: [gregorio-emmi]
-source_office: "Comune di Linguaglossa, Ufficio Anagrafe (Sig.ra Foti Maria Angela)"
-protocol: ""
-transcribed_by: "Nemotron 3.5 Super VL (free)"
-translated_by: "Nemotron 3.5 Super VL (free)"
+register: ''
+year: '1915'
+atto: '202'
+people:
+- gregorio-emmi
+source_office: Comune di Linguaglossa, Ufficio Anagrafe (Sig.ra Foti Maria Angela)
+protocol: ''
+transcribed_by: Nemotron 3.5 Super VL (free)
+translated_by: Nemotron 3.5 Super VL (free)
 filed: true
 transcribed: true
 verified: true
 in_app: true
 on_familysearch: false
+original_filename: doc04420420260630103658 (1).pdf
+original_sha256: a1d238d3c1beb31032a5e4865d510aac4d0ea6fe0610181261001dc382c833a5
 ---
 
 ## Transcription (estratto, multilingual form)
