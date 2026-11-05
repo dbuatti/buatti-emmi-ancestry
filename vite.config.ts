@@ -297,6 +297,38 @@ function localRecordsApiPlugin() {
           return;
         }
 
+        // ---- POST /api/fs-check ----
+        // Saves a FamilySearch person check into src/data/fs-checks.json:
+        // { personId, patch } — patch fields are merged; null deletes a field.
+        if (method === "POST" && url.startsWith("/api/fs-check")) {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const { personId, patch } = JSON.parse(raw);
+                if (typeof personId !== "string" || !/^[a-z0-9-]+$/i.test(personId)) {
+                  return sendJson(res, 400, { error: "invalid personId" });
+                }
+                const storePath = path.resolve(__dirname, "src", "data", "fs-checks.json");
+                let store: Record<string, Record<string, unknown>> = {};
+                if (fs.existsSync(storePath)) {
+                  try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || {}; } catch { store = {}; }
+                }
+                const entry: Record<string, unknown> = { ...(store[personId] ?? {}) };
+                for (const [k, v] of Object.entries(patch ?? {})) {
+                  if (v === null || v === undefined) delete entry[k];
+                  else entry[k] = v;
+                }
+                store[personId] = entry;
+                fs.writeFileSync(storePath, JSON.stringify(store, null, 2) + "\n");
+                return sendJson(res, 200, { ok: true, entry });
+              } catch (e) {
+                return sendJson(res, 500, { error: (e as Error).message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
         // ---- POST /api/event-override ----
         // Persists what the Next card knows about one life event into
         // src/data/event-requests.json. patch === null deletes the entry;
@@ -356,6 +388,36 @@ function localRecordsApiPlugin() {
                   JSON.stringify(store, null, 2) + "\n"
                 );
                 return sendJson(res, 200, { ok: true, store });
+              } catch (e: any) {
+                return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/person-skip ----
+        // Persists person-level skip (skipped_on) into src/data/person-skips.json.
+        if (method === "POST" && url.startsWith("/api/person-skip")) {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const { personId, skippedOn } = JSON.parse(raw);
+                if (typeof personId !== "string" || !/^[a-z0-9-]+$/i.test(personId)) {
+                  return sendJson(res, 400, { error: "invalid personId" });
+                }
+                const storePath = path.resolve(__dirname, "src", "data", "person-skips.json");
+                let store: Record<string, Record<string, unknown>> = {};
+                if (fs.existsSync(storePath)) {
+                  try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || {}; } catch { store = {}; }
+                }
+                if (skippedOn === null || skippedOn === undefined || skippedOn === "") {
+                  delete store[personId];
+                } else {
+                  store[personId] = { ...(store[personId] ?? {}), skippedOn };
+                }
+                fs.writeFileSync(storePath, JSON.stringify(store, null, 2) + "\n");
+                return sendJson(res, 200, { ok: true });
               } catch (e: any) {
                 return sendJson(res, 500, { error: e.message });
               }

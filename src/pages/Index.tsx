@@ -11,6 +11,7 @@ import { calculateCompleteness } from '@/lib/research';
 
 import { AppHeader } from '@/components/AppHeader';
 import { NextGuide } from '@/components/NextGuide';
+import { SessionSummary } from '@/components/SessionSummary';
 import { PedigreeChart } from '@/components/PedigreeChart';
 import { TreeEgo } from '@/components/TreeEgo';
 import { TreeConnected } from '@/components/TreeConnected';
@@ -129,6 +130,7 @@ const Index = () => {
       />
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+        <SessionSummary />
         <NextGuide />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">

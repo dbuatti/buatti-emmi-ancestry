@@ -300,3 +300,17 @@ If identification is not certain, ask the user ONE question with numbered option
 ---
 
 **"transcribe next"** = transcribe the next record that is `filed` but not `transcribed` (tell the user which one it picked). Use only the image the user pastes; do not read `familyData.ts` or other records while transcribing.
+
+---
+
+## "identify <folder>" — sort `_unsorted/`
+
+Processes the files in `~/Downloads/FAMILY TREE/_unsorted/` (or a named subfolder) **one file at a time**:
+
+1. Show ONE file (image or PDF first page) — ask the user to paste a close-up to the VL model.
+2. From the transcription, propose a `record id` (`YYYY_Comune_type_Surnames_attoN`) and which person/life-event it belongs to.
+3. Ask for confirmation before filing: never move or rename without an explicit "yes".
+4. On confirm: copy into `records-local/<id>/` as `<id>_p1.<ext>`, create `records/<id>/record.md` with `filed: false` (transcription not yet done), and move the original to `~/Downloads/FAMILY TREE/_processed/<id>/`.
+5. Move to the next file only after the previous one is confirmed.
+
+Never guess an identification; if the transcription is ambiguous, ask ONE question with numbered options.

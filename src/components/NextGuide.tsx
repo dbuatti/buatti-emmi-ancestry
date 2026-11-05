@@ -27,12 +27,15 @@ import {
   type EventOverrides,
 } from '../../scripts/next-task';
 import eventRequests from '@/data/event-requests.json';
+import fsChecks from '@/data/fs-checks.json';
+import personSkips from '@/data/person-skips.json';
 import {
   callApi,
   callApiOpenInFinder,
   callApiEventOverride,
   callApiCreateRecord,
   callApiOpenInbox,
+  callApiPersonSkip,
 } from './next-guide-api';
 import { getAllRecords, parseFamilySearchSection, type FamilySearchFields } from '@/lib/record-loader';
 
@@ -86,6 +89,7 @@ export function NextGuide() {
   const overrides = eventRequests as EventOverrides;
   const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<string | null>(null);
+  const [officeInput, setOfficeInput] = useState<string | null>(null);
   const [recordSteps, setRecordSteps] = useState<Map<string, RecordStepInfo>>(new Map());
   const [recordsLoaded, setRecordsLoaded] = useState(false);
   const [fsIdInput, setFsIdInput] = useState<string>('');
@@ -143,8 +147,7 @@ export function NextGuide() {
     );
   }
 
-  const task = getNextTask(people, recordSteps, overrides);
-
+  const task = getNextTask(people, recordSteps, overrides, new Date(), fsChecks as Record<string, { checkedOn?: string; openItems?: number; snoozedOn?: string }>, personSkips as Record<string, { skippedOn?: string }>);
   if (!task) {
     return (
       <Card className="border-emerald-200 bg-emerald-50 rounded-xl p-6 shadow-sm">
@@ -154,9 +157,38 @@ export function NextGuide() {
           </div>
           <div>
             <h3 className="text-sm font-bold text-emerald-800">All tasks complete</h3>
-            <p className="text-xs text-emerald-600">Gregorio Emmi — no pending tasks.</p>
+            <p className="text-xs text-emerald-600">No pending tasks.</p>
           </div>
         </div>
+      </Card>
+    );
+  }
+
+  if (task.type === 'fs_person_check') {
+    return (
+      <Card className="bg-white rounded-xl shadow-sm border-2 border-[#800020]/20">
+        <div className="bg-[#FAF6F0] rounded-t-xl p-4 border-b border-[#800020]/20">
+          <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider">Next task</h2>
+          <div className="text-[10px] text-stone-500 mt-0.5">{task.personName}</div>
+        </div>
+        <CardContent className="p-4 space-y-3">
+          <div className="text-sm font-semibold text-stone-800">
+            Update {task.personName}'s page on FamilySearch
+          </div>
+          <p className="text-sm text-stone-600">{task.note}</p>
+          <ol className="list-decimal ml-5 text-sm text-stone-700 space-y-1">
+            <li>Click <b>Open FamilySearch check</b>.</li>
+            <li>Open the person on FamilySearch, press Cmd + A, Cmd + C, and paste the page in.</li>
+            <li>Add or fix each item it lists (each has Copy buttons), then paste again until nothing is left.</li>
+          </ol>
+          <Button
+            size="sm"
+            className="text-xs bg-[#800020] text-white hover:bg-[#600018]"
+            onClick={() => navigate(`/familysearch/${task.personId}`)}
+          >
+            Open FamilySearch check
+          </Button>
+        </CardContent>
       </Card>
     );
   }
@@ -234,7 +266,7 @@ export function NextGuide() {
     try {
       await callApiEventOverride(overrideKey, {
         requestedOn: today,
-        requestedFrom: task.office ?? '',
+        requestedFrom: (officeInput ?? task.office ?? '').trim(),
         receivedOn: null,
       });
       setStatus(`Saved: requested_on ${today}`);
@@ -305,6 +337,18 @@ export function NextGuide() {
     }
   };
 
+  const skipPerson = async () => {
+    if (!task) return;
+    const today = toIsoDate();
+    setStatus('Saving...');
+    try {
+      await callApiPersonSkip(task.personId, today);
+      setStatus(`Saved: skipped ${task.personName} (${today})`);
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
   /** Shared panel: "Where it is", straight from the lifeEvent note. */
   const whereItIsPanel = (
     <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
@@ -312,11 +356,15 @@ export function NextGuide() {
       <p className="text-sm text-stone-700 whitespace-pre-wrap">
         {task.whereItIs || `No note is recorded for this ${eventLabel} event in familyData.ts.`}
       </p>
-      {task.office && (
-        <p className="text-xs text-stone-500 mt-2">
-          Office found in that note: <b className="text-stone-700">{task.office}</b>
-        </p>
-      )}
+      <label className="flex items-center gap-2 text-xs text-stone-600 mt-3">
+        <span className="shrink-0">Office to request from:</span>
+        <input
+          className="flex-1 rounded border border-stone-300 bg-white px-2 py-1 text-sm text-stone-800"
+          value={officeInput ?? task.office ?? ''}
+          placeholder="e.g. Comune di Fiumefreddo di Sicilia"
+          onChange={(e) => setOfficeInput(e.target.value)}
+        />
+      </label>
     </div>
   );
 
@@ -439,7 +487,7 @@ export function NextGuide() {
             Next task
           </h2>
           <div className="flex items-center gap-1.5 text-[10px] text-stone-500 mt-0.5">
-            <span>{task.personName}</span>
+            <span>Working on: {task.personName}{task.relationship ? ` (${task.relationship})` : ''}</span>
             <span className="w-px h-3 bg-stone-300 mx-0.5" />
             <span className="font-bold text-[#800020]">{progress}</span>
           </div>
@@ -484,7 +532,7 @@ export function NextGuide() {
             <div className="mt-2 text-xs text-stone-500">
               "Requested" stores <span className="font-mono">requested_on: {toIsoDate()}</span> and
               hides this event for 30 days; then the card comes back as{' '}
-              <span className="font-mono">Chase {task.office ?? `<office>`}?</span>
+              <span className="font-mono">Chase {(officeInput ?? task.office) || `<office>`}?</span>
             </div>
           </>
         )}
@@ -666,6 +714,17 @@ export function NextGuide() {
             {status}
           </div>
         )}
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-xs h-8 px-3 text-stone-500 hover:bg-stone-50"
+            onClick={skipPerson}
+          >
+            <FastForward className="w-3 h-3 mr-1" /> Skip this person
+          </Button>
+        </div>
 
         <div className="mt-4 flex flex-wrap gap-2">
           {recordId && stepNum >= 2 && (

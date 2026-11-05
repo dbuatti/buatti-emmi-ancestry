@@ -1,6 +1,40 @@
+# FIRST JOB next session — "Bottom-up queue" prompt (paste into OpenCode, coding model)
+
+```
+Replace the hard-coded pilot person in the Next guide with an automatic bottom-up queue:
+
+1. Order people by closeness to Daniele: Daniele first, then parents, then
+   grandparents, then great-grandparents, and so on (use generation: highest
+   generation number first; within a generation keep a stable order by line).
+2. The Next card works on the closest person who is NOT finished. A person is
+   finished when every life event (birth, baptism, marriage(s), death, burial,
+   migration/naturalisation) has a verified record at step 5 AND their FamilySearch
+   person check is clear. Events waiting on a request (requested_on < 30 days) do
+   not block: move on, and come back when the chase is due.
+3. Show "Working on: <name> (<relationship>)" and progress, e.g. "Gregorio Emmi
+   (grandfather) - 4 of 9".
+4. Add "Skip this person": saves skipped_on; the person goes to the end of the queue
+   and returns after everyone ahead is finished or waiting. Keep the existing
+   per-task "Skip for now".
+5. Living people (Daniele, parents): same checklist, but records stay local-only and
+   never go to FamilySearch Memories.
+6. AGENTS.md guide mode uses the same queue (scripts/next-task.ts) so app and
+   OpenCode always agree on who is next.
+7. Also add "identify <folder>" for _unsorted/: one file at a time, ask me to paste a
+   close-up to the VL model, propose the record id from the transcription, file it
+   only after I confirm.
+Test with the current data: the card should start with Daniele. Commit, don't push.
+```
+
+# Session 5 Nov 2026 — summary (Claude)
+
+Done: records system live (inbox → "process inbox" → Next card: file → transcribe → check → apply → FamilySearch); FAMILY TREE folder organised into the repo (189 files, hashes verified; images gitignored, never deployed); Gregorio Emmi birth (Linguaglossa Nati 1915 atto 202, 23 Oct 1915) and baptism (DGS 5455112 n. 251, born 27 Oct / baptised 5 Dec 1915) both through all 5 steps; 23 vs 27 kept as discrepancy; leads: Fiumefreddo Matrimoni 1948 parte II serie A n. 34, Linguaglossa Cittadinanza 1961 atto 32 parte I, godmother Rosaria Emmi, siblings in Linguaglossa baptisms 1901–1921. New: check mode, FamilySearch form card, Get-the-document card (office now taken from "Reference:", editable), FamilySearch person check (/familysearch/:personId, PersonModal tab, saves src/data/fs-checks.json, Next card task once all records are on FamilySearch). Gregorio familySearchId → P65X-5T7 (old G4QG-QD1 kept in a comment).
+
+Next: commit + push; make GitHub repo private; send Fiumefreddo draft (info@ Drafts) then mark Requested; FamilySearch check for Gregorio (add Birth, Christening, Marriage; review P65V-T59, Acireale hint; Concetta Sgroi 1874 vs 1877); later: NSW death cert, Linguaglossa citizenship 1961 atto 32, baptism films 1901–1913, identify 111 _unsorted files. Known issue: TS error in NextGuide "Found online" (personId).
+
 # HANDOFF.md — briefing pack for a fresh session
 
-**Last updated: 06/11/2026**
+**Last updated: 06/11/2026 (bottom-up queue)**
 **Repo:** `~/dyad-apps/Buatti-Emmi Ancestry` · branch `main`
 **Read this first, then `AGENTS.md` (the full PM log).** This file is a distilled briefing;
 `AGENTS.md` is the unabridged history and is where new entries get appended.
@@ -250,6 +284,7 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
 ## 12. Change history of this document
 
 - **06/11/2026** — D15 (Curia letter) sent to curia@diocesisbt.it; moved to "Awaiting replies". Updated ranked next steps; removed D15 from top priority (step 1 now: wait on D13).
+- **06/11/2026 (bottom-up queue)** — Replaced the hard-coded `gregorio-emmi` pilot in `scripts/next-task.ts` with an automatic bottom-up queue: people ordered by stored generation (highest first), Daniele first, then by line; first non-finished/non-waiting person is worked on. "Finished" = every life event at step 5 (step 4 for living people) and FamilySearch person check clear; events waiting on a request (<30 days) don't block. Added `relationship` to NextTask and "Working on: <name> (<relationship>)" in the card. Added person-level "Skip this person" (persists `skippedOn` in `src/data/person-skips.json`, deprioritises the person). Living people skip step 5 and the FS person check. Added `/api/person-skip` endpoint and `callApiPersonSkip`. Documented "identify <folder>" for `_unsorted/` in WORKFLOW.md/AGENTS.md. Seeded lifeEvents for Daniele, Alfred and Venera so the card starts with Daniele. Committed, not pushed.
 - **05/11/2026** — created. Captures: the export tool + data-model traps, the cemetery
   link fix and its verified records (`varId=15950` / `15951`, plus the unrecorded
   `buatti ezio` 1991 entry), the current research state, the known-conflict table, and the

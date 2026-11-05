@@ -2297,7 +2297,7 @@ export const initialPeople: Person[] = [
       internment: 'Transported from Bombay to Sydney aboard SS Uruguay (arrived 4 Oct 1943). Interned as POW at Camp No. 12, Cowra, NSW (from 5 Oct 1943); later moved to Murchison, Victoria. Hospitalized at Leongatha (malaria, May 1944) and Tatura/Murchison (epistaxis, Dec 1944).',
       repatriation: 'Repatriated to Italy on 30 September 1946 aboard H.T. Chitral.'
     },
-    familySearchId: 'G4QG-QD1',
+    familySearchId: 'P65X-5T7', // set 05/11/2026 (the profile Daniele maintains). Previously stored: G4QG-QD1 — may be another FamilySearch profile of Gregorio; FamilySearch also flags P65V-T59 as a possible duplicate.
     records: [
       { type: 'Birth (Civil)', status: 'Found', notes: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30 Jun 2026. Date: 23 Oct 1915. (4-day discrepancy with baptismal record: 27 Oct 1915.)', recordId: '1915_Linguaglossa_birth_Emmi-Gregorio_atto202' },
       { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin. RE-TRANSCRIBED line by line 05/11/2026 from the filed images (records-local/1915_Linguaglossa_baptism_Emmi-Gregorio_n251_p1.jpg + _p2.png), record id 1915_Linguaglossa_baptism_Emmi-Gregorio_n251. Line 4 unreadable in this pass — the officiant\'s name and licence text are [?]; the older reading "Fr. Rochus La Rosa per license of Archpriest Blasius Palermo" is retained but UNVERIFIED. Final line reads "vero Josepha Nicotra" with no legible role; the older reading logged her as the midwife (Giuseppa Nicotra) — role UNCONFIRMED. "(ut ass.)" = "ut asseritur" ("as is stated") — the priest records the couple\'s legitimacy claim as stated, not proven [inference].', link: 'https://www.familysearch.org/ark:/61903/3:1:3QS7-89MY-24XN?cat=olib%3A2028634&view=explore&lang=en&groupId=TH-1942-27830-4120-90' },
@@ -2505,7 +2505,10 @@ export const initialPeople: Person[] = [
     researchStatus: {
       status: 'Confirmed',
       details: 'Living. Details confirmed.'
-    }
+    },
+    lifeEvents: [
+      { type: 'birth', status: 'known_no_record', note: 'Birth 8 Nov 1956, Broadford, Victoria, Australia — confirmed. No certificate held.' }
+    ]
   },
   {
     id: 'venera-buatti',
@@ -2533,7 +2536,10 @@ export const initialPeople: Person[] = [
       nextSteps: [
         'Ask Venera or family for her exact birth date and place.'
       ]
-    }
+    },
+    lifeEvents: [
+      { type: 'birth', status: 'missing', note: 'Birth year 1952 — exact date and place TBC.' }
+    ]
   },
 
   // --- GENERATION 4: Children ---
@@ -2551,6 +2557,9 @@ export const initialPeople: Person[] = [
     isLiving: true,
     records: [
       { type: 'Birth Record', status: 'Found', notes: '20 Nov 1990, Parkdale VIC — confirmed by individual' }
+    ],
+    lifeEvents: [
+      { type: 'birth', status: 'known_no_record', note: 'Birth 20 Nov 1990, Parkdale, Victoria, Australia — confirmed by individual. No certificate held.' }
     ],
     researchStatus: { status: 'Confirmed' }
   },

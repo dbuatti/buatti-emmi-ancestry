@@ -6,6 +6,7 @@ import Index from "./pages/Index";
 import ResearchGoals from "./pages/ResearchGoals";
 import NotFound from "./pages/NotFound";
 import RecordPage from "./pages/RecordPage";
+import FamilySearchCheckPage from "./pages/FamilySearchCheckPage";
 
 const App = () => (
   <TooltipProvider>
@@ -16,6 +17,7 @@ const App = () => (
         <Route path="/" element={<Index />} />
         <Route path="/research-goals" element={<ResearchGoals />} />
         <Route path="/records/:recordId" element={<RecordPage />} />
+        <Route path="/familysearch/:personId" element={<FamilySearchCheckPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

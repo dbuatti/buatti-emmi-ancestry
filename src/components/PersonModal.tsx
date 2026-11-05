@@ -11,6 +11,7 @@ import { getWorkflowStepNumber } from '@/lib/records';
 import { calculateAge } from '@/lib/tree';
 import { LinkifiedText } from '@/components/LinkifiedText';
 import { getAllRecords } from '@/lib/record-loader';
+import { FamilySearchCheck } from '@/components/FamilySearchCheck';
 import type { Person } from '@/types';
 
 interface PersonModalProps {
@@ -402,11 +403,12 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
         </div>
 
         <Tabs defaultValue="overview" className="flex flex-col flex-1 overflow-hidden">
-          <TabsList className="w-full bg-stone-100 rounded-none border-b border-stone-200 grid grid-cols-4 text-xs shrink-0">
+          <TabsList className="w-full bg-stone-100 rounded-none border-b border-stone-200 grid grid-cols-5 text-xs shrink-0">
             <TabsTrigger value="overview" className="rounded-none py-2.5">Overview</TabsTrigger>
             <TabsTrigger value="bio" className="rounded-none py-2.5">Notes</TabsTrigger>
             <TabsTrigger value="migration" className="rounded-none py-2.5">Migration</TabsTrigger>
             <TabsTrigger value="records" className="rounded-none py-2.5">Records</TabsTrigger>
+            <TabsTrigger value="familysearch" className="rounded-none py-2.5">FamilySearch</TabsTrigger>
           </TabsList>
           <TabsContent value="overview" className="flex-1 overflow-y-auto mt-0 p-4">
             <ModalOverview person={person} people={people} onSelectPerson={onSelectPerson} />
@@ -419,6 +421,9 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
           </TabsContent>
           <TabsContent value="records" className="flex-1 overflow-y-auto mt-0 p-4">
             <ModalRecords person={person} />
+          </TabsContent>
+          <TabsContent value="familysearch" className="flex-1 overflow-y-auto mt-0 p-4">
+            <FamilySearchCheck person={person} people={people} />
           </TabsContent>
         </Tabs>
 
