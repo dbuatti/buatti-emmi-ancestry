@@ -18,3 +18,20 @@ transcribed: false
 verified: false
 in_app: false
 on_familysearch: false
+---
+
+## Transcription (estratto, multilingual form)
+- Cognome:
+- Prenomi:
+- Sesso:
+- Data di nascita:
+- Luogo di nascita:
+- Padre (cognome, prenomi):
+- Madre (cognome, prenomi):
+- Annotazioni:
+- Data di rilascio / Ufficiale:
+
+## English
+(one-line summary)
+
+## Discrepancies

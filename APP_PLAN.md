@@ -57,6 +57,8 @@ protocol: prot. NNNN/YYYY  # or "n/a"; leave blank if unknown
 fs_status: on FamilySearch | not on FamilySearch | pending
 verified_by_daniele: true | false
 transcribed_by: pdftotext | tesseract | Daniele (manual) | image_not_available
+image_visibility: public | family | local    # default: local; never default to public
+image_link: https://...    # URL on FamilySearch/Antenati; optional; never copied
 ```
 
 The five workflow steps tracked in front matter:
@@ -113,12 +115,44 @@ Each record.md front matter gets `fs_status`. On the RecordPage:
 - If `fs_status === 'not on FamilySearch'`: badge on To-do page.
 - No FS API calls (no key needed) — manual entry only.
 
+## Image Visibility Levels
+
+Each record.md front matter has two new fields:
+
+```yaml
+image_visibility: public | family | local    # default: local; never default to public
+image_link: https://...    # URL on FamilySearch/Antenati; optional; never copied
+```
+
+### local (default)
+- Image shown only when the app runs on Daniele's Mac (dev mode).
+- `RecordViewer.tsx` resolves from `records-local/<id>/`.
+- No image element is emitted in production builds.
+- **Never default to public.** Only Daniele sets this field.
+
+### public
+- The image is copied into the deployed site and shown on the record page.
+- Only Daniele sets this field. Never default to public.
+- The image is copied into `public/` before build; the build copies it into dist.
+- `RecordViewer` renders the image element when `image_visibility === 'public'`.
+
+### family (planned, not built yet)
+- A later phase using a private Supabase storage bucket plus login.
+- Images shown only to signed-in users.
+- **Do not build this phase yet.**
+
+### image_link
+- Optional URL of the image on FamilySearch/Antenati.
+- Shown as a "View original ↗" button on the record page.
+- **Never copied** — it links out, it is not deployed.
+
 ## Local-Only Image Constraint
 
 Images live in `records-local/` which is **gitignored** and **not in `public/`**.
 - `RecordViewer.tsx` checks `import.meta.env.DEV`. In production, it renders transcription only.
 - In dev, resolves from `records-local/<id>/` (multiple extensions tried).
 - `vite.config.ts` does not copy `records-local/` into dist.
+- For `image_visibility: public`, the image is copied into `public/` before build.
 
 ## Build Order
 
