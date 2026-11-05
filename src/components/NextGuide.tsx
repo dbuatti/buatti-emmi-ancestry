@@ -305,6 +305,39 @@ export function NextGuide() {
               </div>
             </div>
 
+            {/* Open Source PDF in Finder / Copy file path */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">3b. Open Source PDF</div>
+                <div className="text-xs text-stone-600 flex-1">
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs h-7 px-2"
+                      onClick={() => callApiOpenInFinder(recordId)}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-1" /> Show in Finder
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs h-7 px-2"
+                      onClick={() => {
+                        const filePath = `/Users/danielebuatti/Downloads/FAMILY TREE/${recordId}/${recordId}.pdf`;
+                        navigator.clipboard.writeText(filePath);
+                      }}
+                    >
+                      <Copy className="w-3 h-3 mr-1" /> Copy file path
+                    </Button>
+                  </div>
+                  <div className="text-[10px] text-stone-500 mt-1">
+                    Access the record's PDF file in Finder or copy its path
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Citation */}
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-2">
