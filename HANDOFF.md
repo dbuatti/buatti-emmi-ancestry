@@ -281,5 +281,13 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
   `src/lib/workflow-steps.ts`) naming step 4 (`in_app`) / 5 (`on_familysearch`) and a copyable
   prompt for OpenCode. Research state unchanged — D13 (Ida + Alfredo death acts) is still the
   reply that matters.
+- **05/11/2026 (late, step 4)** — `1915_Linguaglossa_baptism_Emmi-Gregorio_n251` is now
+  **`in_app: true`** (step 4 of 5). Nothing in the app contradicted the entry, so the apply was
+  provenance-only: translation fixes (*ut ass.* = "as is stated"; "and Josepha Nicotra [role
+  unread, possibly midwife]"), the officiant/midwife readings downgraded to **unverified**,
+  the FamilySearch ark added to the record entry + source, a new lead
+  **`lead-linguaglossa-baptisms-5455112`** (walk Linguaglossa baptisms **1901–1921** — DGS
+  5455112 for 1914–1921, and find the films for 1901–1913 — for Gregorio's 5+ siblings and for
+  Rosaria Emmi), and a new open question **`q-godmother-rosaria-emmi`**.
 
 *(Append one dated line here at the end of every session, and update "Last updated" above.)*

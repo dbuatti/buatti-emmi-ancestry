@@ -2300,7 +2300,7 @@ export const initialPeople: Person[] = [
     familySearchId: 'G4QG-QD1',
     records: [
       { type: 'Birth (Civil)', status: 'Found', notes: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30 Jun 2026. Date: 23 Oct 1915. (4-day discrepancy with baptismal record: 27 Oct 1915.)', recordId: '1915_Linguaglossa_birth_Emmi-Gregorio_atto202' },
-      { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin.' },
+      { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin. RE-TRANSCRIBED line by line 05/11/2026 from the filed images (records-local/1915_Linguaglossa_baptism_Emmi-Gregorio_n251_p1.jpg + _p2.png), record id 1915_Linguaglossa_baptism_Emmi-Gregorio_n251. Line 4 unreadable in this pass — the officiant\'s name and licence text are [?]; the older reading "Fr. Rochus La Rosa per license of Archpriest Blasius Palermo" is retained but UNVERIFIED. Final line reads "vero Josepha Nicotra" with no legible role; the older reading logged her as the midwife (Giuseppa Nicotra) — role UNCONFIRMED. "(ut ass.)" = "ut asseritur" ("as is stated") — the priest records the couple\'s legitimacy claim as stated, not proven [inference].', link: 'https://www.familysearch.org/ark:/61903/3:1:3QS7-89MY-24XN?cat=olib%3A2028634&view=explore&lang=en&groupId=TH-1942-27830-4120-90' },
       { type: 'Death Record', status: 'Found', notes: 'Confirmation: death notice in Sydney Morning Herald 30 Nov 1979 (Ryerson Index). Died 24 Nov 1979, age 64, late of Stanmore, formerly of Highett, Melbourne.' },
       { type: 'Burial Record', status: 'Found', notes: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070' },
       { type: 'POW Record', status: 'Found', notes: 'NAA MP1103/1 & MP1103/2 — captured Asmara 1941, Cowra POW Camp, repatriated 1946' },
@@ -2327,14 +2327,15 @@ export const initialPeople: Person[] = [
       nextSteps: [
         'Request marriage act from Comune di Fiumefreddo (1948 part 2 series A n. 34). Follow up by phone if no reply (Liuzzo Francesca: 095 7777216).',
         'Request naturalisation certificate EM(2)28650 from NAA.',
-        'Establish when/why the family relocated from Ingham to Sydney.'
+        'Establish when/why the family relocated from Ingham to Sydney.',
+        'Walk the Linguaglossa baptism registers 1901–1921 (DGS 5455112 for 1914–1921, plus the 1901–1913 films once identified) for his siblings — see lead-linguaglossa-baptisms-5455112.'
       ]
     },
     sources: [
       {
         title: 'Baptismal Record (Gregorio Emmi)',
         type: 'Ecclesiastical Record',
-        reference: 'Registri ecclesiastici di Linguaglossa, Battesimi 1914–1921, DGS 5455112, entry N. 251, folio 80 (Baptized 5 Dec 1915 by Fr. Rochus La Rosa)'
+        reference: 'Registri ecclesiastici di Linguaglossa, Battesimi 1914–1921, DGS 5455112, entry N. 251, folio 80 (Baptized 5 Dec 1915 by Fr. Rochus La Rosa). Image: https://www.familysearch.org/ark:/61903/3:1:3QS7-89MY-24XN?cat=olib%3A2028634&view=explore&lang=en&groupId=TH-1942-27830-4120-90 — filed locally as records-local/1915_Linguaglossa_baptism_Emmi-Gregorio_n251_p1.jpg (full page) + _p2.png (close-up).'
       },
       {
         title: 'POW Report on Prisoners of War',
@@ -3127,6 +3128,15 @@ export const initialResearchLeads: ResearchLead[] = [
     nextSteps: 'Send the Comune di Catania request (Ufficio Stato Civile) citing the Tribunale referral. Await Comune di Linguaglossa reply.',
   },
   {
+    id: 'lead-linguaglossa-baptisms-5455112',
+    title: 'Linguaglossa Baptisms 1901–1921 — find Egidio Emmi × Concetta Sgroi\'s other children',
+    category: 'Emmi/Patanè',
+    status: 'To Investigate',
+    description: 'Gregorio Emmi\'s baptism (5 Dec 1915, entry n. 251) sits in the Linguaglossa parish baptism register covering 1914–1921, FamilySearch film DGS 5455112 — free and browseable. Gregorio had "at least 5 siblings" per Mum (28 Jun 2026): an older brother whose family migrated to Venezuela, another brother in NSW, and 3 sisters (one met in Italy). Egidio Emmi × Concetta Sgroi married 4 Nov 1900, so their children\'s baptisms should run across 1901–1921 — i.e. this film PLUS the earlier Linguaglossa baptism registers covering 1901–1913 (identify their FamilySearch film/DGS numbers in the FamilySearch catalogue for Linguaglossa, Parrocchia S. Maria delle Grazie / Diocesi di Acireale). Each entry gives an exact birth date and, via the godparents, may identify Rosaria Emmi (godmother in 1915 — see q-godmother-rosaria-emmi).',
+    nextSteps: '1) Look up the FamilySearch catalogue films for Linguaglossa baptisms 1901–1913 and request/attach them. 2) Walk DGS 5455112 (1914–1921) and the 1901–1913 registers for entries naming Egidio Emmi + Concetta Sgroi as parents. 3) Record each child as a new person with its own baptism record.md and the exact birth date. 4) Note every godparent — Rosaria Emmi\'s own baptism/marriage should be findable in the same registers.',
+    sources: ['FamilySearch DGS 5455112 — Linguaglossa, Battesimi 1914–1921 (entry n. 251 = Gregorio, 5 Dec 1915)', 'FamilySearch catalogue — Linguaglossa parish registers, 1901–1913 (film to be identified)', 'Record id 1915_Linguaglossa_baptism_Emmi-Gregorio_n251'],
+  },
+  {
     id: 'lead-ezio-school-outreach',
     title: 'IIS "Ulpiani" — Ezio Buatti Teacher File Request',
     category: 'Buatti/Chiappini',
@@ -3206,6 +3216,13 @@ export const initialOpenQuestions: OpenQuestion[] = [
     category: 'Buatti/Chiappini',
     status: 'In Progress',
     notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti + Clementina Curcozzi) also checked. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati (an_ua8575, 6-Div 2) — fu Ignazio Galanti, mother Clementina Curcozzi. First hard evidence that Ignazio + Clementina were a real couple with children in Ascoli Piceno. Makes 1904 Ida candidate more credible (second confirmed child of same parents). Alessandro born ~1895 (13 Jul vs 8 Nov — document disagreement, trust official extract). Perugia file (4 Aug 2026) confirms "Galanti Ida" as Ezio\'s mother across four institutional sources but gives no birth date or paternity; a 1944 certificato di nascita deposited by Ezio with the University (enclosure 3, domanda prot. 1746) was NOT among the reproduced pages — follow-up emailed to Monica Fiore (5 Aug 2026). Tribunale AP route CLOSED (archive interdetto, 20 Jul). Live routes: Comune AP prot. 66127/2026 (Ezio birth act — chased with 1944 photo attestation), Comune AP prot. 0062771 (marriage cert), Comune SBT prot. 0054400/2026 (to be widened to stato di famiglia storico). Remaining Morti allegati divisions (5-Div 1, 5-Div 2, 6-Div 1) may contain more Galanti siblings. UPDATE 05/11/2026: Ida\'s burial is confirmed at the family ossuary, Cimitero di Borgo Solestà (Settore L, Blocco L074O, Posto 8 fila 1), death 26/01/1970 — but the Comune cemetery database gives no birth date or age, so it does not answer the question. D13 SENT 05/11/2026 to Dott.ssa Falciatori (Comune AP): copia integrale of Ida\'s 1970 and Alfredo\'s 1964 death acts, each naming parents — now the primary tiebreaker route, and free of the €250–300 "ricerca" contribution since dates are exact.'
+  },
+  {
+    id: 'q-godmother-rosaria-emmi',
+    question: 'Who was Rosaria Emmi (godmother at Gregorio\'s baptism, 5 Dec 1915) and who was Giuseppa Nicotra?',
+    category: 'Emmi/Patanè',
+    status: 'Pending',
+    notes: 'Both named in the 1915 Linguaglossa baptism entry n. 251 (record id 1915_Linguaglossa_baptism_Emmi-Gregorio_n251), both by first name and surname only: no age, no parentage, no relationship stated. "Matrina fuit Rosaria Emmi" — godparents were normally kin, so she is plausibly a sister or cousin of Egidio Emmi, but the act does not say so [inference]. The final line reads "vero Josepha Nicotra" with the role word unread; an earlier reading of the same image logged her as the midwife. Route: walk the Linguaglossa baptism registers (see lead-linguaglossa-baptisms-5455112) for a Rosaria Emmi of the right generation, and for Nicotra midwife signatures.'
   },
   {
     id: 'q-ezio-birth',

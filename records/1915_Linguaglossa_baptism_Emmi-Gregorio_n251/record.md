@@ -16,7 +16,7 @@ translated_by: Nemotron 3.5 Super VL (free)
 filed: true
 transcribed: true
 verified: true
-in_app: false
+in_app: true
 on_familysearch: false
 image_link: https://www.familysearch.org/ark:/61903/3:1:3QS7-89MY-24XN?cat=olib%3A2028634&view=explore&lang=en&groupId=TH-1942-27830-4120-90
 original_filename: 005455112_00243.jpg
@@ -40,7 +40,7 @@ links:
 - Line 6: baptizavi infantem die 27 Octobris 1915 nato ex legitimis
   en: Line 6: I baptized an infant born on 27 October 1915 from legitimate
 - Line 7: conjugibus (ut ass.) Egidio Emmi
-  en: Line 7: spouses (as assumed) Egidio Emmi
+  en: Line 7: spouses (as is stated) Egidio Emmi
 - Line 8: et Concetta Sgroi cui impositum
   en: Line 8: and Concetta Sgroi upon whom was imposed
 - Line 9: est nomen Gregorium
@@ -48,7 +48,9 @@ links:
 - Line 10: Matrina fuit Rosaria Emmi : [?]
   en: Line 10: Godmother was Rosaria Emmi [?]
 - Line 11: vero Josepha Nicotra
-  en: Line 11: Truly Josepha Nicotra
+  en: Line 11: and Josepha Nicotra [role word unread; possibly 'obstetrix' (midwife), inference]
 
 ## Discrepancies
 - Birth date: 27/10/1915 per parish baptism record (atto n. 251); 23/10/1915 per civil birth estratto (atto 202, issued 30/06/2026). Both kept; not resolved.
+- Translation correction 05/11/2026 (Line 7): "(as assumed)" → "(as is stated)". The Latin abbreviation "(ut ass.)" = "ut asseritur" — the priest records the couple's legitimacy as stated, not as proven.
+- Translation correction 05/11/2026 (Line 11): "Truly Josepha Nicotra" → "and Josepha Nicotra [role word unread; possibly 'obstetrix' (midwife), inference]". Latin line unchanged.
