@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Plus, MapPin, ExternalLink, Ship, Shield, Users, GraduationCap, Ruler, FileText, Home, Check, Search, Minus } from 'lucide-react';
 import { getLineBadgeColor, LINE_BG } from '@/lib/constants';
 import { calculateCompleteness, getScoreLabel, getScoreBadgeColor } from '@/lib/research';
+import { getWorkflowStepNumber } from '@/lib/records';
 import { calculateAge } from '@/lib/tree';
 import { LinkifiedText } from '@/components/LinkifiedText';
 import type { Person } from '@/types';
@@ -30,6 +32,8 @@ function Section({ icon: Icon, label, children }: { icon: React.ElementType; lab
 }
 
 function ModalLifeEvents({ person }: { person: Person }) {
+  const navigate = useNavigate();
+
   if (!person.lifeEvents || person.lifeEvents.length === 0) {
     return null;
   }
@@ -50,6 +54,10 @@ function ModalLifeEvents({ person }: { person: Person }) {
         {person.lifeEvents.map((ev) => {
           const info = eventLabels[ev.type];
           const stepNum = ev.step ? `Step ${ev.step} of 5` : '—';
+          const isLinked = ev.status === 'linked' && ev.recordId;
+          const stepNumNum = ev.step ?? 0;
+          const notVerified = isLinked && stepNumNum < 3;
+
           return (
             <div key={ev.type} className="flex items-start gap-2 bg-white p-2 rounded border border-stone-200 text-xs">
               <div className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
@@ -57,9 +65,20 @@ function ModalLifeEvents({ person }: { person: Person }) {
               }`} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1 mb-0.5">
-                  <span className={`font-bold text-stone-800 ${ev.status === 'linked' ? 'text-emerald-800' : 'text-stone-600'}`}>
-                    {info?.label || ev.type}
-                  </span>
+                  {isLinked ? (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="p-0 text-sm font-bold text-stone-800 text-emerald-800 underline underline-offset-4 hover:underline"
+                      onClick={() => navigate(`/records/${ev.recordId}`)}
+                    >
+                      {info?.label || ev.type}
+                    </Button>
+                  ) : (
+                    <span className={`font-bold text-stone-800 ${ev.status === 'linked' ? 'text-emerald-800' : 'text-stone-600'}`}>
+                      {info?.label || ev.type}
+                    </span>
+                  )}
                   {ev.status === 'linked' && (
                     <span className="text-[10px] font-sans bg-emerald-100 text-emerald-800 rounded px-1.5 py-0.5 font-bold">
                       {stepNum}
@@ -74,6 +93,19 @@ function ModalLifeEvents({ person }: { person: Person }) {
                     <span className="text-[10px] font-sans bg-stone-100 text-stone-500 rounded px-1.5 py-0.5 font-bold">
                       Missing
                     </span>
+                  )}
+                  {notVerified && ev.recordId && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 px-2 text-[10px] border-emerald-200 text-emerald-700 hover:border-emerald-400 hover:text-emerald-900 ml-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/records/${ev.recordId}?mode=check`);
+                      }}
+                    >
+                      Check
+                    </Button>
                   )}
                 </div>
                 {ev.note && (
