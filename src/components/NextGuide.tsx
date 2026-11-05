@@ -30,6 +30,14 @@ export function NextGuide() {
   const [recordSteps, setRecordSteps] = useState<Map<string, RecordStepInfo>>(new Map());
   const [recordsLoaded, setRecordsLoaded] = useState(false);
 
+  // Auto-advance: if status shows a save just completed, reload to get next task
+  useEffect(() => {
+    if (status && status.startsWith('Saved:')) {
+      const t = setTimeout(() => window.location.reload(), 1500);
+      return () => clearTimeout(t);
+    }
+  }, [status]);
+
   // Load record steps from record.md front matter (source of truth)
   useEffect(() => {
     let cancelled = false;
@@ -87,14 +95,6 @@ export function NextGuide() {
   const isInAppTask = task.step === 'in_app';
   const isFamilySearchTask = task.step === 'on_familysearch';
   const fmField = stepToFrontMatterField(task.step);
-
-  // Auto-advance: if status shows a save just completed, reload to get next task
-  useEffect(() => {
-    if (status && status.startsWith('Saved:')) {
-      const t = setTimeout(() => window.location.reload(), 1500);
-      return () => clearTimeout(t);
-    }
-  }, [status]);
 
   return (
     <Card className="border-[#800020] bg-[#FAF6F0]">
