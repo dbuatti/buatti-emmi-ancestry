@@ -15,8 +15,8 @@ export const initialPeople: Person[] = [
     birthPlace: 'Ascoli Piceno, Duomo parish (family home: Borgo Solestà)',
     deathDate: '9 May 1964',
     burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
-    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1. Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
-    burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp',
+    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1. Confirmed via the Comune di Ascoli Piceno\'s online cemetery search — record page: "BUATTI ALFREDO, data decesso 9/5/1964, Cimitero 01 b.go solestà, Settore L loculi, Blocco L074O lotto 074 ossari, Posto 8 fila 1".',
+    burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicercaVisualizza.asp?varId=15951',
     spouses: ['ida-galanti'],
     parents: ['giovanni-buatti', 'emidia-bruni'],
     children: ['ezio-buatti'],
@@ -26,11 +26,13 @@ export const initialPeople: Person[] = [
       'Giovanni\'s later residence noted as Roma — the family may have relocated for work.',
       'Aunt Ida Buatti (b. ~Mar 1886) — lettura incerta on foglio (could read Ida or Lela). Potential source of confusion with his wife Ida Galanti in future records.',
       'Siblings: Attilio (5 Jan 1885), Ida/Lela (~Mar 1886, lettura incerta), Adolfo (26 Feb 1887), Sperandia (27 Mar 1889), Antonio (24 Feb 1894), Elvira (30 Jul 1899). Two infant deaths: Elisa (13 Apr 1883–21 Jul 1884) and Arturo (2 Jan 1892–11 Oct 1892).',
+      'OCCUPATION (Nov 2026, IIS Celso Ulpiani file): "Economo di questo Comune" (municipal bursar/steward), employed by the Comune di Ascoli Piceno in 1938. Signed enrolment forms as "Buatti Alfredo di Giovanni". Personnel file may contain stato di famiglia naming wife Ida Galanti with birth date — free lead, not a civil-registry act (no €250–300 contribution).',
+      'RESIDENCE (1938–1941, Nov 2026, IIS Celso Ulpiani file): Via T. B. Barro n. 11, Ascoli Piceno (typed on 7 Oct 1938 and 6 Aug 1941 enrolment forms). Corrects earlier "E. B. Barro" reading from Perugia file.',
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '18 Mar 1888 — foglio famiglia N. 1527 + cartellino individuale (Archivio di Stato di Ascoli Piceno, 17 Jul 2026). Links: foglio https://antenati.cultura.gov.it/ark:/12657/an_ua8378/oLplvkL cartellino https://antenati.cultura.gov.it/ark:/12657/an_ua8562/5gKpOz5' },
       { type: 'Marriage Record', status: 'Searching', notes: 'To Ida Galanti — likely ~1920–1922. Requested from Comune di Ascoli Piceno (prot. 0062771). Tribunale di Ascoli Piceno route CLOSED 20 Jul 2026 (Dott. Maurizio Norcini Pala: court archive interdetto, State Archive notified). USP Ascoli Piceno (21 Jul): no records for 1949–52.' },
-      { type: 'Death Record', status: 'Found', notes: '9 May 1964 — confirmed via Comune cemetery search (database shows 9/5/1964, Italian format)' },
+      { type: 'Death Record', status: 'Requested', notes: '9 May 1964 — death date confirmed via the Comune cemetery search (database shows 9/5/1964). Copia integrale NOT yet obtained: requested from Comune di Ascoli Piceno (Dott.ssa Diletta Falciatori) 05/11/2026 — draft D13, sent together with the request for Ida\'s 1970 death record. Should name his parents and, indirectly, confirm the household.' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, Settore L, Blocco L074O' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
@@ -40,7 +42,8 @@ export const initialPeople: Person[] = [
       details: 'Birth confirmed 18 Mar 1888 via foglio famiglia N. 1527 (Alessandra Buondi, 17 Jul 2026). Parents: Giovanni Buatti + Emidia Bruni. Grandparents: Emidio Buatti + Antonia Lenzi. Marriage to Ida Galanti and her parentage still outstanding — Perugia file (4 Aug 2026) confirms "Galanti Ida" as Ezio\'s mother but no birth date or paternity. Tribunale AP route CLOSED (archive interdetto, 20 Jul).',
       nextSteps: [
         'Await Comune AP replies: prot. 66127/2026 (Ezio birth act, lodged 20 Jul — chased with 1944 photo attestation) and prot. 0062771 (marriage cert, Sergio De Angelis).',
-        'Perugia follow-up RESOLVED (21 Aug 2026): the reproduced 1944 certificato di nascita is silent on Ida Galanti\'s parentage — this source cannot settle 1893 vs 1904. Awaiting Comune AP marriage cert (prot. 0062771).',
+        'D13 SENT 05/11/2026 (Comune di Ascoli Piceno, Dott.ssa Falciatori, protocollo@comune.ap.it): copia integrale of BOTH death records — Alfredo (09/05/1964) and Ida Galanti (26/01/1970), each showing the parents. These are death acts, not the "ricerca" quoted at €250–300, so no contribution should apply. Ida\'s act names her father → 1893 (Antonio) vs 1904 (Ignazio) tiebreaker.',
+        'Perugia follow-up RESOLVED (21 Aug 2026): the reproduced 1944 certificato di nascita is silent on Ida Galanti\'s parentage — this source cannot settle 1893 vs 1904. Awaiting Comune AP marriage cert (prot. 0062771) and the D13 death acts.',
         'Widen Comune di San Benedetto del Tronto request (prot. 0054400/2026) to stato di famiglia storico, citing Buondi letter prot. 1805-P.',
         'Note the Ida Buatti (b. 1886, Alfredo\'s sister) as potential confusion with Ida Galanti in old indexes.'
       ]
@@ -73,15 +76,15 @@ export const initialPeople: Person[] = [
     birthPlace: 'Ascoli Piceno',
     deathDate: '26 January 1970',
     burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno',
-    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1 (same plot as her husband Alfredo Buatti Sr.). Confirmed via the Comune di Ascoli Piceno\'s online cemetery search.',
-    burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicerca.asp',
+    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1 (same plot as her husband Alfredo Buatti Sr.). Confirmed via the Comune di Ascoli Piceno\'s online cemetery search — record page: "GALANTI IDA, data decesso 1/26/1970, Cimitero 01 b.go solestà, Settore L loculi, Blocco L074O lotto 074 ossari, Posto 8 fila 1".',
+    burialLink: 'https://www1.comune.ascolipiceno.it/cimitero/cimiteroweb/forms/DefuntoRicercaVisualizza.asp?varId=15950',
     spouses: ['alfredo-buatti-sr'],
     parents: ['antonio-galanti', 'virginia-rosati'],
     children: ['ezio-buatti'],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '19 Mar 1893 — foglio famiglia 5120 (Registro 55, Ascoli Piceno). Daughter of Antonio Galanti (b. 1857, Lisciano, possidente) + Virginia Rosati (b. 1867, Maltignano). Confirmed as a real person — marriage to Alfredo Buatti unconfirmed (right-hand columns not visible). Family from Lisciano (frazione of Ascoli). 1904 Ida candidate (f. 5545) still unchecked.' },
       { type: 'Marriage Record', status: 'Requested', notes: 'To Alfredo Buatti Sr., ~1920–1922. Requested from Comune di Ascoli Piceno 10 Jul 2026 (protocol 0062771, assigned Sergio De Angelis). Will settle whether 1893 Ida is THE Ida. CAUTION: Alfredo\'s sister Ida Buatti (b. 20 Mar 1886) is a different person.' },
-      { type: 'Death Record', status: 'Found', notes: '26 Jan 1970 — confirmed via cemetery search' },
+      { type: 'Death Record', status: 'Requested', notes: '26 Jan 1970 — death date confirmed via the Comune cemetery search. Copia integrale NOT yet obtained: requested from Comune di Ascoli Piceno (Dott.ssa Diletta Falciatori) 05/11/2026 — draft D13, sent together with the request for Alfredo\'s 1964 death record. An Italian atto di morte names the deceased\'s parents, so this should settle Antonio Galanti (1893 Ida) vs Ignazio Galanti (1904 Ida).' },
       { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà, same plot as Alfredo' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
@@ -91,6 +94,8 @@ export const initialPeople: Person[] = [
       details: '1893 Ida confirmed as real person (foglio 5120): born 19 Mar 1893 to Antonio Galanti + Virginia Rosati, landowning family from Lisciano. Right-hand columns visible but BLANK — no marriage annotation. Register closed ~1901. 1904 Ida (f. 5545, d/o Ignazio Galanti the barber + Clementina Curcozzi) also documented. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati confirms Ignazio + Clementina as a real couple with children — first hard evidence beyond the single birth entry. Makes 1904 candidate more credible. Perugia file (4 Aug 2026) confirms "Galanti Ida" as Ezio\'s mother across four independent institutional sources, but gives no birth date or paternity. Perugia second batch (21 Aug 2026) reproduced the 1944 certificato di nascita and confirmed it is silent on Ida\'s parentage — this source cannot resolve the tiebreaker. Tiebreaker still awaits Comune AP marriage cert (prot. 0062771).',
       nextSteps: [
         'Await Comune AP reply for Ezio\'s copia integrale di nascita (prot. 66127/2026, lodged 20 Jul — chased with 1944 photo attestation). Ida\'s age at his birth settles 1893 vs 1904.',
+        'D13 SENT 05/11/2026 (Comune di Ascoli Piceno, Dott.ssa Falciatori): copia integrale of Ida\'s death act (26/01/1970) and Alfredo\'s (09/05/1964), each showing parents. Death acts with an exact date are not a €250–300 "ricerca", so no fee should apply. This is now the primary tiebreaker route.',
+        'Cemetery database re-checked 05/11/2026: record varId 15950 gives ONLY the death date and plot (Settore L, Blocco L074O, Posto 8 fila 1) — no birth date and no age, so it cannot settle the 1893/1904 question on its own. Find a Grave was also tried: the main Ascoli cemetery is listed there as "Cimitero di Ascoli Piceno", with no entry for Ida Galanti and no Buatti entries at all.',
         'Perugia follow-up (Monica Fiore, sent 5 Aug 2026): 1944 certificato di nascita deposited as enclosure 3 of Ezio\'s admission application — ask if it survives in file 2005.',
         'Await marriage cert reply from Comune (protocol 0062771, Sergio De Angelis).',
         'Tribunale AP route CLOSED 20 Jul 2026 (archive interdetto, Dott. Maurizio Norcini Pala).',
@@ -700,7 +705,7 @@ export const initialPeople: Person[] = [
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Name now known — search Ascoli Piceno area' },
       { type: 'Marriage Record', status: 'Requested', notes: 'To Remo Chiappini — San Benedetto del Tronto, 1930 (Lilia born Jul 1930). Copia integrale of the 1930 marriage act requested from SBT anagrafe (Rosa De Falco) — email sent Aug 2026. The act names both sets of parents.' },
-      { type: 'Death Record', status: 'Searching', notes: 'DIED BEFORE 4 Oct 1952 (recorded on NSW marriage cert 27340/1952). Window 1930–1952, probably San Benedetto del Tronto. Route: Curia di San Benedetto del Tronto — Sig.ra Veccia already has a request circulating among the SBT parishes; a burial record would sit in those registers. Thread warm, do not poke before September.' }
+      { type: 'Death Record', status: 'Requested', notes: 'DIED BEFORE 4 Oct 1952 (recorded on NSW marriage cert 27340/1952). Window 1930–1952, probably San Benedetto del Tronto. D14 SENT 05/11/2026 to Sig.ra Rosa De Falco (Comune di SBT, Ufficio Stato Civile): copia integrale of her death act showing her parents, 1930–1952 window, flagging the family story that she may have died at "San Giorgio" (probably Porto San Giorgio, Fermo). The request states explicitly that this is a DEATH act, not one of the birth/marriage acts SBT refused on privacy grounds on 02/11/2026. Secondary route: Curia di San Benedetto del Tronto (Sig.ra Veccia) for the parish burial record.' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
       { type: 'Population Register', status: 'Not Found', notes: 'Not yet searched' }],
@@ -708,8 +713,8 @@ export const initialPeople: Person[] = [
       status: 'In Progress',
       details: 'Name confirmed as Lilia Chiappini\'s mother via Branxton marriage extract 10 Jul 2026. KEY: already dead by 4 Oct 1952 (NSW marriage cert 27340/1952) — death window 1930–1952, probably San Benedetto del Tronto. 1930 marriage act (Remo × Irma) requested from SBT anagrafe.',
       nextSteps: [
-        'Act after September: ask Curia di San Benedetto del Tronto (Sig.ra Veccia) for Irma Pirri\'s death/burial record in the SBT parish registers.',
-        'Await Rosa De Falco reply (SBT anagrafe) re copia integrale of the 1930 marriage act — it names both sets of parents.',
+        'D14 SENT 05/11/2026 to Sig.ra Rosa De Falco (Comune di SBT): death act of Irma Pirri (window 1930–1952) showing her parents. Sent alongside D10 — watch for both replies; SBT has had three requests in a week, so no further nudging.',
+        'Ask Curia di San Benedetto del Tronto (Sig.ra Veccia) for Irma Pirri\'s death/burial record in the parish registers — the "after September 2026" window is now open.',
         'Search for birth records of Irma Pirri in Ascoli Piceno or San Benedetto del Tronto.',
         'Ask papa about Irma Pirri and whether the TB story relates to her.'
       ]
@@ -814,10 +819,11 @@ export const initialPeople: Person[] = [
       'The earlier banns (pubblicazioni, 8 Sep 1900, same officer Scarlata) recorded father as Salvatore Sgroi and age as 20 — both errors corrected by the marriage ceremony (4 Nov 1900). Banns witnesses: De Francesco Francesco (~44, guardia) and Cesareo Giacomo (40, possibly mugnaio).',
       'Gregorio\'s own daughter Concetta was very likely named after this grandmother.',
       'Had at least one older son (that son\'s family migrated to Venezuela — per Connie Emmi 28 Jun 2026).',
-      'Egidio and Concetta are both illiterate per the 1900 marriage record — neither signed.'
+      'Egidio and Concetta are both illiterate per the 1900 marriage record — neither signed.',
+      'RULE-OUT (05/11/2026, FamilySearch hint): a death act for a "Concetta Sgroi" at PINGUENTE (Buzet, Istria) dated 07/04/1904 — aged 75 (b. ~1829), NUBILE (never married), born in Pinguente, daughter of Salvatore Sgroi and of a mother whose name is illegible (Grok read "Antonia/Antonietta Zuchia?"). NOT this Concetta: ours was born 10 Mar 1877 at Linguaglossa, married since 4 Nov 1900, mother of two sons, and is recorded deceased only prior to 1967. Different woman, same name, different century and different empire — dismiss the hint.'
     ],
     records: [
-      { type: 'Birth Record', status: 'Found', notes: 'Atto n. 58, 11 Mar 1877, Linguaglossa Nati 1877 (Antenati). Born 10 Mar 1877 at 5:46 PM, via Liotto 120. Father: Gregorio Sgroi (27, falegname). Mother: Santa Calì (industriosa). Witnesses: Mariano Vecchio (24), Pietro Stagnitti (22). Officer: Carmelo Vecchio. Margin: married Egidio Emmi 4 Nov 1900. Link: https://antenati.cultura.gov.it/ark:/12657/an_ua81372/LeG9zQR (page 23).' },
+      { type: 'Birth Record', status: 'Found', notes: 'Atto n. 58, 11 Mar 1877, Linguaglossa Nati 1877 (Antenati), page 23. Born 10 Mar 1877 at 5:46 PM, via Liotto 120. Father: Gregorio Sgroi (27, falegname). Mother: Santa Calì (industriosa). Witnesses: Mariano Vecchio (24), Pietro Stagnitti (22). Officer: Carmelo Vecchio. Margin: married Egidio Emmi 4 Nov 1900.', link: 'https://antenati.cultura.gov.it/ark:/12657/an_ua81372/LeG9zQR' },
       { type: 'Marriage Record', status: 'Found', notes: 'Marriage act atto № 59, 4 Nov 1900, Linguaglossa. Officer: Concetto Scarlata. CORRECTS earlier banns (8 Sep 1900). Bride age 23, father Gregorio Sgroi.' },
       { type: 'Death Record', status: 'Not Found', notes: 'Pre-1967 per later church records. Exact date unknown.' },
       { type: 'Surname Confirmation', status: 'Found', notes: '"Sgroi" confirmed via Gregorio\'s 1943 POW record and 1900 marriage record' }
@@ -2024,6 +2030,8 @@ export const initialPeople: Person[] = [
     birthDate: '27 April 1923',
     birthPlace: 'Ascoli Piceno, Marche, Italy',
     deathDate: '16 October 1991',
+    burialPlace: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno — family ossuary with his mother Ida Galanti and grandfather Alfredo Buatti Sr.',
+    burialDetails: 'Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1 — the SAME plot as Ida Galanti (varId 15950) and Alfredo Buatti Sr. (varId 15951). Confirmed via the Comune di Ascoli Piceno online cemetery search 05/11/2026 — record page: "BUATTI EZIO, data decesso 10/16/1991, Cimitero 01 b.go solestà, Settore L loculi, Blocco L074O lotto 074 ossari, Posto 8 fila 1". Note the database gives only the death date and plot — no birth date or age.',
     spouses: ['bruna-lilia-chiappini'],
     parents: ['alfredo-buatti-sr', 'ida-galanti'],
     children: ['alfred-buatti', 'john-buatti-extended'],
@@ -2053,7 +2061,7 @@ export const initialPeople: Person[] = [
         }
       ]
     },
-    italianAddress: 'Via E. B. Barro 11, Ascoli Piceno (Dec 1944 – 1948, per university enrolment forms); Via Mercantini N° 62, Ascoli Piceno (Feb 1952 — university file, seven months before sailing on the Toscana); Via Fabriano 25, Ascoli Piceno (first appears on a 1964 document per Perugia second batch — exact move date from Via E.B. Barro 11 unknown, 1949–1963)',
+    italianAddress: 'Via T. B. Barro 11, Ascoli Piceno (1938–1944 per IIS Celso Ulpiani enrolment forms 7 Oct 1938 & 6 Aug 1941; also Perugia annual enrolment forms 1944–1948); Via Mercantini N° 62, Ascoli Piceno (Feb 1952 — university file, seven months before sailing on the Toscana); Via Fabriano 25, Ascoli Piceno (first appears on a 1964 document per Perugia second batch — exact move date from Via T. B. Barro 11 unknown, 1949–1963)',
     passport: {
       number: '3925755 P',
       issued: '19 June 1952',
@@ -2061,8 +2069,9 @@ export const initialPeople: Person[] = [
     },
     alienRegistration: '290718',
     education: [
-      'Diploma di Perito Agrario, R. Ist. Tecn. "Celso Ulpiani", Ascoli Piceno, 29 July 1942 — first in the institute\'s diploma register (No. 1, delivered 11 Aug 1942). Grades: Italian 6, Agriculture 8, Economics/Estimo 8, Zootecnia 8, Patologia vegetale 7, Chimica/Industrie agrarie 7, Meccanica agraria 8, Topografia/Costruzioni 8, Educazione fisica 8, Cultura militare 8.',
-      'Certificato di cultura generale, R. Liceo Scientifico "Antonio Orsini" (R. Cert. n. 307), issued 16 Dec 1944 — passed in extraordinary session Nov 1944 (Italian Letters 6, History 6). Required supplementary exam for a perito agrario to enter university.',
+      'R. Istituto Tecnico Commerciale e per Geometri "Umberto I", Ascoli Piceno (to 1938) — Licenza from R. Istituto Tecnico Commerciale Inferiore; diploma di ammissione al Corso Superiore 1937–38. Transferred to ITA "Celso Ulpiani" 12 Oct 1938 with birth certificate, identity card, revaccination certificate, 1st-grade admission diploma, medical certificate.',
+      'R. Istituto Tecnico Agrario "Celso Ulpiani", Ascoli Piceno (Oct 1938 – 1942) — Enrolled as alunno esterno, 1st class Corso Superiore; admitted to 3rd course 27 Sep 1940 and 4th course 6 Aug 1941 (letters signed by Alfredo Buatti). Diploma di Perito Agrario, a.s. 1941–42 (scrutinio finale), Registro dei Diplomi di Abilitazione 1941–42: Ezio "di Alfredo", b. Ascoli Piceno 27 aprile 1923; **collected the diploma himself on 11 August 1942** (signed "Buatti Ezio"). Grades (certificate 21/03/1949, prot. 248): Lettere italiane 6; Agricoltura 8; Economia-estimo-contabilità e diritto agrario 8; Zootecnia 8; Patologia vegetale 7; Chimica agraria e industrie agrarie 8; Meccanica agraria 8; Topografia e costruzioni 8; Educazione fisica 8; Cultura militare 8. *Discrepancy:* 23/09/1942 certificate (prot. 1310) gives Chimica = 7; 1946/1949 certificates give 8 — both preserved.',
+      'Certificato di cultura generale, R. Liceo Scientifico "Antonio Orsini" (R. Cert. n. 307), issued 16 Dec 1944 — passed in extraordinary session Nov 1944 (Italian Letters 6, History 6). Required supplementary exam for a perito agrario to enter university. Orsini received Ezio\'s birth certificate and father\'s profession certificate from Ulpiani on 1 June 1944.',
       'Laurea in Scienze Agrarie, Università di Perugia, 26 November 1949 — 95/110. Matricola n. 2005. Enrolled 1° 1944-45, 2° 1945-46, 3° 1946-47, 4° 1947-48, fuori corso 1948-49. Thesis: "Fabbricati e macchine per la lavorazione dell\'uva in provincia di Ascoli Piceno"; tesina "I diritti sul vino"; practical on tractor unit cost (Buono). Diploma n. 3935, 13.2.1950.',
       'SCHOOL OUTREACH (22 Jul 2026): IIS "Ulpiani" (successor to R. Ist. Tecn. Celso Ulpiani) contacted — protocol 0021194/2026, requesting possible teacher file (fascicolo docente) for Ezio Buatti, former student graduated 1942. If they hold historical records, may contain biographical details, family information, or wartime context.'
     ],
@@ -2080,22 +2089,27 @@ export const initialPeople: Person[] = [
       'CITIZENSHIP QUESTION (to pose to D\'Emidio on next reply): Lilia naturalised Australian 1965 (lost Italian citizenship under Art. 8, L. 555/1912) but was AIRE-registered at Maltignano in 1993 and her 1998 death was transcribed into Italian civil registers. 98-93 residence + AIRE registration suggests she reacquired Italian citizenship under L. 91/1992 (declaration + residence in Italy). A dichiarazione di riacquisto may exist in Maltignano\'s registri di cittadinanza — nobody in the family knows about it.',
       'CONSULATE OUTFLOW recorded: Lilia\'s Victorian death certificate was transcribed into Italian civil registers by the Consolato Generale d\'Italia in Melbourne (Prot. 9211 del 22.09.1998, Cancelliere Stefano Cirilli). Cites Posizione consolare L9952 and Matricola 36094 — these are file references, not one-off transaction numbers. A corresponding posizione for Ezio (never naturalised Australian, Italian citizen throughout) likely exists. Consulate contact queued (see AGENTS.md).',
       '1975 certificate (20 Jan 1975) issued "per uso ricostruzione di carriera" — implies Italian employment or pension claim. 1964 and 1975 certificates show he was transacting with Perugia long after his 1963 departure. Given the Maltignano death finding, the 1963-1975+ Italian period is now a priority reconstruction target.',
-      'Discrepancies logged: Chimica/Industrie agrarie = 7 on 1942 diploma vs 8 on 1946 institute certificate (IIS cert. n. 913); cultura generale certificate dated 16/12/1944 on the document but cited 15/12/44 by the Headmaster in 1946. Matricola n. 2005 is the UniPG student number — not the military ruolo matricolare n. 20102/1923.'
+      'Discrepancies logged: Chimica/Industrie agrarie = 7 on 1942 diploma vs 8 on 1946 institute certificate (IIS cert. n. 913); cultura generale certificate dated 16/12/1944 on the document but cited 15/12/44 by the Headmaster in 1946. Matricola n. 2005 is the UniPG student number — not the military ruolo matricolare n. 20102/1923.',
+      'IIS CELSO ULPIANI STUDENT FILE RECEIVED (02/11/2026, free): Two PDFs — Fascicolo Buatti Ezio.pdf (19 pp) + Ritiro diploma Buatti.pdf (1 p). NEW FACTS: (1) Alfredo Buatti occupation 1938 = "Economo di questo Comune" (Comune di Ascoli Piceno bursar); (2) Family residence 1938–1941 = Via T. B. Barro 11 (corrects earlier "E. B. Barro" reading); (3) Ezio attended R. Istituto Tecnico Commerciale "Umberto I" (to 1938), then ITA "Celso Ulpiani" 1938–1942; (4) Diploma collected 11/08/1942 signed by Ezio; (5) Applied Feb 1952 to Ministero Agricoltura e Foreste concorso (64 posti esperto 4ª classe) — confirmed by Ministry letter n. 80788, 23 Feb 1952, Ulpiani reply prot. 214, 25 Feb 1952; (6) 1944 racial-laws declaration signed by Alfredo (no mother named); (7) Grades documented with Chimica 7/8 discrepancy preserved. NEW FREE LEADS: (a) Alfredo\'s personnel file as Comune Economo (stato di famiglia may name Ida with birth date); (b) Liceo Scientifico "A. Orsini" received Ezio\'s birth cert 1 June 1944; (c) IIS "Umberto I" held earlier file. D9 thank-you sent 03/11/2026; thread closed.',
+      'SBT REPLY 02/11/2026 (Rosa De Falco): prot. 0054400 (Alfredo×Ida marriage) CLOSED NEGATIVE — not married in SBT c. 1919–1923. Prot. 0066863 & 0067141 (Lilia birth 1930, Remo×Irma marriage n. 45/1930) REFUSED on privacy grounds (likely Lilia\'s legitimation, born 10 weeks before parents married). Draft D10 asks for estratto of marriage n. 45/1930 showing only spouses\' parents, and accessibility date (e.g. 100 years = 2030).',
+      'BURIAL LOCATED (05/11/2026): the Comune di Ascoli Piceno online cemetery search lists "BUATTI EZIO — data decesso 10/16/1991 — Cimitero 01 b.go solestà — Settore L loculi — Blocco L074O lotto 074 ossari — Posto 8 fila 1" (varId 25135). This is the same ossuary as his mother Ida Galanti (d. 26 Jan 1970) and his father Alfredo Buatti Sr. (d. 9 May 1964), so the family plot is now documented for all three. It also independently corroborates the Maltignano death act: the comune\'s own burial register records the 16 Oct 1991 death. The database shows no birth date or age — only the death date and the loculo.'
     ],
     records: [
       { type: 'Birth Record', status: 'Found', notes: '27 Apr 1923 — atto n. 377, Parte I, 1923 (Ascoli Piceno). Confirmed via Maltignano anagrafe correspondence (Dott.ssa Paola D\'Emidio, prot. 0008863, 11 Aug 2026).' },
       { type: 'Death Record', status: 'Found', notes: '16 Oct 1991 at Ascoli Piceno (Ospedale Civile, Via degli Iris). Atto di morte Parte 2ª, serie C, n. 4/1991 (Maltignano copia integrale received). CORRECTION: Ezio died in ITALY, not Australia as family long believed. Resident in Maltignano at time of death, pensionato.' },
+      { type: 'Burial Record', status: 'Found', notes: 'Cimitero di Borgo Solestà (Cimitero 01), Ascoli Piceno — Settore L (loculi), Blocco L074O, Lotto 074 (ossari), Posto 8, Fila 1, i.e. the family ossuary shared with Ida Galanti (d. 1970) and Alfredo Buatti Sr. (d. 1964). Located 05/11/2026 in the Comune online cemetery search (varId 25135).' },
       { type: 'Immigration File (NAA)', status: 'Found', notes: 'B78, ITALIAN/BUATTI EZIO — digitised copy received 9 Jul 2026 (Item 5746087). Full file: arrival form RA, marriage notification, passport photo.' },
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290718, issued Sydney 27 Sep 1952. Re-issued 23 Jan 1957 (entered register 22 Feb 1957).' },
       { type: 'Passenger List', status: 'Found', notes: 'Toscana, 27 Sep 1952 — NAA K269. Also Fremantle customs stamp 15 Sep 1952.' },
       { type: 'Marriage Record', status: 'Found', notes: 'Lilia Chiappini, 4 Oct 1952 at St Anthony\'s Chapel, Greta, NSW — cert C810020; NSW BDM reg. 27340/1952 (West Maitland & Singleton district, register no. 154). Officiant Fr Zefferino Grisendi. Certificate names parents Remo Chiappini + Irma Pirri (deceased); witnesses Emidio Pica + Domenico Michetti. Greta = Greta Migrant Camp (largest post-war reception centre in NSW); the marriage also appears in the Ascoli Piceno civil register.' },
       { type: 'Bankruptcy Record', status: 'Found', notes: 'No. 248 of 1957. Café & milk bar proprietor, Broadford VIC. Petition & sequestration order 2 Oct 1957. Listed as "unemployed" at time. Public examination 2 Sep 1958 (Trove, Commonwealth Gazette 17 Oct 1957 & 28 Aug 1958). NOT in RecordSearch by surname or case no — located via NAA Contact Us form lodged 11 Aug 2026; acknowledgement ref NAA1000457651, due 23/09/2026.' },
       { type: 'Military Record (Ruolo Matricolare)', status: 'Found', notes: 'Foglio matricolare n. 20102, Distretto di Ascoli Piceno. Received from Archivio di Stato di Ascoli Piceno (Alessandra Buondi) 13 Jul 2026. Confirms education, RSI recall/depennato, officer cadet at Rieti, discharge 1951.' },
-      { type: 'University Student File', status: 'Found', notes: 'Fascicolo studente posiz. n. 2005, Università di Perugia (Facoltà di Agraria). Batch 1 (21 pages) reproduced free by Monica Fiore, received via PEC 4 Aug 2026 (prot. 2026-USDPAMM-0309113, incoming 290425 of 21/07/2026): full academic trajectory 1944-1949, exam transcript, laurea 95/110 (26 Nov 1949), legalised photograph 18 Dec 1944. Batch 2 (21 Aug 2026): 1944 certificato di nascita (enclosure 3 of admission application) — confirmed SILENT on Ida Galanti\'s parentage; annual enrolment forms 1945/46–1948/49 show Via E. B. Barro 11 (some forms lack domicilio; Fiore supplemented with certification requests). Next address Via Fabriano 25 only on a 1964 doc — move date 1949–1963 unknown. No payment required. Fascicolo released for refiling after reply 25 Aug 2026.' }
+      { type: 'University Student File', status: 'Found', notes: 'Fascicolo studente posiz. n. 2005, Università di Perugia (Facoltà di Agraria). Batch 1 (21 pages) reproduced free by Monica Fiore, received via PEC 4 Aug 2026 (prot. 2026-USDPAMM-0309113, incoming 290425 of 21/07/2026): full academic trajectory 1944-1949, exam transcript, laurea 95/110 (26 Nov 1949), legalised photograph 18 Dec 1944. Batch 2 (21 Aug 2026): 1944 certificato di nascita (enclosure 3 of admission application) — confirmed SILENT on Ida Galanti\'s parentage; annual enrolment forms 1945/46–1948/49 show Via E. B. Barro 11 (some forms lack domicilio; Fiore supplemented with certification requests). Next address Via Fabriano 25 only on a 1964 doc — move date 1949–1963 unknown. No payment required. Fascicolo released for refiling after reply 25 Aug 2026.' },
+      { type: 'School File (IIS Celso Ulpiani)', status: 'Found', notes: 'Fascicolo studente Ezio Buatti (b. 27/04/1923), R. Istituto Tecnico Agrario "Celso Ulpiani", Ascoli Piceno — received free 02/11/2026 (A.A. Zangari, apis00800e@istruzione.it). Two PDFs: Fascicolo Buatti Ezio.pdf (19 pp) + Ritiro diploma Buatti.pdf (1 p). Covers 1938–1952: enrolment Oct 1938 (from R. Istituto Tecnico Commerciale "Umberto I"), admissions to 3rd/4th courses 1940/1941, diploma a.s. 1941–42 collected 11/08/1942, grade certificates 1942/1946/1949, 1944 racial-laws declaration, 1944 Orsini culture generale request, 1946 Perugia diploma confirmation, 1952 Ministry of Agriculture concorso application (Div. V, n. 80788, 23/02/1952, confirmed by Ulpiani prot. 214, 25/02/1952). Father Alfredo signed as "Economo di questo Comune" (Comune di Ascoli Piceno), residence Via T. B. Barro 11 (1938–1941). Staff: Preside Dott. Corrado Simoncini, Segretario Guido Ciucci. D9 thank-you sent 03/11/2026.' }
     ],
     researchStatus: {
       status: 'In Progress',
-      details: 'NAA B78 file digitised and received 9 Jul 2026. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi). Perugia fascicolo studente RECEIVED in two batches (4 Aug + 21 Aug 2026, Monica Fiore) — legalised photograph (18 Dec 1944), full exam transcript, thesis title, laurea 95/110 (26 Nov 1949), and the 1944 certificato di nascita (which is SILENT on Ida Galanti\'s parentage). Annual enrolment forms show Via E. B. Barro 11 (1944–1948); next address Via Fabriano 25 only from a 1964 doc. Reply sent 25 Aug 2026 authorising refiling. RSI recall/depennato WWII.',
+      details: 'NAA B78 file digitised and received 9 Jul 2026. Ruolo matricolare received 13 Jul 2026 (Alessandra Buondi). Perugia fascicolo studente RECEIVED in two batches (4 Aug + 21 Aug 2026, Monica Fiore) — legalised photograph (18 Dec 1944), full exam transcript, thesis title, laurea 95/110 (26 Nov 1949), and the 1944 certificato di nascita (which is SILENT on Ida Galanti\'s parentage). Annual enrolment forms show Via E. B. Barro 11 (1944–1948); next address Via Fabriano 25 only from a 1964 doc. Reply sent 25 Aug 2026 authorising refiling. RSI recall/depennato WWII. IIS Celso Ulpiani student file RECEIVED 02/11/2026 (free): complete 1938–1952 file — Alfredo occupation "Economo di questo Comune" (Comune di Ascoli Piceno), residence Via T. B. Barro 11 (1938–1941), Ezio attended R. Istituto Tecnico Commerciale "Umberto I" (to 1938) then ITA "Celso Ulpiani" 1938–1942, diploma collected 11/08/1942, applied Feb 1952 to Ministero Agricoltura e Foreste concorso (64 posti esperto 4ª classe). SBT reply 02/11/2026: Alfredo×Ida marriage CLOSED NEGATIVE (not in SBT); Lilia birth 1930 & Remo×Irma marriage n. 45/1930 REFUSED on privacy grounds (likely Lilia legitimation). D10 asks for estratto showing only spouses\' parents.',
       nextSteps: [
         'Perugia follow-up RESOLVED (21 Aug 2026 batch + reply 25 Aug 2026): the 1944 certificato di nascita is silent on Ida Galanti\'s parentage; enrolment forms 1945/46–1948/49 show Via E. B. Barro 11. Fascicolo released for refiling. No further Perugia action.',
         'Chase Comune di Ascoli Piceno for copia integrale di nascita (prot. 66127/2026, lodged 20 Jul) — cite the 1944 comune photograph attestation ("BUATTI EZIO di Alfredo e di Galanti Ida, nato e residente in questo Comune").',
@@ -2104,7 +2118,10 @@ export const initialPeople: Person[] = [
         'Marriage certificate C810020 received (Aug 2026) — reg. 27340/1952 confirms officiant Fr Zefferino Grisendi, witnesses Emidio Pica + Domenico Michetti, parents Remo Chiappini + Irma Pirri (deceased).',
         'RecordSearch BUATTI sweep — search for Lilia\'s naturalisation file V653748, Ezio\'s bankruptcy file 248/1957.',
         'Find Neptunia outbound passenger list for 13 Sep 1963 to confirm who travelled. RESOLVED Aug 2026: B78 file (item 5746087) carries handwritten departure annotation "LEFT PER NEPTUNIA ON 13/9/63 FROM MELB" on the marriage-notification page — ship, port, and date confirmed. No purchase of PP222/4 outbound manifest needed for this question.',
-        'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?'
+        'Ask family about Ezio\'s university years at Perugia — did he ever teach or work as an agronomist before migrating?',
+        'Send D10 to SBT (Rosa De Falco): ask for estratto of marriage n. 45/1930 showing only spouses\' parents, and accessibility date (e.g. 100 years = 2030).',
+        'Send D11 to Comune di Ascoli Piceno (protocollo@comune.ap.it): request Alfredo Buatti\'s personnel file as Economo (municipal employee) — stato di famiglia may name Ida Galanti with birth date. Emphasise this is an employment record, not a civil-registry act (no €250–300 contribution).',
+        'Cemetery search (Comune di Ascoli Piceno online): search for GALANTI Ida (and BUATTI Alfredo) death acts. If Ida died post-1926, death act <100 years → no €300 fee, names parents (solves 1893 vs 1904 tiebreaker).'
       ]
     },
     sources: [
@@ -2127,6 +2144,16 @@ export const initialPeople: Person[] = [
         title: 'Fascicolo Studente — Università di Perugia',
         type: 'University Student File',
         reference: 'Posiz. n. 2005. Received via PEC 4 Aug 2026 (prot. 2026-USDPAMM-0309113; incoming 290425 of 21/07/2026). Monica Fiore, Ufficio Archivio (monica.fiore@unipg.it).'
+      },
+      {
+        title: 'School File of Ezio Buatti (1938–1952) — IIS "Celso Ulpiani"',
+        type: 'School File',
+        reference: 'R. Istituto Tecnico Agrario "Celso Ulpiani", Ascoli Piceno, fascicolo studente (copy supplied 02/11/2026 free by A.A. Zangari, apis00800e@istruzione.it). Two PDFs: Fascicolo Buatti Ezio.pdf (19 pp) + Ritiro diploma Buatti.pdf (1 p).'
+      },
+      {
+        title: 'Diploma Register Entry of Ezio Buatti (11 August 1942)',
+        type: 'School Record',
+        reference: 'R. ITA "Celso Ulpiani", Registro dei Diplomi di Abilitazione, a.s. 1941–42. Ezio "di Alfredo", b. Ascoli Piceno 27 aprile 1923; collected 11/08/1942 signed "Buatti Ezio".'
       }
     ]
   },
@@ -2344,6 +2371,7 @@ export const initialPeople: Person[] = [
       'His family migrated to Venezuela (per Connie Emmi, 28 Jun 2026).',
       'Name, exact birth date, and death date all unknown — mentioned as "father\'s older brother" by Connie.',
       'May correspond to the brother "in America" mentioned by Mum in phone call (28 Jun 2026).',
+      'HYPOTHESIS (05/11/2026, from a FamilySearch hint): this unnamed brother may be **ANTONINO** Emmi. Sicilian naming convention names the first son after the paternal grandfather — and Gregorio\'s paternal grandfather was Antonino Emmi (~1849, d. 1889). A FamilySearch hint for our Egidio listed an "Antonino Emmi" as his son. NOT confirmed: no birth act, no date, and the tree already carries three different Antonino Emmis, so check the hint\'s birth year and parents before attaching anything.',
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Name unknown — no records found' },
@@ -2944,9 +2972,18 @@ export const initialResearchLeads: ResearchLead[] = [
     title: 'NAA Record: Rosario Patanè (b. 18 Nov 1895) & Sebastiano Patanè (b. 18 Feb 1936)',
     category: 'Emmi/Patanè',
     status: 'In Progress',
-    description: 'NAA file A446, 1967/39646 — "PATANE Rosario born 18 November 1895; Sebastiano born 18 February 1936" (Item ID 7775953, Canberra). Could be Rosaria\'s father Rosario (born c. 1890, close to 1895), or a different Rosario. Rosario Patanè aged ~72 in 1967 would match the c. 1895 birth year. Could also be the Rosario Patanè who married Grazia Coco (ruled out as Rosaria\'s father, but still a Patanè to investigate). File also includes a Sebastiano Patanè (b. 18 Feb 1936) — Rosaria\'s brother was named Sebastiano, but born unknown date.',
-    nextSteps: 'Access application submitted 28 June 2026 (Receipt RK26/00009589, due 2 Nov 2026). Wait for file and examine all pages for family connections, addresses, and sponsors.',
-    sources: ['NAA: A446, 1967/39646 (Item ID 7775953)']
+    description: 'NAA file A446, 1967/39646 — "PATANE Rosario born 18 November 1895; Sebastiano born 18 February 1936" (Item ID 7775953, Canberra). Could be Rosaria\'s father Rosario (born c. 1890, close to 1895), or a different Rosario. Rosario Patanè aged ~72 in 1967 would match the c. 1895 birth year. Could also be the Rosario Patanè who married Grazia Coco (ruled out as Rosaria\'s father, but still a Patanè to investigate). File also includes a Sebastiano Patanè (b. 18 Feb 1936) — Rosaria\'s brother was named Sebastiano, but born unknown date. **UPDATE 02/11/2026**: 90-day decision deadline passed; NAA (ram.acap@naa.gov.au, ref. RK26/00009589) says it will keep processing and notify a decision later. Under the Archives Act, a missed deadline counts as a deemed refusal, so an appeal is possible but not needed.',
+    nextSteps: 'Wait for NAA decision. Then examine all pages for family connections, addresses, and sponsors. **Check in OpenCode: is Rosario Patanè\'s birth date 18/11/1895?** If yes, this file is a direct ancestor\'s immigration record.',
+    sources: ['NAA: A446, 1967/39646 (Item ID 7775953)', 'NAA email 02/11/2026 (ram.acap@naa.gov.au, ref. RK26/00009589)']
+  },
+  {
+    id: 'lead-naa-alfio-patane-1969',
+    title: 'NAA Record: Alfio Patanè (b. 1919) & wife Rosaria née Patanè (b. 1926)',
+    category: 'Emmi/Patanè',
+    status: 'In Progress',
+    description: 'NAA file J25, 1969/7259 — "PATANE, Alfio [b. 1919, Italy] and wife Rosaria (née Patane) [b. 1926, Italy]" (Item ID 4384476, Brisbane). This is the 28/06 application RK26/00009591. **EXAMINED 30/10/2026 (NAA1000465851)**: released "open with exemption" — some content withheld under s. 33(1)(a) and (d) of the Archives Act 1983. Statement of reasons and purchase instructions attached. **IMPORTANT**: this Rosaria (b. 1926) ≠ our Rosaria Patanè (b. 23/05/1924, m. Gregorio Emmi 1948). This Alfio (b. 1919) ≠ the Alfio Patanè murdered in 1928 (A1, 1930/3825). May be linked to Queensland Patanè backlog (Sebastiano Patanè).',
+    nextSteps: 'Decide: buy digital copy (see "How to purchase copies" attachment) or view free in Brisbane reading room (5 days\' notice). Download the two NAA attachments (statement of reasons; purchase instructions) and review. Internal reconsideration of the exemption can be requested within 28 days of notification (check the NAA letter).',
+    sources: ['NAA: J25, 1969/7259 (Item ID 4384476)', 'NAA letter 30/10/2026 (NAA1000465851, Georgina Jansen)']
   },
   {
     id: 'lead-alfio-patane-naturalisation',
@@ -3126,7 +3163,7 @@ export const initialResearchLeads: ResearchLead[] = [
     category: 'Buatti/Chiappini',
     status: 'To Investigate',
     description: 'Irma Pirri was already dead by 4 October 1952 — recorded on the NSW marriage certificate (reg. 27340/1952) for Ezio Buatti + Lilia Chiappini. Death window 1930–1952, almost certainly at San Benedetto del Tronto; she would have been at most about forty. The narrowest unexplored question in the Chiappini line — nobody has searched. Route: Curia di San Benedetto del Tronto (Sig.ra Veccia) — a burial record would sit in the same parish registers already circulating among the SBT parishes. Thread warm, do not poke before September.',
-    nextSteps: 'After September: ask the Curia (Sig.ra Veccia) for Irma Pirri\'s death/burial record. Certificate checked (Aug 2026): records "Irma Pirri (deceased)"; Remo Chiappini recorded as living as of 4 Oct 1952. No further detail on Irma on the certificate.',
+    nextSteps: 'D14 SENT 05/11/2026 to Sig.ra Rosa De Falco (Comune di SBT) requesting Irma\'s copia integrale death act with parents, 1930–1952 window. Also open the Curia route (Sig.ra Veccia) — the "window" is now open. Certificate checked (Aug 2026): records "Irma Pirri (deceased)"; Remo Chiappini recorded as living as of 4 Oct 1952. No further detail on Irma on the certificate.',
   },
   {
     id: 'lead-chiappini-1930-marriage',
@@ -3159,7 +3196,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'Which Ida Galanti (1893 vs 1904) married Alfredo Buatti?',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti + Clementina Curcozzi) also checked. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati (an_ua8575, 6-Div 2) — fu Ignazio Galanti, mother Clementina Curcozzi. First hard evidence that Ignazio + Clementina were a real couple with children in Ascoli Piceno. Makes 1904 Ida candidate more credible (second confirmed child of same parents). Alessandro born ~1895 (13 Jul vs 8 Nov — document disagreement, trust official extract). Perugia file (4 Aug 2026) confirms "Galanti Ida" as Ezio\'s mother across four institutional sources but gives no birth date or paternity; a 1944 certificato di nascita deposited by Ezio with the University (enclosure 3, domanda prot. 1746) was NOT among the reproduced pages — follow-up emailed to Monica Fiore (5 Aug 2026). Tribunale AP route CLOSED (archive interdetto, 20 Jul). Live routes: Comune AP prot. 66127/2026 (Ezio birth act — chased with 1944 photo attestation), Comune AP prot. 0062771 (marriage cert), Comune SBT prot. 0054400/2026 (to be widened to stato di famiglia storico). Remaining Morti allegati divisions (5-Div 1, 5-Div 2, 6-Div 1) may contain more Galanti siblings.'
+    notes: '1893 Ida confirmed as real person (19 Mar 1893, d/o Antonio Galanti + Virginia Rosati, landowning family from Lisciano) via foglio 5120 (18 Jul 2026). Marriage to Alfredo unconfirmed — right-hand columns not visible. 1904 Ida (f. 5545, d/o Ignazio Galanti + Clementina Curcozzi) also checked. BREAKTHROUGH (22 Jul 2026): Galanti Alessandro on WWI Morti allegati (an_ua8575, 6-Div 2) — fu Ignazio Galanti, mother Clementina Curcozzi. First hard evidence that Ignazio + Clementina were a real couple with children in Ascoli Piceno. Makes 1904 Ida candidate more credible (second confirmed child of same parents). Alessandro born ~1895 (13 Jul vs 8 Nov — document disagreement, trust official extract). Perugia file (4 Aug 2026) confirms "Galanti Ida" as Ezio\'s mother across four institutional sources but gives no birth date or paternity; a 1944 certificato di nascita deposited by Ezio with the University (enclosure 3, domanda prot. 1746) was NOT among the reproduced pages — follow-up emailed to Monica Fiore (5 Aug 2026). Tribunale AP route CLOSED (archive interdetto, 20 Jul). Live routes: Comune AP prot. 66127/2026 (Ezio birth act — chased with 1944 photo attestation), Comune AP prot. 0062771 (marriage cert), Comune SBT prot. 0054400/2026 (to be widened to stato di famiglia storico). Remaining Morti allegati divisions (5-Div 1, 5-Div 2, 6-Div 1) may contain more Galanti siblings. UPDATE 05/11/2026: Ida\'s burial is confirmed at the family ossuary, Cimitero di Borgo Solestà (Settore L, Blocco L074O, Posto 8 fila 1), death 26/01/1970 — but the Comune cemetery database gives no birth date or age, so it does not answer the question. D13 SENT 05/11/2026 to Dott.ssa Falciatori (Comune AP): copia integrale of Ida\'s 1970 and Alfredo\'s 1964 death acts, each naming parents — now the primary tiebreaker route, and free of the €250–300 "ricerca" contribution since dates are exact.'
   },
   {
     id: 'q-ezio-birth',
@@ -3187,7 +3224,7 @@ export const initialOpenQuestions: OpenQuestion[] = [
     question: 'When and where did Irma Pirri die?',
     category: 'Buatti/Chiappini',
     status: 'In Progress',
-    notes: 'Already dead by 4 Oct 1952 (recorded on NSW marriage cert 27340/1952, West Maitland & Singleton district). Window 1930–1952, probably San Benedetto del Tronto; she would have been at most about forty. Route: Curia di San Benedetto del Tronto (Sig.ra Veccia) — a burial record would sit in the parish registers already circulating. Act after September (thread warm, don\'t poke before then). Certificate copy checked Aug 2026: "Irma Pirri (deceased)"; no other detail.'
+    notes: 'Already dead by 4 Oct 1952 (recorded on NSW marriage cert 27340/1952, West Maitland & Singleton district). Window 1930–1952, probably San Benedetto del Tronto; she would have been at most about forty. UPDATE 05/11/2026: D14 SENT to Rosa De Falco (Comune di SBT, Ufficio Stato Civile) — copia integrale of the death act with parents, framed explicitly as a death act so it does not collide with the birth/marriage refusals of 02/11/2026. The Curia route (Sig.ra Veccia) is now open and is the fallback. Certificate copy checked Aug 2026: "Irma Pirri (deceased)"; no other detail.'
   },
   {
     id: 'q-bruna-servant',

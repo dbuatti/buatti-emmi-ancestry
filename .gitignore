@@ -1,0 +1,13 @@
+
+# Family-tree originals: local only, never committed or deployed
+records-local/
+reference/
+correspondence/
+private/
+_unsorted/
+copy-log.csv
+
+# Standard
+node_modules/
+dist/
+.DS_Store

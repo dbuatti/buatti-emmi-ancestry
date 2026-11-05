@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
+import { LinkifiedText } from '@/components/LinkifiedText';
 import { useToast } from '@/hooks/use-toast';
 import type { ResearchLead, OpenQuestion } from '@/types';
 import {
@@ -206,11 +207,11 @@ function LeadCard({ lead, onUpdateStatus }: { lead: ResearchLead; onUpdateStatus
         <CardTitle className="text-lg font-serif text-[#800020] mt-1">{lead.title}</CardTitle>
       </CardHeader>
       <CardContent className="text-sm space-y-3">
-        <p className="text-stone-800">{lead.description}</p>
+        <p className="text-stone-800"><LinkifiedText text={lead.description} /></p>
         {lead.nextSteps && (
           <div className="bg-stone-100 p-2.5 rounded border border-stone-200 text-xs font-sans">
             <strong className="text-[#800020] block mb-0.5">Next Steps:</strong>
-            {lead.nextSteps}
+            <LinkifiedText text={lead.nextSteps} />
           </div>
         )}
         <div className="flex justify-end gap-2 pt-2 border-t border-stone-200/60">
@@ -247,13 +248,13 @@ function RuledOutLeadCard({ lead, onReopen }: { lead: ResearchLead; onReopen: (i
         <CardTitle className="text-base font-serif text-rose-900 mt-1">{lead.title}</CardTitle>
       </CardHeader>
       <CardContent className="text-xs space-y-2">
-        <p className="text-stone-700"><strong>Proposed as:</strong> {lead.description}</p>
+        <p className="text-stone-700"><strong>Proposed as:</strong> <LinkifiedText text={lead.description} /></p>
         <div className="bg-rose-100/50 p-2 rounded border border-rose-200 text-rose-900">
-          <strong>Why Ruled Out:</strong> {lead.whyRuledOut}
+          <strong>Why Ruled Out:</strong> <LinkifiedText text={lead.whyRuledOut ?? ''} />
         </div>
         {lead.sources && (
           <p className="text-[10px] text-stone-500 font-sans">
-            <strong>Sources checked:</strong> {lead.sources.join(', ')}
+            <strong>Sources checked:</strong> <LinkifiedText text={lead.sources.join(', ')} />
           </p>
         )}
         <div className="flex justify-end pt-1">

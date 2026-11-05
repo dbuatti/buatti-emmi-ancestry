@@ -2,6 +2,8 @@ export interface RecordStatus {
   type: string;
   status: 'Found' | 'Not Found' | 'Searching' | 'Ruled Out' | 'Requested';
   notes?: string;
+  /** Direct link to the digitised record / catalogue entry, when one exists. */
+  link?: string;
 }
 
 export interface Person {

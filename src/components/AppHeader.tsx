@@ -1,6 +1,9 @@
-import { Users, Plus, BookOpen } from 'lucide-react';
+import { useState } from 'react';
+import { Users, Plus, BookOpen, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BRAND_COLOR } from '@/lib/constants';
+import { useToast } from '@/hooks/use-toast';
+import { buildFamilyTreeExport } from '@/lib/exportFamilyTree';
 import type { Person, ResearchLead, OpenQuestion } from '@/types';
 
 interface AppHeaderProps {
@@ -12,6 +15,42 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ people, leads, questions, onReset, onAddPerson }: AppHeaderProps) {
+  const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+
+  /** One-click: whole tree as plain text on the clipboard, ready to paste into Claude. */
+  const handleCopyTree = async () => {
+    const text = buildFamilyTreeExport(people, leads, questions);
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for non-secure contexts (plain http / older Safari).
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.setAttribute('readonly', '');
+        area.style.position = 'fixed';
+        area.style.top = '-10000px';
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        document.body.removeChild(area);
+      }
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+      toast({
+        title: 'Family tree copied',
+        description: `${people.length} people, ${text.length.toLocaleString()} characters. Paste into Claude — or run "pnpm export:tree" for the family-tree-export.md file.`,
+      });
+    } catch {
+      toast({
+        title: 'Copy failed',
+        description: 'Run "pnpm export:tree" in the project folder to write family-tree-export.md instead.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <header className="relative border-b border-stone-200 bg-[#F4EFE6] py-8 px-4 md:px-8 shadow-sm overflow-hidden">
       <div className="absolute inset-0 opacity-5 pointer-events-none bg-[radial-gradient(#800020_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -36,6 +75,15 @@ export function AppHeader({ people, leads, questions, onReset, onAddPerson }: Ap
           >
             <BookOpen className="w-3.5 h-3.5" /> Research Goals
           </a>
+          <Button
+            variant="outline"
+            onClick={handleCopyTree}
+            title="Copies the whole tree as plain text, grouped by family line — ready to paste into Claude"
+            className="font-sans text-xs border-stone-300 hover:bg-stone-100 text-stone-700 flex items-center gap-2"
+          >
+            {copied ? <Check className="w-4 h-4 text-emerald-700" /> : <Copy className="w-4 h-4" />}
+            {copied ? 'Copied!' : 'Copy family tree'}
+          </Button>
           <Button
             variant="outline"
             onClick={onReset}
