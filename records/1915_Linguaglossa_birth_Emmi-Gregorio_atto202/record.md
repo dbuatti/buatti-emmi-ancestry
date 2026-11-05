@@ -10,8 +10,6 @@ atto: "202"
 people: [gregorio-emmi]
 source_office: "Comune di Linguaglossa, Ufficio Anagrafe (Sig.ra Foti Maria Angela)"
 protocol: ""
-fs_status: not on FamilySearch
-verified_by_daniele: false
 transcribed_by: "Nemotron 3.5 Super VL (free)"
 filed: true
 transcribed: true

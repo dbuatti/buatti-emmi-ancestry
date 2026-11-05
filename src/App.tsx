@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ResearchGoals from "./pages/ResearchGoals";
 import NotFound from "./pages/NotFound";
+import RecordPage from "./pages/RecordPage";
 
 const App = () => (
   <TooltipProvider>
@@ -14,6 +15,7 @@ const App = () => (
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/research-goals" element={<ResearchGoals />} />
+        <Route path="/records/:recordId" element={<RecordPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, MapPin, ExternalLink, Ship, Shield, Users, GraduationCap, Ruler, FileText, Home } from 'lucide-react';
+import { Calendar, Clock, Plus, MapPin, ExternalLink, Ship, Shield, Users, GraduationCap, Ruler, FileText, Home, Check, Search, Minus } from 'lucide-react';
 import { getLineBadgeColor, LINE_BG } from '@/lib/constants';
 import { calculateCompleteness, getScoreLabel, getScoreBadgeColor } from '@/lib/research';
 import { calculateAge } from '@/lib/tree';
@@ -24,6 +24,65 @@ function Section({ icon: Icon, label, children }: { icon: React.ElementType; lab
       <div className="min-w-0 flex-1">
         <span className="font-bold block text-xs text-stone-500 font-sans uppercase tracking-wider mb-0.5">{label}</span>
         {children}
+      </div>
+    </div>
+  );
+}
+
+function ModalLifeEvents({ person }: { person: Person }) {
+  if (!person.lifeEvents || person.lifeEvents.length === 0) {
+    return null;
+  }
+
+  const eventLabels: Record<string, { label: string; icon: React.ElementType }> = {
+    birth: { label: 'Birth', icon: Calendar },
+    baptism: { label: 'Baptism', icon: Plus },
+    marriage: { label: 'Marriage', icon: Users },
+    death: { label: 'Death', icon: Clock },
+    burial: { label: 'Burial', icon: MapPin },
+    migration_naturalisation: { label: 'Migration / Naturalisation', icon: Ship },
+  };
+
+  return (
+    <div className="space-y-2 pt-2 border-t border-stone-200">
+      <h4 className="text-xs font-bold text-stone-500 font-sans uppercase tracking-wider mb-2">Life Events</h4>
+      <div className="space-y-1.5">
+        {person.lifeEvents.map((ev) => {
+          const info = eventLabels[ev.type];
+          const stepNum = ev.step ? `Step ${ev.step} of 5` : '—';
+          return (
+            <div key={ev.type} className="flex items-start gap-2 bg-white p-2 rounded border border-stone-200 text-xs">
+              <div className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
+                ev.status === 'linked' ? 'bg-emerald-500' : ev.status === 'known_no_record' ? 'bg-amber-400' : 'bg-stone-300'
+              }`} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1 mb-0.5">
+                  <span className={`font-bold text-stone-800 ${ev.status === 'linked' ? 'text-emerald-800' : 'text-stone-600'}`}>
+                    {info?.label || ev.type}
+                  </span>
+                  {ev.status === 'linked' && (
+                    <span className="text-[10px] font-sans bg-emerald-100 text-emerald-800 rounded px-1.5 py-0.5 font-bold">
+                      {stepNum}
+                    </span>
+                  )}
+                  {ev.status === 'known_no_record' && (
+                    <span className="text-[10px] font-sans bg-amber-100 text-amber-800 rounded px-1.5 py-0.5 font-bold">
+                      Known, no record
+                    </span>
+                  )}
+                  {ev.status === 'missing' && (
+                    <span className="text-[10px] font-sans bg-stone-100 text-stone-500 rounded px-1.5 py-0.5 font-bold">
+                      Missing
+                    </span>
+                  )}
+                </div>
+                {ev.note && (
+                  <p className="text-stone-600 text-[11px] leading-tight">{ev.note}</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -159,6 +218,7 @@ function ModalOverview({ person, people, onSelectPerson }: { person: Person; peo
           )}
         </div>
       </div>
+      <ModalLifeEvents person={person} />
     </div>
   );
 }
