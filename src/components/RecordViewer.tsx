@@ -18,6 +18,11 @@ interface PanZoomState {
   scale: number;
   tx: number;
   ty: number;
+  isDragging: boolean;
+  startX: number;
+  startY: number;
+  startTx: number;
+  startTy: number;
 }
 
 const MIN_SCALE = 0.5;
@@ -36,6 +41,11 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
     scale: 1,
     tx: 0,
     ty: 0,
+    isDragging: false,
+    startX: 0,
+    startY: 0,
+    startTx: 0,
+    startTy: 0,
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -168,15 +178,14 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
 
   // Global drag listeners
   useEffect(() => {
-    const prev = pz as any;
-    if (!prev.isDragging) return;
+    if (!pz.isDragging) return;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [prev.isDragging, handleMouseMove, handleMouseUp]);
+  }, [pz.isDragging, handleMouseMove, handleMouseUp]);
 
   const pct = Math.round(pz.scale * 100);
 
