@@ -38,6 +38,16 @@ export interface NextTask {
 
 const PILOT_PERSON_ID = 'gregorio-emmi';
 
+const STEP_NAMES: WorkflowStep[] = ['filed', 'transcribed', 'verified', 'in_app', 'on_familysearch'];
+
+const STEP_NOTES: Record<number, string> = {
+  1: 'Record {recordId} filed. Confirm contents match the document.',
+  2: 'Record {recordId} transcribed. Review against the document image.',
+  3: 'Record {recordId} awaits your verification.',
+  4: 'Link {recordId} to person facts in the app.',
+  5: 'Attach {recordId} on FamilySearch.',
+};
+
 export function getNextTask(people: Person[], recordSteps?: Map<string, RecordStepInfo>): NextTask | null {
   const person = people.find((p) => p.id === PILOT_PERSON_ID);
   if (!person) return null;
@@ -49,64 +59,59 @@ export function getNextTask(people: Person[], recordSteps?: Map<string, RecordSt
   for (const ev of linkedEvents) {
     if (!ev.recordId) continue;
 
-    // Step comes from record.md front matter, not from lifeEvents
+    // Step comes from record.md front matter: highest COMPLETED step.
+    // The NEXT task is stepNum + 1.
     const stepInfo = recordSteps?.get(ev.recordId);
-    const stepNum = stepInfo?.stepNumber ?? 1;
-    const stepName = stepInfo?.step ?? ('filed' as WorkflowStep);
+    const completedStepNum = stepInfo?.stepNumber ?? 0;
+    const nextStepNum = completedStepNum + 1;
 
-    if (stepNum === 1) {
+    if (nextStepNum > 5) continue; // All steps done for this record
+
+    const nextStepName = STEP_NAMES[nextStepNum - 1];
+    const note = STEP_NOTES[nextStepNum]?.replace('{recordId}', ev.recordId) ?? '';
+
+    if (nextStepNum === 2) {
       return {
         personId: person.id,
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
-        step: stepName,
-        stepNumber: 1,
-        note: `Record ${ev.recordId} filed. Confirm contents match the document.`,
+        step: nextStepName,
+        stepNumber: nextStepNum,
+        note,
       };
     }
-    if (stepNum === 2) {
+    if (nextStepNum === 3) {
       return {
         personId: person.id,
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
-        step: stepName,
-        stepNumber: 2,
-        note: `Record ${ev.recordId} transcribed. Review against the document image.`,
+        step: nextStepName,
+        stepNumber: nextStepNum,
+        note,
       };
     }
-    if (stepNum === 3) {
-      return {
-        personId: person.id,
-        personName: person.name,
-        type: 'record_check',
-        recordId: ev.recordId,
-        step: stepName,
-        stepNumber: 3,
-        note: `Record ${ev.recordId} awaits your verification.`,
-      };
-    }
-    if (stepNum === 4) {
+    if (nextStepNum === 4) {
       return {
         personId: person.id,
         personName: person.name,
         type: 'record_app',
         recordId: ev.recordId,
-        step: stepName,
-        stepNumber: 4,
-        note: `Link ${ev.recordId} to person facts in the app.`,
+        step: nextStepName,
+        stepNumber: nextStepNum,
+        note,
       };
     }
-    if (stepNum === 5) {
+    if (nextStepNum === 5) {
       return {
         personId: person.id,
         personName: person.name,
         type: 'record_fs',
         recordId: ev.recordId,
-        step: stepName,
-        stepNumber: 5,
-        note: `Attach ${ev.recordId} on FamilySearch.`,
+        step: nextStepName,
+        stepNumber: nextStepNum,
+        note,
       };
     }
   }
