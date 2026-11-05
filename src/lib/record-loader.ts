@@ -26,7 +26,7 @@ let recordsCache: Map<string, RecordEntry> | null = null;
 async function loadAllRecords(): Promise<Map<string, RecordEntry>> {
   if (recordsCache) return recordsCache;
 
-  const modules = import.meta.glob<'/records/*.md', { default: string }>('/records/*.md', {
+  const modules = import.meta.glob('../records/*.md', {
     eager: true,
     import: 'default',
   });
