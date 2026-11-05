@@ -295,5 +295,14 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
   discrepancies (baptism = 3, atto 202 = 2). `WORKFLOW.md` step 4 now **requires** the
   `## FamilySearch` block in the same pass (8 numbered fields), and says a record is not
   `in_app` until that block exists. Committed `a766844`, not pushed.
+- **05/11/2026 (Next card)** — `known_no_record` events no longer say "Create one". The card now
+  reads **"Get the document"**, shows **Where it is** straight from the event's `note`, and names
+  the office found in that note. Buttons: **Requested (waiting for reply)** (hides the event for
+  **30 days**, then it returns as **Chase `<office>`?** with the day count), **Found online**
+  (asks for the link and creates `records/<id>/record.md`), **Received** (saves `receivedOn` and
+  shows the `process inbox` instructions). State persists in **`src/data/event-requests.json`**,
+  keyed `"<personId>|<eventType>"`. New dev endpoints `POST /api/event-override`,
+  `POST /api/create-record`, `POST /api/open-inbox`. See `WORKFLOW.md` → "The Next card and
+  `known_no_record` events".
 
 *(Append one dated line here at the end of every session, and update "Last updated" above.)*

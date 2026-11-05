@@ -58,6 +58,46 @@ After a record is verified (`verified: true`), review it in the app:
 
 ---
 
+## The Next card and `known_no_record` events
+
+A `lifeEvent` with `status: 'known_no_record'` is **not** a "create a record" job — the document
+already exists somewhere, so "Create one" is wrong. The Next card says **Get the document** and
+shows **Where it is**, copied straight from that event's `note` in `familyData.ts`. It also
+detects the office named in the note (`Comune di …`, `Parrocchia di …`, `Archivio di Stato di …`,
+`National Archives of Australia`, …) and displays it.
+
+Three buttons, three meanings:
+
+| Button | What it does |
+|---|---|
+| **Requested (waiting for reply)** | Saves `requestedOn` = today (plus the detected office as `requestedFrom`) and hides this event for **30 days**. |
+| **Found online** | Asks for the link, creates `records/<id>/record.md` with it in `image_link`, and hands the event to step 1 (`filed`). |
+| **Received** | Stops the chase clock, saves `receivedOn`, and shows the "save it to `_inbox` and run `process inbox`" instructions (with a copy button and an Open `_inbox` button). |
+
+After the 30 days are up the card returns as **Chase `<office>`?**, naming the office it recorded
+(and how many days it has been waiting). Chasing resets the 30-day clock; *Not requesting it*
+forgets the event so it comes back as "Get the document".
+
+State lives in **`src/data/event-requests.json`**, keyed `"<personId>|<eventType>"` — committed,
+so it survives sessions:
+
+```json
+{
+  "gregorio-emmi|marriage": {
+    "requestedOn": "2026-11-05",
+    "requestedFrom": "Comune di Linguaglossa"
+  }
+}
+```
+
+Fields: `requestedOn`, `requestedFrom`, `receivedOn`, `recordId` (a record created from an online
+link — it counts as linked so the card advances before `familyData.ts` is edited).
+
+**When `process inbox` files a document, clear its entry** (and link the new `recordId` in
+`familyData.ts`), otherwise the card keeps showing "File the document you received".
+
+---
+
 ## Process a new document
 
 Run these steps whenever asked to **process <file>**:

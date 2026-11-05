@@ -3,6 +3,7 @@ import dyadComponentTagger from "@dyad-sh/react-vite-component-tagger";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import fs from "fs";
+import os from "os";
 import type { ServerResponse, IncomingMessage } from "http";
 
 const RECORDS_LOCAL = path.resolve(__dirname, "records-local");
@@ -10,7 +11,11 @@ const RECORDS_LOCAL = path.resolve(__dirname, "records-local");
 /**
  * Vite plugin that registers local-only dev API endpoints:
  *   POST   /api/update-record/<id>   (front-matter / discrepancies)
+ *   POST   /api/update-record-links/<id> (links: label + url)
  *   GET    /api/record-files/<id>    (list files in records-local/<id>/)
+ *   POST   /api/event-override       (Next card event state -> src/data/event-requests.json)
+ *   POST   /api/create-record        (record.md for a document found online)
+ *   POST   /api/open-inbox           (reveal ~/Downloads/FAMILY TREE/_inbox in Finder)
  *   GET    /records-local/<id>/<file> (serve a single file, path-traversal safe)
  * Only active in dev mode; never bundled into production.
  */
@@ -289,6 +294,234 @@ function localRecordsApiPlugin() {
               }
             })
             .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/event-override ----
+        // Persists what the Next card knows about one life event into
+        // src/data/event-requests.json. patch === null deletes the entry;
+        // a null/empty value inside the patch deletes that single field.
+        if (method === "POST" && url.startsWith("/api/event-override")) {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const { key, patch } = JSON.parse(raw);
+                if (typeof key !== "string" || !key.includes("|")) {
+                  return sendJson(res, 400, {
+                    error: "key must be '<personId>|<eventType>'",
+                  });
+                }
+                if (patch !== null && typeof patch !== "object") {
+                  return sendJson(res, 400, {
+                    error: "patch must be an object or null",
+                  });
+                }
+                const storePath = path.resolve(
+                  __dirname,
+                  "src",
+                  "data",
+                  "event-requests.json"
+                );
+                let store: Record<string, Record<string, unknown>> = {};
+                if (fs.existsSync(storePath)) {
+                  try {
+                    const parsed = JSON.parse(
+                      fs.readFileSync(storePath, "utf-8")
+                    );
+                    if (parsed && typeof parsed === "object") store = parsed;
+                  } catch {
+                    store = {};
+                  }
+                }
+
+                if (patch === null) {
+                  delete store[key];
+                } else {
+                  const entry: Record<string, unknown> = {
+                    ...(store[key] ?? {}),
+                  };
+                  for (const [k, v] of Object.entries(patch)) {
+                    if (v === null || v === undefined || v === "") {
+                      delete entry[k];
+                    } else {
+                      entry[k] = v;
+                    }
+                  }
+                  if (Object.keys(entry).length === 0) delete store[key];
+                  else store[key] = entry;
+                }
+
+                fs.writeFileSync(
+                  storePath,
+                  JSON.stringify(store, null, 2) + "\n"
+                );
+                return sendJson(res, 200, { ok: true, store });
+              } catch (e: any) {
+                return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/create-record ----
+        // Creates records/<id>/record.md for a document spotted online, so the
+        // Next card can hand it straight to step 1 of the workflow.
+        if (method === "POST" && url.startsWith("/api/create-record")) {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const {
+                  personId,
+                  personName,
+                  eventType,
+                  note,
+                  place,
+                  url: linkUrl,
+                } = JSON.parse(raw);
+                if (!personId || !personName || !eventType || !linkUrl) {
+                  return sendJson(res, 400, {
+                    error: "personId, personName, eventType and url are required",
+                  });
+                }
+
+                const TYPE_NAMES: Record<string, string> = {
+                  birth: "Birth Record",
+                  baptism: "Baptism Record",
+                  marriage: "Marriage Record",
+                  death: "Death Record",
+                  burial: "Burial Record",
+                  migration_naturalisation: "Naturalisation Record",
+                };
+
+                const slug = (s: unknown) =>
+                  String(s ?? "")
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^A-Za-z0-9]+/g, "-")
+                    .replace(/^-+|-+$/g, "");
+
+                // Quote YAML scalars only when they would otherwise break.
+                const yamlScalar = (v: unknown) => {
+                  const s = String(v ?? "");
+                  if (!s) return "''";
+                  if (
+                    /^[\s\-?:,[\]{}#&*!|>'"%@`]/.test(s) ||
+                    /: | #|\n/.test(s) ||
+                    /^(true|false|null|~)$/i.test(s)
+                  ) {
+                    return JSON.stringify(s);
+                  }
+                  return s;
+                };
+
+                const year =
+                  (String(note ?? "").match(/\b(1[5-9]\d{2}|20\d{2})\b/) ||
+                    [])[1] ?? "undated";
+                const placeSlug = slug(place) || "unknown-place";
+
+                // Person ids are already slugged "<given>-<surname>…"; flip them
+                // to this repo's Surname-Given record naming, dropping suffixes.
+                const tokens = String(personId).split("-").filter(Boolean);
+                while (
+                  tokens.length > 2 &&
+                  /^(sr|jr|ii|iii|iv|bis)$/i.test(tokens[tokens.length - 1])
+                ) {
+                  tokens.pop();
+                }
+                const cap = (s?: string) =>
+                  s ? s.charAt(0).toUpperCase() + s.slice(1) : "";
+                const given = cap(tokens[0]);
+                const surname = cap(
+                  tokens.length > 1 ? tokens[tokens.length - 1] : tokens[0]
+                );
+                const personSlug = slug(`${surname}-${given}`);
+
+                const recordsRoot = path.resolve(__dirname, "records");
+                const baseId = `${year}_${placeSlug}_${eventType}_${personSlug}`;
+                let id = baseId;
+                let n = 2;
+                while (fs.existsSync(path.join(recordsRoot, id))) {
+                  id = `${baseId}-${n++}`;
+                }
+
+                const frontMatter = [
+                  "---",
+                  `id: ${id}`,
+                  `type: ${TYPE_NAMES[eventType] ?? "Record"}`,
+                  "date: ''",
+                  `place: ${yamlScalar(place)}`,
+                  "comune: ''",
+                  "register: ''",
+                  `year: '${year}'`,
+                  "atto: ''",
+                  "people:",
+                  `- ${personId}`,
+                  "source_office: ''",
+                  "protocol: ''",
+                  "transcribed_by: ''",
+                  "translated_by: ''",
+                  "filed: false",
+                  "transcribed: false",
+                  "verified: false",
+                  "in_app: false",
+                  "on_familysearch: false",
+                  `image_link: ${JSON.stringify(String(linkUrl))}`,
+                  "original_filename: ''",
+                  "original_sha256: ''",
+                  "links:",
+                  '  - label: "Found online"',
+                  `    url: ${JSON.stringify(String(linkUrl))}`,
+                ];
+
+                const body = [
+                  "",
+                  "## Notes",
+                  `- Created ${new Date().toISOString().slice(0, 10)} from the Next card`,
+                  `  ("Found online") for ${personId}. Source link:`,
+                  `  ${linkUrl}`,
+                  "- No local copy yet: `filed` stays false until the document is",
+                  "  downloaded and put through `process inbox`.",
+                  "",
+                ];
+
+                const newRaw =
+                  frontMatter.join("\n") + "\n---\n" + body.join("\n");
+
+                fs.mkdirSync(path.join(recordsRoot, id), { recursive: true });
+                fs.writeFileSync(path.join(recordsRoot, id, "record.md"), newRaw);
+
+                return sendJson(res, 200, { ok: true, id });
+              } catch (e: any) {
+                return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/open-inbox ----
+        // Reveals ~/Downloads/FAMILY TREE/_inbox in Finder.
+        if (method === "POST" && url.startsWith("/api/open-inbox")) {
+          try {
+            const inbox = path.join(
+              os.homedir(),
+              "Downloads",
+              "FAMILY TREE",
+              "_inbox"
+            );
+            if (!fs.existsSync(inbox)) {
+              fs.mkdirSync(inbox, { recursive: true });
+            }
+            import("child_process").then(({ exec }) => {
+              exec(`open "${inbox}"`, (err) => {
+                if (err) return sendJson(res, 500, { error: err.message });
+                return sendJson(res, 200, { ok: true, path: inbox });
+              });
+            });
+          } catch (e: any) {
+            return sendJson(res, 500, { error: e.message });
+          }
           return;
         }
 

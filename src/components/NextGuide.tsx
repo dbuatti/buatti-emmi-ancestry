@@ -1,13 +1,39 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Check, AlertTriangle, FastForward, ExternalLink, Copy } from 'lucide-react';
+import {
+  Check,
+  AlertTriangle,
+  FastForward,
+  ExternalLink,
+  Copy,
+  FileSearch,
+  Send,
+  Inbox,
+  Link2,
+} from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
-import { getNextTask, getProgress, type RecordStepInfo } from '../../scripts/next-task';
-import { callApi, callApiOpenInFinder } from './next-guide-api';
+import {
+  getNextTask,
+  getProgress,
+  eventKey,
+  toIsoDate,
+  placeFromOffice,
+  EVENT_LABELS,
+  type RecordStepInfo,
+  type EventOverrides,
+} from '../../scripts/next-task';
+import eventRequests from '@/data/event-requests.json';
+import {
+  callApi,
+  callApiOpenInFinder,
+  callApiEventOverride,
+  callApiCreateRecord,
+  callApiOpenInbox,
+} from './next-guide-api';
 import { getAllRecords, parseFamilySearchSection, type FamilySearchFields } from '@/lib/record-loader';
 
 function stepToFrontMatterField(step: string): string {
@@ -37,9 +63,27 @@ const STEP_LABELS: Record<string, string> = {
   on_familysearch: 'FamilySearch',
 };
 
+/** Tasks that are not a workflow step of a record. */
+const TASK_BADGES: Record<string, { label: string; color: string }> = {
+  get_document: { label: 'Get the document', color: 'bg-amber-100 text-amber-700' },
+  chase_request: { label: 'Chase', color: 'bg-orange-100 text-orange-700' },
+  process_inbox: { label: 'Process inbox', color: 'bg-emerald-100 text-emerald-700' },
+  missing_event: { label: 'Search', color: 'bg-stone-100 text-stone-600' },
+  unsorted_file: { label: 'Unsorted files', color: 'bg-stone-100 text-stone-600' },
+};
+
+/** DD/MM/YYYY, the format the rest of the data uses. */
+function formatIso(iso?: string): string {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  if (!y || !m || !d) return iso;
+  return `${d}/${m}/${y}`;
+}
+
 export function NextGuide() {
   const navigate = useNavigate();
   const people = initialPeople;
+  const overrides = eventRequests as EventOverrides;
   const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<string | null>(null);
   const [recordSteps, setRecordSteps] = useState<Map<string, RecordStepInfo>>(new Map());
@@ -48,6 +92,9 @@ export function NextGuide() {
   const [recordBodies, setRecordBodies] = useState<Map<string, string>>(new Map());
   const [imageLinks, setImageLinks] = useState<Map<string, string>>(new Map());
   const [copied, setCopied] = useState<string | null>(null);
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [linkInput, setLinkInput] = useState('');
+  const [showReceivedPanel, setShowReceivedPanel] = useState(false);
 
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
@@ -96,7 +143,7 @@ export function NextGuide() {
     );
   }
 
-  const task = getNextTask(people, recordSteps);
+  const task = getNextTask(people, recordSteps, overrides);
 
   if (!task) {
     return (
@@ -122,8 +169,13 @@ export function NextGuide() {
   const isVerifyTask = task.type === 'record_check' && task.step === 'verified';
   const isInAppTask = task.step === 'in_app';
   const isFamilySearchTask = task.step === 'on_familysearch';
+  const isGetDocument = task.type === 'get_document';
+  const isChase = task.type === 'chase_request';
+  const isProcessInbox = task.type === 'process_inbox';
   const fmField = stepToFrontMatterField(task.step);
   const stepNum = task.stepNumber;
+  const eventLabel = task.eventType ? EVENT_LABELS[task.eventType] : 'record';
+  const overrideKey = task.eventType ? eventKey(task.personId, task.eventType) : '';
   const HOW: Record<number, { title: string; steps: string[]; command?: string }> = {
     1: {
       title: `File ${task.personName}'s ${task.eventType ?? 'document'}`,
@@ -166,20 +218,221 @@ export function NextGuide() {
       const f = Array.isArray(files) ? files[0] : (files.files ?? [])[0];
       if (f?.absPath) copy('path', f.absPath);
       else setStatus('Error: no file found for this record');
-    } catch (e: any) {
-      setStatus(`Error: ${e.message}`);
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
     }
   };
 
   const currentPerson = people.find((p) => p.id === task.personId);
   const existingFsId = currentPerson?.familySearchId;
 
+  /** "Requested (waiting for reply)" — remembers the date + office, then skips. */
+  const markRequested = async () => {
+    if (!overrideKey) return;
+    const today = toIsoDate();
+    setStatus('Saving...');
+    try {
+      await callApiEventOverride(overrideKey, {
+        requestedOn: today,
+        requestedFrom: task.office ?? '',
+        receivedOn: null,
+      });
+      setStatus(`Saved: requested_on ${today}`);
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
+  /** "Received" — stops the chase clock and shows the inbox instructions. */
+  const markReceived = async () => {
+    if (!overrideKey) return;
+    const today = toIsoDate();
+    setStatus('Saving...');
+    try {
+      await callApiEventOverride(overrideKey, {
+        requestedOn: null,
+        receivedOn: today,
+      });
+      setShowReceivedPanel(true);
+      setStatus(`Received ${formatIso(today)} — save it to _inbox and run "process inbox".`);
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
+  /** "Found online" — creates the record.md, then hands over to step 1. */
+  const createFromLink = async () => {
+    const url = linkInput.trim();
+    if (!url || !overrideKey) return;
+    setStatus('Creating record…');
+    try {
+      const { id } = await callApiCreateRecord({
+        personId: task.personId,
+        personName: task.personName,
+        eventType: task.eventType ?? 'birth',
+        note: task.whereItIs,
+        place: placeFromOffice(task.office),
+        url,
+      });
+      await callApiEventOverride(overrideKey, {
+        recordId: id,
+        requestedOn: null,
+        receivedOn: null,
+      });
+      setStatus(`Saved: created ${id}`);
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
+  /** Forget everything we know about this event — back to "Get the document". */
+  const clearOverride = async () => {
+    if (!overrideKey) return;
+    setStatus('Saving...');
+    try {
+      await callApiEventOverride(overrideKey, null);
+      setStatus('Saved: cleared');
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
+  const openInbox = async () => {
+    try {
+      await callApiOpenInbox();
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
+  /** Shared panel: "Where it is", straight from the lifeEvent note. */
+  const whereItIsPanel = (
+    <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
+      <div className="text-sm font-bold text-[#800020] mb-1">Where it is</div>
+      <p className="text-sm text-stone-700 whitespace-pre-wrap">
+        {task.whereItIs || `No note is recorded for this ${eventLabel} event in familyData.ts.`}
+      </p>
+      {task.office && (
+        <p className="text-xs text-stone-500 mt-2">
+          Office found in that note: <b className="text-stone-700">{task.office}</b>
+        </p>
+      )}
+    </div>
+  );
+
+  const receivedPanel = (
+    <div className="mt-3 rounded-lg bg-emerald-50 border border-emerald-200 p-4 space-y-2">
+      <div className="text-sm font-bold text-emerald-800">Document received — file it</div>
+      <ol className="list-decimal ml-5 space-y-1 text-sm text-stone-700">
+        <li>Save the file into Downloads › FAMILY TREE › _inbox</li>
+        <li>In OpenCode (coding model), type the command below</li>
+      </ol>
+      <div className="flex flex-wrap items-center gap-2 pt-1">
+        <code className="text-sm bg-white border border-stone-300 rounded px-2 py-1">process inbox</code>
+        <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={() => copy('inbox-cmd', 'process inbox')}>
+          <Copy className="w-3 h-3 mr-1" /> {copied === 'inbox-cmd' ? 'Copied ✓' : 'Copy command'}
+        </Button>
+        <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={openInbox}>
+          <ExternalLink className="w-3 h-3 mr-1" /> Open _inbox
+        </Button>
+      </div>
+      <p className="text-xs text-stone-500">
+        "process inbox" files the document, creates its record.md and ticks it off this card.
+      </p>
+    </div>
+  );
+
+  const linkInputPanel = showLinkInput && (
+    <div className="mt-3 rounded-lg bg-white border border-stone-300 p-3">
+      <label className="text-xs font-semibold text-stone-700">Link to the document</label>
+      <Input
+        value={linkInput}
+        onChange={(e) => setLinkInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') createFromLink();
+        }}
+        placeholder="https://www.familysearch.org/ark:/61903/…"
+        className="mt-1 text-xs"
+        autoFocus
+      />
+      <div className="mt-2 flex gap-2">
+        <Button
+          size="sm"
+          className="text-xs h-8 px-3 bg-[#800020] text-white hover:bg-[#600018]"
+          disabled={!linkInput.trim()}
+          onClick={createFromLink}
+        >
+          <Check className="w-3 h-3 mr-1" /> Create record.md
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="text-xs h-8 px-3 text-stone-500"
+          onClick={() => setShowLinkInput(false)}
+        >
+          Cancel
+        </Button>
+      </div>
+      <p className="text-[10px] text-stone-500 mt-2">
+        Writes records/&lt;id&gt;/record.md with the link in <code>image_link</code> and moves this card to step 1 (filed).
+      </p>
+    </div>
+  );
+
+  const documentButtons = (
+    <div className="mt-4 flex flex-wrap gap-2">
+      <Button
+        size="sm"
+        className="text-xs h-8 px-3 font-semibold bg-[#800020] text-white hover:bg-[#600018] shadow-sm"
+        onClick={markRequested}
+      >
+        <Send className="w-3 h-3 mr-1" /> Requested (waiting for reply)
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        className="text-xs h-8 px-3"
+        onClick={() => setShowLinkInput((v) => !v)}
+      >
+        <Link2 className="w-3 h-3 mr-1" /> Found online
+      </Button>
+      <Button
+        size="sm"
+        variant="outline"
+        className="text-xs h-8 px-3"
+        onClick={markReceived}
+      >
+        <Inbox className="w-3 h-3 mr-1" /> Received
+      </Button>
+    </div>
+  );
+
+  const headline = isVerifyTask
+    ? `Check ${task.personName}'s ${task.eventType ?? 'record'} record (${attoDisplay ?? 'record'}) against the image`
+    : isInAppTask
+      ? `Apply ${recordId} to the people it names (OpenCode step)`
+      : isFamilySearchTask
+        ? `Attach ${recordId} on FamilySearch`
+        : isGetDocument
+          ? 'Get the document'
+          : isChase
+            ? `Chase ${task.office ?? `the ${eventLabel} record`}?`
+            : isProcessInbox
+              ? 'File the document you received'
+              : task.note;
+
+  const badge = TASK_BADGES[task.type];
+
   return (
     <Card className="border-[#800020]/30 bg-white rounded-xl shadow-sm border-2 border-[#800020]/20">
       {/* Header */}
       <div className="bg-[#FAF6F0] rounded-t-xl p-4 border-b border-[#800020]/20 flex items-start gap-3">
         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#800020] text-white shrink-0">
-          <span className="text-xs font-bold">{task.stepNumber}</span>
+          {stepNum ? (
+            <span className="text-xs font-bold">{stepNum}</span>
+          ) : (
+            <FileSearch className="w-4 h-4" />
+          )}
         </div>
         <div className="flex-1">
           <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider leading-none">
@@ -196,8 +449,13 @@ export function NextGuide() {
       <CardContent className="p-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className={`${STEP_COLORS[task.step] ?? 'bg-stone-100 text-stone-600'} text-xs font-bold`}>
-              {STEP_LABELS[task.step] ?? task.step}
+            <Badge
+              variant="outline"
+              className={`${
+                badge?.color ?? STEP_COLORS[task.step] ?? 'bg-stone-100 text-stone-600'
+              } text-xs font-bold`}
+            >
+              {badge?.label ?? STEP_LABELS[task.step] ?? task.step}
             </Badge>
             {task.recordId && (
               <span className="text-[10px] text-stone-400 font-mono">{task.recordId}</span>
@@ -205,17 +463,85 @@ export function NextGuide() {
           </div>
 
           <div className="prose prose-sm text-stone-700 max-w-none">
-            {isVerifyTask
-              ? `Check ${task.personName}'s ${task.eventType ?? 'record'} record (${
-                  attoDisplay ?? 'record'
-                }) against the image`
-              : isInAppTask
-                ? `Apply ${recordId} to the people it names (OpenCode step)`
-                : isFamilySearchTask
-                  ? `Attach ${recordId} on FamilySearch`
-                  : task.note}
+            {headline}
           </div>
+
+          {isChase && (
+            <div className="text-xs text-stone-500">
+              Requested {formatIso(task.requestedOn)} — {task.daysWaiting} days ago, no reply yet.
+              {!task.office && ' No office was recorded when it was marked requested.'}
+            </div>
+          )}
         </div>
+
+        {(isGetDocument || isChase) && whereItIsPanel}
+
+        {isGetDocument && (
+          <>
+            {linkInputPanel}
+            {showReceivedPanel && receivedPanel}
+            {documentButtons}
+            <div className="mt-2 text-xs text-stone-500">
+              "Requested" stores <span className="font-mono">requested_on: {toIsoDate()}</span> and
+              hides this event for 30 days; then the card comes back as{' '}
+              <span className="font-mono">Chase {task.office ?? `<office>`}?</span>
+            </div>
+          </>
+        )}
+
+        {isChase && (
+          <>
+            {linkInputPanel}
+            {showReceivedPanel && receivedPanel}
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                className="text-xs h-8 px-3 font-semibold bg-[#800020] text-white hover:bg-[#600018] shadow-sm"
+                onClick={markRequested}
+              >
+                <Send className="w-3 h-3 mr-1" /> Chased — wait another 30 days
+              </Button>
+              <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={markReceived}>
+                <Inbox className="w-3 h-3 mr-1" /> Received
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-8 px-3"
+                onClick={() => setShowLinkInput((v) => !v)}
+              >
+                <Link2 className="w-3 h-3 mr-1" /> Found online
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-xs h-8 px-3 text-stone-500 hover:bg-stone-50"
+                onClick={clearOverride}
+              >
+                <FastForward className="w-3 h-3 mr-1" /> Not requesting it
+              </Button>
+            </div>
+          </>
+        )}
+
+        {isProcessInbox && (
+          <>
+            <div className="mt-1 text-xs text-stone-500">
+              Marked received {formatIso(task.receivedOn)} — nothing to chase, it just needs filing.
+            </div>
+            {receivedPanel}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-xs h-8 px-3 text-stone-500 hover:bg-stone-50"
+                onClick={clearOverride}
+              >
+                <FastForward className="w-3 h-3 mr-1" /> Not in the inbox — clear this
+              </Button>
+            </div>
+          </>
+        )}
 
         {how && (
           <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
@@ -286,7 +612,7 @@ export function NextGuide() {
                         size="sm"
                         variant="outline"
                         className="text-xs h-7 px-2"
-                        onClick={() => callApiOpenInFinder(recordId).catch((e) => setStatus(`Error: ${e.message}`))}
+                        onClick={() => callApiOpenInFinder(recordId).catch((e) => setStatus(`Error: ${(e as Error).message}`))}
                       >
                         <ExternalLink className="w-3 h-3 mr-1" /> Show in Finder
                       </Button>
@@ -300,7 +626,7 @@ export function NextGuide() {
                         size="sm"
                         variant="outline"
                         className="text-xs h-7 px-2"
-                        onClick={() => callApiOpenInFinder(recordId).catch((e) => setStatus(`Error: ${e.message}`))}
+                        onClick={() => callApiOpenInFinder(recordId).catch((e) => setStatus(`Error: ${(e as Error).message}`))}
                       >
                         <ExternalLink className="w-3 h-3 mr-1" /> Show in Finder
                       </Button>
@@ -370,59 +696,59 @@ export function NextGuide() {
                 try {
                   await callApi(recordId, 'front-matter', `${fmField}=true`);
                   setStatus(`Saved: ${fmField}=true`);
-                } catch (e: any) {
-                  setStatus(`Error: ${e.message}`);
+                } catch (e) {
+                  setStatus(`Error: ${(e as Error).message}`);
                 }
               }}
             >
               <Check className="w-3 h-3 mr-1" /> {isFamilySearchTask ? 'Done – added to FamilySearch' : 'Done'}
             </Button>
           )}
-          <Button
-            size="sm"
-            variant="outline"
-            className="text-xs h-8 px-3 text-stone-600 border-stone-300 hover:bg-stone-50"
-            disabled={!recordId}
-            onClick={async () => {
-              if (!recordId) return;
-              setStatus('Saving...');
-              try {
-                await callApi(
-                  recordId,
-                  'discrepancies',
-                  'User flagged an issue via Next Guide "Something\'s wrong" button.'
-                );
-                setStatus('Saved: discrepancy added');
-              } catch (e: any) {
-                setStatus(`Error: ${e.message}`);
-              }
-            }}
-          >
-            <AlertTriangle className="w-3 h-3 mr-1" /> Something's wrong
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-xs h-8 px-3 text-stone-500 hover:bg-stone-50"
-            disabled={!recordId}
-            onClick={async () => {
-              if (!recordId) return;
-              setStatus('Saving...');
-              try {
-                await callApi(
-                  recordId,
-                  'discrepancies',
-                  'Task skipped via Next Guide "Skip for now" button.'
-                );
-                setSkippedIds((prev) => new Set([...prev, task.eventType ?? '']));
-                setStatus('Saved: skipped');
-              } catch (e: any) {
-                setStatus(`Error: ${e.message}`);
-              }
-            }}
-          >
-            <FastForward className="w-3 h-3 mr-1" /> Skip for now
-          </Button>
+          {recordId && (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-8 px-3 text-stone-600 border-stone-300 hover:bg-stone-50"
+                onClick={async () => {
+                  setStatus('Saving...');
+                  try {
+                    await callApi(
+                      recordId,
+                      'discrepancies',
+                      'User flagged an issue via Next Guide "Something\'s wrong" button.'
+                    );
+                    setStatus('Saved: discrepancy added');
+                  } catch (e) {
+                    setStatus(`Error: ${(e as Error).message}`);
+                  }
+                }}
+              >
+                <AlertTriangle className="w-3 h-3 mr-1" /> Something's wrong
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-xs h-8 px-3 text-stone-500 hover:bg-stone-50"
+                onClick={async () => {
+                  setStatus('Saving...');
+                  try {
+                    await callApi(
+                      recordId,
+                      'discrepancies',
+                      'Task skipped via Next Guide "Skip for now" button.'
+                    );
+                    setSkippedIds((prev) => new Set([...prev, task.eventType ?? '']));
+                    setStatus('Saved: skipped');
+                  } catch (e) {
+                    setStatus(`Error: ${(e as Error).message}`);
+                  }
+                }}
+              >
+                <FastForward className="w-3 h-3 mr-1" /> Skip for now
+              </Button>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>
