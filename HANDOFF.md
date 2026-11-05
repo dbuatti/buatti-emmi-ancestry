@@ -289,5 +289,11 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
   **`lead-linguaglossa-baptisms-5455112`** (walk Linguaglossa baptisms **1901–1921** — DGS
   5455112 for 1914–1921, and find the films for 1901–1913 — for Gregorio's 5+ siblings and for
   Rosaria Emmi), and a new open question **`q-godmother-rosaria-emmi`**.
+- **05/11/2026 (step 4 tooling)** — `parseDiscrepancies` never returned anything: it looked for
+  the substring `"discrepancy"`, which the plural header `## Discrepancies` does not contain.
+  Now matches the stem `/^discrepanc/i`, so check mode finally shows each record's real
+  discrepancies (baptism = 3, atto 202 = 2). `WORKFLOW.md` step 4 now **requires** the
+  `## FamilySearch` block in the same pass (8 numbered fields), and says a record is not
+  `in_app` until that block exists. Committed `a766844`, not pushed.
 
 *(Append one dated line here at the end of every session, and update "Last updated" above.)*
