@@ -70,12 +70,25 @@ export function getNextTask(people: Person[], recordSteps?: Map<string, RecordSt
     const nextStepName = STEP_NAMES[nextStepNum - 1];
     const note = STEP_NOTES[nextStepNum]?.replace('{recordId}', ev.recordId) ?? '';
 
+    if (nextStepNum === 1) {
+      return {
+        personId: person.id,
+        personName: person.name,
+        type: 'record_check',
+        recordId: ev.recordId,
+        eventType: ev.type,
+        step: nextStepName,
+        stepNumber: nextStepNum,
+        note,
+      };
+    }
     if (nextStepNum === 2) {
       return {
         personId: person.id,
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
+        eventType: ev.type,
         step: nextStepName,
         stepNumber: nextStepNum,
         note,
@@ -87,6 +100,7 @@ export function getNextTask(people: Person[], recordSteps?: Map<string, RecordSt
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
+        eventType: ev.type,
         step: nextStepName,
         stepNumber: nextStepNum,
         note,
@@ -98,6 +112,7 @@ export function getNextTask(people: Person[], recordSteps?: Map<string, RecordSt
         personName: person.name,
         type: 'record_app',
         recordId: ev.recordId,
+        eventType: ev.type,
         step: nextStepName,
         stepNumber: nextStepNum,
         note,
@@ -109,6 +124,7 @@ export function getNextTask(people: Person[], recordSteps?: Map<string, RecordSt
         personName: person.name,
         type: 'record_fs',
         recordId: ev.recordId,
+        eventType: ev.type,
         step: nextStepName,
         stepNumber: nextStepNum,
         note,

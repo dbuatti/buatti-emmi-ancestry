@@ -123,6 +123,36 @@ export function NextGuide() {
   const isInAppTask = task.step === 'in_app';
   const isFamilySearchTask = task.step === 'on_familysearch';
   const fmField = stepToFrontMatterField(task.step);
+  const stepNum = task.stepNumber;
+  const HOW: Record<number, { title: string; steps: string[]; command?: string }> = {
+    1: {
+      title: `File ${task.personName}'s ${task.eventType ?? 'document'}`,
+      steps: [
+        'Save the image or PDF into Downloads › FAMILY TREE › _inbox',
+        'In OpenCode (coding model) type the command below',
+      ],
+      command: 'process inbox',
+    },
+    2: {
+      title: `Transcribe ${task.personName}'s ${task.eventType ?? 'record'}`,
+      steps: [
+        'In OpenCode, switch to the VL model',
+        'Click "Open record" below, then screenshot just the entry: Cmd + Shift + Ctrl + 4',
+        'Paste it into OpenCode (Cmd + V) and type the command below',
+        'Switch back to the coding model and type: continue',
+      ],
+      command: 'transcribe next',
+    },
+    4: {
+      title: `Add this record's facts to the people it names`,
+      steps: [
+        'In OpenCode (coding model) type the command below',
+        'Read the proposed changes, then reply: apply',
+      ],
+      command: `run step 4 for ${recordId}`,
+    },
+  };
+  const how = HOW[stepNum];
   const fs: FamilySearchFields | null = recordId ? parseFamilySearchSection(recordBodies.get(recordId) ?? '') : null;
   const copy = (label: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -186,6 +216,24 @@ export function NextGuide() {
                   : task.note}
           </div>
         </div>
+
+        {how && (
+          <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
+            <div className="text-sm font-bold text-[#800020] mb-2">{how.title}</div>
+            <ol className="list-decimal ml-5 space-y-1 text-sm text-stone-700">
+              {how.steps.map((st) => <li key={st}>{st}</li>)}
+            </ol>
+            {how.command && (
+              <div className="mt-3 flex items-center gap-2">
+                <code className="text-sm bg-white border border-stone-300 rounded px-2 py-1">{how.command}</code>
+                <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={() => copy('cmd', how.command!)}>
+                  <Copy className="w-3 h-3 mr-1" /> {copied === 'cmd' ? 'Copied ✓' : 'Copy command'}
+                </Button>
+              </div>
+            )}
+            <div className="mt-2 text-xs text-stone-500">This step ticks itself when OpenCode finishes it. Reload this page afterwards.</div>
+          </div>
+        )}
 
         {isFamilySearchTask && !fs && (
           <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-800">
@@ -294,6 +342,11 @@ export function NextGuide() {
         )}
 
         <div className="mt-4 flex flex-wrap gap-2">
+          {recordId && stepNum >= 2 && (
+            <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={() => navigate(`/records/${recordId}`)}>
+              <ExternalLink className="w-3 h-3 mr-1" /> Open record
+            </Button>
+          )}
           {isVerifyTask ? (
             <Button
               size="sm"
@@ -305,7 +358,7 @@ export function NextGuide() {
             >
               <FastForward className="w-3 h-3 mr-1" /> Open check
             </Button>
-          ) : (
+          ) : !isFamilySearchTask ? null : (
             <Button
               size="sm"
               variant="default"

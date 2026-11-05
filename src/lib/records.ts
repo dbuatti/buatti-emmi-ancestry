@@ -159,6 +159,7 @@ export function getWorkflowStep(fm: RecordFrontMatter): WorkflowStep {
  * Get the step number (1-5) for display.
  */
 export function getWorkflowStepNumber(fm: RecordFrontMatter): number {
+  if (!fm.filed) return 0; // nothing done yet: the next step is filing
   const step = getWorkflowStep(fm);
   const steps: WorkflowStep[] = ['filed', 'transcribed', 'verified', 'in_app', 'on_familysearch'];
   return steps.indexOf(step) + 1;

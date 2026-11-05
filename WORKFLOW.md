@@ -183,3 +183,40 @@ links:           # any other related URLs
   - label: description
     url: https://...
 ```
+
+---
+
+## Process Inbox
+
+**Run `process inbox`** to process every file in `~/Downloads/FAMILY TREE/_inbox/` (create the folder if missing).
+
+### Step 1 — Identify each file
+Use these clues (in order):
+1. **Filename clues**: FamilySearch film numbers (e.g. `005455112` = DGS 5455112), image numbers, "entry N", "atto N", names, years
+2. **Existing records/*/record.md**: check `image_link` and `notes` fields for matching references
+3. **Known `known_no_record` life events** in `familyData.ts`: if a person has `status: 'known_no_record'` for a matching event type, the file may belong there
+
+**Multi-page/multiple files**: Files that are views of the same document (full page + close-up) go in the same record. The larger/full image = `_p1`.
+
+### Step 2 — Resolve uncertainty
+If identification is not certain, ask the user ONE question with numbered options:
+- List existing records that fit (with their IDs and why they match)
+- Option for "new record"
+- Never guess — wait for the user's choice
+
+### Step 3 — File
+- Copy into `records-local/<id>/` as `<id>_pN.<ext>` (N starting at 1)
+- Verify SHA-256
+- Record `original_filename` and `original_sha256` in record.md front matter
+- Set `filed: true`
+
+### Step 4 — Move originals
+- Move originals from `_inbox/` to `~/Downloads/FAMILY TREE/_processed/<id>/` (move, never delete)
+
+### Step 5 — Transcription
+- If typed: ask the user to paste the Preview (Live Text) text
+- If handwritten and the current model can't read images: say "Switch to the VL model, paste a close-up, then say 'transcribe next'". Then continue normal steps and stop for user check.
+
+---
+
+**"transcribe next"** = transcribe the next record that is `filed` but not `transcribed` (tell the user which one it picked). Use only the image the user pastes; do not read `familyData.ts` or other records while transcribing.

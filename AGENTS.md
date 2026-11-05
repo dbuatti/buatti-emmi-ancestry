@@ -20,6 +20,8 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - One question at a time; wait for: yes / no (with a note) / skip / later.
 - Never mark `verified` or `on_familysearch` unless I say so.
 - If I start with a different request, do that first, then offer the next task.
+- **`process inbox`**: processes every file in `~/Downloads/FAMILY TREE/_inbox/`. Identifies which record each file belongs to, files it into `records-local/<id>/` as `<id>_pN.<ext>`, sets `filed: true`, moves originals to `~/Downloads/FAMILY TREE/_processed/<id>/`. If identification is uncertain, asks ONE question with numbered options. Never guess.
+- **"transcribe next"**: transcribes the next record that is `filed` but not `transcribed`. Uses only the image the user pastes; does not read `familyData.ts` or other records while transcribing.
 
 
 ## Repo orientation (as of last update)
