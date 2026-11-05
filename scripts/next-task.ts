@@ -1,12 +1,15 @@
 // Next-task logic for the family-tree guide mode.
 // Used by both the app (via NextGuide.tsx) and by the assistant.
+//
+// record.md front matter is the SOURCE OF TRUTH for step status.
+// lifeEvents in familyData.ts only links recordId — step is computed
+// from record.md front matter and passed in as recordSteps.
 
 export type WorkflowStep = 'filed' | 'transcribed' | 'verified' | 'in_app' | 'on_familysearch';
 
 export interface LifeEvent {
   type: 'birth' | 'baptism' | 'marriage' | 'death' | 'burial' | 'migration_naturalisation';
   recordId?: string;
-  step?: 1 | 2 | 3 | 4 | 5;
   status: 'linked' | 'known_no_record' | 'missing';
   note?: string;
 }
@@ -15,6 +18,11 @@ export interface Person {
   id: string;
   name: string;
   lifeEvents?: LifeEvent[];
+}
+
+export interface RecordStepInfo {
+  step: WorkflowStep;
+  stepNumber: number;
 }
 
 export interface NextTask {
@@ -30,7 +38,7 @@ export interface NextTask {
 
 const PILOT_PERSON_ID = 'gregorio-emmi';
 
-export function getNextTask(people: Person[]): NextTask | null {
+export function getNextTask(people: Person[], recordSteps?: Map<string, RecordStepInfo>): NextTask | null {
   const person = people.find((p) => p.id === PILOT_PERSON_ID);
   if (!person) return null;
 
@@ -40,7 +48,11 @@ export function getNextTask(people: Person[]): NextTask | null {
   const linkedEvents = lifeEvents.filter((ev) => ev.status === 'linked' && ev.recordId);
   for (const ev of linkedEvents) {
     if (!ev.recordId) continue;
-    const stepNum = ev.step ?? 1;
+
+    // Step comes from record.md front matter, not from lifeEvents
+    const stepInfo = recordSteps?.get(ev.recordId);
+    const stepNum = stepInfo?.stepNumber ?? 1;
+    const stepName = stepInfo?.step ?? ('filed' as WorkflowStep);
 
     if (stepNum === 1) {
       return {
@@ -48,7 +60,7 @@ export function getNextTask(people: Person[]): NextTask | null {
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
-        step: 'filed',
+        step: stepName,
         stepNumber: 1,
         note: `Record ${ev.recordId} filed. Confirm contents match the document.`,
       };
@@ -59,7 +71,7 @@ export function getNextTask(people: Person[]): NextTask | null {
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
-        step: 'transcribed',
+        step: stepName,
         stepNumber: 2,
         note: `Record ${ev.recordId} transcribed. Review against the document image.`,
       };
@@ -70,7 +82,7 @@ export function getNextTask(people: Person[]): NextTask | null {
         personName: person.name,
         type: 'record_check',
         recordId: ev.recordId,
-        step: 'verified',
+        step: stepName,
         stepNumber: 3,
         note: `Record ${ev.recordId} awaits your verification.`,
       };
@@ -81,7 +93,7 @@ export function getNextTask(people: Person[]): NextTask | null {
         personName: person.name,
         type: 'record_app',
         recordId: ev.recordId,
-        step: 'in_app',
+        step: stepName,
         stepNumber: 4,
         note: `Link ${ev.recordId} to person facts in the app.`,
       };
@@ -92,7 +104,7 @@ export function getNextTask(people: Person[]): NextTask | null {
         personName: person.name,
         type: 'record_fs',
         recordId: ev.recordId,
-        step: 'on_familysearch',
+        step: stepName,
         stepNumber: 5,
         note: `Attach ${ev.recordId} on FamilySearch.`,
       };
@@ -134,14 +146,16 @@ export function getNextTask(people: Person[]): NextTask | null {
   };
 }
 
-export function getProgress(people: Person[], personId: string): string {
+export function getProgress(people: Person[], personId: string, recordSteps?: Map<string, RecordStepInfo>): string {
   const person = people.find((p) => p.id === personId);
   if (!person || !person.lifeEvents) return '0 of 0';
 
   const total = person.lifeEvents.length;
-  const completed = person.lifeEvents.filter(
-    (ev) => ev.status === 'linked' && (ev.step ?? 0) >= 5
-  ).length;
+  const completed = person.lifeEvents.filter((ev) => {
+    if (ev.status !== 'linked' || !ev.recordId) return false;
+    const stepInfo = recordSteps?.get(ev.recordId);
+    return (stepInfo?.stepNumber ?? 0) >= 5;
+  }).length;
 
   return `${completed} of ${total}`;
 }

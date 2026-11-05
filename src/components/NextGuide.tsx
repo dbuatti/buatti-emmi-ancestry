@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, AlertTriangle, FastForward, ExternalLink, Copy } from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
-import { getNextTask, getProgress } from '../../scripts/next-task';
+import { getNextTask, getProgress, type RecordStepInfo } from '../../scripts/next-task';
 import { callApi } from './next-guide-api';
+import { getAllRecords, type WorkflowStep } from '@/lib/record-loader';
 
 /**
  * Map a WorkflowStep to its front-matter boolean field name.
@@ -26,8 +27,41 @@ export function NextGuide() {
   const people = initialPeople;
   const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<string | null>(null);
+  const [recordSteps, setRecordSteps] = useState<Map<string, RecordStepInfo>>(new Map());
+  const [recordsLoaded, setRecordsLoaded] = useState(false);
 
-  const task = getNextTask(people);
+  // Load record steps from record.md front matter (source of truth)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const records = await getAllRecords();
+        if (cancelled) return;
+        const steps = new Map<string, RecordStepInfo>();
+        for (const rec of records) {
+          steps.set(rec.id, { step: rec.step, stepNumber: rec.stepNumber });
+        }
+        setRecordSteps(steps);
+        setRecordsLoaded(true);
+      } catch (e) {
+        // import.meta.glob may not be available in all contexts
+        setRecordsLoaded(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!recordsLoaded) {
+    return (
+      <Card className="border-stone-200 bg-stone-50">
+        <CardContent className="p-4">
+          <p className="text-xs text-stone-500">Loading records…</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const task = getNextTask(people, recordSteps);
 
   if (!task) {
     return (
@@ -44,7 +78,7 @@ export function NextGuide() {
     );
   }
 
-  const progress = getProgress(people, task.personId);
+  const progress = getProgress(people, task.personId, recordSteps);
   const recordId = task.recordId ?? '';
   const attoDisplay = recordId
     ? recordId.split('_').pop()?.replace(/([a-zA-Z])(\d+)/, '$1 $2') ?? ''
@@ -57,7 +91,6 @@ export function NextGuide() {
   // Auto-advance: if status shows a save just completed, reload to get next task
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
-      // Small delay so user can read the status, then reload
       const t = setTimeout(() => window.location.reload(), 1500);
       return () => clearTimeout(t);
     }

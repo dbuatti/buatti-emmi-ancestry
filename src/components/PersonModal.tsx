@@ -9,6 +9,7 @@ import { calculateCompleteness, getScoreLabel, getScoreBadgeColor } from '@/lib/
 import { getWorkflowStepNumber } from '@/lib/records';
 import { calculateAge } from '@/lib/tree';
 import { LinkifiedText } from '@/components/LinkifiedText';
+import { getAllRecords } from '@/lib/record-loader';
 import type { Person } from '@/types';
 
 interface PersonModalProps {
@@ -33,8 +34,30 @@ function Section({ icon: Icon, label, children }: { icon: React.ElementType; lab
 
 function ModalLifeEvents({ person }: { person: Person }) {
   const navigate = useNavigate();
+  const [recordSteps, setRecordSteps] = useState<Map<string, { step: string; stepNumber: number }>>(new Map());
+  const [recordsLoaded, setRecordsLoaded] = useState(false);
 
-  if (!person.lifeEvents || person.lifeEvents.length === 0) {
+  // Load record steps from record.md front matter (source of truth)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const records = await getAllRecords();
+        if (cancelled) return;
+        const steps = new Map<string, { step: string; stepNumber: number }>();
+        for (const rec of records) {
+          steps.set(rec.id, { step: rec.step, stepNumber: rec.stepNumber });
+        }
+        setRecordSteps(steps);
+        setRecordsLoaded(true);
+      } catch (e) {
+        setRecordsLoaded(true);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  if (!recordsLoaded || !person.lifeEvents || person.lifeEvents.length === 0) {
     return null;
   }
 
@@ -53,9 +76,10 @@ function ModalLifeEvents({ person }: { person: Person }) {
       <div className="space-y-1.5">
         {person.lifeEvents.map((ev) => {
           const info = eventLabels[ev.type];
-          const stepNum = ev.step ? `Step ${ev.step} of 5` : '—';
+          const stepInfo = ev.recordId ? recordSteps.get(ev.recordId) : undefined;
+          const stepNum = stepInfo ? `Step ${stepInfo.stepNumber} of 5` : '—';
+          const stepNumNum = stepInfo?.stepNumber ?? 0;
           const isLinked = ev.status === 'linked' && ev.recordId;
-          const stepNumNum = ev.step ?? 0;
           const notVerified = isLinked && stepNumNum < 3;
 
           return (
@@ -79,7 +103,7 @@ function ModalLifeEvents({ person }: { person: Person }) {
                       {info?.label || ev.type}
                     </span>
                   )}
-                  {ev.status === 'linked' && (
+                  {ev.status === 'linked' && stepInfo && (
                     <span className="text-[10px] font-sans bg-emerald-100 text-emerald-800 rounded px-1.5 py-0.5 font-bold">
                       {stepNum}
                     </span>
