@@ -271,8 +271,11 @@ function localRecordsApiPlugin() {
                 if (links.length > 0) {
                   filteredLines.push("links:");
                   for (const link of links) {
-                    filteredLines.push(`  - label: ${link.label}`);
-                    filteredLines.push(`    url: ${link.url}`);
+                    const label = typeof link?.label === "string" ? link.label : "";
+                    const url = typeof link?.url === "string" ? link.url : "";
+                    if (!url) continue;
+                    filteredLines.push(`  - label: ${JSON.stringify(label)}`);
+                    filteredLines.push(`    url: ${JSON.stringify(url)}`);
                   }
                 }
 

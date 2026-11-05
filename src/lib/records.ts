@@ -39,18 +39,11 @@ export function parseRecordMarkdown(raw: string): RecordData {
     if (trimmed.startsWith('- ')) {
       if (currentLink) links.push(currentLink as RecordLink);
       currentLink = {};
-      const rest = trimmed.slice(2);
-      const colonIdx = rest.indexOf(':');
-      if (colonIdx !== -1) {
-        currentLink.label = rest.slice(0, colonIdx).trim();
-      }
+      const pair = readYamlPair(trimmed.slice(2));
+      if (pair) assignLinkField(currentLink, pair[0], pair[1]);
     } else if (currentLink) {
-      const colonIdx = trimmed.indexOf(':');
-      if (colonIdx !== -1) {
-        const key = trimmed.slice(0, colonIdx).trim();
-        const val = trimmed.slice(colonIdx + 1).trim();
-        if (key === 'url') currentLink.url = val;
-      }
+      const pair = readYamlPair(trimmed);
+      if (pair) assignLinkField(currentLink, pair[0], pair[1]);
     }
   }
   if (currentLink) links.push(currentLink as RecordLink);
@@ -70,6 +63,39 @@ export function parseRecordMarkdown(raw: string): RecordData {
     },
     body: body.trim(),
   };
+}
+
+/**
+ * Split a "key: value" YAML line, unquoting the value.
+ */
+function readYamlPair(text: string): [string, string] | null {
+  const colonIdx = text.indexOf(':');
+  if (colonIdx === -1) return null;
+  const key = text.slice(0, colonIdx).trim();
+  const rawValue = text.slice(colonIdx + 1).trim();
+  return [key, unquoteYaml(rawValue)];
+}
+
+/**
+ * Remove surrounding quotes from a scalar value.
+ */
+function unquoteYaml(value: string): string {
+  if (value.length >= 2 && value.startsWith('"') && value.endsWith('"')) {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value.slice(1, -1);
+    }
+  }
+  if (value.length >= 2 && value.startsWith("'") && value.endsWith("'")) {
+    return value.slice(1, -1).replace(/''/g, "'");
+  }
+  return value;
+}
+
+function assignLinkField(link: Partial<RecordLink>, key: string, value: string) {
+  if (key === 'label') link.label = value;
+  else if (key === 'url') link.url = value;
 }
 
 function defaultFrontMatter(): RecordFrontMatter {

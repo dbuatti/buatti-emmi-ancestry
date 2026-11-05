@@ -62,6 +62,23 @@ export default function RecordPage() {
     }
   };
 
+  const handleRemoveLink = async (index: number) => {
+    if (!recordId) return;
+    const target = frontMatter.links?.[index];
+    if (!target) return;
+    const ok = window.confirm(`Delete this link?\n\n${target.label}\n${target.url}`);
+    if (!ok) return;
+    setStatus('Deleting link...');
+    try {
+      const updatedLinks = (frontMatter.links ?? []).filter((_, i) => i !== index);
+      await callApiUpdateLinks(recordId, updatedLinks);
+      setStatus('Link deleted');
+      window.location.reload();
+    } catch (e: any) {
+      setStatus(`Error: ${e.message}`);
+    }
+  };
+
   const handleSetImageLink = async (url: string) => {
     if (!recordId) return;
     setStatus('Saving...');
@@ -176,12 +193,22 @@ export default function RecordPage() {
               </div>
               <div className="space-y-1">
                 {frontMatter.links.map((link, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="text-[10px] text-stone-500 font-mono">{link.label}</span>
+                  <div
+                    key={`${link.url}-${i}`}
+                    className="flex items-center gap-2 rounded border border-stone-200 bg-white px-2 py-1.5"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-stone-700 truncate">
+                        {link.label || link.url || 'Untitled link'}
+                      </div>
+                      <div className="text-[10px] text-stone-400 font-mono truncate">
+                        {link.url}
+                      </div>
+                    </div>
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-xs h-6 px-2 text-stone-600 border-stone-300 hover:bg-stone-50"
+                      className="text-xs h-6 px-2 text-stone-600 border-stone-300 hover:bg-stone-50 shrink-0"
                       onClick={() => window.open(link.url, '_blank')}
                     >
                       Open ↗
@@ -189,11 +216,22 @@ export default function RecordPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="text-xs h-6 px-2 text-stone-400 border-stone-300 hover:bg-stone-50"
+                      className="text-xs h-6 px-2 text-stone-400 border-stone-300 hover:bg-stone-50 shrink-0"
                       onClick={() => navigator.clipboard.writeText(link.url)}
                     >
                       Copy
                     </Button>
+                    {isDev && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-6 px-2 text-red-600 border-red-200 hover:bg-red-50 shrink-0"
+                        title="Delete this link"
+                        onClick={() => handleRemoveLink(i)}
+                      >
+                        Delete
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>
