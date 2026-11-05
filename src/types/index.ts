@@ -73,6 +73,7 @@ export interface Person {
     issuedBy: string;
   };
   alienRegistration?: string;
+  familySearchId?: string;
   lifeEvents?: {
     type: 'birth' | 'baptism' | 'marriage' | 'death' | 'burial' | 'migration_naturalisation';
     recordId?: string;

@@ -164,6 +164,56 @@ function localRecordsApiPlugin() {
           return sendJson(res, 200, { files });
         }
 
+        // ---- POST /api/open-in-finder/<id> ----
+        if (method === "POST" && url.startsWith("/api/open-in-finder/")) {
+          const recordId = url.split("/").pop() || "";
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          readBody(req)
+            .then(async (raw) => {
+              try {
+                const { file } = JSON.parse(raw);
+                const dir = path.join(RECORDS_LOCAL, recordId);
+                if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+                  return sendJson(res, 404, { error: "Record folder not found" });
+                }
+                const files = fs
+                  .readdirSync(dir)
+                  .filter((f) => fs.statSync(path.join(dir, f)).isFile());
+                if (files.length === 0) {
+                  return sendJson(res, 404, { error: "No files in record folder" });
+                }
+                const targetFile = file
+                  ? files.find((f) => f === file)
+                  : files[0];
+                if (!targetFile) {
+                  return sendJson(res, 404, { error: "File not found in record folder" });
+                }
+                const filePath = path.join(dir, targetFile);
+                const realPath = path.resolve(filePath);
+                const realRoot = path.resolve(RECORDS_LOCAL);
+                if (!realPath.startsWith(realRoot + path.sep)) {
+                  return sendJson(res, 403, { error: "Path traversal denied" });
+                }
+                if (!fs.existsSync(realPath) || !fs.statSync(realPath).isFile()) {
+                  return sendJson(res, 404, { error: "File not found" });
+                }
+                const { exec } = await import("child_process");
+                exec(`open -R "${realPath}"`, (err) => {
+                  if (err) {
+                    return sendJson(res, 500, { error: err.message });
+                  }
+                  return sendJson(res, 200, { ok: true, path: realPath });
+                });
+              } catch (e: any) {
+                return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
         // ---- GET /records-local/<id>/<file> ----
         if (method === "GET" && url.startsWith("/records-local/")) {
           const parts = url.slice("/records-local/".length).split("/");

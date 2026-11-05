@@ -8,7 +8,6 @@ import { RecordCheck } from '@/components/RecordCheck';
 import { parseRecordMarkdown, getWorkflowStepNumber } from '@/lib/records';
 import type { RecordFrontMatter } from '@/types/record';
 
-// Import Gregorio's birth record as raw markdown
 import gregorioBirthRecordMd from '../../records/1915_Linguaglossa_birth_Emmi-Gregorio_atto202/record.md?raw';
 
 const RECORDS: Record<string, string> = {

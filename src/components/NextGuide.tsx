@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { Check, AlertTriangle, FastForward, ExternalLink, Copy } from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
 import { getNextTask, getProgress, type RecordStepInfo } from '../../scripts/next-task';
@@ -43,6 +44,7 @@ export function NextGuide() {
   const [status, setStatus] = useState<string | null>(null);
   const [recordSteps, setRecordSteps] = useState<Map<string, RecordStepInfo>>(new Map());
   const [recordsLoaded, setRecordsLoaded] = useState(false);
+  const [fsIdInput, setFsIdInput] = useState<string>('');
 
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
@@ -110,14 +112,16 @@ export function NextGuide() {
   const isInAppTask = task.step === 'in_app';
   const isFamilySearchTask = task.step === 'on_familysearch';
   const fmField = stepToFrontMatterField(task.step);
-  const [currentStep, totalSteps] = progress.split(' of ').map(Number);
+
+  const currentPerson = people.find((p) => p.id === task.personId);
+  const existingFsId = currentPerson?.familySearchId;
 
   return (
     <Card className="border-[#800020]/30 bg-white rounded-xl shadow-sm border-2 border-[#800020]/20">
       {/* Header */}
       <div className="bg-[#FAF6F0] rounded-t-xl p-4 border-b border-[#800020]/20 flex items-start gap-3">
         <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#800020] text-white shrink-0">
-          <span className="text-xs font-bold">{currentStep}</span>
+          <span className="text-xs font-bold">{task.stepNumber}</span>
         </div>
         <div className="flex-1">
           <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider leading-none">
@@ -132,14 +136,13 @@ export function NextGuide() {
       </div>
 
       <CardContent className="p-4">
-        {/* Step badge + description */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className={`${STEP_COLORS[task.step] ?? 'bg-stone-100 text-stone-600'} text-xs font-bold`}>
               {STEP_LABELS[task.step] ?? task.step}
             </Badge>
             {task.recordId && (
-              <span className="text-[10px] text-stone-400 font-mono">{recordId}</span>
+              <span className="text-[10px] text-stone-400 font-mono">{task.recordId}</span>
             )}
           </div>
 
@@ -156,38 +159,6 @@ export function NextGuide() {
           </div>
         </div>
 
-        {/* In-app task: OpenCode instructions */}
-        {isInAppTask && recordId && (
-          <div className="mt-4 rounded-lg bg-amber-50 border border-amber-200 p-3">
-            <h4 className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2">
-              Apply this record to familyData.ts
-            </h4>
-            <p className="text-xs text-amber-700 mb-2">
-              Ask OpenCode to apply this record's facts to the people it names in{' '}
-              <code className="bg-white px-1">src/data/familyData.ts</code>, then click{' '}
-              <b>Done</b> below to set <code>in_app=true</code>.
-            </p>
-            <div className="bg-white border border-stone-200 rounded p-2 text-[10px] text-stone-600 font-mono break-all overflow-x-auto">
-              OpenCode: Apply the facts in records/{recordId}/record.md (transcribed,
-              verified) to the matching people in src/data/familyData.ts. Link each
-              fact to recordId {recordId}. Add any new research leads as lifeEvents
-              or research leads. Report back when done.
-            </div>
-            <Button
-              size="sm"
-              variant="outline"
-              className="mt-2 text-xs h-7 px-2"
-              onClick={() => {
-                const cmd = `Apply records/${recordId}/record.md facts to src/data/familyData.ts, link facts to recordId ${recordId}, add research leads, report when done.`;
-                navigator.clipboard.writeText(cmd);
-              }}
-            >
-              <Copy className="w-3 h-3 mr-1" /> Copy command
-            </Button>
-          </div>
-        )}
-
-        {/* FamilySearch task */}
         {isFamilySearchTask && recordId && (
           <div className="mt-4 rounded-lg bg-blue-50 border border-blue-200 p-3">
             <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">
@@ -219,17 +190,67 @@ export function NextGuide() {
               Link this record to the person on FamilySearch. When done, click{' '}
               <b>Done – added to FamilySearch</b>.
             </p>
+
+            {existingFsId ? (
+              <div className="mt-2 flex items-center gap-2">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs h-7 px-2"
+                  onClick={() => {
+                    window.open(
+                      `https://www.familysearch.org/tree/person/details/${existingFsId}`,
+                      '_blank'
+                    );
+                  }}
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  Open {task.personName} on FamilySearch
+                </Button>
+                <span className="text-[10px] text-stone-400 font-mono">
+                  {existingFsId}
+                </span>
+              </div>
+            ) : (
+              <div className="mt-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    size="sm"
+                    placeholder="Paste FamilySearch person ID"
+                    value={fsIdInput}
+                    onChange={(e) => setFsIdInput(e.target.value)}
+                    className="flex-1 text-xs"
+                  />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs h-7 px-2"
+                    disabled={!fsIdInput.trim()}
+                    onClick={() => {
+                      navigator.clipboard.writeText(fsIdInput.trim());
+                      setStatus(`Saved: FamilySearch ID ${fsIdInput.trim()} copied`);
+                    }}
+                  >
+                    <Copy className="w-3 h-3 mr-1" /> Save ID
+                  </Button>
+                </div>
+                <div className="mt-2">
+                  <p className="text-xs text-stone-500">
+                    No FamilySearch ID saved yet. Paste the person ID from FamilySearch
+                    (e.g., G4QG-QD1) above to save it.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Status message */}
         {status && (
           <div className="mt-2 p-2 rounded bg-stone-50 text-[10px] text-stone-600 border border-stone-200">
             {status}
           </div>
         )}
 
-        {/* Action buttons */}
         <div className="mt-4 flex flex-wrap gap-2">
           {isVerifyTask ? (
             <Button
@@ -241,26 +262,6 @@ export function NextGuide() {
               }}
             >
               <FastForward className="w-3 h-3 mr-1" /> Open check
-            </Button>
-          ) : isInAppTask || isFamilySearchTask ? (
-            <Button
-              size="sm"
-              variant="default"
-              className="text-xs h-8 px-4 font-semibold bg-[#800020] text-white hover:bg-[#600018] shadow-sm"
-              disabled={!recordId}
-              onClick={async () => {
-                if (!recordId) return;
-                setStatus('Saving...');
-                try {
-                  await callApi(recordId, 'front-matter', `${fmField}=true`);
-                  setStatus(`Saved: ${fmField}=true`);
-                } catch (e: any) {
-                  setStatus(`Error: ${e.message}`);
-                }
-              }}
-            >
-              <Check className="w-3 h-3 mr-1" />
-              {isFamilySearchTask ? 'Done – added to FamilySearch' : 'Done'}
             </Button>
           ) : (
             <Button
