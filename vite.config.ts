@@ -39,7 +39,7 @@ function localRecordsApiPlugin() {
         /^[A-Za-z0-9_.-]+$/.test(id) && !id.includes("..");
 
       const isSafeFileName = (name: string): boolean =>
-        /^[A-Za-z0-9_.()\-]+$/.test(name) && !name.includes("..");
+        /^[A-Za-z0-9_.() \-]+$/.test(name) && !name.includes("..");
 
       server.middlewares.use((req, res, next) => {
         const url = req.url || "";
@@ -171,7 +171,8 @@ function localRecordsApiPlugin() {
             return sendJson(res, 400, { error: "Missing file path" });
           }
           const recordId = parts[0];
-          const fileName = parts.slice(1).join("/");
+          const fileNameEncoded = parts.slice(1).join("/");
+          const fileName = decodeURIComponent(fileNameEncoded);
           if (!isSafeRecordId(recordId) || !isSafeFileName(fileName)) {
             return sendJson(res, 400, { error: "Invalid path" });
           }

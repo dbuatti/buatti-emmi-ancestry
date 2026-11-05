@@ -60,17 +60,19 @@ if (section === 'discrepancies') {
     process.exit(1);
   }
   const boolValue = value === 'true';
+  const isBool = value === 'true' || value === 'false';
+  const normalized = isBool ? boolValue : `"${value}"`;
   const lines = fmYaml.split('\n');
   let found = false;
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].startsWith(`${key}:`)) {
-      lines[i] = `${key}: ${boolValue}`;
+      lines[i] = `${key}: ${normalized}`;
       found = true;
       break;
     }
   }
   if (!found) {
-    lines.push(`${key}: ${boolValue}`);
+    lines.push(`${key}: ${normalized}`);
   }
   const newRaw = `---\n${lines.join('\n')}\n---\n${body}\n`;
   fs.writeFileSync(recordMd, newRaw);
