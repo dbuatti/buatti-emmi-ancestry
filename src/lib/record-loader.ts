@@ -17,24 +17,24 @@ interface RecordEntry {
   stepNumber: number;
 }
 
+// import.meta.glob must be at the top level for Vite to process it
+const modules = import.meta.glob('../records/*.md', {
+  eager: true,
+  import: 'default',
+});
+
 let recordsCache: Map<string, RecordEntry> | null = null;
 
 /**
  * Load all record.md files from the records/ directory.
- * Only runs in dev/build time (import.meta.glob is a build-time feature).
  */
 async function loadAllRecords(): Promise<Map<string, RecordEntry>> {
   if (recordsCache) return recordsCache;
 
-  const modules = import.meta.glob('../records/*.md', {
-    eager: true,
-    import: 'default',
-  });
-
   const cache = new Map<string, RecordEntry>();
 
   for (const [path, mod] of Object.entries(modules)) {
-    const raw = mod.default as string;
+    const raw = mod as string;
     const { frontMatter, body } = parseRecordMarkdown(raw);
     const { id } = frontMatter;
     if (!id) continue;
