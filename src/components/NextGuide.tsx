@@ -1,23 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, AlertTriangle, FastForward } from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
 import { getNextTask, getProgress } from '../../scripts/next-task';
-
-async function callApi(recordId: string, section: string, content: string) {
-  const res = await fetch(`/api/update-record/${recordId}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ section, content }),
-  });
-  if (!res.ok) {
-    throw new Error(`API error: ${res.status}`);
-  }
-  return res.json();
-}
+import { callApi } from './next-guide-api';
 
 export function NextGuide() {
+  const navigate = useNavigate();
   const people = initialPeople;
   const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
   const [status, setStatus] = useState<string | null>(null);
@@ -41,6 +32,7 @@ export function NextGuide() {
 
   const progress = getProgress(people, task.personId);
   const recordId = task.recordId ?? '';
+  const isVerifyTask = task.type === 'record_check' && task.step === 'verified';
 
   return (
     <Card className="border-[#800020] bg-[#FAF6F0]">
@@ -59,7 +51,11 @@ export function NextGuide() {
           <div className="flex items-start gap-2">
             <div className="w-1 h-4 bg-[#800020] rounded-full shrink-0 mt-0.5" />
             <div className="text-sm text-stone-700 leading-relaxed">
-              {task.note}
+              {isVerifyTask
+                ? `Check ${task.personName}'s ${task.eventType ?? 'record'} record (${
+                    recordId.split('_').pop()
+                  }) against the image`
+                : task.note}
               {task.recordId && (
                 <span className="ml-1 text-[10px] text-stone-400 font-mono">({task.recordId})</span>
               )}
@@ -69,71 +65,86 @@ export function NextGuide() {
             <p className="text-[10px] text-stone-500">{status}</p>
           )}
           <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="default"
-              className="text-xs h-8 px-3"
-              disabled={!recordId}
-              onClick={async () => {
-                if (!recordId) return;
-                setStatus('Saving...');
-                try {
-                  await callApi(recordId, 'front-matter', 'in_app=true');
-                  setStatus('Saved: in_app=true');
-                } catch (e: any) {
-                  setStatus(`Error: ${e.message}`);
-                }
-              }}
-            >
-              <Check className="w-3 h-3 mr-1" /> Done
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs h-8 px-3 text-stone-600 border-stone-300"
-              disabled={!recordId}
-              onClick={async () => {
-                if (!recordId) return;
-                setStatus('Saving...');
-                try {
-                  await callApi(
-                    recordId,
-                    'discrepancies',
-                    'User flagged an issue via Next Guide "Something\'s wrong" button.'
-                  );
-                  setStatus('Saved: discrepancy added');
-                } catch (e: any) {
-                  setStatus(`Error: ${e.message}`);
-                }
-              }}
-            >
-              <AlertTriangle className="w-3 h-3 mr-1" /> Something's wrong
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-xs h-8 px-3"
-              disabled={!recordId}
-              onClick={async () => {
-                if (!recordId) return;
-                setStatus('Saving...');
-                try {
-                  await callApi(
-                    recordId,
-                    'discrepancies',
-                    'Task skipped via Next Guide "Skip for now" button.'
-                  );
-                  setSkippedIds((prev) =>
-                    new Set([...prev, task.eventType ?? ''])
-                  );
-                  setStatus('Saved: skipped');
-                } catch (e: any) {
-                  setStatus(`Error: ${e.message}`);
-                }
-              }}
-            >
-              <FastForward className="w-3 h-3 mr-1" /> Skip for now
-            </Button>
+            {isVerifyTask ? (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-8 px-3 border-[#800020] text-[#800020]"
+                onClick={() => {
+                  navigate(`/records/${recordId}?mode=check`);
+                }}
+              >
+                <FastForward className="w-3 h-3 mr-1" /> Open check
+              </Button>
+            ) : (
+              <>
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="text-xs h-8 px-3"
+                  disabled={!recordId}
+                  onClick={async () => {
+                    if (!recordId) return;
+                    setStatus('Saving...');
+                    try {
+                      await callApi(recordId, 'front-matter', 'in_app=true');
+                      setStatus('Saved: in_app=true');
+                    } catch (e: any) {
+                      setStatus(`Error: ${e.message}`);
+                    }
+                  }}
+                >
+                  <Check className="w-3 h-3 mr-1" /> Done
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-8 px-3 text-stone-600 border-stone-300"
+                  disabled={!recordId}
+                  onClick={async () => {
+                    if (!recordId) return;
+                    setStatus('Saving...');
+                    try {
+                      await callApi(
+                        recordId,
+                        'discrepancies',
+                        'User flagged an issue via Next Guide "Something\'s wrong" button.'
+                      );
+                      setStatus('Saved: discrepancy added');
+                    } catch (e: any) {
+                      setStatus(`Error: ${e.message}`);
+                    }
+                  }}
+                >
+                  <AlertTriangle className="w-3 h-3 mr-1" /> Something's wrong
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-xs h-8 px-3"
+                  disabled={!recordId}
+                  onClick={async () => {
+                    if (!recordId) return;
+                    setStatus('Saving...');
+                    try {
+                      await callApi(
+                        recordId,
+                        'discrepancies',
+                        'Task skipped via Next Guide "Skip for now" button.'
+                      );
+                      setSkippedIds((prev) =>
+                        new Set([...prev, task.eventType ?? ''])
+                      );
+                      setStatus('Saved: skipped');
+                    } catch (e: any) {
+                      setStatus(`Error: ${e.message}`);
+                    }
+                  }}
+                >
+                  <FastForward className="w-3 h-3 mr-1" /> Skip for now
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </CardContent>
