@@ -166,6 +166,17 @@ export function RecordCheck({
                   {line.uncertain && (
                     <span className="ml-1 text-[10px] text-amber-600">[?]</span>
                   )}
+                  {line.enLabel && line.enValue && (
+                    <div className="mt-0.5">
+                      <span className="font-bold text-[10px] text-stone-400">
+                        {line.enLabel}:
+                      </span>{' '}
+                      <span className="text-[10px] text-stone-500 italic">
+                        {line.enValue}
+                      </span>
+                      <span className="ml-1 text-[9px] text-stone-300 uppercase">(AI)</span>
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-start gap-1 shrink-0">
                   <Button

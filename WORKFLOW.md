@@ -75,12 +75,14 @@ Run these steps whenever asked to **process <file>**:
 - Use the pasted text for the words; use the screenshot only to decide which box each value belongs to.
 - Fill in the record's template line by line, exactly as written; keep the original Italian.
 - Mark anything uncertain with `[?]`. Never guess or fill gaps.
-- Set `transcribed: true` and `transcribed_by`.
+- Store English translation per line (indented `en: Label: Value` under each Italian line).
+- Set `transcribed: true` and `transcribed_by`; set `translated_by` (model name).
+- Label translations as "AI translation" in the app.
+- Translate field labels too (Cognome → Surname, Padre → Father, Madre → Mother, etc.).
 
 **Handwritten documents:** STOP and say they need Claude. Do not transcribe.
 
 **If you cannot see the image:** STOP and ask the user to paste a screenshot.
-- On multilingual forms: **Padre = father, Madre = mother.**
 
 ### Step 3 — Compare
 - Compare against what `familyData.ts` already says about these people.

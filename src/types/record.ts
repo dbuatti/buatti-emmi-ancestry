@@ -11,6 +11,7 @@ export interface RecordFrontMatter {
   source_office: string;
   protocol: string;
   transcribed_by: string;
+  translated_by: string;
   filed: boolean;
   transcribed: boolean;
   verified: boolean;

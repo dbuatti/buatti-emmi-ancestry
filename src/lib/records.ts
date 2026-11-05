@@ -46,6 +46,7 @@ function defaultFrontMatter(): RecordFrontMatter {
     source_office: '',
     protocol: '',
     transcribed_by: '',
+    translated_by: '',
     filed: false,
     transcribed: false,
     verified: false,

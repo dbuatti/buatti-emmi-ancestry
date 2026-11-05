@@ -55,6 +55,7 @@ people: [person_id]     # familyData person ids
 source_office: Ufficio / Archivio # leave blank if unknown
 protocol: prot. NNNN/YYYY  # or "n/a"; leave blank if unknown
 transcribed_by: pdftotext | tesseract | Daniele (manual) | image_not_available
+translated_by: model name (e.g. "Nemotron 3.5 Super VL (free)")
 image_visibility: public | family | local    # default: local; never default to public
 image_link: https://...    # URL on FamilySearch/Antenati; optional; never copied
 filed: true | false
@@ -66,7 +67,7 @@ on_familysearch: true | false   # only Daniele sets true
 
 The five workflow steps tracked in front matter:
 1. **filed** — record.md exists in `records/<id>/` (filed: true)
-2. **transcribed** — Italian + English in body; `transcribed_by` set
+2. **transcribed** — Italian + English per line in body; `transcribed_by` and `translated_by` set. English stored per line under each Italian line (`en: Label: Value`), labeled "AI translation" in the app.
 3. **verified** — `verified: true` (only Daniele sets this; AI never sets it)
 4. **in_app** — person facts updated with `recordId` links (in_app: true)
 5. **on_familysearch** — Daniele attaches on FamilySearch (on_familysearch: true)
