@@ -272,5 +272,14 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
   may identify the **unnamed older brother who went to Venezuela** — Sicilian naming convention
   names the first son after the paternal grandfather, and that grandfather was Antonino Emmi
   (~1849). Not confirmed; noted on the brother's record so it isn't lost.
+- **05/11/2026 (late)** — record-page tooling only (no research impact): check mode widened
+  (3:2 split, `max-w-[1800px]`); transcriptions now stored as line items (`- Line N: …` +
+  `  en: Line N: …`) and the check screen rebuilt around them; links are **deletable**
+  (Open / Copy / Delete) and the links YAML reader was fixed (it never read the label value, so
+  every link showed as "label"); `process inbox` workflow added to `WORKFLOW.md`/`AGENTS.md`;
+  and the record page now ends each record with a **Next step** card (`STEP_DETAILS` in
+  `src/lib/workflow-steps.ts`) naming step 4 (`in_app`) / 5 (`on_familysearch`) and a copyable
+  prompt for OpenCode. Research state unchanged — D13 (Ida + Alfredo death acts) is still the
+  reply that matters.
 
 *(Append one dated line here at the end of every session, and update "Last updated" above.)*

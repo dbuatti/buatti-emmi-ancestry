@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { RecordBody } from '@/components/RecordBody';
 import { RecordViewer } from '@/components/RecordViewer';
 import { RecordCheck } from '@/components/RecordCheck';
+import { RecordNextStep } from '@/components/RecordNextStep';
 import { parseRecordMarkdown, getWorkflowStepNumber } from '@/lib/records';
 import type { RecordFrontMatter, RecordLink } from '@/types/record';
 import { callApiOpenInFinder, callApiUpdateLinks } from '@/components/next-guide-api';
@@ -159,6 +160,15 @@ export default function RecordPage() {
               )}
             </div>
           </div>
+
+          <RecordNextStep
+            recordId={frontMatter.id}
+            frontMatter={frontMatter}
+            isDev={isDev}
+            onCheckAgainstImage={() => {
+              window.location.href = `/records/${recordId}?mode=check`;
+            }}
+          />
 
           <div className="grid grid-cols-2 gap-4 text-xs text-stone-600">
             <div><span className="font-bold">ID:</span> {frontMatter.id}</div>
