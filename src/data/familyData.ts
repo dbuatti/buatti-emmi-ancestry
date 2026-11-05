@@ -2315,10 +2315,10 @@ export const initialPeople: Person[] = [
     lifeEvents: [
       { type: 'birth', recordId: '1915_Linguaglossa_birth_Emmi-Gregorio_atto202', step: 1, status: 'linked', note: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30/06/2026. Date: 23 Oct 1915.' },
       { type: 'baptism', status: 'known_no_record', note: 'Baptised 5 Dec 1915, Linguaglossa DGS 5455112 entry N.251 folio 80. Born 27 Oct 1915 per parish record.' },
-      { type: 'marriage', status: 'known_no_record', note: 'Married Rosaria Patanè 7 Jul 1948, Fiumefreddo di Sicilia — atto n. 34, part 2, series A.' },
+      { type: 'marriage', status: 'known_no_record', note: 'Married Rosaria Patanè 7 Jul 1948, Fiumefreddo di Sicilia — atto n. 34, part 2, series A. Reference: Fiumefreddo di Sicilia, Matrimoni 1948, parte II serie A, n. 34 (source: estratto atto 202, Comune di Linguaglossa, issued 30/06/2026).' },
       { type: 'death', status: 'known_no_record', note: 'Died 24 Nov 1979, Stanmore NSW. SMH death notice 30 Nov 1979.' },
       { type: 'burial', status: 'known_no_record', note: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070. Funeral 30 Nov 1979.' },
-      { type: 'migration_naturalisation', status: 'known_no_record', note: 'Arrived Mar 1950 per M/V Napoli. Naturalised 26 Jan 1961 cert EM(2)28650. Alien Registration No. 139899.' },
+      { type: 'migration_naturalisation', status: 'known_no_record', note: 'Arrived Mar 1950 per M/V Napoli. Naturalised 26 Jan 1961 cert EM(2)28650. Alien Registration No. 139899. Reference: Linguaglossa, Cittadinanza 1961, atto 32, parte I (source: estratto atto 202, Comune di Linguaglossa, issued 30/06/2026).' },
     ],
     researchStatus: {
       status: 'In Progress',
