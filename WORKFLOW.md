@@ -9,16 +9,23 @@ Every document goes through 5 steps, tracked in its `record.md` front matter:
 - Record the SHA-256 hash for duplicate detection
 
 ## Step 2: transcribed
-- Italian transcription in `record.md` (verbatim, keep original spelling and abbreviations)
-- English translation below Italian
-- Uncertain readings marked with `[?]` — do not guess or fill gaps
-- Note which model/person performed the transcription
-- If OCR/image is unavailable, write: `Image not available locally; transcription pending OCR/model`
+
+**Typed documents (e.g. estratto multilingue forms):**
+- You will paste text copied from Preview (Live Text) plus attach a screenshot.
+- Use the pasted text for the words; use the screenshot only to decide which box each value belongs to.
+- Italian transcription in `record.md` (verbatim, keep original spelling and abbreviations).
+- English translation below Italian.
+- Uncertain readings marked with `[?]` — do not guess or fill gaps.
+- Note which model/person performed the transcription.
+- Set `transcribed: true` and `transcribed_by`.
+
+**Handwritten documents:** STOP and say they need Claude. Do not transcribe.
+
+**If you cannot see the image at all:** STOP and ask the user to paste a screenshot.
 
 ## Step 3: verified
 - Daniele has checked names, dates and parents against the image
 - **Only Daniele sets this field** — AI/assistants never set step 3 or 5
-- If Daniele cannot read the image, write: `verified_by_daniele: false; note: unable to verify without OCR`
 
 ## Step 4: in_app
 - Person facts updated and linked to this record in the React app
@@ -29,7 +36,6 @@ Every document goes through 5 steps, tracked in its `record.md` front matter:
 
 ## Step 5: on_familysearch
 - Daniele has attached the record on FamilySearch (manually, no automated API)
-- `fs_status` in record front matter: `on FamilySearch` / `not on FamilySearch` / `pending`
 
 ---
 
@@ -54,11 +60,16 @@ Run these steps whenever asked to **process <file>**:
 - Create `records/<id>/record.md` with front matter: `filed: true`, everything else blank/false.
 
 ### Step 2 — Transcribe
+
+**Typed documents:** User pastes text from Preview (Live Text) plus a screenshot.
+- Use the pasted text for the words; use the screenshot only to decide which box each value belongs to.
 - Fill in the record's template line by line, exactly as written; keep the original Italian.
 - Mark anything uncertain with `[?]`. Never guess or fill gaps.
 - Set `transcribed: true` and `transcribed_by`.
-- **If you cannot actually see the image, STOP and ask the user to paste a screenshot.**
-- **If the document is handwritten, STOP and say it needs Claude.**
+
+**Handwritten documents:** STOP and say they need Claude. Do not transcribe.
+
+**If you cannot see the image:** STOP and ask the user to paste a screenshot.
 - On multilingual forms: **Padre = father, Madre = mother.**
 
 ### Step 3 — Compare
@@ -74,9 +85,9 @@ Run these steps whenever asked to **process <file>**:
 ```
 1. filed          → copy source file into records/<id>/, set id=YYYY_Comune_type_Surnames_attoN
 2. transcribed    → Italian + English in record.md; [?] for uncertain; note model
-3. verified       → Daniele checks; set verified_by_daniele: true/false
+3. verified       → Daniele checks; set verified: true/false
 4. in_app         → update PersonModal facts with recordId links
-5. on_familysearch → Daniele attaches on FamilySearch; set fs_status
+5. on_familysearch → Daniele attaches on FamilySearch; set on_familysearch: true/false
 ```
 
 If any step is blocked, the to-do page shows the record at that step, and no further steps are attempted until it clears.
@@ -97,7 +108,10 @@ atto: N                 # act number
 people: [person_id]     # familyData person ids
 source_office: Ufficio / Archivio
 protocol: prot. NNNN/YYYY  # or "n/a"
-fs_status: on FamilySearch | not on FamilySearch | pending
-verified_by_daniele: true | false
 transcribed_by: "pdftotext" | "tesseract" | "Daniele (manual)" | "image_not_available"
+filed: true | false
+transcribed: true | false
+verified: true | false       # only Daniele sets true
+in_app: true | false
+on_familysearch: true | false   # only Daniele sets true
 ```
