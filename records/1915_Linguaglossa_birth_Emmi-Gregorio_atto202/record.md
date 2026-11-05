@@ -13,7 +13,7 @@ protocol: ""
 transcribed_by: "Nemotron 3.5 Super VL (free)"
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 ---

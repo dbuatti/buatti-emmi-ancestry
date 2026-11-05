@@ -125,6 +125,18 @@ export default function RecordPage() {
             <Button variant="outline" size="sm">
               Copy source title
             </Button>
+            {import.meta.env.DEV && !frontMatter.verified && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-emerald-200 text-emerald-700 hover:border-emerald-400 hover:text-emerald-900"
+                onClick={() => {
+                  window.location.href = `/records/${recordId}?mode=check`;
+                }}
+              >
+                Check against image
+              </Button>
+            )}
           </div>
         </div>
       </div>
