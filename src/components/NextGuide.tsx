@@ -33,6 +33,9 @@ export function NextGuide() {
   const progress = getProgress(people, task.personId);
   const recordId = task.recordId ?? '';
   const isVerifyTask = task.type === 'record_check' && task.step === 'verified';
+  const attoDisplay = recordId
+    ? recordId.split('_').pop()?.replace(/([a-zA-Z])(\d+)/, '$1 $2') ?? ''
+    : '';
 
   return (
     <Card className="border-[#800020] bg-[#FAF6F0]">
@@ -53,7 +56,7 @@ export function NextGuide() {
             <div className="text-sm text-stone-700 leading-relaxed">
               {isVerifyTask
                 ? `Check ${task.personName}'s ${task.eventType ?? 'record'} record (${
-                    recordId.split('_').pop()
+                    attoDisplay ?? 'record'
                   }) against the image`
                 : task.note}
               {task.recordId && (
