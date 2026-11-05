@@ -10,7 +10,7 @@ import { getNextTask, getProgress, type RecordStepInfo } from '../../scripts/nex
 import { callApi, callApiOpenInFinder } from './next-guide-api';
 import { getAllRecords, type WorkflowStep } from '@/lib/record-loader';
 
-// Parse record data
+// Parse record data from API
 interface FamilySearchData {
   eventDate: string;
   sourceTitle: string;
@@ -25,14 +25,30 @@ interface FamilySearchData {
   addToSourceBox: string;
 }
 
-function parseFamilySearchData(recordId: string): FamilySearchData | null {
+async function fetchFamilySearchData(recordId: string): Promise<FamilySearchData | null> {
   try {
-    const fs = require('fs');
-    const path = require('path');
-    const recordPath = path.join(__dirname, '../../records', recordId, 'record.md');
-    const content = fs.readFileSync(recordPath, 'utf8');
-
-    // Extract FamilySearch section
+    // Use the same API approach as RecordViewer
+    const response = await fetch(`/api/record-files/${recordId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch record files');
+    }
+    const files = await response.json();
+    
+    // Look for record.md file
+    const recordMdFile = files.find((file: { name: string }) => file.name === 'record.md');
+    if (!recordMdFile) {
+      throw new Error('record.md not found');
+    }
+    
+    // Get the content from the API endpoint
+    const contentResponse = await fetch(`/records-local/${recordId}/record.md`);
+    if (!contentResponse.ok) {
+      throw new Error('Failed to fetch record.md content');
+    }
+    
+    const content = await contentResponse.text();
+    
+    // Extract FamilySearch section from the content
     const fsMatch = content.match(/## FamilySearch\n\n((?:###.*?\n)+)/);
     if (!fsMatch) return null;
 
@@ -121,13 +137,18 @@ export function NextGuide() {
         const records = await getAllRecords();
         if (cancelled) return;
         const steps = new Map<string, RecordStepInfo>();
+        let fsData: FamilySearchData | null = null;
+        
         for (const rec of records) {
           steps.set(rec.id, { step: rec.step, stepNumber: rec.stepNumber });
           
           // Parse FamilySearch data for this record
-          const fsData = parseFamilySearchData(rec.id);
-          if (fsData && !familySearchData) {
-            setFamilySearchData(fsData);
+          if (!fsData) {
+            const data = await fetchFamilySearchData(rec.id);
+            if (data) {
+              fsData = data;
+              setFamilySearchData(fsData);
+            }
           }
         }
         setRecordSteps(steps);
