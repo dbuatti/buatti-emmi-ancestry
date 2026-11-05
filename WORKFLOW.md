@@ -217,6 +217,11 @@ If identification is not certain, ask the user ONE question with numbered option
 - If typed: ask the user to paste the Preview (Live Text) text
 - If handwritten and the current model can't read images: say "Switch to the VL model, paste a close-up, then say 'transcribe next'". Then continue normal steps and stop for user check.
 
+**Transcription format:**
+- **Typed documents:** Use the pasted text for the words; keep `en: Label: translation` underneath each Italian line.
+- **Handwritten entries:** Each line as `- Label: text` with `  en: Label: translation` underneath. Use `"Line 1"`, `"Line 2"` etc. for handwritten lines (don’t guess or fill gaps).
+- Never save free paragraphs (e.g. multi-sentence narrative paragraphs). The format must match what the check screen expects.
+
 ---
 
 **"transcribe next"** = transcribe the next record that is `filed` but not `transcribed` (tell the user which one it picked). Use only the image the user pastes; do not read `familyData.ts` or other records while transcribing.
