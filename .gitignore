@@ -11,3 +11,6 @@ copy-log.csv
 node_modules/
 dist/
 .DS_Store
+
+# Dyad builder state/screenshots — local only
+.dyad/
