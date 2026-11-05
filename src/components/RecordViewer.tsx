@@ -5,7 +5,7 @@ import { Image as ImageIcon, AlertCircle, Maximize, ExternalLink, ZoomIn, ZoomOu
 
 interface RecordViewerProps {
   recordId: string;
-  sticky?: boolean; // when true, the panel stays fixed while the list scrolls
+  sticky?: boolean;
 }
 
 interface RecordFile {
@@ -18,11 +18,6 @@ interface PanZoomState {
   scale: number;
   tx: number;
   ty: number;
-  isDragging: boolean;
-  startX: number;
-  startY: number;
-  startTx: number;
-  startTy: number;
 }
 
 const MIN_SCALE = 0.5;
@@ -36,27 +31,20 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
   const [loading, setLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(false);
 
-  // Pan/zoom state
+  // Pan/zoom state - applies to both images and PDFs via container transform
   const [pz, setPz] = useState<PanZoomState>({
     scale: 1,
     tx: 0,
     ty: 0,
-    isDragging: false,
-    startX: 0,
-    startY: 0,
-    startTx: 0,
-    startTy: 0,
   });
 
-  const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Clamp scale
   const clampScale = (s: number) => Math.min(Math.max(s, MIN_SCALE), MAX_SCALE);
 
   // Reset pan/zoom when a new file is selected
   useEffect(() => {
-    setPz({ scale: 1, tx: 0, ty: 0, isDragging: false, startX: 0, startY: 0, startTx: 0, startTy: 0 });
+    setPz({ scale: 1, tx: 0, ty: 0 });
   }, [selected]);
 
   useEffect(() => {
@@ -94,16 +82,14 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
 
   const fileUrl = selectedFile ? selectedFile.path : "";
 
-  // -------- Pan/Zoom handlers --------
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
-      if (!isImage) return;
       e.preventDefault();
       const delta = -e.deltaY * 0.001;
       setPz((prev) => {
         const newScale = clampScale(prev.scale + delta);
         // Zoom toward cursor position
-        const rect = imgRef.current?.getBoundingClientRect();
+        const rect = containerRef.current?.getBoundingClientRect();
         if (!rect) return { ...prev, scale: newScale };
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -120,12 +106,12 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
         };
       });
     },
-    [isImage]
+    []
   );
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (!isImage || pz.scale <= 1) return;
+      if (pz.scale <= 1) return;
       setPz((prev) => ({
         ...prev,
         isDragging: true,
@@ -135,12 +121,12 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
         startTy: prev.ty,
       }));
     },
-    [isImage, pz.scale]
+    [pz.scale]
   );
 
   const handleMouseMove = useCallback(
     (e: MouseEvent) => {
-      setPz((prev) => {
+      setPz((prev: any) => {
         if (!prev.isDragging) return prev;
         const dx = e.clientX - prev.startX;
         const dy = e.clientY - prev.startY;
@@ -155,7 +141,7 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
   );
 
   const handleMouseUp = useCallback(() => {
-    setPz((prev) => ({ ...prev, isDragging: false }));
+    setPz((prev: any) => ({ ...prev, isDragging: false }));
   }, []);
 
   const zoomIn = () => {
@@ -167,7 +153,7 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
   };
 
   const resetView = () => {
-    setPz({ scale: 1, tx: 0, ty: 0, isDragging: false, startX: 0, startY: 0, startTx: 0, startTy: 0 });
+    setPz({ scale: 1, tx: 0, ty: 0 });
   };
 
   const toggleFullScreen = () => {
@@ -180,28 +166,29 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
     }
   };
 
-  // Global drag listeners (so dragging continues outside the image)
+  // Global drag listeners
   useEffect(() => {
-    if (!pz.isDragging) return;
+    const prev = pz as any;
+    if (!prev.isDragging) return;
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [pz.isDragging, handleMouseMove, handleMouseUp]);
+  }, [prev.isDragging, handleMouseMove, handleMouseUp]);
 
-  const panelClass = sticky
-    ? "sticky top-0 z-10 bg-white border-b border-stone-200"
-    : "";
+  const pct = Math.round(pz.scale * 100);
 
   return (
     <>
       {/* Full-screen modal */}
-      {fullScreen && selectedFile && isImage && (
+      {fullScreen && selectedFile && (
         <div
           className="fixed inset-0 z-50 bg-black flex flex-col"
-          onClick={() => setFullScreen(false)}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setFullScreen(false);
+          }}
         >
           <div className="absolute top-4 right-4 flex gap-2 bg-white/10 backdrop-blur p-2 rounded">
             <Button
@@ -225,19 +212,40 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
               <RotateCcw className="w-4 h-4" /> Close
             </Button>
           </div>
-          <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
-            <img
-              src={fileUrl}
-              alt={selectedFile.name}
-              className="max-w-full max-h-full object-contain cursor-pointer"
-              onClick={() => setFullScreen(false)}
-            />
+          <div className="flex-1 flex items-center justify-center p-2 overflow-hidden bg-black">
+            <div
+              className="relative flex items-center justify-center w-full h-full"
+              style={{
+                transform: `scale(${pz.scale}) translate(${pz.tx}px, ${pz.ty}px)`,
+                transformOrigin: "center center",
+                cursor: pz.scale > 1 ? "grabbing" : "default",
+              }}
+              onWheel={handleWheel}
+              onMouseDown={handleMouseDown}
+            >
+              {isPdf ? (
+                <iframe
+                  src={fileUrl}
+                  className="w-full h-full max-w-[2000px] max-h-[2800px]"
+                  title="Document PDF"
+                />
+              ) : (
+                <img
+                  src={fileUrl}
+                  alt={selectedFile.name}
+                  className="max-w-full max-h-full object-contain"
+                  onError={(e) => {
+                    setError(`Failed to load image: ${selectedFile.name}`);
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
 
       {/* Main card */}
-      <Card className={`border-stone-200 flex flex-col h-full ${panelClass}`}>
+      <Card className={`border-stone-200 flex flex-col h-full ${sticky ? "sticky top-0 z-10 bg-white border-b border-stone-200" : ""}`}>
         <CardHeader className="flex items-center justify-between gap-2 bg-white/80 backdrop-blur sticky top-0 z-10 px-4 py-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider">
             Document Image
@@ -251,43 +259,40 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
             >
               <ExternalLink className="w-3 h-3 mr-1" /> Open in new tab
             </Button>
-            {isImage && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={zoomOut}
-                  disabled={pz.scale <= MIN_SCALE}
-                >
-                  <ZoomOut className="w-3 h-3" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={zoomIn}
-                  disabled={pz.scale >= MAX_SCALE}
-                >
-                  <ZoomIn className="w-3 h-3" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={resetView}
-                  disabled={pz.scale === 1 && pz.tx === 0 && pz.ty === 0}
-                >
-                  <RotateCcw className="w-3 h-3" />
-                </Button>
-                {pz.scale > 1 && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={toggleFullScreen}
-                    className="border-transparent hover:bg-white/20"
-                  >
-                    <Maximize className="w-3 h-3" />
-                  </Button>
-                )}
-              </>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={zoomOut}
+              disabled={pz.scale <= MIN_SCALE}
+            >
+              <ZoomOut className="w-3 h-3" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={zoomIn}
+              disabled={pz.scale >= MAX_SCALE}
+            >
+              <ZoomIn className="w-3 h-3" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetView}
+              disabled={pz.scale === 1 && pz.tx === 0 && pz.ty === 0}
+            >
+              <RotateCcw className="w-3 h-3" />
+            </Button>
+            <span className="text-[10px] text-stone-400 font-mono">{pct}%</span>
+            {pz.scale > 1 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleFullScreen}
+                className="border-transparent hover:bg-white/20"
+              >
+                <Maximize className="w-3 h-3" />
+              </Button>
             )}
           </div>
         </CardHeader>
@@ -317,7 +322,17 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
             </div>
           )}
           {!loading && !error && files.length > 0 && selectedFile && (
-            <div className="flex-1 relative overflow-hidden bg-stone-100">
+            <div
+              className="flex-1 relative overflow-hidden bg-stone-100"
+              onWheel={handleWheel}
+              onMouseDown={handleMouseDown}
+              style={{
+                cursor:
+                  pz.scale > 1 ? "grabbing" : isImage || isPdf
+                    ? "crosshair"
+                    : "default",
+              }}
+            >
               {/* Thumbnail strip (horizontal, only if multiple files) */}
               {files.length > 1 && !fullScreen && (
                 <div className="absolute bottom-0 left-0 right-0 h-10 bg-white/90 border-t border-stone-200 flex items-center gap-1 px-2 overflow-x-auto z-10">
@@ -339,44 +354,33 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
                   })}
                 </div>
               )}
-              {/* Main view */}
+              {/* Main view - full height */}
               <div
-                className="flex-1 flex items-center justify-center relative"
-                onWheel={handleWheel}
-                onMouseDown={handleMouseDown}
+                className="flex-1 flex items-center justify-center w-full h-full"
                 style={{
-                  cursor:
-                    pz.scale > 1 ? "grabbing" : isImage ? "crosshair" : "default",
+                  transform: `scale(${pz.scale}) translate(${pz.tx}px, ${pz.ty}px)`,
+                  transformOrigin: "center center",
                 }}
               >
                 {isPdf ? (
                   <iframe
                     src={fileUrl}
-                    className="w-full h-full rounded border border-stone-200"
+                    className="w-full h-full max-w-[2400px] max-h-[3400px]"
                     title="Document PDF"
                   />
                 ) : (
-                  <div
-                    className="flex items-center justify-center w-full h-full"
-                  >
-                    <img
-                      ref={imgRef}
-                      src={fileUrl}
-                      alt={selectedFile.name}
-                      className="max-w-full max-h-full object-contain cursor-pointer rounded border border-stone-200"
-                      style={{
-                        transform: `scale(${pz.scale}) translate(${pz.tx}px, ${pz.ty}px)`,
-                        transformOrigin: "center center",
-                      }}
-                      onClick={
-                        pz.scale > 1 ? toggleFullScreen : undefined
-                      }
-                      onError={(e) => {
-                        setError(`Failed to load image: ${selectedFile.name}`);
-                        (e.target as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  </div>
+                  <img
+                    ref={containerRef}
+                    src={fileUrl}
+                    alt={selectedFile.name}
+                    className="max-w-full max-h-full object-contain cursor-pointer"
+                    onClick={
+                      pz.scale > 1 ? toggleFullScreen : undefined
+                    }
+                    onError={(e) => {
+                      setError(`Failed to load image: ${selectedFile.name}`);
+                    }}
+                  />
                 )}
               </div>
             </div>
