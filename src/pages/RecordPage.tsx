@@ -83,7 +83,7 @@ export default function RecordPage() {
 
   if (isCheckMode) {
     return (
-      <div className="max-w-7xl mx-auto p-4 space-y-6">
+      <div className="w-full max-w-[1800px] mx-auto px-3 py-4 space-y-4">
         <div className="flex items-center justify-between">
           <Button
             variant="outline"
@@ -102,11 +102,11 @@ export default function RecordPage() {
           </Badge>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-4 h-[calc(100vh-4rem)]">
+        <div className="grid grid-cols-1 xl:grid-cols-5 gap-4 items-start">
+          <div className="xl:col-span-3 h-[calc(100vh-8rem)]">
             <RecordViewer recordId={frontMatter.id} sticky={true} />
           </div>
-          <div className="lg:col-span-1 space-y-6 overflow-y-auto h-[calc(100vh-4rem)]">
+          <div className="xl:col-span-2 h-[calc(100vh-8rem)] overflow-y-auto pr-1">
             <RecordCheck
               recordId={frontMatter.id}
               frontMatter={frontMatter}
