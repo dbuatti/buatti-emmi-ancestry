@@ -54,19 +54,22 @@ atto: N                 # act number; leave blank if unknown
 people: [person_id]     # familyData person ids
 source_office: Ufficio / Archivio # leave blank if unknown
 protocol: prot. NNNN/YYYY  # or "n/a"; leave blank if unknown
-fs_status: on FamilySearch | not on FamilySearch | pending
-verified_by_daniele: true | false
 transcribed_by: pdftotext | tesseract | Daniele (manual) | image_not_available
 image_visibility: public | family | local    # default: local; never default to public
 image_link: https://...    # URL on FamilySearch/Antenati; optional; never copied
+filed: true | false
+transcribed: true | false
+verified: true | false       # only Daniele sets true
+in_app: true | false
+on_familysearch: true | false   # only Daniele sets true
 ```
 
 The five workflow steps tracked in front matter:
 1. **filed** — record.md exists in `records/<id>/` (filed: true)
 2. **transcribed** — Italian + English in body; `transcribed_by` set
-3. **verified** — `verified_by_daniele: true` (only Daniele sets this; AI never sets it)
-4. **in_app** — person facts updated with `recordId` links
-5. **on_familysearch** — `fs_status: on FamilySearch` (Daniele manually attaches on FamilySearch)
+3. **verified** — `verified: true` (only Daniele sets this; AI never sets it)
+4. **in_app** — person facts updated with `recordId` links (in_app: true)
+5. **on_familysearch** — Daniele attaches on FamilySearch (on_familysearch: true)
 
 Unknown fields are left as blank (empty string ""), never guessed or invented.
 
@@ -86,6 +89,41 @@ Each row links to `/records/<recordId>` (the RecordPage). The Records tab shows 
 
 New structured section listing ruled-out namesakes with reason + record reference.
 
+### Life Events Checklist
+
+Each person page shows a "Life events" checklist with six rows:
+
+| Row | Meaning |
+|-----|---------|
+| Birth | Civil birth record |
+| Baptism | Parish baptism record |
+| Marriage(s) | Civil marriage record(s) |
+| Death | Civil death record |
+| Burial | Cemetery/burial record |
+| Migration/Naturalisation | Passenger list, alien registration, naturalisation cert |
+
+Each row shows one of three states:
+
+- **record linked** — a `recordId` points to `records/<id>/record.md`; the row also shows the workflow step status (1–5): filed/transcribed/verified/in_app/on_familysearch.
+- **known-but-no-record** — the event is known from a source (notes, familyData, etc.) but no record.md exists yet.
+- **missing** — no source at all; the fact is not established.
+
+The checklist is derived from `person.lifeEvents` in familyData.ts:
+
+```ts
+interface LifeEvent {
+  type: 'birth' | 'baptism' | 'marriage' | 'death' | 'burial' | 'migration_naturalisation';
+  recordId?: string;       // key into records/<id>/, if a record.md exists
+  step?: 1 | 2 | 3 | 4 | 5; // workflow step status from record.md front matter
+  status: 'linked' | 'known_no_record' | 'missing';
+  note?: string;           // brief explanation (e.g. "baptism 5 Dec 1915, DGS 5455112")
+}
+```
+
+If `recordId` is set, `step` is read from that record.md's front matter (filed/transcribed/verified/in_app/on_familysearch). If `status === 'known_no_record'`, `note` explains what is known. If `status === 'missing'`, the row is empty except the label.
+
+Build this for Gregorio Emmi first, using his existing data in familyData.ts.
+
 ## Record Page (`/records/:recordId`)
 
 Layout: two-column split on desktop.
@@ -97,7 +135,7 @@ Layout: two-column split on desktop.
 **Right: RecordBody**
 - Markdown body rendered from `record.md`
 - Uncertain readings marked `[?]` highlighted
-- `VerifiedToggle` checkbox: writes to localStorage (`verified_by_daniele`). In dev, field is editable.
+- `VerifiedToggle` checkbox: writes `verified: true` (only Daniele sets). In dev, field is editable.
 - `CopyButtons`: "Copy source title", "Copy transcription"
 
 ## To-Do Page (`/todo`)
@@ -108,11 +146,29 @@ Lists records where step < 5. Each record shows:
 - Brief note (e.g. "awaiting OCR", "D13 sent, waiting for reply")
 - Link to the record page for editing
 
+## Next Guide (local mode)
+
+A card at the top of the app shows ONE task at a time:
+
+- **Task card**: single actionable task (e.g. "Verify Gregorio Emmi's birth record — step 2: transcribed, step 3: pending verification").
+- **Buttons**: `Done` / `Something's wrong` / `Skip for now`.
+- **Order**:
+  1. One person at a time (start with Gregorio Emmi)
+  2. Each record through: check → app → FamilySearch
+  3. The person's missing events
+  4. That person's unsorted files
+- **Done / Skip**: buttons write to record.md via a small local endpoint (in dev: local file write; in production: n/a — local mode only). Skipped tasks go to the end of the queue.
+- **Progress**: shown as "Gregorio: 4 of 9".
+- **"Something's wrong"**: saves a free-text note under `## Discrepancies` in the record's `record.md`.
+
+The next-task logic lives in `scripts/next-task.ts`, used by both the app (via local endpoint) and by the assistant to propose the next task.
+
+
 ## FamilySearch Integration
 
-Each record.md front matter gets `fs_status`. On the RecordPage:
-- If `fs_status === 'on FamilySearch'`: show "View on FamilySearch ↗" link (Daniele supplies the FS person ID manually per record).
-- If `fs_status === 'not on FamilySearch'`: badge on To-do page.
+Each record.md front matter gets `on_familysearch`. On the RecordPage:
+- If `on_familysearch === true`: show "View on FamilySearch ↗" link (Daniele supplies the FS person ID manually per record).
+- If `on_familysearch === false`: badge on To-do page.
 - No FS API calls (no key needed) — manual entry only.
 
 ## Image Visibility Levels

@@ -15,6 +15,13 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - Always log progress here so memory persists across sessions. Do not repeat done work.
 - Tech stack & conventions: see `AI_RULES.md`. Stack = React 19 + TS + Vite + Tailwind + shadcn/ui + React Router.
 
+## Family-tree guide mode
+- At the start of every session: read `WORKFLOW.md` and `records/*/record.md`, work out the single next task with `scripts/next-task.ts`, and ask me about it.
+- One question at a time; wait for: yes / no (with a note) / skip / later.
+- Never mark `verified` or `on_familysearch` unless I say so.
+- If I start with a different request, do that first, then offer the next task.
+
+
 ## Repo orientation (as of last update)
 - React ancestry-research app. Pages: `Index.tsx`, `ResearchGoals.tsx`, `NotFound.tsx`.
 - Single source of genealogy data: `src/data/familyData.ts` (the `initialPeople`, `initialResearchLeads`, `initialOpenQuestions` exports).

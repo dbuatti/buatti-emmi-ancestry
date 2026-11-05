@@ -2312,6 +2312,14 @@ export const initialPeople: Person[] = [
       { type: 'Naturalisation Record', status: 'Found', notes: 'Certificate EM(2)28650, 26 Jan 1961. Transcribed Linguaglossa 1961 atto n. 32 part I. Per civil birth extract (atto n. 202).' },
       { type: 'Marriage Record', status: 'Found', notes: 'Rosaria Patanè, 7 Jul 1948, Fiumefreddo di Sicilia — atto n. 34, part 2, series A. Recorded in margin of civil birth extract (atto n. 202).' },
     ],
+    lifeEvents: [
+      { type: 'birth', recordId: '1915_Linguaglossa_birth_Emmi-Gregorio_atto202', step: 1, status: 'linked', note: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30/06/2026. Date: 23 Oct 1915.' },
+      { type: 'baptism', status: 'known_no_record', note: 'Baptised 5 Dec 1915, Linguaglossa DGS 5455112 entry N.251 folio 80. Born 27 Oct 1915 per parish record.' },
+      { type: 'marriage', status: 'known_no_record', note: 'Married Rosaria Patanè 7 Jul 1948, Fiumefreddo di Sicilia — atto n. 34, part 2, series A.' },
+      { type: 'death', status: 'known_no_record', note: 'Died 24 Nov 1979, Stanmore NSW. SMH death notice 30 Nov 1979.' },
+      { type: 'burial', status: 'known_no_record', note: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070. Funeral 30 Nov 1979.' },
+      { type: 'migration_naturalisation', status: 'known_no_record', note: 'Arrived Mar 1950 per M/V Napoli. Naturalised 26 Jan 1961 cert EM(2)28650. Alien Registration No. 139899.' },
+    ],
     researchStatus: {
       status: 'In Progress',
       details: 'Civil birth extract received 30 Jun 2026 (atto n. 202 — confirms 23 Oct 1915 birth). Baptismal record previously found. Marriage to Rosaria Patanè confirmed: 7 Jul 1948, Fiumefreddo. Naturalisation (Australian citizenship) 26 Jan 1961, cert. EM(2)28650.',
@@ -3251,8 +3259,8 @@ export const initialOpenQuestions: OpenQuestion[] = [
     id: 'q-gregorio-birth-civil',
     question: 'How can we obtain Gregorio\'s civil birth record (27 Oct 1915)?',
     category: 'Emmi/Patanè',
-    status: 'In Progress',
-    notes: 'All FamilySearch/Antenati digital routes exhausted. Request emails sent 28 June 2026 to Comune di Linguaglossa and Archivio di Stato di Catania. Awaiting replies.'
+    status: 'Resolved',
+    notes: 'Estratto received 30/06/2026: atto 202 gives birth date 23/10/1915 (not 27 Oct). Estratto recorded in record.md under records/1915_Linguaglossa_birth_Emmi-Gregorio_atto202/record.md.'
   },
   {
     id: 'q-rosaria-baptism',

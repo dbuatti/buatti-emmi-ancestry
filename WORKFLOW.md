@@ -43,7 +43,33 @@ Every document goes through 5 steps, tracked in its `record.md` front matter:
 
 ---
 
-## Workflow in practice (per-document)
+## Process a new document
+
+Run these steps whenever asked to **process <file>**:
+
+### Step 1 — Copy
+- Copy the file into `records-local/<id>/` (never move or delete the original).
+- `id` follows the format: `YYYY_Comune_type_Surnames_attoN`.
+- Check the SHA-256 of the copy matches the original.
+- Create `records/<id>/record.md` with front matter: `filed: true`, everything else blank/false.
+
+### Step 2 — Transcribe
+- Fill in the record's template line by line, exactly as written; keep the original Italian.
+- Mark anything uncertain with `[?]`. Never guess or fill gaps.
+- Set `transcribed: true` and `transcribed_by`.
+- **If you cannot actually see the image, STOP and ask the user to paste a screenshot.**
+- **If the document is handwritten, STOP and say it needs Claude.**
+- On multilingual forms: **Padre = father, Madre = mother.**
+
+### Step 3 — Compare
+- Compare against what `familyData.ts` already says about these people.
+- List every difference under `## Discrepancies` in `record.md`, citing both sources.
+- Never delete existing values in `familyData.ts`.
+
+### Step 4 — Stop for review
+- STOP. Show the user the filled lines and the discrepancies.
+- Ask the user to check them against the document.
+- Only when the user says **"verified"**: set `verified: true` and update the app.
 
 ```
 1. filed          → copy source file into records/<id>/, set id=YYYY_Comune_type_Surnames_attoN
