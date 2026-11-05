@@ -102,11 +102,46 @@ After the record is verified (`verified: true`), the Next guide proposes changes
 3. **Proposed changes per person**: new facts vs. existing matches vs. conflicts. Never overwrite without confirmation.
 4. **Apply only after you say "apply"** — then set `in_app: true`.
 5. **Research leads become Next guide tasks** (e.g. "Request X from Comune Y").
+6. **ALWAYS write the record's `## FamilySearch` section in the same pass.** Applying a record is
+   not finished until that block exists, so the FamilySearch card is ready without being asked.
+   Use the same 8 numbered fields, in this order, with these exact headings:
+
+   ```
+   ## FamilySearch
+
+   ### 1. Event Date
+   ### 2. Source Title
+   ### 3. Source Type
+   ### 4. Citation
+   ### 5. Notes
+   ### 6. Reason to Attach Source
+   ### 7. Vital Tags
+   ### 8. Add Source to My Source Box
+   ```
+
+   - **1. Event Date** — the date FamilySearch should record (e.g. `23 October 1915`). If the
+     document implies a different date than the app holds, state both.
+   - **2. Source Title** — `Type of event — person, year, place, register + act number`.
+   - **3. Source Type** — `Add a Memory → Upload Memory (<local file name>)` when we hold the
+     image ourselves; if the record has an `image_link`, use `Web Page URL` + the link instead.
+   - **4. Citation** — archive/parish, register, year, act/entry number, folio where known,
+     film/DGS number, `ark:` link, and the issue date for issued extracts.
+   - **5. Notes** — **English first** (translation, checked), then **Italian exactly as written**
+     on the document. No free paraphrase; keep `[?]` and inference markers.
+   - **6. Reason to Attach Source** — one paragraph: what the source proves for this person,
+     plus any discrepancy worth flagging on FamilySearch.
+   - **7. Vital Tags** — FamilySearch's tick-boxes (e.g. `Name, Sex, Birth`).
+   - **8. Add Source to My Source Box** — `Yes`/`No` and why (reusable facts about other people).
+
+   Reference format: `records/1915_Linguaglossa_birth_Emmi-Gregorio_atto202/record.md` and
+   `records/1915_Linguaglossa_baptism_Emmi-Gregorio_n251/record.md`. Everything is generated
+   from the record itself — never invent a field; if the document is silent, say so.
 
 **Rules:**
 - Only facts the document actually states; interpretations marked as inference.
 - Never overwrite existing values in `familyData.ts` without explicit confirmation.
 - Only Daniele sets `in_app: true`.
+- A record is not `in_app` until its `## FamilySearch` section exists.
 
 ```
 1. filed          → copy source file into records/<id>/, set id=YYYY_Comune_type_Surnames_attoN

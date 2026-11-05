@@ -97,9 +97,10 @@ export function parseTranscriptionLines(body: string): TranscriptionLine[] {
  */
 export function parseDiscrepancies(body: string): string[] {
   const sections = splitSections(body);
-  const discSection = sections.find((s) =>
-    s.header.toLowerCase().includes('discrepancy')
-  );
+  // Match both "Discrepancy" and "Discrepancies" — note that the singular
+  // "discrepancy" is NOT a substring of the plural "discrepancies"
+  // (discrepanc-ies vs discrepanc-y), so match on the shared stem.
+  const discSection = sections.find((s) => /^discrepanc/i.test(s.header.trim()));
   if (!discSection) return [];
 
   const items: string[] = [];
