@@ -28,11 +28,21 @@ Every document goes through 5 steps, tracked in its `record.md` front matter:
 - **Only Daniele sets this field** — AI/assistants never set step 3 or 5
 
 ## Step 4: in_app
-- Person facts updated and linked to this record in the React app
-- Each fact on the person page that this record supports gets:
-  - a `recordId` link
-  - a status badge: `sourced` / `unsourced` / `provisional`
-- The `RecordMatrix` component shows which records are attached to which persons
+
+After a record is verified (`verified: true`), review it in the app:
+
+1. **List every fact** the document states about EVERY person named (not just the main person): births, marriages, deaths, citizenship, residence, occupations, parents. Each fact must cite this record id.
+2. **List every OTHER record it refers to** (e.g. "Matrimoni 1948 parte II serie A n. 34") as a research lead: register, year, act number, comune, and whether we already hold it.
+3. **Show proposed changes per person** as a short list, marking which are new and which already match existing data. Flag conflicts; never overwrite existing values without confirmation.
+4. **Apply only after you say "apply"**. Then set `in_app: true`.
+5. **Research leads become tasks** in the Next guide (e.g. "Request X from Comune Y").
+
+**Rules:**
+- Only facts the document actually states. No guessing or filling gaps.
+- Interpretations (e.g. what "parte II serie A" means) go in a separate "notes" line marked as inference.
+- Never overwrite existing facts in familyData.ts without explicit confirmation.
+- Only Daniele sets `in_app: true`.
+
 
 ## Step 5: on_familysearch
 - Daniele has attached the record on FamilySearch (manually, no automated API)
@@ -77,20 +87,68 @@ Run these steps whenever asked to **process <file>**:
 - List every difference under `## Discrepancies` in `record.md`, citing both sources.
 - Never delete existing values in `familyData.ts`.
 
-### Step 4 — Stop for review
-- STOP. Show the user the filled lines and the discrepancies.
-- Ask the user to check them against the document.
-- Only when the user says **"verified"**: set `verified: true` and update the app.
+### Step 4 — Apply to app (in_app)
+
+After the record is verified (`verified: true`), the Next guide proposes changes:
+
+1. **Every fact** the document states about each person named: births, marriages, deaths, citizenship, residence, occupations, parents — each citing this record id.
+2. **Every other record referenced** (e.g. "Matrimoni 1948 parte II serie A n. 34") as a research lead: register, year, act number, comune, whether we already hold it.
+3. **Proposed changes per person**: new facts vs. existing matches vs. conflicts. Never overwrite without confirmation.
+4. **Apply only after you say "apply"** — then set `in_app: true`.
+5. **Research leads become Next guide tasks** (e.g. "Request X from Comune Y").
+
+**Rules:**
+- Only facts the document actually states; interpretations marked as inference.
+- Never overwrite existing values in `familyData.ts` without explicit confirmation.
+- Only Daniele sets `in_app: true`.
 
 ```
 1. filed          → copy source file into records/<id>/, set id=YYYY_Comune_type_Surnames_attoN
 2. transcribed    → Italian + English in record.md; [?] for uncertain; note model
 3. verified       → Daniele checks; set verified: true/false
-4. in_app         → update PersonModal facts with recordId links
+4. in_app         → propose changes from verified record; apply only after "apply"; set in_app: true/false
 5. on_familysearch → Daniele attaches on FamilySearch; set on_familysearch: true/false
 ```
 
+
 If any step is blocked, the to-do page shows the record at that step, and no further steps are attempted until it clears.
+
+---
+
+## In-App Review Process (Step 4: in_app)
+
+Once a record is `verified: true`, the Next guide enters "in app" review mode for that record:
+
+### What happens
+
+1. **Read the transcription** — every line under `## Transcription` in `record.md`.
+2. **Extract facts per person named** — for each person mentioned (not just the main subject), list:
+   - Birth: date, place
+   - Marriage: date, place, spouse, act reference
+   - Death: date, place
+   - Citizenship: gained/lost, certificate reference, date
+   - Residence: address, comune, dates
+   - Occupation: title, employer, dates
+   - Parents: names, relationship
+   Each fact cites this record id as its source.
+3. **Extract cross-references to other records** — any register, year, act number, comune mentioned. For each:
+   - Register name, year, act number, comune
+   - Whether we already hold a copy (check `records/` and `records-local/`)
+   - If not held, create a Next guide task: "Request X from Comune Y"
+4. **Compare against familyData.ts** — for each person, show:
+   - New facts (not currently in familyData.ts)
+   - Matching facts (already present, same source or different)
+   - Conflicts (different values from existing data)
+5. **Present for approval** — show the proposed changes as a short list. Wait for "apply".
+6. **Apply** — only after explicit "apply": update `familyData.ts` with new facts, add research leads, set `in_app: true`.
+
+### Rules
+
+- **Only facts the document actually states.** No guessing, no filling gaps.
+- **Interpretations** (e.g. what "parte II serie A" means) go in a separate "notes" line, marked as inference.
+- **Never overwrite** existing values in `familyData.ts` without explicit confirmation.
+- **Only Daniele sets `in_app: true`.** The assistant never sets it.
+- **Only Daniele says "apply".** The assistant waits for confirmation before changing any data.
 
 ---
 
