@@ -7,8 +7,68 @@ import { Input } from '@/components/ui/input';
 import { Check, AlertTriangle, FastForward, ExternalLink, Copy } from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
 import { getNextTask, getProgress, type RecordStepInfo } from '../../scripts/next-task';
-import { callApi } from './next-guide-api';
+import { callApi, callApiOpenInFinder } from './next-guide-api';
 import { getAllRecords, type WorkflowStep } from '@/lib/record-loader';
+
+// Parse record data
+interface FamilySearchData {
+  eventDate: string;
+  sourceTitle: string;
+  sourceType: string;
+  citation: string;
+  notes: {
+    english: string;
+    italian: string;
+  };
+  reason: string;
+  vitalTags: string[];
+  addToSourceBox: string;
+}
+
+function parseFamilySearchData(recordId: string): FamilySearchData | null {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const recordPath = path.join(__dirname, '../../records', recordId, 'record.md');
+    const content = fs.readFileSync(recordPath, 'utf8');
+
+    // Extract FamilySearch section
+    const fsMatch = content.match(/## FamilySearch\n\n((?:###.*?\n)+)/);
+    if (!fsMatch) return null;
+
+    const fsContent = fsMatch[1];
+
+    // Parse sections
+    const sections: Record<string, string> = {};
+    let currentSection = '';
+    
+    const lines = fsContent.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.startsWith('### ')) {
+        currentSection = line.replace('### ', '').toLowerCase().replace(/\s+/g, '_');
+      } else if (currentSection && line.trim() && !line.startsWith('###')) {
+        sections[currentSection] = (sections[currentSection] || '') + line + '\n';
+      }
+    }
+
+    return {
+      eventDate: sections['event_date']?.trim() || '',
+      sourceTitle: sections['source_title']?.trim() || '',
+      sourceType: sections['source_type']?.trim() || '',
+      citation: sections['citation']?.trim() || '',
+      notes: {
+        english: (sections['notes_english']?.trim() || ''),
+        italian: (sections['notes_italian']?.trim() || '')
+      },
+      reason: sections['reason_to_attach_source']?.trim() || '',
+      vitalTags: sections['vital_tags']?.trim().split('\n').map(line => line.trim()) || [],
+      addToSourceBox: sections['add_source_to_my_source_box']?.trim() || ''
+    };
+  } catch (error) {
+    return null;
+  }
+}
 
 function stepToFrontMatterField(step: string): string {
   const map: Record<string, string> = {
@@ -45,6 +105,7 @@ export function NextGuide() {
   const [recordSteps, setRecordSteps] = useState<Map<string, RecordStepInfo>>(new Map());
   const [recordsLoaded, setRecordsLoaded] = useState(false);
   const [fsIdInput, setFsIdInput] = useState<string>('');
+  const [familySearchData, setFamilySearchData] = useState<FamilySearchData | null>(null);
 
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
@@ -62,6 +123,12 @@ export function NextGuide() {
         const steps = new Map<string, RecordStepInfo>();
         for (const rec of records) {
           steps.set(rec.id, { step: rec.step, stepNumber: rec.stepNumber });
+          
+          // Parse FamilySearch data for this record
+          const fsData = parseFamilySearchData(rec.id);
+          if (fsData && !familySearchData) {
+            setFamilySearchData(fsData);
+          }
         }
         setRecordSteps(steps);
         setRecordsLoaded(true);
@@ -159,89 +226,191 @@ export function NextGuide() {
           </div>
         </div>
 
-        {isFamilySearchTask && recordId && (
-          <div className="mt-4 rounded-lg bg-blue-50 border border-blue-200 p-3">
-            <h4 className="text-xs font-bold text-blue-800 uppercase tracking-wider mb-2">
-              FamilySearch
-            </h4>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-7 px-2"
-                onClick={() => {
-                  navigator.clipboard.writeText(recordId);
-                }}
-              >
-                <Copy className="w-3 h-3 mr-1" /> Copy source title
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-7 px-2"
-                onClick={() => {
-                  navigator.clipboard.writeText(`Transcription of ${recordId}`);
-                }}
-              >
-                <Copy className="w-3 h-3 mr-1" /> Copy transcription
-              </Button>
-            </div>
-            <p className="text-xs text-blue-700 mt-2">
-              Link this record to the person on FamilySearch. When done, click{' '}
-              <b>Done – added to FamilySearch</b>.
-            </p>
+        {isFamilySearchTask && familySearchData && (
+          <div className="mt-4 rounded-lg bg-purple-50 border border-purple-200 p-4">
+            <h3 className="text-sm font-bold text-purple-800 uppercase tracking-wider mb-3">
+              FamilySearch Add Source Form
+            </h3>
 
-            {existingFsId ? (
-              <div className="mt-2 flex items-center gap-2">
+            {/* Event Date */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">1. Event Date</div>
+                <div className="text-xs text-stone-600 flex-1 font-mono bg-white p-2 rounded border border-stone-200">
+                  {familySearchData.eventDate}
+                </div>
                 <Button
                   size="sm"
-                  variant="ghost"
+                  variant="outline"
                   className="text-xs h-7 px-2"
-                  onClick={() => {
-                    window.open(
-                      `https://www.familysearch.org/tree/person/details/${existingFsId}`,
-                      '_blank'
-                    );
-                  }}
+                  onClick={() => navigator.clipboard.writeText(familySearchData.eventDate)}
                 >
-                  <ExternalLink className="w-3 h-3 mr-1" />
-                  Open {task.personName} on FamilySearch
+                  <Copy className="w-3 h-3 mr-1" /> Copy
                 </Button>
-                <span className="text-[10px] text-stone-400 font-mono">
-                  {existingFsId}
-                </span>
               </div>
-            ) : (
-              <div className="mt-2">
-                <div className="flex items-center gap-2">
-                  <Input
-                    size="sm"
-                    placeholder="Paste FamilySearch person ID"
-                    value={fsIdInput}
-                    onChange={(e) => setFsIdInput(e.target.value)}
-                    className="flex-1 text-xs"
-                  />
+            </div>
+
+            {/* Source Title */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">2. Source Title</div>
+                <div className="text-xs text-stone-600 flex-1 font-mono bg-white p-2 rounded border border-stone-200 break-all">
+                  {familySearchData.sourceTitle}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-7 px-2"
+                  onClick={() => navigator.clipboard.writeText(familySearchData.sourceTitle)}
+                >
+                  <Copy className="w-3 h-3 mr-1" /> Copy
+                </Button>
+              </div>
+            </div>
+
+            {/* Source Type */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">3. Source Type</div>
+                <div className="text-xs text-stone-600 flex-1">
+                  {familySearchData.sourceType.includes('Add a Memory') ? (
+                    <span className="inline-flex items-center gap-1">
+                      Add a Memory → Upload Memory
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-6 px-1 ml-2"
+                        onClick={() => navigator.clipboard.writeText('Add a Memory → Upload Memory')}
+                      >
+                        <Copy className="w-2 h-2 mr-1" /> Copy
+                      </Button>
+                    </span>
+                  ) : (
+                    <span className="text-stone-500">Web Page URL (not available)</span>
+                  )}
+                </div>
+                {familySearchData.sourceType.includes('Add a Memory') && (
                   <Button
                     size="sm"
                     variant="outline"
                     className="text-xs h-7 px-2"
-                    disabled={!fsIdInput.trim()}
                     onClick={() => {
-                      navigator.clipboard.writeText(fsIdInput.trim());
-                      setStatus(`Saved: FamilySearch ID ${fsIdInput.trim()} copied`);
+                      navigator.clipboard.writeText('Add a Memory → Upload Memory');
+                      callApiOpenInFinder(recordId);
                     }}
                   >
-                    <Copy className="w-3 h-3 mr-1" /> Save ID
+                    Show in Finder
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {/* Citation */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">4. Citation</div>
+                <div className="text-xs text-stone-600 flex-1 font-mono bg-white p-2 rounded border border-stone-200 break-all">
+                  {familySearchData.citation}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-7 px-2"
+                  onClick={() => navigator.clipboard.writeText(familySearchData.citation)}
+                >
+                  <Copy className="w-3 h-3 mr-1" /> Copy
+                </Button>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">5. Notes</div>
+                <div className="text-xs text-stone-600 flex-1 space-y-2">
+                  <div>
+                    <div className="font-semibold text-stone-700 text-[10px] mb-1">English</div>
+                    <div className="font-mono bg-white p-2 rounded border border-stone-200 text-[10px] break-all">
+                      {familySearchData.notes.english}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-stone-700 text-[10px] mb-1">Italian</div>
+                    <div className="font-mono bg-white p-2 rounded border border-stone-200 text-[10px] break-all">
+                      {familySearchData.notes.italian}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs h-7 px-2"
+                    onClick={() => navigator.clipboard.writeText(familySearchData.notes.english)}
+                  >
+                    <Copy className="w-3 h-3 mr-1" /> Copy English
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs h-7 px-2"
+                    onClick={() => navigator.clipboard.writeText(familySearchData.notes.italian)}
+                  >
+                    <Copy className="w-3 h-3 mr-1" /> Copy Italian
                   </Button>
                 </div>
-                <div className="mt-2">
-                  <p className="text-xs text-stone-500">
-                    No FamilySearch ID saved yet. Paste the person ID from FamilySearch
-                    (e.g., G4QG-QD1) above to save it.
-                  </p>
+              </div>
+            </div>
+
+            {/* Reason to Attach Source */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">6. Reason to Attach Source</div>
+                <div className="text-xs text-stone-600 flex-1 font-mono bg-white p-2 rounded border border-stone-200 break-all">
+                  {familySearchData.reason}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-7 px-2"
+                  onClick={() => navigator.clipboard.writeText(familySearchData.reason)}
+                >
+                  <Copy className="w-3 h-3 mr-1" /> Copy
+                </Button>
+              </div>
+            </div>
+
+            {/* Vital Tags */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">7. Vital Tags</div>
+                <div className="text-xs text-stone-600 flex-1">
+                  <div className="flex flex-wrap gap-1">
+                    {familySearchData.vitalTags.map((tag, index) => (
+                      tag && (
+                        <span key={index} className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-700 rounded text-[10px] font-mono">
+                          {tag.trim()}
+                        </span>
+                      )
+                    ))}
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
+
+            {/* Add to Source Box */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="text-xs font-semibold text-stone-700 w-32">8. Add Source to My Source Box</div>
+                <div className="text-xs text-stone-600 flex-1">
+                  {familySearchData.addToSourceBox.includes('Yes') ? (
+                    <span className="text-emerald-700 font-semibold">Yes</span>
+                  ) : (
+                    <span className="text-stone-500">No</span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
