@@ -1,16 +1,16 @@
-import type { RecordFrontMatter, WorkflowStep } from './record';
+import type { RecordFrontMatter, WorkflowStep } from '@/types/record';
+import { parseRecordMarkdown, getWorkflowStep, getWorkflowStepNumber } from './records';
 
 /**
- * Record loader: provides record step info from record.md front matter.
- *
- * record.md front matter is the SOURCE OF TRUTH for step status.
- * lifeEvents in familyData.ts only links recordId — step is computed here.
- *
- * Record steps are hardcoded here (synced from record.md front matter).
- * Update this map when a record's step changes.
+ * Record loader. record.md front matter is the ONLY source of a record's status.
+ * Every records/<id>/record.md is read at build/dev time via import.meta.glob,
+ * so nothing here is ever edited by hand. When a record.md changes (e.g. via the
+ * local update endpoint), Vite reloads it automatically.
  */
 
-interface RecordEntry {
+export type { WorkflowStep };
+
+export interface RecordEntry {
   id: string;
   frontMatter: RecordFrontMatter;
   body: string;
@@ -18,84 +18,81 @@ interface RecordEntry {
   stepNumber: number;
 }
 
-// Record steps from record.md front matter (source of truth).
-// Update these when a record's step changes (e.g. verified:true → in_app:true).
-const RECORD_STEPS: Record<string, { step: WorkflowStep; stepNumber: number }> = {
-  '1870_Linguaglossa_birth_Emmi-Egidio_atto31': { step: 'filed', stepNumber: 1 },
-  '1900_Linguaglossa_marriage_Emmi-Sgroi_atto59': { step: 'filed', stepNumber: 1 },
-  '1915_Linguaglossa_birth_Emmi-Gregorio_atto202': { step: 'in_app', stepNumber: 4 },
-  '1930_San-Benedetto_birth_Chiappini-Lilia_atto196': { step: 'filed', stepNumber: 1 },
-  '1938-1952_Ascoli-Piceno_school-file_Buatti-Ezio': { step: 'filed', stepNumber: 1 },
-  '1942_Ascoli-Piceno_diploma-register_Buatti-Ezio': { step: 'filed', stepNumber: 1 },
-  '1944-1949_Perugia-University_student-file_Buatti-Ezio': { step: 'filed', stepNumber: 1 },
-  '1952_Branxton-parish_marriage_Buatti-Chiappini': { step: 'filed', stepNumber: 1 },
-  '1952_NSW_marriage_Buatti-Chiappini_reg27340': { step: 'filed', stepNumber: 1 },
-  '1963_Ascoli-Piceno_marriage-transcription_Buatti-Chiappini_atto36': { step: 'filed', stepNumber: 1 },
-  '1991_Maltignano_death_Buatti-Ezio_atto4': { step: 'filed', stepNumber: 1 },
-  '1998_Maltignano_death_Chiappini-Lilia_atto6': { step: 'filed', stepNumber: 1 },
-};
+const rawFiles = import.meta.glob('/records/*/record.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
 
-let recordsCache: Map<string, RecordEntry> | null = null;
-
-function makeEntry(id: string, info: { step: WorkflowStep; stepNumber: number }): RecordEntry {
-  return {
-    id,
-    frontMatter: {
+function buildEntries(): Map<string, RecordEntry> {
+  const map = new Map<string, RecordEntry>();
+  for (const [filePath, raw] of Object.entries(rawFiles)) {
+    const id = filePath.split('/').slice(-2, -1)[0];
+    const { frontMatter, body } = parseRecordMarkdown(raw);
+    map.set(id, {
       id,
-      type: '',
-      date: '',
-      place: '',
-      comune: '',
-      register: '',
-      year: '',
-      atto: '',
-      people: [],
-      source_office: '',
-      protocol: '',
-      transcribed_by: '',
-      filed: info.stepNumber >= 1,
-      transcribed: info.stepNumber >= 2,
-      verified: info.stepNumber >= 3,
-      in_app: info.stepNumber >= 4,
-      on_familysearch: info.stepNumber >= 5,
-    },
-    body: '',
-    step: info.step,
-    stepNumber: info.stepNumber,
-  };
-}
-
-async function loadAllRecords(): Promise<Map<string, RecordEntry>> {
-  if (recordsCache) return recordsCache;
-
-  const cache = new Map<string, RecordEntry>();
-  for (const [id, info] of Object.entries(RECORD_STEPS)) {
-    cache.set(id, makeEntry(id, info));
+      frontMatter: { ...frontMatter, id: frontMatter.id || id },
+      body,
+      step: getWorkflowStep(frontMatter),
+      stepNumber: getWorkflowStepNumber(frontMatter),
+    });
   }
-
-  recordsCache = cache;
-  return cache;
+  return map;
 }
+
+const records = buildEntries();
 
 export async function getRecordStep(recordId: string): Promise<{ step: WorkflowStep; stepNumber: number } | null> {
-  const cache = await loadAllRecords();
-  const entry = cache.get(recordId);
-  if (!entry) return null;
-  return { step: entry.step, stepNumber: entry.stepNumber };
+  const e = records.get(recordId);
+  return e ? { step: e.step, stepNumber: e.stepNumber } : null;
 }
 
-export async function getRecordEntry(recordId: string): Promise<{ frontMatter: RecordFrontMatter; body: string; step: WorkflowStep; stepNumber: number } | null> {
-  const cache = await loadAllRecords();
-  const entry = cache.get(recordId);
-  if (!entry) return null;
-  return { frontMatter: entry.frontMatter, body: entry.body, step: entry.step, stepNumber: entry.stepNumber };
+export async function getRecordEntry(recordId: string): Promise<RecordEntry | null> {
+  return records.get(recordId) ?? null;
 }
 
 export async function getAllRecords(): Promise<RecordEntry[]> {
-  const cache = await loadAllRecords();
-  return Array.from(cache.values());
+  return Array.from(records.values());
 }
 
 export function clearRecordCache(): void {
-  recordsCache = null;
+  /* kept for compatibility; records are reloaded by Vite when files change */
+}
+
+/** Parse the "## FamilySearch" section of a record body into numbered fields. */
+export interface FamilySearchFields {
+  eventDate: string;
+  sourceTitle: string;
+  sourceType: string;
+  citation: string;
+  notes: string;
+  reason: string;
+  vitalTags: string;
+  sourceBox: string;
+}
+
+export function parseFamilySearchSection(body: string): FamilySearchFields | null {
+  const start = body.indexOf('## FamilySearch');
+  if (start === -1) return null;
+  const rest = body.slice(start + '## FamilySearch'.length);
+  const end = rest.search(/\n## /);
+  const section = end === -1 ? rest : rest.slice(0, end);
+  const fields: Record<string, string> = {};
+  const parts = section.split(/\n### /).slice(1);
+  for (const part of parts) {
+    const nl = part.indexOf('\n');
+    const heading = (nl === -1 ? part : part.slice(0, nl)).trim();
+    const num = heading.match(/^(\d)/)?.[1] ?? '';
+    fields[num] = (nl === -1 ? '' : part.slice(nl + 1)).trim();
+  }
+  return {
+    eventDate: fields['1'] ?? '',
+    sourceTitle: fields['2'] ?? '',
+    sourceType: fields['3'] ?? '',
+    citation: fields['4'] ?? '',
+    notes: fields['5'] ?? '',
+    reason: fields['6'] ?? '',
+    vitalTags: fields['7'] ?? '',
+    sourceBox: fields['8'] ?? '',
+  };
 }

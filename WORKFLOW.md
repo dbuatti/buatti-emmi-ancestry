@@ -67,6 +67,12 @@ Run these steps whenever asked to **process <file>**:
 - Record `original_filename` and `original_sha256` in record.md front matter
 - Create `records/<id>/record.md` with front matter: `filed: true`, everything else blank/false
 
+### Step 1.5 — Online link (if any)
+- Ask the user: "Is there an online link to this record's image (FamilySearch, Antenati, etc.)?"
+- If yes, record it as `image_link` in front matter (if it's the main source image)
+- Any additional related URLs go in `links:` with a short label
+- If `image_link` is empty and the link is from FamilySearch or Antenati, save it as `image_link`
+
 ### Step 2 — Transcribe
 
 **Typed documents:** User pastes text from Preview (Live Text) plus a screenshot.
@@ -172,4 +178,8 @@ transcribed: true | false
 verified: true | false       # only Daniele sets true
 in_app: true | false
 on_familysearch: true | false   # only Daniele sets true
+image_link: URL  # online link to original image (FamilySearch, Antenati, etc.)
+links:           # any other related URLs
+  - label: description
+    url: https://...
 ```

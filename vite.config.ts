@@ -159,6 +159,7 @@ function localRecordsApiPlugin() {
             .map((f) => ({
               name: f,
               path: `/records-local/${recordId}/${encodeURIComponent(f)}`,
+              absPath: path.join(dir, f),
               ext: path.extname(f).toLowerCase(),
             }));
           return sendJson(res, 200, { files });
@@ -206,6 +207,80 @@ function localRecordsApiPlugin() {
                   }
                   return sendJson(res, 200, { ok: true, path: realPath });
                 });
+              } catch (e: any) {
+                return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/update-record-links/<id> ----
+        if (method === "POST" && url.startsWith("/api/update-record-links/")) {
+          const recordId = url.split("/").pop() || "";
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          readBody(req)
+            .then(async (raw) => {
+              try {
+                const { links } = JSON.parse(raw);
+                if (!Array.isArray(links)) {
+                  return sendJson(res, 400, { error: "links must be an array" });
+                }
+                const recordMd = path.resolve(
+                  RECORDS_LOCAL,
+                  "..",
+                  "records",
+                  recordId,
+                  "record.md"
+                );
+                if (!fs.existsSync(recordMd)) {
+                  return sendJson(res, 404, { error: "Record not found" });
+                }
+                let fileRaw = fs.readFileSync(recordMd, "utf-8");
+                const fmMatch = fileRaw.match(
+                  /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
+                );
+                if (!fmMatch) {
+                  return sendJson(res, 500, { error: "Invalid front matter" });
+                }
+                const [, fmYaml, bodyText] = fmMatch;
+                const lines = fmYaml.split("\n");
+                let newYaml: string;
+
+                // Remove any existing links block
+                let filteredLines: string[] = [];
+                let inLinksBlock = false;
+                for (const line of lines) {
+                  if (line.startsWith("links:")) {
+                    inLinksBlock = true;
+                    continue;
+                  }
+                  if (inLinksBlock) {
+                    if (line.trim() && !line.startsWith(" ")) {
+                      inLinksBlock = false;
+                      filteredLines.push(line);
+                    }
+                    continue;
+                  }
+                  filteredLines.push(line);
+                }
+
+                // Append new links block
+                if (links.length > 0) {
+                  filteredLines.push("links:");
+                  for (const link of links) {
+                    filteredLines.push(`  - label: ${link.label}`);
+                    filteredLines.push(`    url: ${link.url}`);
+                  }
+                }
+
+                newYaml = filteredLines.join("\n");
+                const newRaw = `---\n${newYaml}\n---\n${bodyText}\n`;
+
+                fs.writeFileSync(recordMd, newRaw);
+                return sendJson(res, 200, { ok: true });
               } catch (e: any) {
                 return sendJson(res, 500, { error: e.message });
               }

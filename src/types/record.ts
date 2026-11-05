@@ -1,3 +1,8 @@
+export interface RecordLink {
+  label: string;
+  url: string;
+}
+
 export interface RecordFrontMatter {
   id: string;
   type: string;
@@ -17,6 +22,8 @@ export interface RecordFrontMatter {
   verified: boolean;
   in_app: boolean;
   on_familysearch: boolean;
+  image_link?: string;
+  links?: RecordLink[];
 }
 
 export interface RecordData {
