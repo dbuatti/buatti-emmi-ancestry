@@ -2298,7 +2298,7 @@ export const initialPeople: Person[] = [
       repatriation: 'Repatriated to Italy on 30 September 1946 aboard H.T. Chitral.'
     },
     records: [
-      { type: 'Birth (Civil)', status: 'Found', notes: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30 Jun 2026. Date: 23 Oct 1915. (4-day discrepancy with baptismal record: 27 Oct 1915.)' },
+      { type: 'Birth (Civil)', status: 'Found', notes: 'Estratto atto n. 202, Comune di Linguaglossa — issued 30 Jun 2026. Date: 23 Oct 1915. (4-day discrepancy with baptismal record: 27 Oct 1915.)', recordId: '1915_Linguaglossa_birth_Emmi-Gregorio_atto202' },
       { type: 'Baptismal Record', status: 'Found', notes: 'Parish register Linguaglossa, DGS 5455112 — baptised 5 Dec 1915, entry N.251, folio 80. Officiated by Fr. Rochus La Rosa (per license of Archpriest Blasius Palermo). Godmother: Rosaria Emmi (previously unknown Emmi relative — possibly Egidio\'s sister or cousin). Midwife: Giuseppa Nicotra. Born 27 Oct 1915. No marriage annotations in margin.' },
       { type: 'Death Record', status: 'Found', notes: 'Confirmation: death notice in Sydney Morning Herald 30 Nov 1979 (Ryerson Index). Died 24 Nov 1979, age 64, late of Stanmore, formerly of Highett, Melbourne.' },
       { type: 'Burial Record', status: 'Found', notes: 'Rookwood Catholic Cemetery, Lawn (5) plot 1070' },

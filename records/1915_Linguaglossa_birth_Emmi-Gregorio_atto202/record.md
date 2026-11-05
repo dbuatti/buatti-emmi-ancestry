@@ -15,7 +15,7 @@ translated_by: "Nemotron 3.5 Super VL (free)"
 filed: true
 transcribed: true
 verified: true
-in_app: false
+in_app: true
 on_familysearch: false
 ---
 
