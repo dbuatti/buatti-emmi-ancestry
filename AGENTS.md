@@ -98,6 +98,22 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 
 - [2026-11-05] **Links inside record notes are now clickable.** New `src/components/LinkifiedText.tsx` — splits any string on `https?://…` and renders real anchors (`target="_blank"`, `rel="noopener noreferrer"`, burgundy dotted underline, `break-all`). Wired into: `PersonModal` (person notes, record notes), `ResearchLog` (lead description, next steps, "sources checked", ruled-out reason). This fixes every URL that was pasted inline as plain text — no per-entry data surgery needed. Also added an optional **`link`** field to `RecordStatus` in `src/types/index.ts`, rendered in `PersonModal` as an **"Open record ↗"** button; migrated Concetta Sgroi's 1877 birth act to it (`antenati…/an_ua81372/LeG9zQR`), with the URL moved out of the note text. `exportFamilyTree.ts` now prints `— Link: …` after a record's notes, so nothing is lost from the paste-into-Claude export. Verified: build passes, eslint clean on the three touched components, tsc still 36 pre-existing `familyData.ts` errors, export regenerated (205,293 chars), and the splitter unit-checked against the real note strings (multiple URLs, trailing full stop handled).
 
+## Future capability: Email and Document Intelligence
+
+The Research Operations Centre will eventually understand the relationship between Gmail
+correspondence, document attachments and genealogy records. Design decisions:
+1. Existing `attachments` table is the starting point — extend it, don't create a parallel DB.
+2. Preserve full provenance: account, message, thread, attachment, original file.
+3. Searchable attachment inventory as part of the correspondence experience.
+4. Eventually classify documents, extract names/dates/places, suggest links to genealogy.
+5. All person/record matching requires user approval.
+6. Document lifecycle: discovered, needs_review, verified, filed, duplicate.
+7. Outstanding research requests stay in genealogy workflow (lifeEvents), not attachment statuses.
+8. Never overwrite existing records or discard original sources.
+
+Implementation not started. Phases: 3 (UI dashboard), 4 (backend intelligence), 5 (document UI).
+
+---
 ## Open next-step candidates
 - **PRIORITY — Curia di San Benedetto del Tronto (Sig.ra Veccia): Irma Pirri's death/burial record.** The "after September 2026" trigger has passed, and the Curia is a *different* institution from the Comune, so writing now does not crowd Rosa De Falco. Ask for the parish death/burial entry, window 1930–1952, mentioning the "San Giorgio" story and that Irma was deceased by the marriage of her daughter Lilia (4 Oct 1952).
 - **D13 (Ida + Alfredo death acts) — SENT 05/11/2026 to Ascoli.** WAITING. Highest-value reply in the pipeline: Ida's father's name settles 1893 vs 1904.
@@ -145,3 +161,14 @@ Read it BEFORE proposing any next step, and APPEND to the log after each action 
 - [2026-11-06] **D15 SENT** (06/11/2026): Curia di San Benedetto del Tronto (Sig.ra Veccia, curia@diocesisbt.it) — Irma Pirri's parish death/burial entry 1930–1952, plus whether any parish answered the July 2026 request. Awaiting reply; no further SBT action until De Falco replies. HANDOFF.md updated (D15 moved to awaiting replies; ranked next steps adjusted — D13 now #1).
 
 - [2026-11-06] **Bottom-up queue implemented (FIRST JOB).** `scripts/next-task.ts` no longer hard-codes `gregorio-emmi`: `getNextTask` walks a queue ordered by stored generation (highest first, Daniele first, then by line), skipping finished/waiting people; added `relationship` to `NextTask`, person-skip support (`personSkips` param + `src/data/person-skips.json`), living-person handling (max step 4, no FS person check), waiting events don't block. `NextGuide.tsx` shows "Working on: <name> (<relationship>)" and a "Skip this person" button; new `/api/person-skip` endpoint + `callApiPersonSkip`. Documented "identify <folder>" in WORKFLOW.md/AGENTS.md. Seeded lifeEvents for Daniele, Alfred, Venera so the card starts with Daniele. Verified with node: first task = Daniele, get_document, birth. `pnpm build` passes. Committed, not pushed.
+
+- [2026-11-07] **RESEARCH OPERATIONS CENTRE — PHASE 1 BUILT AND VERIFIED GREEN** (new feature session).
+  - New tab `research-centre` (dashboard): stats (definite / possible / unreviewed / total), distribution by account, Tabs with Definite + Possible lists.
+  - New files: `src/pages/ResearchCentre.tsx` (dashboard + types), `src/components/CorrespondenceList.tsx` (search/sort/filters/table), `src/components/MessageDetail.tsx` (dialog).
+  - `vite.config.ts`: new `localCorrespondenceApiPlugin` with `GET /api/correspondence/health`, `/genealogy/summary`, `/genealogy/messages`, `/messages/:id/detail`. Dev-only, parameterized SQL, bound via existing local-only setup. `scripts/correspondence-db.d.mts` added for TS resolution of the `.mjs` module.
+  - DB state: definite=33, possible=2, unreviewed=5993, total=6028 (no overlap; integrity ok; pre-fix backup `/tmp/correspondence.db.backup_20261106_224638_pre_fix`, user_version 6).
+  - Verification this session: `npx vite build` passes; **real** typecheck is `npx tsc -b --noEmit` (plain `tsc --noEmit` silently passes on the solution-style tsconfig); `tsc -b` clean for all NEW files (remaining errors are pre-existing: familyData.ts, RecordViewer, RecordPage, NextGuide, records.ts). eslint clean for new files (only pre-existing vite.config/records-plugin debt remains). Dev server live on **127.0.0.1:8080** (had to restart — stale process was serving failing responses; after restart all endpoints OK). Python tests 117/117 pass; Node `scripts/test-correspondence-db.mjs` — fixed 2 stale expectations (schema v5→v6, persistence check) and now 11/11 pass. `pnpm build` passes; NO correspondence data/DB in `dist/`.
+  - MessageDetail now self-fetches `/api/correspondence/messages/:id/detail` (hooks before early return; `detail ?? message`; clears on close). Fixed lucide icon imports (`Document`/`BarChart3` don't exist in lucide-react 0.462 → `FileText`/`TrendingUp`). Replaced `String.replaceAll` (ES2020 lib) with `.replace(/_/g, ' ')`. StatCard icon prop typed `ReactNode`.
+  - KNOWN pre-existing (not this session's scope): `pnpm lint` errors in shadcn ui/command.tsx, ui/textarea.tsx, tailwind.config.ts; tsc errors in familyData.ts etc.; `scripts/test-correspondence-db.mjs` had stale v5 expectations (fixed this session).
+  - Phase 1 scope respected: no AI/OCR/sending; SQLite server-side; no new deps.
+

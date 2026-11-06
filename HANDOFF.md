@@ -1,3 +1,7 @@
+# Person page (built by Claude, 5 Nov 2026, evening)
+/people/:personId (src/pages/PersonPage.tsx). Extras saved to src/data/person-meta.json via POST /api/person-meta (src/lib/person-meta.ts; withMeta() merges over familyData). Sections: header + progress; FamilySearch ID (paste link or ID), other FamilySearch profiles, links; notes; life events with the next action per row (process inbox / transcribe next / Open check / run step 4 / FamilySearch card / Requested-Received); records naming the person; FamilySearch page check. PersonModal has "Open full page →".
+STILL TO DO (part 2): facts with sourced/unsourced/provisional badges; open questions + research leads for the person; "Next for this person" (Next card filtered); public build read-only and hiding living people's details; make tree clicks open the page directly; NextGuide person name → link to the page.
+
 # FIRST JOB next session — "Bottom-up queue" prompt (paste into OpenCode, coding model)
 
 ```
@@ -34,7 +38,42 @@ Next: commit + push; make GitHub repo private; send Fiumefreddo draft (info@ Dra
 
 # HANDOFF.md — briefing pack for a fresh session
 
-**Last updated: 06/11/2026 (bottom-up queue)**
+## Future capability: Email and Document Intelligence (added 06/11/2026)
+
+The Research Operations Centre will eventually understand the relationship between Gmail
+correspondence, document attachments and genealogy records.
+
+**Design decisions:**
+1. The existing `attachments` table is the starting point. Extend it rather than creating
+   a parallel document database.
+2. Preserve full provenance: original Gmail account, message, thread, attachment and
+   original file. Never discard the original source.
+3. Build a searchable attachment inventory as part of the correspondence experience.
+4. Eventually classify documents, extract names/dates/places and suggest links to
+   genealogy people and life events.
+5. All person and record matching must require user approval. Never silently assign
+   uncertain documents to a person.
+6. Document lifecycle statuses: discovered, needs_review, verified, filed, duplicate.
+7. Outstanding research requests stay in the existing genealogy research workflow
+   (`lifeEvents` with `known_no_record`), not as attachment statuses.
+8. Never overwrite existing records or discard original sources.
+
+**Implementation phases (not yet started):**
+- Phase 3 (UI): correspondence dashboard — prerequisite for document intelligence UI
+- Phase 4 (backend): attachment inventory API, filename-based record-type classifier,
+  cross-account duplicate detection, document status column, link suggestion engine
+- Phase 5 (UI): document review workflow, "open original email", "save to record"
+
+**Current readiness:** Data layer is well-positioned. Attachments table has filename,
+mime_type, size_bytes, gmail_attachment_id, local_path, ocr_text, unavailable tracking.
+Messages have account_email, gmail_message_id, gmail_thread_id, subject, snippet,
+body_text. Full provenance chain exists. Gaps: no document classification, no entity
+extraction, no lifecycle tracking beyond availability, no bridge to genealogy records.
+
+---
+# HANDOFF.md — briefing pack for a fresh session
+
+**Last updated: 07/11/2026 (Research Operations Centre Phase 1)**
 **Repo:** `~/dyad-apps/Buatti-Emmi Ancestry` · branch `main`
 **Read this first, then `AGENTS.md` (the full PM log).** This file is a distilled briefing;
 `AGENTS.md` is the unabridged history and is where new entries get appended.
@@ -283,6 +322,18 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
 
 ## 12. Change history of this document
 
+- **07/11/2026** — **Research Operations Centre Phase 1 built and verified green.** New tab
+  `research-centre` (dashboard + definite/possible lists). New: `src/pages/ResearchCentre.tsx`,
+  `src/components/CorrespondenceList.tsx`, `src/components/MessageDetail.tsx`,
+  `src/lib/exportFamilyTree.ts`-style dev endpoints in `vite.config.ts`
+  (`localCorrespondenceApiPlugin`: `/api/correspondence/health`,
+  `/genealogy/summary`, `/genealogy/messages`, `/messages/:id/detail`). DB: definite=33,
+  possible=2, unreviewed=5993, total=6028 (no overlap; integrity ok; backup pre-fix at
+  `/tmp/correspondence.db.backup_20261106_224638_pre_fix`, user_version 6). Build passes,
+  `tsc -b` clean for new files, eslint clean for new files, dev server live on
+  **127.0.0.1:8080**, all four endpoints curl-verified, Python tests 117/117 and Node tests
+  11/11 pass. MessageDetail now fetches its own detail via `/messages/:id/detail`. No
+  correspondence data in `dist/`.
 - **06/11/2026** — D15 (Curia letter) sent to curia@diocesisbt.it; moved to "Awaiting replies". Updated ranked next steps; removed D15 from top priority (step 1 now: wait on D13).
 - **06/11/2026 (bottom-up queue)** — Replaced the hard-coded `gregorio-emmi` pilot in `scripts/next-task.ts` with an automatic bottom-up queue: people ordered by stored generation (highest first), Daniele first, then by line; first non-finished/non-waiting person is worked on. "Finished" = every life event at step 5 (step 4 for living people) and FamilySearch person check clear; events waiting on a request (<30 days) don't block. Added `relationship` to NextTask and "Working on: <name> (<relationship>)" in the card. Added person-level "Skip this person" (persists `skippedOn` in `src/data/person-skips.json`, deprioritises the person). Living people skip step 5 and the FS person check. Added `/api/person-skip` endpoint and `callApiPersonSkip`. Documented "identify <folder>" for `_unsorted/` in WORKFLOW.md/AGENTS.md. Seeded lifeEvents for Daniele, Alfred and Venera so the card starts with Daniele. Committed, not pushed.
 - **05/11/2026** — created. Captures: the export tool + data-model traps, the cemetery
