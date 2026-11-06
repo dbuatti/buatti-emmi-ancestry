@@ -1,0 +1,234 @@
+import React, { useState, useEffect, useMemo, type ReactNode } from 'react';
+import { TrendingUp, Search, Filter, FileText, Users, Calendar, Mail, Download, X, ExternalLink } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
+import { LinkifiedText } from '@/components/LinkifiedText';
+import { CorrespondenceList } from '@/components/CorrespondenceList';
+import { MessageDetail } from '@/components/MessageDetail';
+
+export interface CorrespondenceMessage {
+  id: number;
+  account_email: string;
+  gmail_message_id: string;
+  gmail_thread_id: string;
+  direction: 'in' | 'out';
+  from_name?: string;
+  from_email?: string;
+  subject?: string;
+  snippet?: string;
+  to_json?: string;
+  cc_json?: string;
+  received_at?: string;
+  sent_at?: string;
+  message_type?: string;
+  action_status?: string;
+  genealogy_relevance?: string;
+  body_text?: string;
+  body_html_path?: string;
+  raw_path?: string;
+  attachments?: CorrespondenceAttachment[];
+  attachment_count?: number;
+}
+
+export interface CorrespondenceAttachment {
+  filename?: string;
+  mime_type?: string;
+  size_bytes?: number;
+  local_path?: string;
+  unavailable?: boolean;
+  unavailable_reason?: string;
+  gmail_attachment_id?: string;
+}
+
+export interface CorrespondenceStats {
+  definite: number;
+  possible: number;
+  unreviewed: number;
+  total: number;
+  by_account: { [key: string]: number };
+  by_type: { [key: string]: number };
+}
+
+export function ResearchCentre() {
+  const { toast } = useToast();
+  const [stats, setStats] = useState<CorrespondenceStats | null>(null);
+  const [selectedMessage, setSelectedMessage] = useState<CorrespondenceMessage | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch stats from API
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/correspondence/genealogy/summary');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        const data = await response.json();
+        setStats(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        toast({
+          title: 'Error',
+          description: 'Failed to load correspondence stats',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [toast]);
+
+  const StatCard = ({ title, value, subtitle, icon, color }: {
+    title: string;
+    value: number;
+    subtitle?: string;
+    icon: ReactNode;
+    color: string;
+  }) => (
+    <Card className="border-2 border-stone-200 bg-white">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+          {icon}
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-3xl font-bold text-stone-900">{value.toLocaleString()}</div>
+        {subtitle && <div className="text-xs text-stone-500 mt-1">{subtitle}</div>}
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#FAF6F0] text-stone-900 font-serif selection:bg-[#800020]/20 selection:text-[#800020]">
+      <main className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-stone-900 mb-2 flex items-center gap-3">
+            <TrendingUp className="w-8 h-8 text-[#800020]" />
+            Research Operations Centre
+          </h1>
+          <p className="text-stone-600 font-sans">
+            Genealogy-related correspondence analysis and research workspace
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#800020]"></div>
+          </div>
+        ) : error ? (
+          <Card className="border-red-200 bg-red-50">
+            <CardContent className="pt-6">
+              <p className="text-red-600">Error loading data: {error}</p>
+            </CardContent>
+          </Card>
+        ) : stats ? (
+          <React.Fragment>
+            {/* Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <StatCard
+                title="Definite"
+                value={stats.definite}
+                subtitle="Verified genealogy correspondence"
+                icon={<FileText className="w-4 h-4 text-green-600" />}
+                color="green"
+              />
+              <StatCard
+                title="Possible"
+                value={stats.possible}
+                subtitle="Potentially genealogy-related"
+                icon={<Search className="w-4 h-4 text-yellow-600" />}
+                color="yellow"
+              />
+              <StatCard
+                title="Unreviewed"
+                value={stats.unreviewed}
+                subtitle="Awaiting classification"
+                icon={<Mail className="w-4 h-4 text-gray-600" />}
+                color="gray"
+              />
+              <StatCard
+                title="Total Messages"
+                value={stats.total}
+                subtitle="All correspondence"
+                icon={<TrendingUp className="w-4 h-4 text-blue-600" />}
+                color="blue"
+              />
+            </div>
+
+            {/* Accounts Breakdown */}
+            <Card className="mb-6 border-stone-200">
+              <CardHeader>
+                <CardTitle className="text-lg font-serif flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Distribution by Account
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {Object.entries(stats.by_account).map(([account, count]) => (
+                    <div key={account} className="text-center p-3 bg-stone-50 rounded-lg">
+                      <div className="text-sm font-medium text-stone-700 truncate" title={account}>
+                        {account.split('@')[0]}
+                      </div>
+                      <div className="text-xl font-bold text-[#800020]">{count}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Main Content Area */}
+            <Tabs defaultValue="definite" className="space-y-4">
+              <TabsList className="bg-[#F4EFE6] border border-stone-200">
+                <TabsTrigger value="definite" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white">
+                  Definite Messages ({stats.definite})
+                </TabsTrigger>
+                <TabsTrigger value="possible" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white">
+                  Possible Messages ({stats.possible})
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="definite" className="space-y-4">
+                <CorrespondenceList
+                  relevance="definite"
+                  onSelectMessage={setSelectedMessage}
+                  setIsDetailOpen={setIsDetailOpen}
+                />
+              </TabsContent>
+
+              <TabsContent value="possible" className="space-y-4">
+                <CorrespondenceList
+                  relevance="possible"
+                  onSelectMessage={setSelectedMessage}
+                  setIsDetailOpen={setIsDetailOpen}
+                />
+              </TabsContent>
+            </Tabs>
+          </React.Fragment>
+        ) : null}
+      </main>
+
+      {/* Message Detail Dialog */}
+      <MessageDetail
+        message={selectedMessage}
+        open={isDetailOpen}
+        onOpenChange={(open) => {
+          setIsDetailOpen(open);
+          if (!open) setSelectedMessage(null);
+        }}
+      />
+    </div>
+  );
+}

@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import React from 'react';
 
 /**
  * Matches absolute http(s) URLs inside free text. Trailing punctuation is excluded so a
@@ -45,7 +45,7 @@ export function LinkifiedText({ text, className, stopPropagation, linkClassName 
             {part}
           </a>
         ) : (
-          <Fragment key={i}>{part}</Fragment>
+          <React.Fragment key={i}>{part}</React.Fragment>
         ),
       )}
     </span>

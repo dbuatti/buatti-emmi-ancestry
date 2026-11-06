@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import dyadComponentTagger from "@dyad-sh/react-vite-component-tagger";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -7,6 +7,21 @@ import os from "os";
 import type { ServerResponse, IncomingMessage } from "http";
 
 const RECORDS_LOCAL = path.resolve(__dirname, "records-local");
+
+interface CorrespondenceStatement {
+  get(...params: unknown[]): Record<string, unknown> | undefined;
+  all(...params: unknown[]): Record<string, unknown>[];
+}
+
+interface CorrespondenceDb {
+  pragma(source: string, options?: Record<string, unknown>): unknown;
+  prepare(source: string): CorrespondenceStatement;
+}
+
+interface CorrespondenceDbModule {
+  getDb: () => CorrespondenceDb;
+  getDbPath: () => string;
+}
 
 /**
  * Vite plugin that registers local-only dev API endpoints:
@@ -19,7 +34,7 @@ const RECORDS_LOCAL = path.resolve(__dirname, "records-local");
  *   GET    /records-local/<id>/<file> (serve a single file, path-traversal safe)
  * Only active in dev mode; never bundled into production.
  */
-function localRecordsApiPlugin() {
+function localRecordsApiPlugin(): Plugin {
   return {
     name: "local-records-api",
     configureServer(server) {
@@ -635,12 +650,207 @@ function localRecordsApiPlugin() {
   };
 }
 
+
+function localCorrespondenceApiPlugin(): Plugin {
+  return {
+    name: "local-correspondence-api",
+    configureServer(server) {
+      let dbModulePromise: Promise<{ getDb: () => CorrespondenceDb; getDbPath: () => string }> | null = null;
+      const loadDbModule = async (): Promise<{ getDb: () => CorrespondenceDb; getDbPath: () => string }> => {
+        if (!dbModulePromise) {
+          dbModulePromise = import("./scripts/correspondence-db.mjs").then(
+            (m) => ({ getDb: m.getDb, getDbPath: m.getDbPath })
+          );
+        }
+        const mod = await dbModulePromise;
+        return mod;
+      };
+      const loadDb = async (): Promise<CorrespondenceDb> => (await loadDbModule()).getDb();
+
+      const sendJson = (res: ServerResponse, status: number, body: unknown) => {
+        res.writeHead(status, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(body));
+      };
+
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url || "";
+        const method = req.method || "GET";
+
+        // ---- GET /api/correspondence/health ----
+        if (method === "GET" && url === "/api/correspondence/health") {
+          try {
+            const db = await loadDb();
+            const version = db.pragma("user_version", { simple: true });
+            const tables = db
+              .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name")
+              .all()
+              .map((r) => String(r.name));
+            const counts: Record<string, number> = {};
+            for (const t of tables) {
+              counts[t] = Number(db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get()?.n ?? 0);
+            }
+            return sendJson(res, 200, {
+              ok: true,
+              dbPath: (await loadDbModule()).getDbPath(),
+              schemaVersion: version,
+              tables,
+              counts,
+            });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/genealogy/summary ----
+        if (method === "GET" && url === "/api/correspondence/genealogy/summary") {
+          try {
+            const db = await loadDb();
+            const definite = Number(db.prepare("SELECT COUNT(*) AS n FROM message_classification WHERE genealogy_relevance = 'definite'").get()?.n ?? 0);
+            const possible = Number(db.prepare("SELECT COUNT(*) AS n FROM message_classification WHERE genealogy_relevance = 'possible'").get()?.n ?? 0);
+            const unreviewed = Number(db.prepare("SELECT COUNT(*) AS n FROM message_classification WHERE genealogy_relevance IS NULL").get()?.n ?? 0);
+            const total = Number(db.prepare("SELECT COUNT(*) AS n FROM messages").get()?.n ?? 0);
+            const byAccountRows = db.prepare(
+              "SELECT m.account_email, COUNT(*) AS n FROM messages m JOIN message_classification mc ON mc.message_id = m.id GROUP BY m.account_email"
+            ).all();
+            const byAccount: Record<string, number> = {};
+            for (const r of byAccountRows) byAccount[String(r.account_email)] = Number(r.n ?? 0);
+            const byTypeRows = db.prepare(
+              "SELECT mc.message_type, COUNT(*) AS n FROM message_classification mc GROUP BY mc.message_type"
+            ).all();
+            const byType: Record<string, number> = {};
+            for (const r of byTypeRows) byType[String(r.message_type || 'unknown')] = Number(r.n ?? 0);
+            return sendJson(res, 200, {
+              ok: true,
+              definite,
+              possible,
+              unreviewed,
+              total,
+              by_account: byAccount,
+              by_type: byType,
+            });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/genealogy/messages ----
+        if (method === "GET" && url.startsWith("/api/correspondence/genealogy/messages")) {
+          try {
+            const db = await loadDb();
+            const urlObj = new URL(url, "http://localhost");
+            const relevance = urlObj.searchParams.get("relevance") || "definite";
+            const account = urlObj.searchParams.get("account");
+            const type = urlObj.searchParams.get("type");
+            const status = urlObj.searchParams.get("status");
+            const search = urlObj.searchParams.get("search");
+            const dateFilter = urlObj.searchParams.get("date");
+
+            const params = [relevance];
+            let whereClause = "mc.genealogy_relevance = ?";
+
+            if (account) {
+              whereClause += " AND m.account_email = ?";
+              params.push(account);
+            }
+            if (type) {
+              whereClause += " AND mc.message_type = ?";
+              params.push(type);
+            }
+            if (status) {
+              whereClause += " AND mc.action_status = ?";
+              params.push(status);
+            }
+            if (search) {
+              whereClause += " AND (m.subject LIKE ? OR m.from_name LIKE ? OR m.from_email LIKE ? OR m.account_email LIKE ? OR m.snippet LIKE ?)";
+              const s = `%${search}%`;
+              params.push(s, s, s, s, s);
+            }
+            if (dateFilter) {
+              const now = new Date();
+              if (dateFilter === "today") {
+                const today = now.toISOString().slice(0, 10);
+                whereClause += " AND m.received_at >= ? AND m.received_at < ?";
+                params.push(`${today}T00:00:00Z`, `${today}T23:59:59Z`);
+              } else if (dateFilter === "week") {
+                whereClause += " AND m.received_at >= ?";
+                params.push(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString());
+              } else if (dateFilter === "month") {
+                whereClause += " AND m.received_at >= ?";
+                params.push(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+              } else if (dateFilter === "year") {
+                whereClause += " AND m.received_at >= ?";
+                params.push(new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString());
+              }
+            }
+
+            const rows = db.prepare(
+              `SELECT m.id, m.account_email, m.gmail_message_id, m.gmail_thread_id, m.direction,
+                      m.from_name, m.from_email, m.subject, m.snippet, m.received_at, m.sent_at,
+                      mc.message_type, mc.action_status, mc.genealogy_relevance,
+                      (SELECT COUNT(*) FROM attachments a WHERE a.message_id = m.id) AS attachment_count
+               FROM messages m
+               JOIN message_classification mc ON mc.message_id = m.id
+               WHERE ${whereClause}
+               ORDER BY m.received_at DESC`
+            ).all(params);
+
+            return sendJson(res, 200, { ok: true, messages: rows, count: rows.length });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/messages/:id/detail ----
+        const messageDetailMatch = url.match(/^\/api\/correspondence\/messages\/(\d+)\/detail$/);
+        if (method === "GET" && messageDetailMatch) {
+          try {
+            const db = await loadDb();
+            const messageId = messageDetailMatch[1];
+            const msg = db.prepare(
+              `SELECT m.id, m.account_email, m.gmail_message_id, m.gmail_thread_id, m.direction,
+                      m.from_name, m.from_email, m.to_json, m.cc_json, m.subject, m.received_at,
+                      m.sent_at, m.snippet, m.body_text, m.body_html_path, m.language, m.raw_path,
+                      mc.message_type, mc.action_status, mc.genealogy_relevance
+               FROM messages m
+               JOIN message_classification mc ON mc.message_id = m.id
+               WHERE m.id = ?`
+            ).get(messageId);
+
+            if (!msg) {
+              return sendJson(res, 404, { ok: false, error: "Message not found" });
+            }
+
+            const attachments = db.prepare(
+              `SELECT id, filename, safe_filename, mime_type, size_bytes, gmail_attachment_id,
+                      local_path, ocr_text, created_at, unavailable, unavailable_reason, unavailable_at
+               FROM attachments WHERE message_id = ?`
+            ).all(messageId);
+
+            return sendJson(res, 200, {
+              ok: true,
+              message: {
+                ...msg,
+                attachments,
+                attachment_count: attachments.length,
+              },
+            });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        next();
+      });
+    },
+  };
+}
+
 export default defineConfig(() => ({
   server: {
     host: "::",
     port: 8080,
   },
-  plugins: [dyadComponentTagger(), react(), localRecordsApiPlugin()],
+  plugins: [dyadComponentTagger(), react(), localRecordsApiPlugin(), localCorrespondenceApiPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

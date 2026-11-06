@@ -7,6 +7,13 @@ private/
 _unsorted/
 copy-log.csv
 
+# Correspondence SQLite (local only, never committed or deployed)
+.local/correspondence.db
+.local/correspondence.db-wal
+.local/correspondence.db-shm
+src/data/correspondence.json
+src/data/gmail-scan-state.json
+
 # Standard
 node_modules/
 dist/
