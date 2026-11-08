@@ -12,13 +12,22 @@ import { parseRecordMarkdown, getWorkflowStepNumber } from '@/lib/records';
 import type { RecordFrontMatter, RecordLink } from '@/types/record';
 import { callApiOpenInFinder, callApiUpdateLinks } from '@/components/next-guide-api';
 
-import gregorioBirthRecordMd from '../../records/1915_Linguaglossa_birth_Emmi-Gregorio_atto202/record.md?raw';
-import gregorioBaptismRecordMd from '../../records/1915_Linguaglossa_baptism_Emmi-Gregorio_n251/record.md?raw';
+/**
+ * Every records/<id>/record.md is loaded at build/dev time via import.meta.glob
+ * (same mechanism as src/lib/record-loader.ts) so no record dead-ends with
+ * "Record not found". A record.md change (via the local update endpoint) is
+ * reloaded by Vite automatically.
+ */
+const rawRecordFiles = import.meta.glob('/records/*/record.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
 
-const RECORDS: Record<string, string> = {
-  '1915_Linguaglossa_birth_Emmi-Gregorio_atto202': gregorioBirthRecordMd,
-  '1915_Linguaglossa_baptism_Emmi-Gregorio_n251': gregorioBaptismRecordMd,
-};
+const RECORDS: Record<string, string> = {};
+for (const [filePath, raw] of Object.entries(rawRecordFiles)) {
+  RECORDS[filePath.split('/').slice(-2, -1)[0]] = raw;
+}
 
 export default function RecordPage() {
   const { recordId } = useParams();
@@ -29,7 +38,13 @@ export default function RecordPage() {
   const [newLinkLabel, setNewLinkLabel] = useState<string>('');
 
   const rawMd = RECORDS[recordId ?? ''];
-  const record = rawMd ? parseRecordMarkdown(rawMd) : null;
+  const parsed = rawMd ? parseRecordMarkdown(rawMd) : null;
+  const record = parsed
+    ? {
+        ...parsed,
+        frontMatter: { ...parsed.frontMatter, id: parsed.frontMatter.id || recordId || '' },
+      }
+    : null;
 
   if (!record) {
     return (
@@ -58,8 +73,8 @@ export default function RecordPage() {
       setNewLinkUrl('');
       setNewLinkLabel('');
       window.location.reload();
-    } catch (e: any) {
-      setStatus(`Error: ${e.message}`);
+    } catch (e) {
+      setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
     }
   };
 
@@ -75,8 +90,8 @@ export default function RecordPage() {
       await callApiUpdateLinks(recordId, updatedLinks);
       setStatus('Link deleted');
       window.location.reload();
-    } catch (e: any) {
-      setStatus(`Error: ${e.message}`);
+    } catch (e) {
+      setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
     }
   };
 
@@ -91,8 +106,8 @@ export default function RecordPage() {
       });
       setStatus('Image link saved');
       window.location.reload();
-    } catch (e: any) {
-      setStatus(`Error: ${e.message}`);
+    } catch (e) {
+      setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
     }
   };
 
@@ -285,8 +300,8 @@ export default function RecordPage() {
                   try {
                     await callApiOpenInFinder(recordId);
                     setStatus('Opened in Finder');
-                  } catch (e: any) {
-                    setStatus(`Error: ${e.message}`);
+                  } catch (e) {
+                    setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
                   }
                 }}
               >

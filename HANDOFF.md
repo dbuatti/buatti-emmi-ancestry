@@ -73,7 +73,7 @@ extraction, no lifecycle tracking beyond availability, no bridge to genealogy re
 ---
 # HANDOFF.md — briefing pack for a fresh session
 
-**Last updated: 07/11/2026 (Research Operations Centre Phase 1)**
+**Last updated: 09/11/2026 (audit follow-through: RecordPage loads all 13 records; /api/person-meta endpoint added)**
 **Repo:** `~/dyad-apps/Buatti-Emmi Ancestry` · branch `main`
 **Read this first, then `AGENTS.md` (the full PM log).** This file is a distilled briefing;
 `AGENTS.md` is the unabridged history and is where new entries get appended.
@@ -322,6 +322,24 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
 
 ## 12. Change history of this document
 
+- **09/11/2026 (audit follow-through — two persistence/visibility fixes)** — Followed the audit: implemented the two zero-decision fixes. (1) **RecordPage loads ALL records**: the two hard-coded `?raw` imports are replaced by the same `import.meta.glob('/records/*/record.md')` mechanism as `src/lib/record-loader.ts`; previously `/record/:id` dead-ended with "Record not found" for 11 of the 13 records linked from PersonPage/NextGuide/PersonModal. Defensive fallback: an empty front-matter `id` falls back to the URL `recordId` (record-loader parity). Also cleared the file's pre-existing lint debt (4× `catch (e: any)` → typed) — `npx eslint src/pages/RecordPage.tsx` is clean. **Verified live**: the dev-served module imports all 13 record.md files. (2) **`POST /api/person-meta` implemented** in `localRecordsApiPlugin` (mirrors `/api/event-override`: shallow merge, null deletes the field, `patch:null` deletes the entry; validates `personId`). The audit found the endpoint missing (404) — the PersonPage Save buttons for FamilySearch ID / alt profiles / links / notes could never persist. **Verified end-to-end**: POST → file updated → `patch:null` → `src/data/person-meta.json` byte-identical to pre-test (md5 `1f707cee…`). Gates: `pnpm build` passes; full `tsc -b` error set unchanged (54, all pre-existing incl. the RecordPage `size="sm"` pair and the vite.config `lastLines` pair from uncommitted correspondence work); eslint shows **zero errors inside the inserted vite.config block** (445–485). Committed, not pushed.
+- **07/11/2026 (Phase 2 — attachment download live)** — OAuth for `info@danielebuatti.com`
+  re-authorised and confirmed working (dry-run sync OK). Added `--download` /
+  `--download-message <GMAIL_MESSAGE_ID>` to `scripts/sync-gmail.py`:
+  `download_attachment()` via `users().messages().attachments().get(userId='me',
+  id=<att>, messageId=<msg>)`, binary-safe base64 decode, writes to
+  `correspondence/attachments/<safe_filename>`, sets `attachments.local_path`, skips rows
+  with `local_path` already set (idempotent). Ran live for Phase 2 test message
+  `1a1abc46de4b71d3` (internal id 14): **9/9 attachments downloaded**, byte-exact size match
+  vs DB `size_bytes`; re-run → 0 candidates (idempotent). `postacert.eml` correctly skipped
+  (no gmail_attachment_id). Also added `getAttachmentsDir()` to `scripts/correspondence-db.mjs`
+  + `.d.mts`. New dev endpoint **GET /api/correspondence/attachments/:id** in
+  `localCorrespondenceApiPlugin` (dev-only, path-traversal safe, 404 if not downloaded).
+  `MessageDetail.tsx` "Local" link now points at that endpoint (was a raw filesystem path).
+  Verified: endpoint 200 + MD5 match on PDF (1,019,458 B), 404s for undownloaded/missing;
+  health 200; RC page 200; Python tests 117/117; `tsc -b` back to pre-existing 44-error
+  baseline (none in touched files); `vite build` passes; eslint clean on touched TS/TSX
+  (vite.config.ts remaining errors are pre-existing, lines ≤600). **No commit/push done.**
 - **07/11/2026** — **Research Operations Centre Phase 1 built and verified green.** New tab
   `research-centre` (dashboard + definite/possible lists). New: `src/pages/ResearchCentre.tsx`,
   `src/components/CorrespondenceList.tsx`, `src/components/MessageDetail.tsx`,

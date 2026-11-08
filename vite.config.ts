@@ -441,6 +441,55 @@ function localRecordsApiPlugin(): Plugin {
           return;
         }
 
+        // ---- POST /api/person-meta ----
+        // Persists per-person extras (FamilySearch ID, alt profiles, links,
+        // notes) into src/data/person-meta.json. The client merges the entry
+        // over familyData.ts via withMeta(), so familyData.ts is never edited
+        // by hand. Same conventions as /api/event-override: patch === null
+        // deletes the entry; a null/empty value inside the patch deletes that
+        // single field.
+        if (method === "POST" && url === "/api/person-meta") {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const { personId, patch } = JSON.parse(raw);
+                if (typeof personId !== "string" || !/^[a-z0-9-]+$/i.test(personId)) {
+                  return sendJson(res, 400, { error: "invalid personId" });
+                }
+                if (patch !== null && typeof patch !== "object") {
+                  return sendJson(res, 400, { error: "patch must be an object or null" });
+                }
+                const storePath = path.resolve(__dirname, "src", "data", "person-meta.json");
+                let store: Record<string, Record<string, unknown>> = {};
+                if (fs.existsSync(storePath)) {
+                  try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || {}; } catch { store = {}; }
+                }
+
+                if (patch === null) {
+                  delete store[personId];
+                } else {
+                  const entry: Record<string, unknown> = { ...(store[personId] ?? {}) };
+                  for (const [k, v] of Object.entries(patch)) {
+                    if (v === null || v === undefined || v === "") {
+                      delete entry[k];
+                    } else {
+                      entry[k] = v;
+                    }
+                  }
+                  if (Object.keys(entry).length === 0) delete store[personId];
+                  else store[personId] = entry;
+                }
+
+                fs.writeFileSync(storePath, JSON.stringify(store, null, 2) + "\n");
+                return sendJson(res, 200, { ok: true, entry: store[personId] ?? null });
+              } catch (e) {
+                return sendJson(res, 500, { error: e instanceof Error ? e.message : String(e) });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
         // ---- POST /api/create-record ----
         // Creates records/<id>/record.md for a document spotted online, so the
         // Next card can hand it straight to step 1 of the workflow.
