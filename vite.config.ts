@@ -490,6 +490,122 @@ function localRecordsApiPlugin(): Plugin {
           return;
         }
 
+        // ---- POST /api/tree-overrides ----
+        // Sidecar persistence for UI-added/edited data (Add Ancestor, delete
+        // person, Add Lead / Add Question, status updates). familyData.ts is
+        // never written: the store holds operations only (added entities,
+        // deleted ids, status overrides), merged over the initial data by
+        // src/lib/tree-overrides.ts. `op: "reset"` empties every key (the
+        // Reset button in the header).
+        if (method === "POST" && url === "/api/tree-overrides") {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const body = JSON.parse(raw);
+                const storePath = path.resolve(
+                  __dirname,
+                  "src",
+                  "data",
+                  "tree-overrides.json"
+                );
+                let store: Record<string, unknown> = {};
+                if (fs.existsSync(storePath)) {
+                  try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || {}; } catch { store = {}; }
+                }
+                const empty = () => {
+                  store = {
+                    addedPeople: [],
+                    deletedPersonIds: [],
+                    addedLeads: [],
+                    leadStatus: {},
+                    addedQuestions: [],
+                    questionStatus: {},
+                  };
+                };
+                if (!store.addedPeople) empty();
+
+                const ID_RE = /^[A-Za-z0-9-]+$/;
+                const pushOrReplace = (key: string, entity: { id: unknown }, label: string) => {
+                  if (
+                    !entity ||
+                    typeof entity !== "object" ||
+                    typeof entity.id !== "string" ||
+                    !ID_RE.test(entity.id)
+                  ) {
+                    return sendJson(res, 400, { error: `invalid ${label}` });
+                  }
+                  const list = store[key] as any[];
+                  const i = list.findIndex((x) => x.id === entity.id);
+                  if (i >= 0) list[i] = entity;
+                  else list.push(entity);
+                };
+
+                switch (body.op) {
+                  case "addPerson": {
+                    pushOrReplace("addedPeople", body.person, "person");
+                    // Re-adding a previously deleted id revives it.
+                    store.deletedPersonIds = (store.deletedPersonIds as string[]).filter(
+                      (id) => id !== body.person.id
+                    );
+                    break;
+                  }
+                  case "deletePerson": {
+                    if (typeof body.personId !== "string" || !ID_RE.test(body.personId)) {
+                      return sendJson(res, 400, { error: "invalid personId" });
+                    }
+                    const ids = new Set(store.deletedPersonIds as string[]);
+                    ids.add(body.personId);
+                    store.deletedPersonIds = [...ids];
+                    break;
+                  }
+                  case "addLead": {
+                    pushOrReplace("addedLeads", body.lead, "lead");
+                    break;
+                  }
+                  case "setLeadStatus": {
+                    if (
+                      typeof body.leadId !== "string" ||
+                      !ID_RE.test(body.leadId) ||
+                      !["To Investigate", "In Progress", "Ruled Out", "Completed"].includes(body.status)
+                    ) {
+                      return sendJson(res, 400, { error: "invalid leadId or status" });
+                    }
+                    (store.leadStatus as Record<string, string>)[body.leadId] = body.status;
+                    break;
+                  }
+                  case "addQuestion": {
+                    pushOrReplace("addedQuestions", body.question, "question");
+                    break;
+                  }
+                  case "setQuestionStatus": {
+                    if (
+                      typeof body.questionId !== "string" ||
+                      !ID_RE.test(body.questionId) ||
+                      !["Pending", "In Progress", "Resolved"].includes(body.status)
+                    ) {
+                      return sendJson(res, 400, { error: "invalid questionId or status" });
+                    }
+                    (store.questionStatus as Record<string, string>)[body.questionId] = body.status;
+                    break;
+                  }
+                  case "reset": {
+                    empty();
+                    break;
+                  }
+                  default:
+                    return sendJson(res, 400, { error: "unknown op" });
+                }
+
+                fs.writeFileSync(storePath, JSON.stringify(store, null, 2) + "\n");
+                return sendJson(res, 200, { ok: true });
+              } catch (e) {
+                return sendJson(res, 500, { error: e instanceof Error ? e.message : String(e) });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
         // ---- POST /api/create-record ----
         // Creates records/<id>/record.md for a document spotted online, so the
         // Next card can hand it straight to step 1 of the workflow.

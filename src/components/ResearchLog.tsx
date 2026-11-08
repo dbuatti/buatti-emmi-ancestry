@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { LinkifiedText } from '@/components/LinkifiedText';
 import { useToast } from '@/hooks/use-toast';
 import type { ResearchLead, OpenQuestion } from '@/types';
+import { saveTreeOverride } from '@/lib/tree-overrides';
 import {
   DEFAULT_NEW_LEAD, DEFAULT_NEW_QUESTION,
   LEAD_CATEGORIES, LEAD_STATUSES, QUESTION_CATEGORIES, QUESTION_STATUSES,
@@ -48,6 +49,9 @@ function AddLeadDialog({ leads, setLeads }: {
     };
 
     setLeads([lead, ...leads]);
+    saveTreeOverride({ op: 'addLead', lead }, (msg) =>
+      toast({ title: "Not saved to disk", description: msg, variant: "destructive" })
+    );
     setOpen(false);
     toast({ title: "Research Lead Added", description: `"${lead.title}" has been added to the research log.` });
     setForm({ ...DEFAULT_NEW_LEAD });
@@ -139,6 +143,9 @@ function AddQuestionDialog({ questions, setQuestions }: {
     };
 
     setQuestions([question, ...questions]);
+    saveTreeOverride({ op: 'addQuestion', question }, (msg) =>
+      toast({ title: "Not saved to disk", description: msg, variant: "destructive" })
+    );
     setOpen(false);
     toast({ title: "Open Question Added", description: "The question has been added to the checklist." });
     setForm({ ...DEFAULT_NEW_QUESTION });
@@ -282,10 +289,14 @@ export function ResearchLog({ leads, questions, setLeads, setQuestions }: Resear
       }
       return l;
     }));
+    saveTreeOverride({ op: 'setLeadStatus', leadId: id, status }, (msg) =>
+      toast({ title: "Not saved to disk", description: msg, variant: "destructive" })
+    );
     toast({ title: "Lead Updated", description: `Lead status updated to ${status}.` });
   };
 
   const toggleQuestionStatus = (id: string) => {
+    const current = questions.find(q => q.id === id);
     setQuestions(questions.map(q => {
       if (q.id === id) {
         const nextStatus: Record<OpenQuestion['status'], OpenQuestion['status']> = {
@@ -297,6 +308,16 @@ export function ResearchLog({ leads, questions, setLeads, setQuestions }: Resear
       }
       return q;
     }));
+    if (current) {
+      const nextStatus: Record<OpenQuestion['status'], OpenQuestion['status']> = {
+        'Pending': 'In Progress',
+        'In Progress': 'Resolved',
+        'Resolved': 'Pending'
+      };
+      saveTreeOverride({ op: 'setQuestionStatus', questionId: id, status: nextStatus[current.status] }, (msg) =>
+        toast({ title: "Not saved to disk", description: msg, variant: "destructive" })
+      );
+    }
     toast({ title: "Question Updated", description: "The question status has been updated." });
   };
 

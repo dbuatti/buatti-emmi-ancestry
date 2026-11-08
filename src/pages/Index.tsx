@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { calculateCompleteness } from '@/lib/research';
+import { withPeopleOverrides, withLeadOverrides, withQuestionOverrides, saveTreeOverride } from '@/lib/tree-overrides';
 
 import { AppHeader } from '@/components/AppHeader';
 import { NextGuide } from '@/components/NextGuide';
@@ -27,11 +28,13 @@ import { DEFAULT_NEW_PERSON } from '@/lib/constants';
 const Index = () => {
   const { toast } = useToast();
 
-  const [people, setPeople] = useState<Person[]>(initialPeople);
+  // State starts from the sidecar tree-overrides.json merged over familyData.ts,
+  // so UI-added people/leads/questions survive a refresh (local mode).
+  const [people, setPeople] = useState<Person[]>(() => withPeopleOverrides(initialPeople));
 
-  const [leads, setLeads] = useState<ResearchLead[]>(initialResearchLeads);
+  const [leads, setLeads] = useState<ResearchLead[]>(() => withLeadOverrides(initialResearchLeads));
 
-  const [questions, setQuestions] = useState<OpenQuestion[]>(initialOpenQuestions);
+  const [questions, setQuestions] = useState<OpenQuestion[]>(() => withQuestionOverrides(initialOpenQuestions));
 
   const [selectedPersonId, setSelectedPersonId] = useState<string>('daniele-buatti');
   const [modalPersonId, setModalPersonId] = useState<string | null>(null);
@@ -76,6 +79,9 @@ const Index = () => {
     setPeople([...people, personToAdd]);
     setIsAddPersonOpen(false);
     setSelectedPersonId(id);
+    saveTreeOverride({ op: 'addPerson', person: personToAdd }, (msg) =>
+      toast({ title: "Not saved to disk", description: msg, variant: "destructive" })
+    );
     toast({ title: "Ancestor Added", description: `${personToAdd.name} has been added to the family tree.` });
     setNewPerson({ ...DEFAULT_NEW_PERSON });
   };
@@ -83,6 +89,9 @@ const Index = () => {
   const deletePerson = (id: string) => {
     if (confirm("Are you sure you want to delete this person? This cannot be undone.")) {
       setPeople(people.filter(p => p.id !== id));
+      saveTreeOverride({ op: 'deletePerson', personId: id }, (msg) =>
+        toast({ title: "Not saved to disk", description: msg, variant: "destructive" })
+      );
       if (selectedPersonId === id) setSelectedPersonId(people[0]?.id || '');
       toast({ title: "Person Deleted", description: "The ancestor has been removed from the tree.", variant: "destructive" });
     }
@@ -90,6 +99,9 @@ const Index = () => {
 
   const resetToDefault = () => {
     if (confirm("Are you sure you want to reset all data to the original compiled records? Any custom changes will be lost.")) {
+      // The sidecar (tree-overrides.json) must be cleared too, otherwise
+      // previously added people reappear on the next refresh.
+      saveTreeOverride({ op: 'reset' });
       setPeople(initialPeople);
       setLeads(initialResearchLeads);
       setQuestions(initialOpenQuestions);
