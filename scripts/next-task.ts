@@ -529,24 +529,13 @@ function tryPerson(
     };
   }
 
+  // Waiting requests stay hidden — Snooze (re-marking requested) moves the
+  // card on to genuinely actionable work. They resurface on their own as
+  // chase cards once REQUEST_CHASE_DAYS pass; the waiting room
+  // (getWaitingTasks) keeps receipt logging one tap away in the meantime.
+  // NOTE: `pending` is intentionally not returned as a card here.
   if (pending) {
-    const label = EVENT_LABELS[pending.ev.type];
-    const office = pending.o.requestedFrom || extractOffice(pending.ev.note) || undefined;
-    return {
-      task: {
-        ...base,
-        type: 'get_document',
-        eventType: pending.ev.type,
-        note: pending.o.requestedOn
-          ? `${label} requested ${pending.o.requestedOn} — waiting for reply from ${office ?? 'the office'}.`
-          : `Get the document: ${label}.`,
-        whereItIs: pending.ev.note?.trim() ?? '',
-        office,
-        requestedOn: pending.o.requestedOn,
-        receivedOn: pending.o.receivedOn,
-      },
-      waiting: false,
-    };
+    anyWaiting = true;
   }
 
   if (fresh) {
@@ -718,6 +707,49 @@ export function getAllTasksForPerson(
   }
 
   return tasks;
+}
+
+export interface WaitingTask {
+  personId: string;
+  personName: string;
+  relationship?: string;
+  eventType: LifeEventType;
+  office?: string;
+  requestedOn?: string;
+  daysWaiting?: number;
+}
+
+/**
+ * Every requested-but-not-yet-due event (hidden from the Next card).
+ * Powers the waiting room: nothing to chase, but receipts can be logged.
+ */
+export function getWaitingTasks(
+  people: Person[],
+  overrides?: EventOverrides,
+  now: Date = new Date()
+): WaitingTask[] {
+  const ov = overrides ?? {};
+  const ctx = buildGraph(people);
+  const out: WaitingTask[] = [];
+  for (const person of people) {
+    for (const ev of person.lifeEvents ?? []) {
+      if (ev.status !== 'known_no_record' || ev.recordId) continue;
+      const o = ov[eventKey(person.id, ev.type)];
+      if (!o || o.recordId || o.receivedOn || !o.requestedOn) continue;
+      const days = daysSince(o.requestedOn, now);
+      if (days === null || days >= REQUEST_CHASE_DAYS) continue;
+      out.push({
+        personId: person.id,
+        personName: person.name,
+        relationship: relationshipLabel(person, ctx),
+        eventType: ev.type,
+        office: o.requestedFrom || extractOffice(ev.note) || undefined,
+        requestedOn: o.requestedOn,
+        daysWaiting: days,
+      });
+    }
+  }
+  return out.sort((a, b) => (b.daysWaiting ?? 0) - (a.daysWaiting ?? 0));
 }
 
 export function getNextTask(
