@@ -73,7 +73,7 @@ extraction, no lifecycle tracking beyond availability, no bridge to genealogy re
 ---
 # HANDOFF.md — briefing pack for a fresh session
 
-**Last updated: 09/11/2026 (audit follow-through — UI add/delete/edit persistence via tree-overrides sidecar)**
+**Last updated: 09/11/2026 (session continues — assistant panel: purpose column, pill filters, chase-filter fix, translate button; Gemini analyse/translate backend with --model/--backlog + retry/backoff; NextGuide sent-correspondence auto-detect; thread-links phase 2 from analyses)**
 **Repo:** `~/dyad-apps/Buatti-Emmi Ancestry` · branch `main`
 **Read this first, then `AGENTS.md` (the full PM log).** This file is a distilled briefing;
 `AGENTS.md` is the unabridged history and is where new entries get appended.
@@ -410,5 +410,27 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
   keyed `"<personId>|<eventType>"`. New dev endpoints `POST /api/event-override`,
   `POST /api/create-record`, `POST /api/open-inbox`. See `WORKFLOW.md` → "The Next card and
   `known_no_record` events".
+
+- **09/11/2026 (assistant panel + LLM backend + sent-auto-detect + thread-links phase 2)** —
+  (1) `scripts/assistant-summary.py` crashed on a missing `REQUEST_LINKS_PATH` constant (NameError)
+  after the purpose-lookup edit — fixed, and `purpose` now flows into pending_actions + all
+  genealogy threads (derived from `request-links.json`). (2) Assistant thread list gained
+  **pill filters** (institution/people/status, multi-select, counts) via new `src/components/PillFilter.tsx`.
+  (3) Duplicate stats card removed from `ResearchAssistant.tsx` (dashboard renders its own).
+  (4) **Chase filter bug fixed**: `chase` status filter *excluded* threads with days_waiting > 30;
+  now it includes them (shows threads needing chase). (5) Draft panel: **Translate to English**
+  button wired to new `POST /api/assistant/translate` (Gemini, temp 0.1, thinking off);
+  translation displayed under the draft. (6) `scripts/analyze-messages.py`: **Gemini backend**
+  added — `gemini_analyse` (json_mode, thinkingBudget 0, maxOutput 4000), `gemini_translate_chunk`
+  + `gemini_translate_full`, `--model {ollama,gemini}`, `--backlog` (targets
+  genealogy_relevance IS NULL). Retry with backoff (15/30/60s) + 2s pacing between calls. (7)
+  **NextGuide**: new **"Check sent correspondence"** button on Get-the-document cards →
+  `GET /api/correspondence/sent-request?personId&eventType` → auto-logs `requestedOn` +
+  `requestedFrom` from the detected sent Gmail message. (8) `scripts/build-thread-links.py`:
+  phase 2 adds **person thread-links from Gemini analyses** (304 → 327 links). Gemini pilot:
+  msgs 14/55 analysed clean via Gemini (translation ok, clean uncertainties); msg 115 + batch
+  hits → **HTTP 429 rate limit** (free tier throttling; retry/backoff + pacing now in place).
+  Comprehensive suite re-run: 16/18 (2 known false-ish: build-grep false negative; draft fell back
+  to qwen because Gemini was 429-ing).
 
 *(Append one dated line here at the end of every session, and update "Last updated" above.)*
