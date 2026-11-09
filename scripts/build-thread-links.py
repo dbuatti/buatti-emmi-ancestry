@@ -124,11 +124,57 @@ def main():
                 except sqlite3.Error as e:
                     print("insert error:", e, file=sys.stderr)
 
+    # ---- Phase 2: person links from Gemini message analyses (4B) ----
+    # The analyse pipeline (Gemini) extracts people per message; a thread can
+    # mention people that request-links missed. Add those links idempotently.
+    analysis_dir = os.path.join(ROOT, "correspondence", "extracted", "analysis")
+    added_from_analysis = 0
+    if os.path.isdir(analysis_dir):
+        for fname in sorted(os.listdir(analysis_dir)):
+            if not fname.startswith("message_") or not fname.endswith(".json"):
+                continue
+            try:
+                a = json.load(open(os.path.join(analysis_dir, fname), encoding="utf-8"))
+            except Exception:
+                continue
+            mid = a.get("message_id")
+            if not mid:
+                continue
+            try:
+                row = cur.execute(
+                    "SELECT thread_id, account_email, gmail_thread_id FROM messages WHERE id=?",
+                    (mid,),
+                ).fetchone()
+            except Exception:
+                continue
+            if not row:
+                continue
+            tid = row[0]
+            for p in a.get("people") or []:
+                if not isinstance(p, dict):
+                    continue
+                name = p.get("name")
+                if not name or "daniele buatti" in name.lower():
+                    continue  # Daniele himself is already linked via the requester side
+                pid = resolve_person_id(name, person_map)
+                if not pid:
+                    continue
+                key = (tid, "person", pid)
+                if key in seen:
+                    continue
+                seen.add(key)
+                cur.execute(
+                    "INSERT OR IGNORE INTO thread_links (thread_id, entity_type, entity_id, created_at) VALUES (?,?,?,datetime('now'))",
+                    (tid, "person", pid),
+                )
+                added_from_analysis += cur.rowcount
+
     conn.commit()
     conn.close()
     print(f"Inserted {inserted} thread->person links")
     print(f"Skipped (no person match): {skipped_no_person}")
     print(f"Skipped (no thread in DB): {skipped_no_thread}")
+    print(f"Added via Gemini analyses: {added_from_analysis}")
 
 
 if __name__ == "__main__":
