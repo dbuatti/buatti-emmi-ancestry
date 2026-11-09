@@ -21,6 +21,7 @@ ACTIONS_PATH = ROOT / "correspondence" / "extracted" / "actions.json"
 EVENT_REQ = ROOT / "src" / "data" / "event-requests.json"
 COMPOSE_AUTH = ROOT / ".local" / "gmail_auth_compose.json"
 REQUEST_LINKS_PATH = ROOT / "correspondence" / "extracted" / "request-links.json"
+ANALYSIS_DIR = ROOT / "correspondence" / "extracted" / "analysis"
 
 
 def load_compose_accounts():
@@ -78,6 +79,32 @@ def main():
 
     conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
+
+    # Gemini analysis enrichment: purpose_summary per message -> purpose per thread.
+    # Filled only when request-links has nothing (or less) — never overwrites a request purpose.
+    analysis_purpose_by_tid = {}
+    if ANALYSIS_DIR.exists():
+        for f in sorted(ANALYSIS_DIR.glob("message_*.json")):
+            try:
+                a = json.load(open(f))
+            except Exception:
+                continue
+            mid = a.get("message_id")
+            if not mid:
+                continue
+            try:
+                row = conn.execute(
+                    "SELECT thread_id, account_email, gmail_thread_id FROM messages WHERE id=?",
+                    (mid,),
+                ).fetchone()
+            except Exception:
+                continue
+            if not row:
+                continue
+            tid = str(row[0])
+            ps = a.get("purpose_summary") or ""
+            if ps and not str(ps).startswith("(analysis failed"):
+                analysis_purpose_by_tid[tid] = ps
 
     rows = conn.execute("""
         SELECT t.id AS thread_db_id, t.account_email, t.gmail_thread_id,
@@ -143,7 +170,7 @@ def main():
             "people": person_names,
             "protocol_refs": protocol_refs,
             "classification": classification,
-            "purpose": request_purpose.get(gtid, ""),
+            "purpose": request_purpose.get(gtid, "") or analysis_purpose_by_tid.get(tid, ""),
             "days_waiting": days_waiting,
             "latest_inbound_snippet": snippet,
             "status": r["status"],
@@ -187,7 +214,7 @@ def main():
             "people": person_names,
             "protocol_refs": protocol_refs,
             "classification": classification or "",
-            "purpose": request_purpose.get(gtid, ""),
+            "purpose": request_purpose.get(gtid, "") or analysis_purpose_by_tid.get(tid, ""),
             "days_waiting": days_wait,
             "latest_inbound_snippet": snippet,
             "has_unanswered_inbound": r["has_unanswered_inbound"],
