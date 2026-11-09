@@ -16,7 +16,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (Gemini visual reading 10/11/2026 — Daniele to verify every line)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename:
@@ -73,5 +73,6 @@ mentioned: []
 ## Source
 
 Cover page (p1: Dichiarazione di conformità, Dott.ssa Paola D'Emidio, 11/08/2026, prot. 0007783) indexes BOTH acts: n°4 BUATTI EZIO (b. 27/04/1923 Ascoli, d. 16-10-1991 Ascoli) and n°6 CHIAPPINI LILIA (b. 03/07/1930 San Benedetto del Tronto, d. 23-05-1998 Melbourne). This record files the Ezio act (p2); Lilia's is record 1998_Maltignano_death_Chiappini-Lilia_atto6.
+
 
 

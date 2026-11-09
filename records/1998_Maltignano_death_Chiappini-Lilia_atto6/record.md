@@ -13,9 +13,9 @@ source_office: Comune di Maltignano — Ufficio Stato Civile
 protocol: 0008863/2026
 fs_status: not on FamilySearch
 verified_by_daniele: false
-transcribed_by: ''
+transcribed_by: OpenCode (Daniele selected-text reading 10/11/2026 — Daniele to verify every line)
 filed: true
-transcribed: false
+transcribed: true
 verified: false
 in_app: false
 on_familysearch: false
@@ -27,17 +27,32 @@ people:
 mentioned: []
 ---
 
-# Italian transcription
+## Transcription
 
-Transcription pending.
-
-# English translation
-
-Translation pending.
+- Tipo di atto: trascrizione di atto di morte — Parte II, Serie C, n. 6 (Maltignano, 1998)
+  en: Tipo di atto: death act transcription — Part II, Series C, no. 6 (Maltignano, 1998)
+- Data della trascrizione: 7 ottobre 1998, ore 9:21, Casa Comunale di Maltignano
+  en: Data della trascrizione: 7 October 1998, 9:21 am, Maltignano town hall
+- Ufficiale trascrittore: Dott.ssa Paola D'Emidio (su richiesta del Consolato Generale d'Italia in Melbourne, Prot. n. 9211 del 22/09/1998, Posizione L9952)
+  en: Ufficiale trascrittore: Dr. Paola D'Emidio (on request of the Italian Consulate General in Melbourne, Prot. no. 9211 of 22/09/1998, File L9952)
+- Documento trascritto: certificato di morte con traduzione per estratto (Stato del Victoria, Australia)
+  en: Documento trascritto: death certificate with abridged translation (State of Victoria, Australia)
+- Deceduta: CHIAPPINI LILIA
+  en: Deceduta: CHIAPPINI LILIA
+- Data di nascita: 03/07/1930, San Benedetto del Tronto (AP)
+  en: Data di nascita: 03/07/1930, San Benedetto del Tronto (AP)
+- Data del decesso: 23/05/1998, Melbourne
+  en: Data del decesso: 23/05/1998, Melbourne
+- Visto consolare: Cancelliere Stefano Cirilli, 22/09/1998; Matr. 36094, Pos. L9952
+  en: Visto consolare: Registrar Stefano Cirilli, 22/09/1998; Matr. 36094, File L9952
+- Atto di nascita: San Benedetto del Tronto n. 196, Parte I S., anno 1930
+  en: Atto di nascita: San Benedetto del Tronto no. 196, Part I S., year 1930
+- Trascritto a Maltignano: 07/10/1998
+  en: Trascritto a Maltignano: 07/10/1998
 
 ## Uncertain readings
 
-N/A - image not yet transcribed.
+- Daniele's selected-text reading is clean throughout — verify every line in check mode, then press Verified.
 
 ## Source
 
