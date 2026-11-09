@@ -41,6 +41,7 @@ import {
   callApiPersonSkip,
 } from './next-guide-api';
 import { getAllRecords, parseFamilySearchSection, type FamilySearchFields } from '@/lib/record-loader';
+import { extractKeyTerms, flattenTerms } from '@/lib/email-terms';
 
 function stepToFrontMatterField(step: string): string {
   const map: Record<string, string> = {
@@ -97,6 +98,7 @@ export function NextGuide() {
   const [recordsLoaded, setRecordsLoaded] = useState(false);
   const [fsIdInput, setFsIdInput] = useState<string>('');
   const [recordBodies, setRecordBodies] = useState<Map<string, string>>(new Map());
+  const [recordEntries, setRecordEntries] = useState<Map<string, { id: string; frontMatter: Record<string, unknown> }>>(new Map());
   const [imageLinks, setImageLinks] = useState<Map<string, string>>(new Map());
   const [copied, setCopied] = useState<string | null>(null);
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -104,7 +106,9 @@ export function NextGuide() {
   const [showReceivedPanel, setShowReceivedPanel] = useState(false);
   const [sentCheck, setSentCheck] = useState<{ found: boolean; sent_at?: string; recipient?: string } | null>(null);
   const [sourceQuery, setSourceQuery] = useState('');
-  const [sourceHits, setSourceHits] = useState<Array<{ id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number }>>([]);
+  const [sourceHits, setSourceHits] = useState<Array<{ id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number; matchedTerms?: string[] }>>([]);
+  const [searchedTerms, setSearchedTerms] = useState<string[]>([]);
+  const [sentAuto, setSentAuto] = useState<{ found: boolean; sent_at?: string; recipient?: string; subject?: string } | null>(null);
   const [sourceLoading, setSourceLoading] = useState(false);
   const [showHowTo, setShowHowTo] = useState(false);
 
@@ -124,9 +128,11 @@ export function NextGuide() {
         const steps = new Map<string, RecordStepInfo>();
         const bodies = new Map<string, string>();
         const imgLinks = new Map<string, string>();
+        const entries = new Map<string, { id: string; frontMatter: Record<string, unknown> }>();
         for (const rec of records) {
           steps.set(rec.id, { step: rec.step, stepNumber: rec.stepNumber });
           bodies.set(rec.id, rec.body);
+          entries.set(rec.id, { id: rec.id, frontMatter: rec.frontMatter as unknown as Record<string, unknown> });
           if (rec.frontMatter.image_link) {
             imgLinks.set(rec.id, rec.frontMatter.image_link);
           }
@@ -134,6 +140,7 @@ export function NextGuide() {
         setRecordBodies(bodies);
         setRecordSteps(steps);
         setImageLinks(imgLinks);
+        setRecordEntries(entries);
         setRecordsLoaded(true);
       } catch (e) {
         setRecordsLoaded(true);
@@ -144,22 +151,73 @@ export function NextGuide() {
 
   const task = getNextTask(people, recordSteps, overrides, new Date(), fsChecks as Record<string, { checkedOn?: string; openItems?: number; snoozedOn?: string }>, personSkips as Record<string, { skippedOn?: string }>);
 
-  // Source-in-email lookup: when the task is "get the document", search imported
-  // correspondence for the source text (estratto / certificate / act references) and
-  // surface any message that contains it.
+  // Source-in-email lookup: break the task into key terms (act numbers, years,
+  // surnames, office tokens) and search each one. A single verbatim-sentence
+  // search can never match; key terms can.
   useEffect(() => {
-    if (task?.type !== 'get_document') return;
-    const q = (task.whereItIs || task.office || task.eventType || '').trim();
-    if (!q) { setSourceHits([]); setSourceQuery(''); return; }
+    if (task?.type !== 'get_document' && task?.type !== 'chase_request') return;
+    const terms = flattenTerms(
+      extractKeyTerms([task?.whereItIs, task?.note, task?.office], task?.personName ?? '')
+    );
+    if (terms.length === 0) { setSourceHits([]); setSourceQuery(''); setSearchedTerms([]); return; }
     let cancelled = false;
     setSourceLoading(true);
-    fetch(`/api/correspondence/source?q=${encodeURIComponent(q)}`)
-      .then((r) => r.json())
-      .then((d) => { if (!cancelled) { setSourceHits((d?.hits as typeof sourceHits) ?? []); setSourceQuery(q); } })
-      .catch(() => { if (!cancelled) setSourceHits([]); })
-      .finally(() => { if (!cancelled) setSourceLoading(false); });
+    setSearchedTerms(terms);
+    (async () => {
+      try {
+        const results = await Promise.all(
+          terms.map((t) =>
+            fetch(`/api/correspondence/source?q=${encodeURIComponent(t)}`)
+              .then((r) => r.json())
+              .then((d) => ({ term: t, hits: (d?.hits ?? []) as Array<{ id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number }> }))
+              .catch(() => ({ term: t, hits: [] as Array<{ id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number }> }))
+          )
+        );
+        if (cancelled) return;
+        const merged = new Map<number, { id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number; matchedTerms: string[] }>();
+        for (const { term, hits } of results) {
+          for (const h of hits) {
+            const cur = merged.get(h.id);
+            if (cur) {
+              if (!cur.matchedTerms.includes(term)) cur.matchedTerms.push(term);
+            } else {
+              merged.set(h.id, { ...h, matchedTerms: [term] });
+            }
+          }
+        }
+        const sorted = [...merged.values()].sort(
+          (a, b) => b.matchedTerms.length - a.matchedTerms.length
+        );
+        setSourceHits(sorted);
+        setSourceQuery(terms.join(' · '));
+      } finally {
+        if (!cancelled) setSourceLoading(false);
+      }
+    })();
     return () => { cancelled = true; };
-  }, [task?.type, task?.whereItIs, task?.office, task?.eventType]);
+  }, [task?.type, task?.whereItIs, task?.note, task?.office, task?.personName]);
+
+  // Auto sent-check (display only): has anything been emailed about this
+  // person + event? Runs on mount; the "Check sent mail" button re-checks
+  // AND logs the result.
+  useEffect(() => {
+    if (task?.type !== 'get_document' && task?.type !== 'chase_request') return;
+    if (!task?.personId) return;
+    let cancelled = false;
+    const person = initialPeople.find((pp) => pp.id === task.personId);
+    const surname = (person?.name ?? task.personName ?? '').replace(/\([^)]*\)/g, ' ').trim().split(/\s+/).filter((t) => t.length > 2).pop() ?? '';
+    fetch(
+      `/api/correspondence/sent-request?personId=${encodeURIComponent(task.personId)}&eventType=${encodeURIComponent(task.eventType ?? 'birth')}&surname=${encodeURIComponent(surname)}`
+    )
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        if (d?.found) setSentAuto({ found: true, sent_at: d.sent_at, recipient: d.recipient, subject: d.subject });
+        else setSentAuto({ found: false });
+      })
+      .catch(() => { if (!cancelled) setSentAuto(null); });
+    return () => { cancelled = true; };
+  }, [task?.type, task?.personId, task?.eventType, task?.personName]);
 
   if (!recordsLoaded) {
     return (
@@ -419,25 +477,62 @@ export function NextGuide() {
     </div>
   );
 
-  /** Source-in-email panel: does imported correspondence contain the source text? */
+  /** Source-in-email panel: key-term hits across imported mail. */
   const sourcePanel = (
-    <div className="pt-1">
+    <div className="pt-1 space-y-2">
+      {searchedTerms.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          <span className="text-[10px] text-stone-500 font-sans py-0.5">Searched:</span>
+          {searchedTerms.map((t) => (
+            <span key={t} className="rounded-full bg-stone-100 border border-stone-200 px-2 py-0.5 text-[10px] font-sans text-stone-600">
+              {t}
+            </span>
+          ))}
+        </div>
+      )}
+      {/* Sent-mail evidence (auto-checked) */}
+      {sentAuto?.found ? (
+        <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2 text-xs text-emerald-800">
+          <span className="font-bold">Emailed about this:</span>{' '}
+          {sentAuto.sent_at ? `${String(sentAuto.sent_at).slice(0, 10)}` : 'sent'}
+          {sentAuto.recipient ? ` → ${sentAuto.recipient}` : ''}
+          {sentAuto.subject ? <div className="mt-0.5 text-emerald-700">“{sentAuto.subject}”</div> : null}
+        </div>
+      ) : sentAuto && !sentAuto.found ? (
+        <div className="rounded-lg bg-stone-50 border border-stone-200 px-3 py-2 text-xs text-stone-600">
+          No sent email found for this person + event. If you emailed about it, it may not be imported yet.
+        </div>
+      ) : null}
       {sourceLoading ? (
-        <div className="text-xs text-stone-600">Searching…</div>
+        <div className="text-xs text-stone-600">Searching imported mail…</div>
       ) : sourceQuery && sourceHits.length > 0 ? (
         <ul className="space-y-2">
           {sourceHits.map((h) => (
-            <li key={h.id} className="text-xs text-stone-700">
+            <li key={h.id} className="rounded-lg border border-stone-200 bg-white px-3 py-2 text-xs text-stone-700">
               <span className="font-semibold">{h.subject || '(no subject)'}</span>
               {h.from_name ? <span className="text-stone-500"> — from {h.from_name}</span> : null}
-              {h.snippet ? <div className="text-stone-600 mt-0.5">{h.snippet}</div> : null}
-              {!!h.attachment_count && <div className="text-stone-500 mt-0.5">{h.attachment_count} attachment(s).</div>}
+              <span className="text-stone-400"> · {h.received_at ? String(h.received_at).slice(0, 10) : ''}</span>
+              {(h.matchedTerms ?? []).length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {(h.matchedTerms ?? []).map((t) => (
+                    <span key={t} className="rounded-full bg-[#800020]/10 text-[#800020] px-1.5 py-px text-[10px] font-sans font-semibold">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {h.snippet ? <div className="text-stone-600 mt-1">{h.snippet}</div> : null}
+              {!!h.attachment_count && (
+                <div className="mt-1 inline-flex items-center rounded-full bg-amber-100 text-amber-800 px-2 py-0.5 text-[10px] font-bold font-sans">
+                  {h.attachment_count} attachment{h.attachment_count === 1 ? '' : 's'} — check for the record here
+                </div>
+              )}
             </li>
           ))}
         </ul>
       ) : sourceQuery && sourceHits.length === 0 ? (
         <div className="text-xs text-stone-700">
-          No correspondence hits for “{sourceQuery}”. The source may be on FamilySearch, or not imported yet.
+          No hits across imported mail for these terms. Either nothing has arrived, or the email isn't imported yet.
         </div>
       ) : null}
     </div>
@@ -655,6 +750,103 @@ export function NextGuide() {
 
         {/* Received panel */}
         {showReceivedPanel && receivedPanel}
+
+        {/* Where to find it: filed records for this person + records mentioning the event */}
+        {(isGetDocument || isChase) &&
+          (() => {
+            const filedForPerson = [...recordEntries.values()].filter((r) =>
+              ((r.frontMatter.people ?? []) as string[]).includes(task.personId)
+            );
+            const terms = extractKeyTerms([task.whereItIs, task.note], task.personName ?? '');
+            const surname = (terms.names[0] ?? '').toLowerCase();
+            const filedIds = new Set(filedForPerson.map((r) => r.id));
+            const mentionedIn = [...recordBodies.entries()]
+              .filter(
+                ([id, body]) =>
+                  !filedIds.has(id) &&
+                  surname.length > 2 &&
+                  body.toLowerCase().includes(surname) &&
+                  (terms.years.length === 0 || terms.years.some((y) => body.includes(y)))
+              )
+              .slice(0, 5)
+              .map(([id]) => recordEntries.get(id))
+              .filter((r): r is NonNullable<typeof r> => Boolean(r));
+            return (
+              <div>
+                <details className="group rounded-lg border border-[#800020]/30 bg-[#FAF6F0] overflow-hidden" open>
+                  <summary className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-stone-700 cursor-pointer hover:bg-stone-50 list-none">
+                    <FileSearch className="w-3.5 h-3.5 text-[#800020]" />
+                    Where to find it
+                    {filedForPerson.length > 0 && (
+                      <span className="ml-1 rounded-full bg-emerald-100 text-emerald-800 px-1.5 py-0.5 text-[10px] font-bold">
+                        {filedForPerson.length}
+                      </span>
+                    )}
+                    <ChevronDown className="w-3.5 h-3.5 ml-auto text-stone-400 group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <div className="px-3 pb-3 pt-1 space-y-2">
+                    {task.recordId && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-8 px-3 border-[#800020] text-[#800020]"
+                        onClick={() => navigate(`/research/records/${task.recordId}`)}
+                      >
+                        Open the record
+                      </Button>
+                    )}
+                    {filedForPerson.length > 0 ? (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                          {task.personName}’s filed records
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {filedForPerson.map((r) => (
+                            <button
+                              key={r.id}
+                              className="rounded-full border border-stone-300 bg-white px-2.5 py-1 text-[11px] font-sans text-stone-700 hover:border-[#800020] hover:text-[#800020]"
+                              onClick={() => navigate(`/research/records/${r.id}`)}
+                            >
+                              {String(r.frontMatter.type || 'Record')} · {String(r.frontMatter.date || r.frontMatter.year || '')}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-stone-600">
+                        Nothing filed for {task.personName} yet — that’s why this card exists.
+                      </p>
+                    )}
+                    {mentionedIn.length > 0 && (
+                      <div>
+                        <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                          Mentioned in other records
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {mentionedIn.map((r) => (
+                            <button
+                              key={r.id}
+                              className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-sans text-amber-800 hover:border-[#800020]"
+                              onClick={() => navigate(`/research/records/${r.id}`)}
+                              title="This record's transcription mentions this person and year — the reference may live here"
+                            >
+                              {String(r.frontMatter.type || 'Record')} · {String(r.frontMatter.date || r.frontMatter.year || '')}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <a
+                      className="inline-block text-[11px] font-sans text-[#800020] underline"
+                      href={`/research/people/${task.personId}`}
+                    >
+                      Open {task.personName}’s person page
+                    </a>
+                  </div>
+                </details>
+              </div>
+            );
+          })()}
 
         {/* Details — collapsed by default */}
         {(isGetDocument || isChase) && (

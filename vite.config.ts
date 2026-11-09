@@ -2475,6 +2475,27 @@ function localCorrespondenceApiPlugin(): Plugin {
             // Fallback: any outbound in linked threads.
             if (!best && candidates.length > 0) best = candidates[0];
 
+            // Surname fallback: thread_links is often empty, so search ALL
+            // outbound mail mentioning the person's surname + event keywords.
+            // This is what catches requests the linker never saw.
+            if (!best) {
+              const surname = (u.searchParams.get("surname") || "").trim();
+              if (surname.length > 2) {
+                const surnameHits = db.prepare(
+                  `SELECT id, gmail_thread_id, from_email, to_json, subject, sent_at, body_text
+                   FROM messages WHERE direction='out'
+                   AND (subject LIKE ? OR body_text LIKE ?)
+                   ORDER BY sent_at DESC LIMIT 25`
+                ).all(`%${surname}%`, `%${surname}%`);
+                for (const c of surnameHits) {
+                  const text = `${c.subject || ""} ${c.body_text || ""}`.toLowerCase();
+                  const matchesKw = keywords.length === 0 || keywords.some((k) => text.includes(k));
+                  if (matchesKw) { best = c; break; }
+                }
+                if (!best && surnameHits.length > 0) best = surnameHits[0];
+              }
+            }
+
             if (!best) return sendJson(res, 200, { ok: true, found: false });
 
             let recipient = "";
