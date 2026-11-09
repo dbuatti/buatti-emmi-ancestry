@@ -54,8 +54,8 @@ mentioned:
   en: Madre: late Rosati Virginia, resident in Ascoli Piceno
 - Stato civile: vedova di Buatti Alfredo
   en: Stato civile: widow of Buatti Alfredo
-- Ufficiale: [firma illeggibile]
-  en: Ufficiale: [signature illegible]
+- Ufficiale: Dott. Mario Serianni (nome stampato; firma illeggibile)
+  en: Ufficiale: Dr. Mario Serianni (printed name; signature illegible)
 
 ## Uncertain readings
 
