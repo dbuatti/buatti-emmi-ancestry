@@ -572,13 +572,13 @@ export default function RecordPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-4 space-y-6">
-      <div className="flex flex-col lg:flex-row lg:gap-6">
-        <div className="lg:w-1/3">
-          <div className="lg:sticky lg:top-4">
+      <div className="flex flex-col lg:flex-row lg:gap-6 lg:items-start">
+        <div className="lg:w-[42%] lg:shrink-0 lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)]">
+          <div className="h-full">
             <RecordViewer recordId={frontMatter.id} />
           </div>
         </div>
-        <div className="lg:w-2/3 space-y-4">
+        <div className="lg:flex-1 lg:min-w-0 space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <h1 className="text-lg font-bold text-stone-800">{frontMatter.type || 'Untitled record'}</h1>
             <div className="flex gap-2 items-center">
