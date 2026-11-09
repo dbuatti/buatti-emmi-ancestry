@@ -31,22 +31,22 @@ original_sha256:
 
 - Tipo di atto: Atto di morte — Parte II, Serie B
   en: Tipo di atto: Death act — Part II, Series B
-- Numero dell'atto: 148 [?]
-  en: Numero dell'atto: Number 148 [?]
-- Data dell'atto: settembre 1964 [?]
-  en: Data dell'atto: September 1964 [?]
+- Numero dell'atto: 148 («Numero 148»)
+  en: Numero dell'atto: Number 148 (act reads "Numero 148")
+- Data dell'atto: settembre 1964 («L'anno millenovecentosessantaquattro…», giorno illeggibile) [?]
+  en: Data dell'atto: September 1964 (act reads "L'anno millenovecentosessantaquattro…", day illegible) [?]
 - Deceduto: BUATTI ALFREDO
   en: Deceduto: BUATTI ALFREDO
-- Data del decesso: 5 settembre 1964 [?]
-  en: Data del decesso: 5 September 1964 [?]
+- Data del decesso: 5 settembre 1964 («il giorno Cinque del mese di settembre dell'anno millenovecentosessantaquattro»)
+  en: Data del decesso: 5 September 1964 (act reads "il giorno Cinque del mese di settembre…")
 - Ora del decesso: ore tre [?]
   en: Ora del decesso: three o'clock [?]
 - Luogo del decesso: ospedale [nome illeggibile — verificare sull'immagine]
   en: Luogo del decesso: hospital [name illegible — check the image]
 - Stato: cittadino italiano, residente in Ascoli Piceno, pensionato
   en: Stato: Italian citizen, resident in Ascoli Piceno, pensioner
-- Data di nascita: 18 marzo 1888
-  en: Data di nascita: 18 March 1888
+- Data di nascita: 18 marzo 1888 («diciotto marzo milleottocentoottantotto»)
+  en: Data di nascita: 18 March 1888 (act reads "diciotto marzo milleottocentoottantotto")
 - Luogo di nascita: Ascoli Piceno
   en: Luogo di nascita: Ascoli Piceno
 - Atto di nascita: n. 245, P. I S., anno 1888

@@ -330,11 +330,6 @@ export function RecordCheck({
                       <span className={isChecked ? 'text-emerald-700' : isWrong ? 'text-amber-700 line-through' : ''}>
                         {line.value || '—'}
                       </span>
-                      {line.uncertain && (
-                        <span className="ml-1 text-[10px] text-amber-600 uppercase font-bold">
-                          [?]
-                        </span>
-                      )}
                     </div>
                     {line.enValue !== undefined && (
                       <div className="text-xs text-stone-500 italic break-words">
