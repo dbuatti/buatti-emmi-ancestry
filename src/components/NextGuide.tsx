@@ -702,11 +702,21 @@ export function NextGuide() {
                   <Inbox className="w-4 h-4 mr-1.5" /> Document received
                 </Button>
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={markRequested}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs h-8 px-3"
+                    onClick={markRequested}
+                    title={
+                      typeof task.daysWaiting === 'number' && task.daysWaiting >= 30
+                        ? 'Logs a chase today — the card returns in 30 days'
+                        : 'Nothing to do yet — hides this card for 30 days, then it returns as a chase'
+                    }
+                  >
                     <Send className="w-3 h-3 mr-1" />
                     {typeof task.daysWaiting === 'number' && task.daysWaiting >= 30
                       ? 'Chase — wait another 30 days'
-                      : 'Re-mark requested'}
+                      : 'Snooze 30 days'}
                   </Button>
                   <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={() => setShowLinkInput((v) => !v)}>
                     <Link2 className="w-3 h-3 mr-1" /> Found online
