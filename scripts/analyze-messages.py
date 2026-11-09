@@ -18,12 +18,15 @@ import re
 import sqlite3
 import urllib.request
 import datetime
+import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(ROOT, ".local", "correspondence.db")
 ANALYSIS_DIR = os.path.join(ROOT, "correspondence", "extracted", "analysis")
 MODEL = "llama3.2:latest"
 CHUNK_SIZE = 2000
+GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 SYSTEM = """You are a careful genealogical research assistant. You read Italian/English correspondence
 between a genealogy researcher and Italian municipal offices. You must be precise and conservative.
@@ -190,6 +193,155 @@ def ollama_translate_full(body):
     return full, manifest, all_ok, covered
 
 
+def gemini_translate_chunk(chunk_text):
+    global _applied_translation_rules
+    try:
+        _trules = get_prompt_rules(stage="translation")
+        _trule_text = format_rules_for_prompt(_trules, stage="translation")
+        _applied_translation_rules = list(_trules.keys())
+    except Exception:
+        _trule_text = ""
+        _applied_translation_rules = []
+    system = ("You are a professional translator. Translate the following email excerpt from Italian "
+               "(or any other language) into English. Preserve names, dates, act numbers, protocol "
+               "numbers, offices, and official terminology exactly. Translate EVERY sentence. "
+               "Return ONLY the English translation, no commentary, no markdown, no summarising.") + ("\n" + _trule_text if _trule_text else "")
+    tr = _gemini_generate(chunk_text, system, json_mode=False, max_tokens=3000)
+    return tr.strip()
+
+
+def gemini_translate_full(body):
+    chunks = split_chunks(body)
+    if not chunks:
+        return "", [], True, 0
+    manifest = []
+    parts = []
+    all_ok = True
+    for c in chunks:
+        try:
+            tr = gemini_translate_chunk(c["text"])
+            ok = bool(tr.strip())
+            if not ok:
+                all_ok = False
+            manifest.append({"seq": c["seq"], "start": c["start"], "end": c["end"],
+                             "source_chars": c["chars"], "translated_chars": len(tr),
+                             "status": "ok" if ok else "empty"})
+            parts.append(tr)
+        except Exception as e:
+            all_ok = False
+            manifest.append({"seq": c["seq"], "start": c["start"], "end": c["end"],
+                             "source_chars": c["chars"], "translated_chars": 0,
+                             "status": "error", "error": str(e)})
+            parts.append(f"[TRANSLATION FAILED FOR CHUNK {c['seq']}: {e}]")
+    full = "\n\n".join(parts)
+    # Deterministic safety net: apply active translation rules as text replacements
+    try:
+        _all_trules = load_active_rules(stage="translation")
+        full, _ = apply_rules_to_text(full, _all_trules)
+    except Exception:
+        pass
+    reconstructed = "\n\n".join(c["text"] for c in chunks)
+    norm_body = re.sub(r"\s+", " ", body).strip()
+    norm_recon = re.sub(r"\s+", " ", reconstructed).strip()
+    covered = len(body)
+    if norm_recon != norm_body:
+        all_ok = False
+        manifest.append({"note": f"coverage mismatch: {len(norm_recon)} != {len(norm_body)}"})
+    else:
+        manifest.append({"note": f"coverage OK: {len(chunks)} chunks"})
+    return full, manifest, all_ok, covered
+
+
+def _load_gemini_key():
+    key_path = os.path.join(ROOT, ".local", "gemini_api_key.txt")
+    if not os.path.exists(key_path):
+        return None
+    with open(key_path, "r", encoding="utf-8") as f:
+        for ln in f:
+            t = ln.strip()
+            if not t or t.startswith("#"):
+                continue
+            return t
+    return None
+
+
+def _gemini_generate(prompt, system, json_mode=False, max_tokens=3000, attempts=3):
+    key = _load_gemini_key()
+    if not key:
+        raise RuntimeError("Gemini key not configured at .local/gemini_api_key.txt")
+    payload = {
+        "contents": [{"parts": [{"text": (system + "\n\n" + prompt) if system else prompt}]}],
+        "generationConfig": {
+            "temperature": 0.1,
+            "maxOutputTokens": max_tokens,
+            "thinkingConfig": {"thinkingBudget": 0},
+        },
+    }
+    if json_mode:
+        payload["generationConfig"]["responseMimeType"] = "application/json"
+    last_err = None
+    for attempt in range(attempts):
+        try:
+            req = urllib.request.Request(
+                f"{GEMINI_API_BASE}/{GEMINI_MODEL}:generateContent?key={key}",
+                data=json.dumps(payload).encode(),
+                headers={"Content-Type": "application/json"},
+            )
+            with urllib.request.urlopen(req, timeout=300) as r:
+                resp = json.load(r)
+            parts = resp.get("candidates", [{}])[0].get("content", {}).get("parts", []) or []
+            text = "".join((p.get("text") or "") for p in parts)
+            if json_mode:
+                try:
+                    return json.loads(text)
+                except Exception:
+                    m = re.search(r"\{.*\}", text, re.S)
+                    if not m:
+                        raise RuntimeError("Gemini returned no JSON object")
+                    return json.loads(m.group(0))
+            return text.strip()
+        except Exception as e:
+            last_err = e
+            if attempt < attempts - 1:
+                time.sleep(10 * (attempt + 1))
+    raise last_err
+
+
+def gemini_analyse(subject, body, from_name, from_email, to_json, received_at, sent_at, translation):
+    global _applied_rule_ids
+    try:
+        _arules = get_prompt_rules(stage="analysis")
+        _arule_text = format_rules_for_prompt(_arules, stage="analysis")
+        _applied_rule_ids = list(_arules.keys())
+    except Exception:
+        _arule_text = ""
+        _applied_rule_ids = []
+    user = f"""Subject: {subject}
+From: {from_name} <{from_email}>
+To: {to_json}
+Date: {received_at or sent_at}
+
+English translation:
+{translation[:6000]}
+
+Return a JSON object with purpose_summary, people, dates, places, institutions, protocol_refs, record_refs, actions_requested, actions_promised, outstanding_questions, next_steps, uncertainties. Every fact must include an evidence quote. Be concise.""" + (_arule_text if _arule_text else "")
+    data = _gemini_generate(user, SYSTEM, json_mode=True, max_tokens=4000)
+    fact_keys = ["people", "dates", "places", "institutions", "protocol_refs", "record_refs",
+                 "actions_requested", "actions_promised", "outstanding_questions", "next_steps"]
+    if all(not data.get(k) for k in fact_keys) and not data.get("purpose_summary"):
+        data.setdefault("uncertainties", []).append(
+            {"issue": "extraction incomplete: all fact fields empty", "evidence": "none"})
+    for k in fact_keys:
+        for item in (data.get(k) or []):
+            if isinstance(item, dict) and "evidence" not in item:
+                item["evidence"] = "MISSING"
+                data.setdefault("uncertainties", []).append(
+                    {"issue": f"missing evidence quote in {k}", "evidence": str(item)[:80]})
+    data["_model"] = GEMINI_MODEL
+    data["_truncated"] = len(body) > 6000
+    return data
+
+
 def ollama_analyse(subject, body, from_name, from_email, to_json, received_at, sent_at, translation):
     global _applied_rule_ids
     global _applied_rule_ids
@@ -274,7 +426,12 @@ def main():
     ap.add_argument("--unanalysed", action="store_true", help="Analyse all genealogy-relevant messages without analysis files")
     ap.add_argument("--limit", type=int, default=10, help="Max messages to analyse per run (default 10)")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--model", choices=["ollama", "gemini"], default="ollama", help="Analysis model backend (default ollama)")
     args = ap.parse_args()
+
+    global MODEL
+    if args.model == "gemini":
+        MODEL = GEMINI_MODEL
 
     if not args.ids and not args.unanalysed:
         ap.error("Either --ids or --unanalysed is required")
@@ -363,13 +520,20 @@ def main():
         print(f"\n=== msg {mid}: {row['subject'][:70]} (body {len(body)} chars) ===", flush=True)
 
         print("  translating (chunked)...", flush=True)
-        translation, chunk_manifest, trans_ok, covered = ollama_translate_full(body)
+        if args.model == "gemini":
+            translation, chunk_manifest, trans_ok, covered = gemini_translate_full(body)
+        else:
+            translation, chunk_manifest, trans_ok, covered = ollama_translate_full(body)
         print(f"  chunks={len(chunk_manifest)} covered={covered}/{len(body)} ok={trans_ok} trans_chars={len(translation)}", flush=True)
 
         print("  analysing...", flush=True)
         try:
-            data = ollama_analyse(row["subject"] or "", body, row["from_name"] or "", row["from_email"] or "",
-                                  row["to_json"] or "[]", row["received_at"], row["sent_at"], translation)
+            if args.model == "gemini":
+                data = gemini_analyse(row["subject"] or "", body, row["from_name"] or "", row["from_email"] or "",
+                                      row["to_json"] or "[]", row["received_at"], row["sent_at"], translation)
+            else:
+                data = ollama_analyse(row["subject"] or "", body, row["from_name"] or "", row["from_email"] or "",
+                                      row["to_json"] or "[]", row["received_at"], row["sent_at"], translation)
         except Exception as e:
             print(f"  ANALYSIS FAILED: {e}")
             failed_mids.add(mid)
