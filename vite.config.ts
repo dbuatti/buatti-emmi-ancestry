@@ -1295,7 +1295,7 @@ function localRecordsApiPlugin(): Plugin {
             .then((raw) => {
               try {
                 const body = JSON.parse(raw);
-                const storePath = path.resolve(process.cwd(), ".local", "tree-overrides.json");
+                const storePath = path.resolve(process.cwd(), "src", "data", "tree-overrides.json");
                 let store: Record<string, unknown> = {};
                 if (fs.existsSync(storePath)) {
                   try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || {}; } catch { store = {}; }

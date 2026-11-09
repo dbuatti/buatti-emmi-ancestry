@@ -9,7 +9,7 @@
  * the save call fails silently and behaviour degrades to the old in-memory UI.
  */
 import type { Person, ResearchLead, OpenQuestion } from '@/types';
-import overridesJson from '../../.local/tree-overrides.json';
+import overridesJson from '@/data/tree-overrides.json';
 
 export interface TreeOverrides {
   addedPeople: Person[];
