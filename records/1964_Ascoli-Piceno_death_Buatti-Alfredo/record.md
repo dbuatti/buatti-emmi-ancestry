@@ -9,8 +9,6 @@ year: '1964'
 atto: '148'
 parte: 'II'
 serie: 'B'
-people:
-  - alfredo-buatti-sr
 source_office: Comune di Ascoli Piceno — Ufficio Stato Civile
 protocol: 0101199/2026
 fs_status: not on FamilySearch
@@ -18,13 +16,18 @@ verified_by_daniele: false
 transcribed_by: OpenCode (Daniele image-reading draft 10/11/2026 — Daniele to verify every line)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename:
 - doc07061420261105133528.pdf
 original_sha256:
 - b288bcfefc693a0cfb306ea874f2d133971c60be8076c0e89794d37eb35b6b89
+people:
+  - alfredo-buatti-sr
+mentioned:
+  - giovanni-buatti
+  - emidia-bruni
 ---
 
 ## Transcription
@@ -33,8 +36,8 @@ original_sha256:
   en: Tipo di atto: Death act — Part II, Series B
 - Numero dell'atto: 148 («Numero 148»)
   en: Numero dell'atto: Number 148 (act reads "Numero 148")
-- Data dell'atto: 6 settembre 1964, ore dieci («L'anno millenovecentosessantaquattro, addì sei… del mese di settembre alle ore dieci») [?]
-  en: Data dell'atto: 6 September 1964, 10 o'clock [?]
+- Data dell'atto: 6 settembre 1964, ore dieci («L'anno millenovecentosessantaquattro, addì sei… del mese di settembre alle ore dieci»)
+  en: Data dell'atto: 6 September 1964, 10 o'clock
 - Deceduto: BUATTI ALFREDO
   en: Deceduto: BUATTI ALFREDO
 - Data del decesso: 5 settembre 1964 («il giorno Cinque del mese di settembre dell'anno millenovecentosessantaquattro»)
@@ -49,23 +52,23 @@ original_sha256:
   en: Data di nascita: 18 March 1888 (act reads "diciotto marzo milleottocentoottantotto")
 - Luogo di nascita: Ascoli Piceno
   en: Luogo di nascita: Ascoli Piceno
-- Atto di nascita: n. 248, P. I S., anno 1888 [?]
-  en: Atto di nascita: no. 248, P. I S., year 1888 [?]
-- Padre: fu Giovanni [?]
-  en: Padre: late Giovanni [?]
-- Madre: fu Bruni Emidia [?]
-  en: Madre: late Bruni Emidia [?]
-- Stato civile: marito di Galanti Ida [?]
-  en: Stato civile: husband of Galanti Ida [?]
-- Copia conforme: Ascoli Piceno, 5/11/2026 [?]
-  en: Copia conforme: Ascoli Piceno, 5/11/2026 [?]
+- Atto di nascita: n. 245, P. I S., anno 1888 [?]
+  en: Atto di nascita: no. 245, P. I S., year 1888 [?]
+- Padre: fu Giovanni
+  en: Padre: late Giovanni
+- Madre: fu Bruni Emidia
+  en: Madre: late Bruni Emidia
+- Stato civile: marito di Galanti Ida
+  en: Stato civile: husband of Galanti Ida
+- Copia conforme: Ascoli Piceno, 5/11/2026
+  en: Copia conforme: Ascoli Piceno, 5/11/2026
 - Ufficiale: Rag. Vincenzo Piccinini, Assessore («Io, Rag. Vincenzo Piccinini… per delega avuta»; firma illeggibile)
   en: Ufficiale: Rag. Vincenzo Piccinini, assessor (signature illegible)
 
 ## Uncertain readings
 
 - Numero: read "148 V" in handwriting — confirm the number (and what V marks) against the image.
-- Atto di nascita: 245 (Daniele) vs 248 (Gemini, twice) — look once more at the digit; the true reading decides.
+- Atto di nascita: settled 245 (Daniele's eyes over Gemini's twice-read 248), kept with [?] as he typed it.
 - Ora: settled 17:00 (Daniele "DIECISETTE" + Gemini "diciassette e dieci"); minutes stay [illeggibili] per Daniele's eyes.
 - Ospedale: death place name garbled in both readings — read fresh from the image.
 - Padre/Madre/Stato civile: handwriting per Daniele's caveat — confirm each against the image.
@@ -74,3 +77,7 @@ original_sha256:
 # Source
 
 D13 request (sent 05/11/2026 to Dott.ssa Diletta Falciatori): copia integrale of the death act of BUATTI Alfredo (d. 05/09/1964 — the cemetery "9/5/1964" is US M/D format, confirmed by the act's spelled-out "Cinque settembre"). Reply received same day via PEC (thread 1a1abc46de4b71d3, registered as prot. 0101199/2026): 2-page PDF with one death act per page — page 1 = Ida Galanti, page 2 = Alfredo Buatti. Filed page 2 here as a standalone PDF (rotation corrected: source pages carried a wrong /Rotate 270 flag, reset to 0). Header reads "ATTI DI MORTE - Parte II - Serie B". The _Marcato.pdf twin is the PEC-marked copy of the same document. Original 2-page PDF archived in records-local/_sources/.
+
+## Discrepancies
+- Line "Atto di nascita": AI read "n. 248, P. I S., anno 1888 [?]", corrected to "n. 245, P. I S., anno 1888 [?]".
+
