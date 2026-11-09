@@ -8,11 +8,16 @@ _unsorted/
 copy-log.csv
 
 # Correspondence SQLite (local only, never committed or deployed)
-.local/correspondence.db
-.local/correspondence.db-wal
-.local/correspondence.db-shm
+.local/
 src/data/correspondence.json
 src/data/gmail-scan-state.json
+
+# Generated / local artifacts
+deserts/
+family-tree-export.md
+*.attachment-gate.json
+__pycache__/
+scripts/__pycache__/
 
 # Standard
 node_modules/
