@@ -7,7 +7,6 @@ comune: ''
 register: ''
 year: ''
 atto: ''
-people: []
 source_office: ''
 protocol: ''
 fs_status: not on FamilySearch
@@ -21,6 +20,9 @@ on_familysearch: false
 original_filename: Prot_Par 0008863 del 11-08-2026 - Allegato atto di morte Chiappini
   Lilia_signed.pdf
 original_sha256: f4059f099268db6b0bb272b928533aed9afddff9e37ad63c01eed02f6e7f866a
+people:
+  - bruna-lilia-chiappini
+mentioned: []
 ---
 
 # Italian transcription
@@ -34,3 +36,4 @@ Translation pending.
 # Uncertain readings
 
 N/A - image not yet transcribed.
+

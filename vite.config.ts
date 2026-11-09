@@ -376,6 +376,58 @@ function localRecordsApiPlugin(): Plugin {
           return sendJson(res, 200, { files });
         }
 
+        // ---- GET /api/record-page-png/<id>?file=X&page=N ----
+        // Renders one record page as PNG bytes (for copy-to-clipboard).
+        // PDFs via pdftoppm (absolute binary, symlink-safe paths); images
+        // via sips conversion to PNG. Always returns image/png.
+        if (method === "GET" && url.split("?")[0].startsWith("/api/record-page-png/")) {
+          try {
+            const pathOnly = url.split("?")[0];
+            const recordId = pathOnly.split("/").pop() || "";
+            if (!isSafeRecordId(recordId)) {
+              return sendJson(res, 400, { error: "Invalid record id" });
+            }
+            const urlObj = new URL(url, "http://localhost");
+            const file = urlObj.searchParams.get("file") || "";
+            const page = Math.max(1, parseInt(urlObj.searchParams.get("page") || "1", 10) || 1);
+            const dir = path.join(RECORDS_LOCAL, recordId);
+            if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+              return sendJson(res, 404, { error: "Record folder not found" });
+            }
+            const safeDir = path.resolve(dir);
+            const fp = path.resolve(safeDir, file);
+            if (!file || !fp.startsWith(safeDir + path.sep) || !fs.existsSync(fp)) {
+              return sendJson(res, 404, { error: "File not found in record folder" });
+            }
+            const { execFileSync } = await import("node:child_process");
+            const ext = path.extname(fp).toLowerCase();
+            let pngBytes: Buffer;
+            if (ext === ".pdf") {
+              const tmpBase = path.join(fs.realpathSync(os.tmpdir()), `pagepng-${Date.now()}`);
+              const pdftoppm = fs.existsSync("/opt/homebrew/bin/pdftoppm") ? "/opt/homebrew/bin/pdftoppm" : "pdftoppm";
+              execFileSync(pdftoppm, ["-png", "-r", "200", "-f", String(page), "-l", String(page), "-singlefile", fp, tmpBase], { encoding: "utf8", timeout: 60000 });
+              pngBytes = fs.readFileSync(tmpBase + ".png");
+              try { fs.unlinkSync(tmpBase + ".png"); } catch {}
+            } else if ([".jpg", ".jpeg", ".png", ".webp", ".tiff", ".tif"].includes(ext)) {
+              if (ext === ".png") {
+                pngBytes = fs.readFileSync(fp);
+              } else {
+                const tmpOut = path.join(fs.realpathSync(os.tmpdir()), `pagepng-${Date.now()}.png`);
+                execFileSync("/usr/bin/sips", ["-s", "format", "png", fp, "--out", tmpOut], { encoding: "utf8", timeout: 60000 });
+                pngBytes = fs.readFileSync(tmpOut);
+                try { fs.unlinkSync(tmpOut); } catch {}
+              }
+            } else {
+              return sendJson(res, 400, { error: "Not a renderable file" });
+            }
+            res.writeHead(200, { "Content-Type": "image/png", "Content-Length": pngBytes.length });
+            res.end(pngBytes);
+            return;
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
         // ---- POST /api/correspondence/ocr/<recordId> ----
         // Runs tesseract OCR. For PDFs, converts ALL pages. For multiple image files,
         // OCRs each one. Returns per-page results with "--- Page N ---" markers.

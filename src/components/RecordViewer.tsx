@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Image as ImageIcon, AlertCircle, Maximize, ExternalLink, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { Image as ImageIcon, AlertCircle, Maximize, ExternalLink, ZoomIn, ZoomOut, RotateCcw, ClipboardCopy, Check } from "lucide-react";
 
 interface RecordViewerProps {
   recordId: string;
@@ -36,6 +36,7 @@ export function RecordViewer({ recordId, sticky = false, pages }: RecordViewerPr
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copying" | "done" | "error">("idle");
 
   // Pan/zoom state - applies to both images and PDFs via container transform
   const [pz, setPz] = useState<PanZoomState>({
@@ -200,6 +201,32 @@ export function RecordViewer({ recordId, sticky = false, pages }: RecordViewerPr
     }
   };
 
+  const copyImage = async () => {
+    if (!selectedFile) return;
+    setCopyState("copying");
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/record-page-png/${recordId}?file=${encodeURIComponent(selectedFile.name)}&page=1`
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob }),
+      ]);
+      setCopyState("done");
+      setTimeout(() => setCopyState("idle"), 2000);
+    } catch (e) {
+      setCopyState("error");
+      setError(
+        e instanceof Error && e.name === "NotAllowedError"
+          ? "Clipboard blocked by the browser — use Download instead."
+          : `Copy failed (${e instanceof Error ? e.message : String(e)}). Use Download instead.`
+      );
+      setTimeout(() => setCopyState("idle"), 3000);
+    }
+  };
+
   // Global drag listeners
   useEffect(() => {
     if (!pz.isDragging) return;
@@ -291,6 +318,19 @@ export function RecordViewer({ recordId, sticky = false, pages }: RecordViewerPr
               disabled={!selectedFile}
             >
               <ExternalLink className="w-3 h-3 mr-1" /> Open in new tab
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyImage}
+              disabled={!selectedFile || copyState === "copying"}
+              title="Copy the document image to the clipboard (paste into chat, mail, notes)"
+            >
+              {copyState === "done" ? (
+                <><Check className="w-3 h-3 mr-1" /> Copied</>
+              ) : (
+                <><ClipboardCopy className="w-3 h-3 mr-1" /> {copyState === "copying" ? "Copying…" : "Copy image"}</>
+              )}
             </Button>
             <Button
               variant="outline"

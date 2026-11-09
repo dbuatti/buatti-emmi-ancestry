@@ -7,7 +7,6 @@ comune: ''
 register: ''
 year: ''
 atto: ''
-people: []
 source_office: ''
 protocol: ''
 fs_status: not on FamilySearch
@@ -24,6 +23,10 @@ original_filename:
 original_sha256:
 - d92ffea479294c89badf996e291b5613d73fc01a26f7a7852d00d161f2837326
 - f6d14fe57c43aacf1d3579ff9a862ad82708f1178cf7500c117d5f170b78e28f
+people:
+  - ezio-buatti
+  - bruna-lilia-chiappini
+mentioned: []
 ---
 
 # Italian transcription
@@ -37,3 +40,5 @@ Translation pending.
 # Uncertain readings
 
 N/A - image not yet transcribed.
+
+
