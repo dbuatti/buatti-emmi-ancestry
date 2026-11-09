@@ -87,25 +87,6 @@ const ResearchAssistant = () => {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
-          <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle>Total Messages</CardTitle></CardHeader><CardContent>
-            <p className="text-3xl font-serif font-bold text-[#800020]">{summary.db_stats?.total_messages?.toLocaleString() || 0}</p>
-            <p className="text-stone-500 text-sm">Across both accounts</p>
-          </CardContent></Card>
-          <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle>Definite Leads</CardTitle></CardHeader><CardContent>
-            <p className="text-3xl font-serif font-bold text-emerald-600">{summary.db_stats?.definite || 0}</p>
-            <p className="text-stone-500 text-sm">genealogy_relevance=definite</p>
-          </CardContent></Card>
-          <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle>Possible Leads</CardTitle></CardHeader><CardContent>
-            <p className="text-3xl font-serif font-bold text-orange-600">{summary.db_stats?.possible || 0}</p>
-            <p className="text-stone-500 text-sm">genealogy_relevance=possible</p>
-          </CardContent></Card>
-          <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle>Model</CardTitle></CardHeader><CardContent>
-            <p className="text-3xl font-serif font-bold text-stone-500">{summary.model_available ? 'Available' : 'Unavailable'}</p>
-            <p className="text-stone-500 text-sm">qwen2.5:14b local LLM</p>
-          </CardContent></Card>
-        </div>
-
         {suggestions.length > 0 && (
           <div className="mb-6">
             <h2 className="text-lg font-serif font-bold text-[#800020] mb-4">Automatic Suggestions</h2>

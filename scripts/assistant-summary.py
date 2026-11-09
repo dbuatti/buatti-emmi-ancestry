@@ -63,7 +63,7 @@ def main():
         SELECT t.id AS thread_db_id, t.account_email, t.gmail_thread_id,
                t.subject, t.status, t.last_message_at, t.last_inbound_at,
                t.last_outbound_at, t.has_unanswered_inbound,
-               m.received_at, m.sent_at, m.snippet,
+               m.received_at, m.sent_at, m.snippet, m.direction,
                mc.message_type, mc.action_status, mc.genealogy_relevance
         FROM threads t
         JOIN messages m ON m.thread_id = t.id AND m.account_email = t.account_email
@@ -78,7 +78,22 @@ def main():
     no_action_needed = []
     all_genthreads = []
 
+    # Group by thread: one entry per thread, snippet from the LATEST INBOUND message
+    # (the old code took an arbitrary message row, which was often Daniele's own
+    # outbound message — mislabeled as "latest inbound").
+    latest_inbound = {}   # (account, gtid) -> (ts, snippet)
+    seen_threads = {}     # (account, gtid) -> first row for that thread
     for r in rows:
+        key = (r["account_email"], r["gmail_thread_id"])
+        if key not in seen_threads:
+            seen_threads[key] = r
+        if r["direction"] == "in":
+            ts = r["received_at"] or ""
+            prev = latest_inbound.get(key)
+            if prev is None or ts > prev[0]:
+                latest_inbound[key] = (ts, r["snippet"] or "")
+
+    for r in seen_threads.values():
         gtid = r["gmail_thread_id"]
         tid = str(r["thread_db_id"])
         inst_info = threads_data.get(gtid, {})
@@ -88,7 +103,7 @@ def main():
         person_names = inst_info.get("person_names", [])[:2]
         institution = inst_info.get("institution", "")
         protocol_refs = inst_info.get("record_refs", [])[:2] or inst_info.get("protocol_refs", [])[:2]
-        snippet = (r["snippet"] or "")[:100]
+        snippet = (latest_inbound.get((r["account_email"], gtid), ("", ""))[1] or "")[:100]
         days_waiting = None
         last_activity = r["last_message_at"] or r["last_outbound_at"]
         if last_activity:

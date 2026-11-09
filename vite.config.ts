@@ -1448,6 +1448,48 @@ function localCorrespondenceApiPlugin(): Plugin {
              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
            }
          }
+
+         // ---- POST /api/assistant/translate ----
+         if (method === "POST" && url === "/api/assistant/translate") {
+           try {
+             const raw = await readBody(req);
+             const { text, target } = JSON.parse(raw || "{}");
+             if (!text || typeof text !== "string") {
+               return sendJson(res, 400, { ok: false, error: "text required" });
+             }
+             const targetLang = target === "it" ? "Italian" : "English";
+             const geminiKeyPath = path.resolve(process.cwd(), ".local", "gemini_api_key.txt");
+             let geminiKey = "";
+             if (fs.existsSync(geminiKeyPath)) {
+               const keyLines = fs.readFileSync(geminiKeyPath, "utf8").split("\n");
+               for (const ln of keyLines) {
+                 const t = ln.trim();
+                 if (!t || t.startsWith("#")) continue;
+                 geminiKey = t;
+                 break;
+               }
+             }
+             if (!geminiKey) {
+               return sendJson(res, 503, { ok: false, error: "No Gemini key configured (.local/gemini_api_key.txt)" });
+             }
+             const prompt = `Translate the following text to ${targetLang}. Output ONLY the translation, nothing else.\n\n${text}`;
+             const { execFileSync } = await import("node:child_process");
+             const result = execFileSync("curl", [
+               "-s", "-X", "POST",
+               `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
+               "-H", "Content-Type: application/json",
+               "-d", JSON.stringify({
+                 contents: [{ parts: [{ text: prompt }] }],
+                 generationConfig: { temperature: 0.1, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
+               }),
+             ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
+             const geminiResponse = JSON.parse(result);
+             const translation = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+             return sendJson(res, 200, { ok: true, translation: translation.trim() });
+           } catch (e) {
+             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+           }
+         }
  
          // ---- POST /api/assistant/draft-save ----
          if (method === "POST" && url === "/api/assistant/draft-save") {
