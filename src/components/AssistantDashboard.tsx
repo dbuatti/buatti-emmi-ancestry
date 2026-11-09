@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AssistantSummaryResponse, ThreadSummary, FilterStatus, FilterAccount } from '@/types/assistant';
+import { PillFilter } from '@/components/PillFilter';
 
 interface AssistantDashboardProps {
   summary: AssistantSummaryResponse | null;
@@ -36,6 +37,56 @@ export const AssistantDashboard = ({
   setSearchQuery,
   onSelectThread,
 }: AssistantDashboardProps) => {
+  // Pill filter state (multi-select).
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([]);
+  const [selectedPeople, setSelectedPeople] = useState<string[]>([]);
+  const [selectedClassifications, setSelectedClassifications] = useState<string[]>([]);
+
+  const toggle = (setter: React.Dispatch<React.SetStateAction<string[]>>, key: string) =>
+    setter(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
+
+  // Derive pill options with counts from all pending threads (before other filters).
+  const allPending = summary?.pending_actions || [];
+  const institutionPills = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const t of allPending) {
+      const inst = (t.institution || '').trim();
+      if (!inst) continue;
+      counts.set(inst, (counts.get(inst) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([label, count]) => ({ key: label, label, count }));
+  }, [allPending]);
+
+  const peoplePills = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const t of allPending) {
+      for (const p of t.people || []) {
+        const name = p.trim();
+        if (!name) continue;
+        counts.set(name, (counts.get(name) || 0) + 1);
+      }
+    }
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 12)
+      .map(([label, count]) => ({ key: label, label, count }));
+  }, [allPending]);
+
+  const classificationPills = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const t of allPending) {
+      const cls = (t.classification || '').toLowerCase();
+      if (!cls) continue;
+      counts.set(cls, (counts.get(cls) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, count]) => ({ key, label: ASSISTANT_STATUSES[key]?.label || key, count }));
+  }, [allPending]);
+
   const threads = useMemo(() => {
     return (summary?.pending_actions || []).filter(t => {
       if (filterStatus === 'pending') {
@@ -46,6 +97,9 @@ export const AssistantDashboard = ({
       if (filterStatus === 'no-action' && (t.classification || '').toLowerCase() !== 'no_action_needed') return false;
       if (filterAccount === 'daniele' && t.account_email !== 'daniele.buatti@gmail.com') return false;
       if (filterAccount === 'info' && t.account_email !== 'info@danielebuatti.com') return false;
+      if (selectedInstitutions.length > 0 && !selectedInstitutions.includes((t.institution || '').trim())) return false;
+      if (selectedPeople.length > 0 && !(t.people || []).some(p => selectedPeople.includes(p.trim()))) return false;
+      if (selectedClassifications.length > 0 && !selectedClassifications.includes((t.classification || '').toLowerCase())) return false;
       if (searchQuery && !(
         (t.institution || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
         (t.people?.some(p => p.toLowerCase().includes(searchQuery.toLowerCase())) || false) ||
@@ -54,7 +108,7 @@ export const AssistantDashboard = ({
       )) return false;
       return true;
     });
-  }, [summary, filterStatus, filterAccount, searchQuery]);
+  }, [summary, filterStatus, filterAccount, searchQuery, selectedInstitutions, selectedPeople, selectedClassifications]);
 
   const statusColor = (cls: string) => {
     const s = ASSISTANT_STATUSES[cls.toLowerCase()];
@@ -105,6 +159,22 @@ export const AssistantDashboard = ({
         </CardContent></Card>
       </div>
 
+      <Card className="border-stone-200">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold text-stone-700">Filter threads</div>
+            {(selectedInstitutions.length > 0 || selectedPeople.length > 0 || selectedClassifications.length > 0) && (
+              <Button variant="ghost" size="sm" className="text-xs" onClick={() => { setSelectedInstitutions([]); setSelectedPeople([]); setSelectedClassifications([]); }}>
+                Clear all
+              </Button>
+            )}
+          </div>
+          <PillFilter title="Institution" pills={institutionPills} selected={selectedInstitutions} onToggle={k => toggle(setSelectedInstitutions, k)} onClear={() => setSelectedInstitutions([])} />
+          <PillFilter title="People" pills={peoplePills} selected={selectedPeople} onToggle={k => toggle(setSelectedPeople, k)} onClear={() => setSelectedPeople([])} />
+          <PillFilter title="Status" pills={classificationPills} selected={selectedClassifications} onToggle={k => toggle(setSelectedClassifications, k)} onClear={() => setSelectedClassifications([])} />
+        </CardContent>
+      </Card>
+
       <div className="flex flex-wrap items-center gap-2 p-4 border border-stone-200 rounded-lg bg-white">
         <Select value={filterStatus} onValueChange={v => setFilterStatus(v as FilterStatus)}>
           <SelectTrigger className="bg-white border-stone-300 w-auto min-w-[140px]">
@@ -131,7 +201,7 @@ export const AssistantDashboard = ({
       </div>
 
       <Card>
-        <CardHeader className="p-4"><CardTitle className="text-lg">Threads Needing Attention</CardTitle></CardHeader>
+        <CardHeader className="p-4"><CardTitle className="text-lg">Threads Needing Attention ({threads.length})</CardTitle></CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
