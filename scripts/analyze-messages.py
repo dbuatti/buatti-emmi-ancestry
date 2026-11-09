@@ -303,7 +303,7 @@ def _gemini_generate(prompt, system, json_mode=False, max_tokens=3000, attempts=
         except Exception as e:
             last_err = e
             if attempt < attempts - 1:
-                time.sleep(10 * (attempt + 1))
+                time.sleep([15, 30, 60][attempt])
     raise last_err
 
 
