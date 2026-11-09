@@ -15,6 +15,7 @@ import {
   Inbox,
   Link2,
   MailCheck,
+  Crosshair,
   MapPin,
   ChevronDown,
 } from 'lucide-react';
@@ -712,6 +713,22 @@ export function NextGuide() {
                   </Button>
                   <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={checkSentCorrespondence}>
                     <Send className="w-3 h-3 mr-1" /> Check sent mail
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs h-8 px-3"
+                    onClick={() =>
+                      navigate(
+                        `/research/triangulate?person=${encodeURIComponent(task.personId)}&target=${encodeURIComponent(
+                          task.eventType === 'birth' || task.eventType === 'marriage' || task.eventType === 'death'
+                            ? task.eventType
+                            : 'death'
+                        )}`
+                      )
+                    }
+                  >
+                    <Crosshair className="w-3 h-3 mr-1" /> Triangulate
                   </Button>
                   <Button
                     size="sm"
