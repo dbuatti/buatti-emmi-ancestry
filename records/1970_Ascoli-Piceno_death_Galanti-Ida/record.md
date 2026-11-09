@@ -25,7 +25,7 @@ original_sha256:
 - b288bcfefc693a0cfb306ea874f2d133971c60be8076c0e89794d37eb35b6b89
 ---
 
-# Italian transcription
+## Transcription
 
 - Data dell'atto: 26 gennaio 1970
   en: Data dell'atto: 26 January 1970
