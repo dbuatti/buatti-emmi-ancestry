@@ -52,18 +52,14 @@ original_sha256:
 - Ufficiale: [firma illeggibile]
   en: Ufficiale: [signature illegible]
 
-# English translation
-
-See en: lines above (line-by-line).
-
-# Uncertain readings
+## Uncertain readings
 
 - Data del decesso: OCR reads the day as VENTISE[I] with noise around it — but the act date, the cemetery record, and family knowledge all say 26/01/1970. Confirm the day word against the image.
 - Luogo di nascita: OCR garbled ("LASA PARO ere Sipiaotarenio") — read it fresh from the image; likely Ascoli Piceno, do not assume.
 - Padre: OCR reads "da fu ANntOnio" — surname Galanti implied (father of the deceased). Confirm.
 - Atto number: not legible in OCR — read from the top of the image and fill front matter.
 
-# Source
+## Source
 
 D13 request (sent 05/11/2026 to Dott.ssa Diletta Falciatori): copia integrale of the death act of GALANTI Ida (d. 26/01/1970). Reply received same day via PEC (thread 1a1abc46de4b71d3, registered as prot. 0101199/2026): 2-page PDF with one death act per page — page 1 = Ida Galanti, page 2 = Alfredo Buatti. Filed page 1 here as a standalone PDF (rotation corrected: source pages carried a wrong /Rotate 270 flag, reset to 0). The _Marcato.pdf twin is the PEC-marked copy of the same document. Original 2-page PDF archived in records-local/_sources/.
 
