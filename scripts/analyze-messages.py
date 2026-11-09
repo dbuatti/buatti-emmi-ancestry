@@ -493,6 +493,7 @@ def main():
 
     failed_mids = set()
     for mid in args.ids:
+        time.sleep(2)
         # Create or update ai_jobs entry
         job_key = f"analyse_msg_{mid}"
         now = datetime.datetime.now(datetime.timezone.utc).isoformat()
