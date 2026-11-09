@@ -33,24 +33,24 @@ original_sha256:
   en: Tipo di atto: Death act — Part II, Series B
 - Numero dell'atto: 148 («Numero 148»)
   en: Numero dell'atto: Number 148 (act reads "Numero 148")
-- Data dell'atto: settembre 1964 («L'anno millenovecentosessantaquattro…», giorno illeggibile) [?]
-  en: Data dell'atto: September 1964 (act reads "L'anno millenovecentosessantaquattro…", day illegible) [?]
+- Data dell'atto: 6 settembre 1964, ore dieci («L'anno millenovecentosessantaquattro, addì sei… del mese di settembre alle ore dieci») [?]
+  en: Data dell'atto: 6 September 1964, 10 o'clock [?]
 - Deceduto: BUATTI ALFREDO
   en: Deceduto: BUATTI ALFREDO
 - Data del decesso: 5 settembre 1964 («il giorno Cinque del mese di settembre dell'anno millenovecentosessantaquattro»)
   en: Data del decesso: 5 September 1964 (act reads "il giorno Cinque del mese di settembre…")
 - Ora del decesso: ore diciassette e minuti [illeggibili]
   en: Ora del decesso: five o'clock and unreadable minutes
-- Luogo del decesso: ospedale [nome illeggibile — verificare sull'immagine]
-  en: Luogo del decesso: hospital [name illegible — check the image]
+- Luogo del decesso: Ospedale Civile, Ascoli Piceno («Direzione del locale Ospedale Civile»; avviso di morte con la data di ieri)
+  en: Luogo del decesso: Civic Hospital, Ascoli Piceno (death notice dated the day before)
 - Stato: cittadino italiano, residente in Ascoli Piceno, pensionato
   en: Stato: Italian citizen, resident in Ascoli Piceno, pensioner
 - Data di nascita: 18 marzo 1888 («diciotto marzo milleottocentoottantotto»)
   en: Data di nascita: 18 March 1888 (act reads "diciotto marzo milleottocentoottantotto")
 - Luogo di nascita: Ascoli Piceno
   en: Luogo di nascita: Ascoli Piceno
-- Atto di nascita: n. 245, P. I S., anno 1888
-  en: Atto di nascita: no. 245, P. I S., year 1888
+- Atto di nascita: n. 248, P. I S., anno 1888 [?]
+  en: Atto di nascita: no. 248, P. I S., year 1888 [?]
 - Padre: fu Giovanni [?]
   en: Padre: late Giovanni [?]
 - Madre: fu Bruni Emidia [?]
@@ -59,13 +59,14 @@ original_sha256:
   en: Stato civile: husband of Galanti Ida [?]
 - Copia conforme: Ascoli Piceno, 5/11/2026 [?]
   en: Copia conforme: Ascoli Piceno, 5/11/2026 [?]
-- Ufficiale: [firma illeggibile]
-  en: Ufficiale: [signature illegible]
+- Ufficiale: Rag. Vincenzo Piccinini, Assessore («Io, Rag. Vincenzo Piccinini… per delega avuta»; firma illeggibile)
+  en: Ufficiale: Rag. Vincenzo Piccinini, assessor (signature illegible)
 
 ## Uncertain readings
 
 - Numero: read "148 V" in handwriting — confirm the number (and what V marks) against the image.
-- Ora: Daniele reads "ORA DIECISETTE" on the image — settled 10/11/2026 (was "tre" vs "diciassette").
+- Atto di nascita: 245 (Daniele) vs 248 (Gemini, twice) — look once more at the digit; the true reading decides.
+- Ora: settled 17:00 (Daniele "DIECISETTE" + Gemini "diciassette e dieci"); minutes stay [illeggibili] per Daniele's eyes.
 - Ospedale: death place name garbled in both readings — read fresh from the image.
 - Padre/Madre/Stato civile: handwriting per Daniele's caveat — confirm each against the image.
 - Copia conforme date: reads like 5/1/2036, taken as 5/11/2026 (D13 reply date) — confirm.
