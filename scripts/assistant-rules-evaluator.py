@@ -78,6 +78,7 @@ def evaluate_threads(rules, summary):
                     "classification": thread.get("classification"),
                     "days_waiting": thread.get("days_waiting"),
                     "protocol_refs": thread.get("protocol_refs") or [],
+                    "purpose": thread.get("purpose") or "",
                     "latest_inbound_snippet": thread.get("latest_inbound_snippet") or "",
                     "rule_id": rule.get("id"),
                     "confidence": rule.get("confidence", 50),

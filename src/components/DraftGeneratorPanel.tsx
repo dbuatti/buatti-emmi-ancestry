@@ -15,6 +15,7 @@ interface DraftGeneratorPanelProps {
   institution: string;
   people: string[];
   protocolRefs: string[];
+  purpose?: string;
   latestSnippet: string;
   classification: string;
   prefillTemplate?: string;
@@ -28,6 +29,7 @@ export const DraftGeneratorPanel = ({
   institution,
   people,
   protocolRefs,
+  purpose,
   latestSnippet,
   classification,
   prefillTemplate,
@@ -52,6 +54,7 @@ export const DraftGeneratorPanel = ({
       `Institution you are writing to: ${institution || 'Unknown'}`,
       `Your ancestors/people mentioned: ${people.join(', ') || 'None'}`,
       `Protocol refs to cite verbatim if referring to prior requests: ${protocolRefs.join(', ') || 'None'}`,
+      `Purpose of this correspondence: ${purpose || 'Not specified'}`,
       `Thread classification: ${classification || 'Unknown'}`,
       '',
       'The latest incoming message from them:',

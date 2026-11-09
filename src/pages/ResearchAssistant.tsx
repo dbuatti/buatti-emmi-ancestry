@@ -139,6 +139,7 @@ const ResearchAssistant = () => {
               institution={selectedSuggestion.institution}
               people={selectedSuggestion.people}
               protocolRefs={selectedSuggestion.protocol_refs}
+              purpose={selectedSuggestion.purpose}
               latestSnippet={selectedSuggestion.latest_inbound_snippet}
               classification={selectedSuggestion.classification}
               prefillTemplate={selectedSuggestion.draft_template}
@@ -159,6 +160,7 @@ const ResearchAssistant = () => {
               institution={selectedThread.institution}
               people={selectedThread.people}
               protocolRefs={selectedThread.protocol_refs}
+              purpose={selectedThread.purpose}
               latestSnippet={selectedThread.latest_inbound_snippet}
               classification={selectedThread.classification}
             />
