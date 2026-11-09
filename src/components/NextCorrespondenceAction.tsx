@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Mail, Download, Clock, AlertTriangle, CheckCircle2, Loader2, SkipForward } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -158,6 +159,11 @@ export function NextCorrespondenceAction() {
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
+            {action.kind === 'sweep' && (
+              <Button size="sm" variant="outline" asChild>
+                <Link to="/research/centre?tab=newitems">Review new items</Link>
+              </Button>
+            )}
             {action.kind !== 'done' && (
               <>
                 <Button size="sm" variant="outline" onClick={skip}>

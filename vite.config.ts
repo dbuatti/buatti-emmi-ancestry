@@ -1374,32 +1374,70 @@ function localCorrespondenceApiPlugin(): Plugin {
          if (method === "POST" && url === "/api/assistant/draft") {
            try {
              const raw = await readBody(req);
-             const { threadId, gmailThreadId, accountEmail, prompt } = JSON.parse(raw || "{}");
+             const { threadId, gmailThreadId, accountEmail, prompt, model: requestedModel } = JSON.parse(raw || "{}");
              if (!threadId || !prompt) {
                return sendJson(res, 400, { ok: false, error: "Missing threadId or prompt" });
              }
- 
-             // Call Ollama qwen2.5:14b for draft generation
-             const { execFileSync } = await import("node:child_process");
-             const ollamaPrompt = `${prompt}\n\nGenerate ONLY the email body (no subject, no signature placeholders). Keep it concise and professional.`;
-             const result = execFileSync("curl", [
-               "-s", "-X", "POST", "http://localhost:11434/api/generate",
-               "-H", "Content-Type: application/json",
-               "-d", JSON.stringify({
-                 model: "qwen2.5:14b",
-                 prompt: ollamaPrompt,
-                 stream: false,
-                 options: { temperature: 0.3, top_p: 0.9, num_predict: 512 },
-               }),
-             ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
- 
-             const ollamaResponse = JSON.parse(result);
-             const draft = ollamaResponse.response || "";
- 
+
+             const modelChoice = (requestedModel || "").toLowerCase();
+             let draft = "";
+             let usedModel = "";
+
+             // Gemini path (if key present)
+             const geminiKeyPath = path.resolve(process.cwd(), ".local", "gemini_api_key.txt");
+             let geminiKey = "";
+             if (fs.existsSync(geminiKeyPath)) {
+               geminiKey = fs.readFileSync(geminiKeyPath, "utf8").trim().split("\n")[0].trim();
+               if (geminiKey.startsWith("#") || geminiKey === "YOUR_KEY_HERE" || !geminiKey) geminiKey = "";
+             }
+
+             const wantGemini = (modelChoice === "gemini" || modelChoice === "") && geminiKey;
+             if (wantGemini) {
+               const geminiPrompt = `${prompt}\n\nGenerate ONLY the email body (no subject, no signature placeholders). Keep it concise and professional.`;
+               const { execFileSync } = await import("node:child_process");
+               const geminiModel = "gemini-2.0-flash";
+               const result = execFileSync("curl", [
+                 "-s", "-X", "POST",
+                 `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
+                 "-H", "Content-Type: application/json",
+                 "-d", JSON.stringify({
+                   contents: [{ parts: [{ text: geminiPrompt }] }],
+                   generationConfig: { temperature: 0.3, maxOutputTokens: 512 },
+                 }),
+               ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
+               try {
+                 const geminiResponse = JSON.parse(result);
+                 draft = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                 usedModel = geminiModel;
+               } catch {
+                 draft = "";
+               }
+             }
+
+             // Ollama fallback (qwen or llama)
+             if (!draft) {
+               const ollamaModel = modelChoice === "llama" ? "llama3.2:latest" : "qwen2.5:14b";
+               const { execFileSync } = await import("node:child_process");
+               const ollamaPrompt = `${prompt}\n\nGenerate ONLY the email body (no subject, no signature placeholders). Keep it concise and professional.`;
+               const result = execFileSync("curl", [
+                 "-s", "-X", "POST", "http://localhost:11434/api/generate",
+                 "-H", "Content-Type: application/json",
+                 "-d", JSON.stringify({
+                   model: ollamaModel,
+                   prompt: ollamaPrompt,
+                   stream: false,
+                   options: { temperature: 0.3, top_p: 0.9, num_predict: 512 },
+                 }),
+               ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
+               const ollamaResponse = JSON.parse(result);
+               draft = ollamaResponse.response || "";
+               usedModel = ollamaModel;
+             }
+
              // Generate subject from draft first line or institution
              const subject = `Re: ${accountEmail.includes("info") ? "Genealogy Inquiry" : "Genealogy Correspondence"}`;
  
-             return sendJson(res, 200, { ok: true, draft, subject });
+             return sendJson(res, 200, { ok: true, draft, subject, model: usedModel });
            } catch (e) {
              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
            }

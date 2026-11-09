@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { TrendingUp, Mail } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CorrespondenceList } from '@/components/CorrespondenceList';
 import { ThreadReader } from '@/components/ThreadReader';
 import { RequestReview } from '@/components/RequestReview';
+import { NewItemsView } from '@/components/NewItemsView';
 import { NextCorrespondenceAction } from '@/components/NextCorrespondenceAction';
 import { DecisionsLog } from '@/components/DecisionsLog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -47,6 +49,9 @@ export interface CorrespondenceMessage {
 }
 
 export function ResearchCentre() {
+  const [searchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') || 'correspondence';
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [relevance, setRelevance] = useState<'definite' | 'possible' | 'all'>('definite');
   const [selectedThreadId, setSelectedThreadId] = useState<string | null>(null);
   const [threadOpen, setThreadOpen] = useState(false);
@@ -64,9 +69,10 @@ export function ResearchCentre() {
           </p>
         </div>
 
-        <Tabs defaultValue="correspondence" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="correspondence">Correspondence</TabsTrigger>
+            <TabsTrigger value="newitems">New items</TabsTrigger>
             <TabsTrigger value="requests">Request review</TabsTrigger>
             <TabsTrigger value="decisions">Decisions</TabsTrigger>
           </TabsList>
@@ -103,6 +109,10 @@ export function ResearchCentre() {
               open={threadOpen}
               onOpenChange={setThreadOpen}
             />
+          </TabsContent>
+
+          <TabsContent value="newitems">
+            <NewItemsView />
           </TabsContent>
 
           <TabsContent value="requests">

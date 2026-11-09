@@ -7,7 +7,8 @@ import NotFound from "./pages/NotFound";
 import RecordPage from "./pages/RecordPage";
 import PersonPage from "./pages/PersonPage";
 import FamilySearchCheckPage from "./pages/FamilySearchCheckPage";
-import ResearchArea from "./pages/ResearchArea";
+import ResearchHub from "./pages/ResearchHub";
+import TaskPage from "./pages/TaskPage";
 import { ResearchCentre } from "./pages/ResearchCentre";
 import ResearchAssistant from "./pages/ResearchAssistant";
 import FamilyLayout from "./layouts/FamilyLayout";
@@ -39,7 +40,8 @@ const App = () => (
           <Route path="/family/sources" element={<FamilySources />} />
           <Route path="/family/stories" element={<FamilyStories />} />
         </Route>
-        <Route path="/research" element={<ResearchArea />} />
+        <Route path="/research" element={<ResearchHub />} />
+        <Route path="/research/tasks" element={<TaskPage />} />
         <Route path="/research/centre" element={<ResearchCentre />} />
         <Route path="/research/assistant" element={<ResearchAssistant />} />
 
