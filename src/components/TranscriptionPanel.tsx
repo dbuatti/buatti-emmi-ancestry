@@ -67,6 +67,37 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
       .catch(() => {});
   }, [recordId]);
 
+  const [visionRunning, setVisionRunning] = useState(false);
+
+  // Gemini visual reading — far better on handwriting than tesseract.
+  const runVision = async () => {
+    setVisionRunning(true);
+    try {
+      const url = selectedFile
+        ? `/api/correspondence/vision/${recordId}?file=${encodeURIComponent(selectedFile)}`
+        : `/api/correspondence/vision/${recordId}`;
+      const res = await fetch(url, { method: 'POST' });
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(
+          'Gemini reading runs on your Mac dev server (pnpm dev), not on the deployed site.'
+        );
+      }
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.error || `Gemini reading failed (HTTP ${res.status})`);
+      setOcrText(data.text || '');
+      setOcrLines(data.lines || []);
+      setOcrQuality(data.quality || null);
+      setOcrFile(`${data.file || ''} (Gemini)`);
+      setOcrPageCount(data.pageCount || 0);
+      toast({ title: 'Gemini reading complete', description: `${data.lines?.length ?? 0} lines extracted` });
+    } catch (e: unknown) {
+      toast({ title: 'Gemini reading failed', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
+    } finally {
+      setVisionRunning(false);
+    }
+  };
+
   const runOcr = async () => {
     setRunning(true);
     try {
@@ -189,6 +220,10 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
               <Button size="sm" variant="outline" className="text-xs h-7" onClick={runOcr} disabled={running}>
                 {running ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Scan className="w-3 h-3 mr-1" />}
                 {running ? 'Running OCR…' : 'Run OCR on image'}
+              </Button>
+              <Button size="sm" variant="default" className="text-xs h-7 bg-purple-700 text-white hover:bg-purple-800" onClick={runVision} disabled={visionRunning || running} title="Visual AI reading — much better on handwriting than OCR">
+                {visionRunning ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Scan className="w-3 h-3 mr-1" />}
+                {visionRunning ? 'Reading…' : 'Gemini reading'}
               </Button>
             </div>
           </div>

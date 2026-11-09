@@ -7,7 +7,6 @@ comune: ''
 register: ''
 year: ''
 atto: ''
-people: []
 source_office: ''
 protocol: ''
 fs_status: not on FamilySearch
@@ -20,6 +19,10 @@ in_app: false
 on_familysearch: false
 original_filename: 2026 07 10 Marriage Record - Branxton Parish - Buatti and Chiappini.pdf
 original_sha256: c9b7037a4757d12285a13b2c1346f0d0e423db6a61d3ea4fdaf54c9072db2540
+people:
+  - ezio-buatti
+  - bruna-lilia-chiappini
+mentioned: []
 ---
 
 # Italian transcription
@@ -33,3 +36,5 @@ Translation pending.
 # Uncertain readings
 
 N/A - image not yet transcribed.
+
+

@@ -376,6 +376,102 @@ function localRecordsApiPlugin(): Plugin {
           return sendJson(res, 200, { files });
         }
 
+        // ---- POST /api/correspondence/vision/<recordId> ----
+        // Gemini visual reading for handwritten/typed acts. Renders up to 4
+        // pages to PNG and asks gemini-2.5-flash to transcribe line by line.
+        // Dev-only; uses the existing .local/gemini_api_key.txt pool (# comments skipped).
+        if (method === "POST" && url.split("?")[0].startsWith("/api/correspondence/vision/")) {
+          try {
+            const pathOnly = url.split("?")[0];
+            const recordId = pathOnly.split("/").pop() || "";
+            if (!isSafeRecordId(recordId)) {
+              return sendJson(res, 400, { error: "Invalid record id" });
+            }
+            const urlObj = new URL(url, "http://localhost");
+            const requestedFile = urlObj.searchParams.get("file") || "";
+            const dir = path.join(RECORDS_LOCAL, recordId);
+            if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+              return sendJson(res, 404, { error: "Record folder not found" });
+            }
+            const files = fs.readdirSync(dir)
+              .filter((f) => fs.statSync(path.join(dir, f)).isFile())
+              .filter((f) => /\.(jpg|jpeg|png|webp|tiff|tif|pdf)$/i.test(f));
+            const target = (requestedFile && files.includes(requestedFile)) ? requestedFile : (files.find((f) => /\.pdf$/i.test(f)) || files[0]);
+            if (!target) return sendJson(res, 404, { error: "No image/PDF files in record folder" });
+            const fp = path.join(dir, target);
+            const { execFileSync } = await import("node:child_process");
+            const pdftoppm = fs.existsSync("/opt/homebrew/bin/pdftoppm") ? "/opt/homebrew/bin/pdftoppm" : "pdftoppm";
+            const tmpBase = path.join(fs.realpathSync(os.tmpdir()), `vision-${Date.now()}`);
+            let pagePngs: string[];
+            if (/\.pdf$/i.test(target)) {
+              const info = execFileSync("pdfinfo", [fp], { encoding: "utf8", timeout: 30000 });
+              const m = info.match(/Pages:\s+(\d+)/);
+              const n = Math.min(parseInt(m?.[1] || "1", 10), 4);
+              execFileSync(pdftoppm, ["-png", "-r", "300", "-f", "1", "-l", String(n), fp, tmpBase], { encoding: "utf8", timeout: 120000 });
+              pagePngs = [];
+              for (let pgi = 1; pgi <= n; pgi++) pagePngs.push(`${tmpBase}-${pgi}.png`);
+            } else {
+              pagePngs = [fp];
+            }
+            const keyFile = path.join(process.cwd(), ".local", "gemini_api_key.txt");
+            const keys = fs.readFileSync(keyFile, "utf-8").split("\n")
+              .map((l) => l.trim()).filter((l) => l && !l.startsWith("#") && l.startsWith("AIza"));
+            if (keys.length === 0) return sendJson(res, 500, { ok: false, error: "No Gemini keys configured" });
+            const prompt = "Transcribe this Italian civil registry act line by line. It mixes pre-printed form text with handwriting. Output format, one per line: `- <field label>: <exact reading as written>`. Rules: transcribe handwriting diplomatically (as written, not normalized); mark unreadable words [?]; keep Italian number words as written; do not translate; do not summarize; skip empty boilerplate lines.";
+            const allLines: Array<{ id: string; number: number; text: string; label: string | null; value: string; page: number }> = [];
+            const pageTexts: string[] = [];
+            let lineNo = 0;
+            for (let pi = 0; pi < pagePngs.length; pi++) {
+              const b64 = fs.readFileSync(pagePngs[pi]).toString("base64");
+              let text = "";
+              let lastErr = "";
+              for (const key of keys) {
+                try {
+                  const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      contents: [{ parts: [
+                        { inline_data: { mime_type: "image/png", data: b64 } },
+                        { text: prompt },
+                      ] }],
+                      generationConfig: { temperature: 0.1, maxOutputTokens: 3000, thinkingConfig: { thinkingBudget: 0 } },
+                    }),
+                  });
+                  if (!resp.ok) { lastErr = `HTTP ${resp.status}`; continue; }
+                  const data = await resp.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
+                  const parts = data.candidates?.[0]?.content?.parts ?? [];
+                  text = parts.map((x) => x.text || "").join("");
+                  if (text.trim()) break;
+                } catch (e) { lastErr = e instanceof Error ? e.message : String(e); }
+              }
+              if (!text.trim()) return sendJson(res, 502, { ok: false, error: `Gemini reading failed on page ${pi + 1}: ${lastErr}` });
+              pageTexts.push(`--- Page ${pi + 1} ---\n${text}`);
+              for (const rawLine of text.split("\n")) {
+                const t = rawLine.trim().replace(/^-\s*/, "");
+                if (!t) continue;
+                lineNo++;
+                allLines.push({
+                  id: `v${pi + 1}-line-${lineNo}`,
+                  number: lineNo,
+                  text: t,
+                  label: t.includes(":") ? t.split(":")[0].trim() : null,
+                  value: t.includes(":") ? t.split(":").slice(1).join(":").trim() : t.trim(),
+                  page: pi + 1,
+                });
+              }
+            }
+            try { for (const f of fs.readdirSync(path.dirname(tmpBase))) { if (f.startsWith(path.basename(tmpBase))) fs.unlinkSync(path.join(path.dirname(tmpBase), f)); } } catch {}
+            return sendJson(res, 200, {
+              ok: true, text: pageTexts.join("\n\n"), lines: allLines,
+              quality: { lineCount: allLines.length, confidence: allLines.length > 5 ? "good" : "fair", pageCount: pagePngs.length, backend: "gemini-vision" },
+              file: target, pageCount: pagePngs.length,
+            });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
         // ---- GET /api/record-page-png/<id>?file=X&page=N ----
         // Renders one record page as PNG bytes (for copy-to-clipboard).
         // PDFs via pdftoppm (absolute binary, symlink-safe paths); images
