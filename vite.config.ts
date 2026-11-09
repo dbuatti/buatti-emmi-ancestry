@@ -1387,22 +1387,28 @@ function localCorrespondenceApiPlugin(): Plugin {
              const geminiKeyPath = path.resolve(process.cwd(), ".local", "gemini_api_key.txt");
              let geminiKey = "";
              if (fs.existsSync(geminiKeyPath)) {
-               geminiKey = fs.readFileSync(geminiKeyPath, "utf8").trim().split("\n")[0].trim();
-               if (geminiKey.startsWith("#") || geminiKey === "YOUR_KEY_HERE" || !geminiKey) geminiKey = "";
+               const keyLines = fs.readFileSync(geminiKeyPath, "utf8").split("\n");
+               for (const ln of keyLines) {
+                 const t = ln.trim();
+                 if (!t || t.startsWith("#")) continue;
+                 geminiKey = t;
+                 break;
+               }
+               if (geminiKey === "YOUR_KEY_HERE" || !geminiKey) geminiKey = "";
              }
 
              const wantGemini = (modelChoice === "gemini" || modelChoice === "") && geminiKey;
              if (wantGemini) {
                const geminiPrompt = `${prompt}\n\nGenerate ONLY the email body (no subject, no signature placeholders). Keep it concise and professional.`;
                const { execFileSync } = await import("node:child_process");
-               const geminiModel = "gemini-2.0-flash";
+               const geminiModel = "gemini-2.5-flash";
                const result = execFileSync("curl", [
                  "-s", "-X", "POST",
                  `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
                  "-H", "Content-Type: application/json",
                  "-d", JSON.stringify({
                    contents: [{ parts: [{ text: geminiPrompt }] }],
-                   generationConfig: { temperature: 0.3, maxOutputTokens: 512 },
+                   generationConfig: { temperature: 0.3, maxOutputTokens: 1024, thinkingConfig: { thinkingBudget: 0 } },
                  }),
                ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
                try {
@@ -1624,6 +1630,74 @@ function localCorrespondenceApiPlugin(): Plugin {
             const { execFileSync } = await import("node:child_process");
             execFileSync("python3", [path.resolve(process.cwd(), "scripts", "build-request-links.py"), "--confirm-fulfilled", confirmMatch[1]], { cwd: process.cwd(), timeout: 60000 });
             return sendJson(res, 200, { ok: true });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/sent-request?personId=…&eventType=… ----
+        if (method === "GET" && url.startsWith("/api/correspondence/sent-request")) {
+          try {
+            const u = new URL(url, "http://localhost");
+            const personId = u.searchParams.get("personId") || "";
+            const eventType = u.searchParams.get("eventType") || "";
+            if (!personId) return sendJson(res, 400, { ok: false, error: "personId required" });
+
+            const db = await loadDb();
+            // Primary signal: threads linked to this person via thread_links.
+            const linkedThreads = db.prepare(
+              "SELECT thread_id FROM thread_links WHERE entity_type='person' AND entity_id=?"
+            ).all(personId).map((r: any) => Number(r.thread_id));
+
+            // Event keyword map.
+            const kwMap: Record<string, string[]> = {
+              birth: ["nascita", "birth", "atto di nascita"],
+              baptism: ["battesimo", "baptism", "baptismal"],
+              marriage: ["matrimonio", "marriage", "atto di matrimonio"],
+              death: ["morte", "death", "atto di morte"],
+              burial: ["sepoltura", "burial", "cimitero", "cemetery"],
+              migration_naturalisation: ["naturalizzazione", "naturalisation", "naturalization", "passenger", "emigrazione"],
+            };
+            const keywords = kwMap[eventType] || [];
+
+            // Search outbound messages in linked threads (and fallback: all outbound mentioning person surname).
+            let candidates: any[] = [];
+            if (linkedThreads.length > 0) {
+              const placeholders = linkedThreads.map(() => "?").join(",");
+              candidates = db.prepare(
+                `SELECT id, gmail_thread_id, from_email, to_json, subject, sent_at, body_text
+                 FROM messages WHERE direction='out' AND thread_id IN (${placeholders})
+                 ORDER BY sent_at DESC`
+              ).all(...linkedThreads);
+            }
+
+            // Filter by event keyword if possible.
+            let best = null;
+            for (const c of candidates) {
+              const text = `${c.subject || ""} ${c.body_text || ""}`.toLowerCase();
+              const matchesKw = keywords.length === 0 || keywords.some((k) => text.includes(k));
+              if (matchesKw) { best = c; break; }
+            }
+            // Fallback: any outbound in linked threads.
+            if (!best && candidates.length > 0) best = candidates[0];
+
+            if (!best) return sendJson(res, 200, { ok: true, found: false });
+
+            let recipient = "";
+            try {
+              const to = JSON.parse(best.to_json || "[]");
+              recipient = (to[0]?.email || to[0]?.name || "").toString();
+            } catch { recipient = ""; }
+
+            return sendJson(res, 200, {
+              ok: true,
+              found: true,
+              sent_at: best.sent_at,
+              recipient,
+              message_id: best.id,
+              thread_id: best.gmail_thread_id,
+              subject: best.subject,
+            });
           } catch (e) {
             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
           }
