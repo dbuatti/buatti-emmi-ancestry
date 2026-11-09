@@ -379,7 +379,7 @@ function localRecordsApiPlugin(): Plugin {
         // ---- POST /api/correspondence/ocr/<recordId> ----
         // Runs tesseract OCR. For PDFs, converts ALL pages. For multiple image files,
         // OCRs each one. Returns per-page results with "--- Page N ---" markers.
-        const ocrMatch = url.match(/^\/api\/correspondence\/ocr\/([^/]+)$/);
+        const ocrMatch = url.split("?")[0].match(/^\/api\/correspondence\/ocr\/([^/]+)$/);
         if (method === "POST" && ocrMatch) {
           const recordId = ocrMatch[1];
           if (!isSafeRecordId(recordId)) {

@@ -729,7 +729,7 @@ export default function RecordPage() {
                               title={`Unlink ${person?.name || pid}`}
                               aria-label={`Unlink ${person?.name || pid}`}
                             >
-                              \u2715
+                              ✕
                             </button>
                           </span>
                         );
@@ -815,7 +815,7 @@ export default function RecordPage() {
                       }
                     }}
                   >
-                    <option value="">+ Link another person\u2026</option>
+                    <option value="">+ Link another person…</option>
                     {initialPeople
                       .filter((p) => !(frontMatter.people ?? []).includes(p.id))
                       .map((p) => (
@@ -830,7 +830,7 @@ export default function RecordPage() {
           )}
 
           {/* 4. FamilySearch — Add as Source */}
-          <CollapsibleSection title="FamilySearch \u2014 Add as Source" defaultOpen={!!frontMatter.verified && !frontMatter.on_familysearch}>
+          <CollapsibleSection title="FamilySearch — Add as Source" defaultOpen={!!frontMatter.verified && !frontMatter.on_familysearch}>
             <FamilySearchPanel recordId={frontMatter.id} frontMatter={frontMatter} body={body} setStatus={setStatus} />
           </CollapsibleSection>
 
