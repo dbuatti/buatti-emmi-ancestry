@@ -99,6 +99,7 @@ export function NextGuide() {
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [linkInput, setLinkInput] = useState('');
   const [showReceivedPanel, setShowReceivedPanel] = useState(false);
+  const [sentCheck, setSentCheck] = useState<{ found: boolean; sent_at?: string; recipient?: string } | null>(null);
 
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
@@ -287,6 +288,33 @@ export function NextGuide() {
       });
       setShowReceivedPanel(true);
       setStatus(`Received ${formatIso(today)} — save it to _inbox and run "process inbox".`);
+    } catch (e) {
+      setStatus(`Error: ${(e as Error).message}`);
+    }
+  };
+
+  /** 4E: auto-detect sent correspondence — has Daniele already sent this request? */
+  const checkSentCorrespondence = async () => {
+    if (!overrideKey) return;
+    setStatus('Checking sent correspondence…');
+    try {
+      const res = await fetch(`/api/correspondence/sent-request?personId=${encodeURIComponent(task.personId)}&eventType=${encodeURIComponent(task.eventType ?? 'birth')}`);
+      const data = await res.json();
+      if (!res.ok || !data?.ok) throw new Error(data?.error || `API error: ${res.status}`);
+      if (data.found) {
+        const sentIso = String(data.sent_at || '').slice(0, 10);
+        await callApiEventOverride(overrideKey, {
+          requestedOn: sentIso || toIsoDate(),
+          requestedFrom: data.recipient || (task.office ?? ''),
+          receivedOn: null,
+        });
+        setSentCheck({ found: true, sent_at: data.sent_at, recipient: data.recipient });
+        setStatus(`Detected sent correspondence — logged as requested ${sentIso || 'today'}.`);
+        window.location.reload();
+      } else {
+        setSentCheck({ found: false });
+        setStatus('No sent correspondence detected for this request yet.');
+      }
     } catch (e) {
       setStatus(`Error: ${(e as Error).message}`);
     }
@@ -538,6 +566,16 @@ export function NextGuide() {
             {linkInputPanel}
             {showReceivedPanel && receivedPanel}
             {documentButtons}
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-8 px-3"
+                onClick={checkSentCorrespondence}
+              >
+                <Send className="w-3 h-3 mr-1" /> Check sent correspondence
+              </Button>
+            </div>
             <div className="mt-2 text-xs text-stone-500">
               "Requested" stores <span className="font-mono">requested_on: {toIsoDate()}</span> and
               hides this event for 30 days; then the card comes back as{' '}

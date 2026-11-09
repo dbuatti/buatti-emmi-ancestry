@@ -427,14 +427,15 @@ def main():
     ap.add_argument("--limit", type=int, default=10, help="Max messages to analyse per run (default 10)")
     ap.add_argument("--force", action="store_true")
     ap.add_argument("--model", choices=["ollama", "gemini"], default="ollama", help="Analysis model backend (default ollama)")
+    ap.add_argument("--backlog", action="store_true", help="Target the backlog: genealogy_relevance IS NULL, without analysis yet")
     args = ap.parse_args()
 
     global MODEL
     if args.model == "gemini":
         MODEL = GEMINI_MODEL
 
-    if not args.ids and not args.unanalysed:
-        ap.error("Either --ids or --unanalysed is required")
+    if not args.ids and not args.unanalysed and not args.backlog:
+        ap.error("Either --ids, --unanalysed or --backlog is required")
 
     os.makedirs(ANALYSIS_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
@@ -456,7 +457,21 @@ def main():
     if stale:
         conn.commit()
 
-    if args.unanalysed:
+    if args.backlog:
+        # Backlog mode: genealogy messages not yet classified into definite/possible.
+        rows = conn.execute("""SELECT m.id FROM messages m
+            JOIN message_classification mc ON mc.message_id = m.id
+            WHERE mc.genealogy_relevance IS NULL
+            AND NOT EXISTS (SELECT 1 FROM message_analysis ma WHERE ma.message_id = m.id)
+            ORDER BY m.id LIMIT ?""", (args.limit,)).fetchall()
+        ids = [r["id"] for r in rows]
+        if not ids:
+            print("No unanalysed backlog messages found.")
+            conn.close()
+            return
+        print(f"Found {len(ids)} unanalysed backlog messages: {ids}")
+        args.ids = ids
+    elif args.unanalysed:
         # Find genealogy-relevant messages without analysis files
         rows = conn.execute("""SELECT m.id FROM messages m
             JOIN message_classification mc ON mc.message_id = m.id
