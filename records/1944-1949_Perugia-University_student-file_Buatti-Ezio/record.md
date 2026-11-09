@@ -7,9 +7,10 @@ comune: ''
 register: ''
 year: ''
 atto: ''
-people: []
-source_office: ''
-protocol: ''
+people:
+  - ezio-buatti
+source_office: Università di Perugia — Servizio Fondi Storici e Collezioni Speciali
+protocol: 2026-USDPAMM-0309113
 fs_status: not on FamilySearch
 verified_by_daniele: false
 transcribed_by: ''
