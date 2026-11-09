@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +21,14 @@ const ResearchAssistant = () => {
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'chase' | 'no-action'>('all');
   const [filterAccount, setFilterAccount] = useState<'all' | 'daniele' | 'info'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const detailRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to the thread detail when a thread/suggestion is selected.
+  useEffect(() => {
+    if ((selectedThread || selectedSuggestion) && detailRef.current) {
+      detailRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selectedThread, selectedSuggestion]);
 
   useEffect(() => {
     fetch('/api/assistant/summary')
@@ -136,7 +144,7 @@ const ResearchAssistant = () => {
         />
 
         {selectedSuggestion ? (
-          <div className="mt-6 space-y-6">
+          <div ref={detailRef} className="mt-6 space-y-6">
             <Button onClick={() => { setSelectedSuggestion(null); setSelectedThread(null); }} size="sm" variant="ghost">
               ← Back
             </Button>
@@ -156,7 +164,7 @@ const ResearchAssistant = () => {
             />
           </div>
         ) : selectedThread ? (
-          <div className="mt-6 space-y-6">
+          <div ref={detailRef} className="mt-6 space-y-6">
             <Button onClick={() => { setSelectedThread(null); setSelectedSuggestion(null); }} size="sm" variant="ghost">
               ← Back
             </Button>

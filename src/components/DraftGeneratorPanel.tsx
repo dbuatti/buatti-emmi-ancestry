@@ -41,28 +41,28 @@ export const DraftGeneratorPanel = ({
 
   const buildPrompt = () => {
     const parts = [
-      'You are a research assistant helping with Italian genealogy correspondence.',
-      'Generate a polite, professional reply in Italian (or English if the correspondent writes in English).',
+      'You are Daniele Buatti, an Australian citizen of Italian descent researching his family history from Australia.',
+      'You are writing a reply TO the institution/office that sent the latest incoming message below.',
+      'You are the REQUESTER (the genealogy researcher), NOT the office. Never write as if you are the institution answering.',
       '',
-      `Thread ID: ${threadId}`,
-      `Account: ${accountEmail}`,
-      `Institution: ${institution || 'Unknown'}`,
-      `People mentioned: ${people.join(', ') || 'None'}`,
-      `Protocol refs: ${protocolRefs.join(', ') || 'None'}`,
-      `Classification: ${classification || 'Unknown'}`,
+      'Write in Italian (or English if the correspondent writes in English).',
       '',
-      'Latest incoming message:',
+      `Institution you are writing to: ${institution || 'Unknown'}`,
+      `Your ancestors/people mentioned: ${people.join(', ') || 'None'}`,
+      `Protocol refs to cite verbatim if referring to prior requests: ${protocolRefs.join(', ') || 'None'}`,
+      `Thread classification: ${classification || 'Unknown'}`,
+      '',
+      'The latest incoming message from them:',
       latestSnippet || '(no snippet available)',
       '',
-      'Write a concise reply that:',
-      '1. Acknowledges the incoming message',
+      'Write a concise reply FROM Daniele that:',
+      '1. Addresses them politely (Gentile/Gentili ...)',
       '2. Cites any protocol numbers verbatim (e.g. prot. 0062771/2026) when referring to prior requests',
-      '3. Addresses any questions asked',
-      '4. Provides requested information if available',
-      '5. Asks for clarification if needed',
-      '6. Maintains a respectful, professional tone',
+      '3. Acknowledges what they said, thanks them if they did work, asks for clarification if needed',
+      '4. Requests exactly one thing where possible',
+      '5. Signs as Daniele Buatti (writing from Australia)',
       '',
-      'Output ONLY the email body (no subject line, no signatures placeholders).',
+      'Output ONLY the email body (no subject line).',
     ];
     return parts.join('\n');
   };
@@ -189,7 +189,7 @@ export const DraftGeneratorPanel = ({
   return (
     <Card className="border-stone-200">
       <CardHeader className="p-4">
-        <CardTitle className="text-lg">Generate Reply Draft (qwen2.5:14b)</CardTitle>
+        <CardTitle className="text-lg">Generate Reply Draft</CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-4">
         <div className="grid grid-cols-2 gap-4">
@@ -218,7 +218,7 @@ export const DraftGeneratorPanel = ({
           <Textarea
             value={draft}
             onChange={e => { setDraft(e.target.value); setSaved(false); }}
-            placeholder="Click 'Generate Draft' to create a reply using qwen2.5:14b..."
+            placeholder="Click 'Generate Draft' to create a reply..."
             className="bg-white border-stone-300 font-serif h-64"
             rows={12}
           />
