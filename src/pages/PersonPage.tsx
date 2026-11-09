@@ -8,6 +8,8 @@ import type { LifeEvent } from '@/types/record';
 import { getAllRecords, parseFamilySearchSection, type RecordEntry } from '@/lib/record-loader';
 import { FamilySearchCheck } from '@/components/FamilySearchCheck';
 import { QuickSearchLinks } from '@/components/QuickSearchLinks';
+import { PersonTaskList } from '@/components/PersonTaskList';
+import { FactQualificationPanel } from '@/components/FactQualificationPanel';
 import { callApiEventOverride, callApi, callApiOpenInFinder } from '@/components/next-guide-api';
 import eventRequests from '@/data/event-requests.json';
 import {
@@ -195,6 +197,16 @@ function PersonPageInner() {
           <div className="text-xs text-stone-500 mb-2">Quick external searches for {person.name}:</div>
           <QuickSearchLinks name={person.name} />
         </div>
+
+        {/* All tasks for this person */}
+        <PersonTaskList personId={person.id} />
+
+        {/* Fact qualification */}
+        <FactQualificationPanel
+          person={person}
+          records={records}
+          onNavigateToRecord={(rid) => navigate(`/research/records/${rid}`)}
+        />
 
         <div className="grid md:grid-cols-2 gap-4">
           {/* Identity & links */}

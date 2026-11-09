@@ -100,6 +100,9 @@ export function NextGuide() {
   const [linkInput, setLinkInput] = useState('');
   const [showReceivedPanel, setShowReceivedPanel] = useState(false);
   const [sentCheck, setSentCheck] = useState<{ found: boolean; sent_at?: string; recipient?: string } | null>(null);
+  const [sourceQuery, setSourceQuery] = useState('');
+  const [sourceHits, setSourceHits] = useState<Array<{ id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number }>>([]);
+  const [sourceLoading, setSourceLoading] = useState(false);
 
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
@@ -135,6 +138,25 @@ export function NextGuide() {
     return () => { cancelled = true; };
   }, []);
 
+  const task = getNextTask(people, recordSteps, overrides, new Date(), fsChecks as Record<string, { checkedOn?: string; openItems?: number; snoozedOn?: string }>, personSkips as Record<string, { skippedOn?: string }>);
+
+  // Source-in-email lookup: when the task is "get the document", search imported
+  // correspondence for the source text (estratto / certificate / act references) and
+  // surface any message that contains it.
+  useEffect(() => {
+    if (task?.type !== 'get_document') return;
+    const q = (task.whereItIs || task.office || task.eventType || '').trim();
+    if (!q) { setSourceHits([]); setSourceQuery(''); return; }
+    let cancelled = false;
+    setSourceLoading(true);
+    fetch(`/api/correspondence/source?q=${encodeURIComponent(q)}`)
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled) { setSourceHits((d?.hits as typeof sourceHits) ?? []); setSourceQuery(q); } })
+      .catch(() => { if (!cancelled) setSourceHits([]); })
+      .finally(() => { if (!cancelled) setSourceLoading(false); });
+    return () => { cancelled = true; };
+  }, [task?.type, task?.whereItIs, task?.office, task?.eventType]);
+
   if (!recordsLoaded) {
     return (
       <Card className="border-stone-200 bg-white p-4 rounded-xl shadow-sm">
@@ -148,7 +170,6 @@ export function NextGuide() {
     );
   }
 
-  const task = getNextTask(people, recordSteps, overrides, new Date(), fsChecks as Record<string, { checkedOn?: string; openItems?: number; snoozedOn?: string }>, personSkips as Record<string, { skippedOn?: string }>);
   if (!task) {
     return (
       <Card className="border-emerald-200 bg-emerald-50 rounded-xl p-6 shadow-sm">
@@ -395,6 +416,34 @@ export function NextGuide() {
     </div>
   );
 
+  /** Source-in-email panel: does imported correspondence contain the source text? */
+  const sourcePanel = (
+    <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
+      <div className="text-sm font-bold text-[#800020] mb-1">Source in email</div>
+      <p className="text-xs text-stone-500 mb-2">
+        Searching imported Gmail correspondence for the source text (estratto / certificate / act references).
+      </p>
+      {sourceLoading ? (
+        <div className="text-xs text-stone-600">Searching…</div>
+      ) : sourceQuery && sourceHits.length > 0 ? (
+        <ul className="space-y-2">
+          {sourceHits.map((h) => (
+            <li key={h.id} className="text-xs text-stone-700">
+              <span className="font-semibold">{h.subject || '(no subject)'}</span>
+              {h.from_name ? <span className="text-stone-500"> — from {h.from_name}</span> : null}
+              {h.snippet ? <div className="text-stone-600 mt-0.5">{h.snippet}</div> : null}
+              {!!h.attachment_count && <div className="text-stone-500 mt-0.5">{h.attachment_count} attachment(s).</div>}
+            </li>
+          ))}
+        </ul>
+      ) : sourceQuery && sourceHits.length === 0 ? (
+        <div className="text-xs text-stone-700">
+          No correspondence hits for “{sourceQuery}”. The source may be on FamilySearch, or not imported yet.
+        </div>
+      ) : null}
+    </div>
+  );
+
   const receivedPanel = (
     <div className="mt-3 rounded-lg bg-emerald-50 border border-emerald-200 p-4 space-y-2">
       <div className="text-sm font-bold text-emerald-800">Document received — file it</div>
@@ -489,7 +538,7 @@ export function NextGuide() {
       : isFamilySearchTask
         ? `Attach ${recordId} on FamilySearch`
         : isGetDocument
-          ? 'Get the document'
+          ? task.note
           : isChase
             ? `Chase ${task.office ?? `the ${eventLabel} record`}?`
             : isProcessInbox
@@ -563,6 +612,7 @@ export function NextGuide() {
 
         {isGetDocument && (
           <>
+            {sourcePanel}
             {linkInputPanel}
             {showReceivedPanel && receivedPanel}
             {documentButtons}

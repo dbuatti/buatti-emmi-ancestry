@@ -9,6 +9,7 @@ import { RecordBody } from '@/components/RecordBody';
 import { RecordViewer } from '@/components/RecordViewer';
 import { RecordCheck } from '@/components/RecordCheck';
 import { RecordNextStep } from '@/components/RecordNextStep';
+import { TranscriptionPanel } from '@/components/TranscriptionPanel';
 import { parseRecordMarkdown, getWorkflowStepNumber } from '@/lib/records';
 import type { RecordFrontMatter, RecordLink } from '@/types/record';
 import { callApiOpenInFinder, callApiUpdateLinks } from '@/components/next-guide-api';
@@ -274,6 +275,11 @@ export default function RecordPage() {
               <RecordBody record={frontMatter} body={body} />
             </CardContent>
           </Card>
+
+          {/* In-app transcription + quality checker */}
+          {isDev && recordId && (
+            <TranscriptionPanel recordId={frontMatter.id} />
+          )}
 
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" size="sm">

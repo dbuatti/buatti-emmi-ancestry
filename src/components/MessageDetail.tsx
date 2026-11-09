@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useToast } from '@/hooks/use-toast';
 import { CorrespondenceMessage } from '@/pages/ResearchCentre';
 import { LinkifiedText } from '@/components/LinkifiedText';
+import { AttachmentInspector } from '@/components/AttachmentInspector';
 
 export interface MessageDetailProps {
   message: CorrespondenceMessage | null;
@@ -301,6 +302,11 @@ export function MessageDetail({ message, open, onOpenChange }: MessageDetailProp
               </CardContent>
             </Card>
           ) : null}
+
+          {/* Attachment inspector — readability + linking + cross-reference */}
+          {activeMessage.id && (
+            <AttachmentInspector messageId={activeMessage.id} />
+          )}
 
           {/* Source provenance expanded view */}
           <Card className="mt-4 border-stone-200">

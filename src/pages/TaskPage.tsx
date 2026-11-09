@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NextGuide } from '@/components/NextGuide';
+import { AllTasksByPerson } from '@/components/AllTasksByPerson';
 import { getAllRecords } from '@/lib/record-loader';
 
 export default function TaskPage() {
@@ -27,6 +28,8 @@ export default function TaskPage() {
         </div>
 
         <NextGuide />
+
+        <AllTasksByPerson />
 
         <Card className="border-stone-200">
           <CardHeader className="pb-2">

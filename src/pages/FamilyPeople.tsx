@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { initialPeople } from '@/data/familyDataWrapper';
+import { initialPeople, initialOpenQuestions } from '@/data/familyDataWrapper';
 import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { calculateCompleteness } from '@/lib/research';
 
@@ -22,7 +22,7 @@ const FamilyPeople = () => {
       return matchesSearch && matchesLine && matchesGen;
     });
     if (sortBy === 'priority' || sortBy === 'completeness') {
-      const scores = new Map(filtered.map((p) => [p.id, calculateCompleteness(p).score]));
+      const scores = new Map(filtered.map((p) => [p.id, calculateCompleteness(p, initialOpenQuestions).score]));
       filtered.sort((a, b) => {
         const diff = (scores.get(a.id) ?? 0) - (scores.get(b.id) ?? 0);
         return sortBy === 'completeness' ? -diff : diff;

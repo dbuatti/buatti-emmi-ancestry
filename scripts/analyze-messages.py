@@ -252,35 +252,66 @@ def gemini_translate_full(body):
     return full, manifest, all_ok, covered
 
 
-def _load_gemini_key():
+_gemini_key_pool = []
+_gemini_key_cursor = 0
+_gemini_unusable = set()
+
+
+def _load_gemini_key_pool():
+    """Read the Gemini key pool from .local/gemini_api_key.txt (one key per
+    line, '#' comments and blanks skipped, 'YOUR_KEY_HERE' skipped, keys must
+    start with 'AIza...'). Returns the list of usable keys."""
+    global _gemini_key_pool, _gemini_key_cursor, _gemini_unusable
+    pool = []
     key_path = os.path.join(ROOT, ".local", "gemini_api_key.txt")
-    if not os.path.exists(key_path):
-        return None
-    with open(key_path, "r", encoding="utf-8") as f:
-        for ln in f:
-            t = ln.strip()
-            if not t or t.startswith("#"):
-                continue
-            return t
-    return None
+    if os.path.exists(key_path):
+        with open(key_path, "r", encoding="utf-8") as f:
+            for ln in f:
+                t = ln.strip()
+                if not t or t.startswith("#") or t == "YOUR_KEY_HERE" or not t.startswith("AIza"):
+                    continue
+                pool.append(t)
+    _gemini_key_pool = pool
+    _gemini_key_cursor = 0
+    _gemini_unusable = set()
+    return pool
+
+
+def _next_gemini_key():
+    """Return (key, index) for the next usable key from the pool, rotating on
+    failure. Returns (None, -1) when no key is configured."""
+    global _gemini_key_pool, _gemini_key_cursor, _gemini_unusable
+    pool = _gemini_key_pool or _load_gemini_key_pool()
+    n = len(pool)
+    if n == 0:
+        return None, -1
+    for i in range(n):
+        idx = (_gemini_key_cursor + i) % n
+        if idx in _gemini_unusable:
+            continue
+        _gemini_key_cursor = (idx + 1) % n
+        return pool[idx], idx
+    _gemini_key_cursor = 0
+    _gemini_unusable = set()
+    return pool[0], 0
 
 
 def _gemini_generate(prompt, system, json_mode=False, max_tokens=3000, attempts=3):
-    key = _load_gemini_key()
-    if not key:
-        raise RuntimeError("Gemini key not configured at .local/gemini_api_key.txt")
-    payload = {
-        "contents": [{"parts": [{"text": (system + "\n\n" + prompt) if system else prompt}]}],
-        "generationConfig": {
-            "temperature": 0.1,
-            "maxOutputTokens": max_tokens,
-            "thinkingConfig": {"thinkingBudget": 0},
-        },
-    }
-    if json_mode:
-        payload["generationConfig"]["responseMimeType"] = "application/json"
     last_err = None
     for attempt in range(attempts):
+        key, idx = _next_gemini_key()
+        if not key:
+            raise RuntimeError("Gemini key not configured at .local/gemini_api_key.txt")
+        payload = {
+            "contents": [{"parts": [{"text": (system + "\n\n" + prompt) if system else prompt}]}],
+            "generationConfig": {
+                "temperature": 0.1,
+                "maxOutputTokens": max_tokens,
+                "thinkingConfig": {"thinkingBudget": 0},
+            },
+        }
+        if json_mode:
+            payload["generationConfig"]["responseMimeType"] = "application/json"
         try:
             req = urllib.request.Request(
                 f"{GEMINI_API_BASE}/{GEMINI_MODEL}:generateContent?key={key}",
@@ -302,6 +333,7 @@ def _gemini_generate(prompt, system, json_mode=False, max_tokens=3000, attempts=
             return text.strip()
         except Exception as e:
             last_err = e
+            _gemini_unusable.add(idx)
             if attempt < attempts - 1:
                 time.sleep([15, 30, 60][attempt])
     raise last_err
@@ -462,8 +494,12 @@ def main():
         rows = conn.execute("""SELECT m.id FROM messages m
             JOIN message_classification mc ON mc.message_id = m.id
             WHERE mc.genealogy_relevance IS NULL
+            AND mc.category NOT IN ('automated_notification','newsletter','marketing')
+            AND (lower(m.from_email) LIKE '%comune%' OR lower(m.from_email) LIKE '%naa%' OR lower(m.from_email) LIKE '%esteri%' OR lower(m.from_email) LIKE '%unipg%' OR lower(m.from_email) LIKE '%consolato%' OR lower(m.from_email) LIKE '%pec%')
             AND NOT EXISTS (SELECT 1 FROM message_analysis ma WHERE ma.message_id = m.id)
-            ORDER BY m.id LIMIT ?""", (args.limit,)).fetchall()
+            ORDER BY CASE WHEN mc.action_required = 1 THEN 0 ELSE 1 END,
+            m.id
+            LIMIT ?""", (args.limit,)).fetchall()
         ids = [r["id"] for r in rows]
         if not ids:
             print("No unanalysed backlog messages found.")

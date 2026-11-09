@@ -467,6 +467,7 @@ function tryPerson(
   let received: { ev: LifeEvent; o: EventOverride } | null = null;
   let chase: { ev: LifeEvent; o: EventOverride; days: number; office: string | null } | null = null;
   let fresh: { ev: LifeEvent; office: string | null } | null = null;
+  let pending: { ev: LifeEvent; o: EventOverride } | null = null;
   let anyWaiting = false;
 
   for (const ev of lifeEvents) {
@@ -484,6 +485,7 @@ function tryPerson(
       const days = daysSince(o.requestedOn, now);
       if (days === null || days < REQUEST_CHASE_DAYS) {
         anyWaiting = true;
+        if (!pending) pending = { ev, o };
         continue;
       }
       if (!chase) {
@@ -527,6 +529,26 @@ function tryPerson(
     };
   }
 
+  if (pending) {
+    const label = EVENT_LABELS[pending.ev.type];
+    const office = pending.o.requestedFrom || extractOffice(pending.ev.note) || undefined;
+    return {
+      task: {
+        ...base,
+        type: 'get_document',
+        eventType: pending.ev.type,
+        note: pending.o.requestedOn
+          ? `${label} requested ${pending.o.requestedOn} — waiting for reply from ${office ?? 'the office'}.`
+          : `Get the document: ${label}.`,
+        whereItIs: pending.ev.note?.trim() ?? '',
+        office,
+        requestedOn: pending.o.requestedOn,
+        receivedOn: pending.o.receivedOn,
+      },
+      waiting: false,
+    };
+  }
+
   if (fresh) {
     const label = EVENT_LABELS[fresh.ev.type];
     return {
@@ -549,6 +571,153 @@ function tryPerson(
   // 4. Unsorted files — last resort, only if nothing else.
   // (No per-person unsorted detection here; leave as no-op for queue.)
   return { task: null, waiting: false };
+}
+
+/**
+ * Collect ALL pending tasks for a single person (not just the next one).
+ * Used by the person page to show a full task list with click-through.
+ */
+export function getAllTasksForPerson(
+  person: Person,
+  recordSteps?: Map<string, RecordStepInfo>,
+  overrides?: EventOverrides,
+  now: Date = new Date(),
+  fsChecks: FsChecks = {},
+  personSkips: PersonSkips = {}
+): NextTask[] {
+  const rs = recordSteps ?? new Map();
+  const ov = overrides ?? {};
+  const ctx = buildGraph([person]);
+  const base = { personId: person.id, personName: person.name, relationship: relationshipLabel(person, ctx) };
+  const isLiving = !!person.isLiving;
+  const maxStep = isLiving ? 4 : 5;
+  const lifeEvents = person.lifeEvents ?? [];
+  const tasks: NextTask[] = [];
+
+  // 1. Linked records needing workflow advancement.
+  for (const ev of lifeEvents) {
+    const o = ov[eventKey(person.id, ev.type)];
+    const recordId = ev.recordId ?? o?.recordId;
+    if (!recordId) continue;
+    if (ev.status !== 'linked' && !o?.recordId) continue;
+
+    const stepInfo = rs.get(recordId);
+    const completedStepNum = stepInfo?.stepNumber ?? 0;
+    const nextStepNum = completedStepNum + 1;
+    if (nextStepNum > maxStep) continue;
+
+    const nextStepName = STEP_NAMES[nextStepNum - 1];
+    const note = (STEP_NOTES[nextStepNum] ?? '').replace('{recordId}', recordId);
+
+    let type: NextTaskType;
+    if (nextStepNum === 4) type = 'record_app';
+    else if (nextStepNum === 5) type = 'record_fs';
+    else type = 'record_check';
+
+    tasks.push({
+      ...base,
+      type,
+      recordId,
+      eventType: ev.type,
+      step: nextStepName,
+      stepNumber: nextStepNum,
+      note,
+    });
+  }
+
+  // 1b. FS person check.
+  if (!isLiving) {
+    const linked = lifeEvents
+      .map((ev) => ev.recordId ?? ov[eventKey(person.id, ev.type)]?.recordId)
+      .filter((id): id is string => !!id);
+    const allDone =
+      linked.length > 0 && linked.every((id) => (rs.get(id)?.stepNumber ?? 0) >= maxStep);
+    const chk = fsChecks[person.id];
+    const snoozeDays = chk?.snoozedOn ? daysSince(chk.snoozedOn, now) : null;
+    const snoozed = snoozeDays !== null && snoozeDays < REQUEST_CHASE_DAYS;
+    const done = !!chk?.checkedOn && (chk.openItems ?? 1) === 0;
+    if (allDone && !done && !snoozed) {
+      tasks.push({
+        ...base,
+        type: 'fs_person_check',
+        note: chk?.checkedOn
+          ? `Last check ${chk.checkedOn}: ${chk.openItems} item(s) still to do on FamilySearch.`
+          : `Update ${person.name}'s page on FamilySearch from the verified records.`,
+      });
+    }
+  }
+
+  // 2. Missing events.
+  const missingEvents = lifeEvents.filter((ev) => ev.status === 'missing');
+  for (const ev of missingEvents) {
+    tasks.push({
+      ...base,
+      type: 'missing_event',
+      eventType: ev.type,
+      note: `No record found for ${EVENT_LABELS[ev.type]}. Search for sources.`,
+    });
+  }
+
+  // 3. Known but no record.
+  for (const ev of lifeEvents) {
+    if (ev.status !== 'known_no_record') continue;
+    if (ev.recordId) continue;
+    const o = ov[eventKey(person.id, ev.type)];
+    if (o?.recordId) continue;
+
+    if (o?.receivedOn) {
+      tasks.push({
+        ...base,
+        type: 'process_inbox',
+        eventType: ev.type,
+        note: `${EVENT_LABELS[ev.type]} received — save it to _inbox and run "process inbox".`,
+        whereItIs: ev.note?.trim() ?? '',
+        receivedOn: o.receivedOn,
+      });
+      continue;
+    }
+
+    if (o?.requestedOn) {
+      const days = daysSince(o.requestedOn, now);
+      if (days !== null && days >= REQUEST_CHASE_DAYS) {
+        tasks.push({
+          ...base,
+          type: 'chase_request',
+          eventType: ev.type,
+          note: `Chase ${o.requestedFrom || extractOffice(ev.note) || `the ${EVENT_LABELS[ev.type]} record`}? Requested ${o.requestedOn} — ${days} days and no reply.`,
+          whereItIs: ev.note?.trim() ?? '',
+          office: (o.requestedFrom || extractOffice(ev.note)) ?? undefined,
+          requestedOn: o.requestedOn,
+          daysWaiting: days,
+        });
+      } else {
+        tasks.push({
+          ...base,
+          type: 'get_document',
+          eventType: ev.type,
+          note: o.requestedOn
+            ? `${EVENT_LABELS[ev.type]} requested ${o.requestedOn} — waiting for reply from ${o.requestedFrom || extractOffice(ev.note) || 'the office'}.`
+            : `Get the document: ${EVENT_LABELS[ev.type]}.`,
+          whereItIs: ev.note?.trim() ?? '',
+          office: (o.requestedFrom || extractOffice(ev.note)) ?? undefined,
+          requestedOn: o.requestedOn,
+          receivedOn: o.receivedOn,
+        });
+      }
+      continue;
+    }
+
+    tasks.push({
+      ...base,
+      type: 'get_document',
+      eventType: ev.type,
+      note: `Get the document: ${EVENT_LABELS[ev.type]}${extractOffice(ev.note) ? ` — request it from ${extractOffice(ev.note)}` : ''}.`,
+      whereItIs: ev.note?.trim() ?? '',
+      office: extractOffice(ev.note) ?? undefined,
+    });
+  }
+
+  return tasks;
 }
 
 export function getNextTask(
