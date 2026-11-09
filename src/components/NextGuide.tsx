@@ -14,6 +14,9 @@ import {
   Send,
   Inbox,
   Link2,
+  MailCheck,
+  MapPin,
+  ChevronDown,
 } from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
 import {
@@ -103,6 +106,7 @@ export function NextGuide() {
   const [sourceQuery, setSourceQuery] = useState('');
   const [sourceHits, setSourceHits] = useState<Array<{ id: number; subject: string; from_name: string; from_email: string; snippet: string; received_at: string; attachment_count: number }>>([]);
   const [sourceLoading, setSourceLoading] = useState(false);
+  const [showHowTo, setShowHowTo] = useState(false);
 
   useEffect(() => {
     if (status && status.startsWith('Saved:')) {
@@ -399,13 +403,12 @@ export function NextGuide() {
 
   /** Shared panel: "Where it is", straight from the lifeEvent note. */
   const whereItIsPanel = (
-    <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
-      <div className="text-sm font-bold text-[#800020] mb-1">Where it is</div>
+    <div className="pt-1">
       <p className="text-sm text-stone-700 whitespace-pre-wrap">
         {task.whereItIs || `No note is recorded for this ${eventLabel} event in familyData.ts.`}
       </p>
       <label className="flex items-center gap-2 text-xs text-stone-600 mt-3">
-        <span className="shrink-0">Office to request from:</span>
+        <span className="shrink-0 font-semibold">Office:</span>
         <input
           className="flex-1 rounded border border-stone-300 bg-white px-2 py-1 text-sm text-stone-800"
           value={officeInput ?? task.office ?? ''}
@@ -418,11 +421,7 @@ export function NextGuide() {
 
   /** Source-in-email panel: does imported correspondence contain the source text? */
   const sourcePanel = (
-    <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
-      <div className="text-sm font-bold text-[#800020] mb-1">Source in email</div>
-      <p className="text-xs text-stone-500 mb-2">
-        Searching imported Gmail correspondence for the source text (estratto / certificate / act references).
-      </p>
+    <div className="pt-1">
       {sourceLoading ? (
         <div className="text-xs text-stone-600">Searching…</div>
       ) : sourceQuery && sourceHits.length > 0 ? (
@@ -503,34 +502,6 @@ export function NextGuide() {
     </div>
   );
 
-  const documentButtons = (
-    <div className="mt-4 flex flex-wrap gap-2">
-      <Button
-        size="sm"
-        className="text-xs h-8 px-3 font-semibold bg-[#800020] text-white hover:bg-[#600018] shadow-sm"
-        onClick={markRequested}
-      >
-        <Send className="w-3 h-3 mr-1" /> Requested (waiting for reply)
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        className="text-xs h-8 px-3"
-        onClick={() => setShowLinkInput((v) => !v)}
-      >
-        <Link2 className="w-3 h-3 mr-1" /> Found online
-      </Button>
-      <Button
-        size="sm"
-        variant="outline"
-        className="text-xs h-8 px-3"
-        onClick={markReceived}
-      >
-        <Inbox className="w-3 h-3 mr-1" /> Received
-      </Button>
-    </div>
-  );
-
   const headline = isVerifyTask
     ? `Check ${task.personName}'s ${task.eventType ?? 'record'} record (${attoDisplay ?? 'record'}) against the image`
     : isInAppTask
@@ -580,8 +551,9 @@ export function NextGuide() {
         </div>
       </div>
 
-      <CardContent className="p-4">
-        <div className="flex flex-col gap-3">
+      <CardContent className="p-4 space-y-4">
+        {/* Task badge + status summary */}
+        <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"
@@ -596,77 +568,121 @@ export function NextGuide() {
             )}
           </div>
 
-          <div className="prose prose-sm text-stone-700 max-w-none">
-            {headline}
-          </div>
-
-          {isChase && (
-            <div className="text-xs text-stone-500">
-              Requested {formatIso(task.requestedOn)} — {task.daysWaiting} days ago, no reply yet.
-              {!task.office && ' No office was recorded when it was marked requested.'}
+          {(isGetDocument || isChase) && task.requestedOn ? (
+            <div className="rounded-lg bg-stone-50 border border-stone-200 px-3 py-2.5 flex items-start gap-2.5">
+              <MailCheck className="w-4 h-4 text-stone-500 shrink-0 mt-0.5" />
+              <div className="text-sm text-stone-700 leading-snug">
+                <span className="font-semibold">{eventLabel} requested</span>
+                {task.office && (
+                  <> from <span className="font-medium text-stone-900">{task.office}</span></>
+                )}{' '}
+                on {formatIso(task.requestedOn)}
+                {typeof task.daysWaiting === 'number' && (
+                  <span className={`ml-1.5 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                    task.daysWaiting >= 30 ? 'bg-amber-100 text-amber-800' : 'bg-stone-100 text-stone-600'
+                  }`}>
+                    {task.daysWaiting}d waiting{task.daysWaiting >= 30 ? ' — chase due' : ''}
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="prose prose-sm text-stone-700 max-w-none">
+              {headline}
             </div>
           )}
         </div>
 
-        {(isGetDocument || isChase) && whereItIsPanel}
-
-        {isGetDocument && (
-          <>
-            {sourcePanel}
-            {linkInputPanel}
-            {showReceivedPanel && receivedPanel}
-            {documentButtons}
-            <div className="mt-2 flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-8 px-3"
-                onClick={checkSentCorrespondence}
-              >
-                <Send className="w-3 h-3 mr-1" /> Check sent correspondence
-              </Button>
-            </div>
-            <div className="mt-2 text-xs text-stone-500">
-              "Requested" stores <span className="font-mono">requested_on: {toIsoDate()}</span> and
-              hides this event for 30 days; then the card comes back as{' '}
-              <span className="font-mono">Chase {(officeInput ?? task.office) || `<office>`}?</span>
-            </div>
-          </>
+        {/* Actions — one primary, rest secondary */}
+        {(isGetDocument || isChase) && (
+          <div className="space-y-2">
+            {task.requestedOn ? (
+              <>
+                <Button
+                  size="sm"
+                  className="w-full sm:w-auto text-sm h-9 px-4 font-semibold bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm"
+                  onClick={markReceived}
+                >
+                  <Inbox className="w-4 h-4 mr-1.5" /> Document received
+                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={markRequested}>
+                    <Send className="w-3 h-3 mr-1" />
+                    {typeof task.daysWaiting === 'number' && task.daysWaiting >= 30
+                      ? 'Chase — wait another 30 days'
+                      : 'Re-mark requested'}
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={() => setShowLinkInput((v) => !v)}>
+                    <Link2 className="w-3 h-3 mr-1" /> Found online
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={checkSentCorrespondence}>
+                    <Send className="w-3 h-3 mr-1" /> Check sent mail
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-xs h-8 px-3 text-stone-400 hover:bg-stone-50"
+                    onClick={clearOverride}
+                  >
+                    Not requesting it
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="sm"
+                  className="w-full sm:w-auto text-sm h-9 px-4 font-semibold bg-[#800020] text-white hover:bg-[#600018] shadow-sm"
+                  onClick={markRequested}
+                >
+                  <Send className="w-4 h-4 mr-1.5" /> Mark as requested
+                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={() => setShowLinkInput((v) => !v)}>
+                    <Link2 className="w-3 h-3 mr-1" /> Found online
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={markReceived}>
+                    <Inbox className="w-3 h-3 mr-1" /> Already received
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         )}
 
-        {isChase && (
-          <>
-            {linkInputPanel}
-            {showReceivedPanel && receivedPanel}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button
-                size="sm"
-                className="text-xs h-8 px-3 font-semibold bg-[#800020] text-white hover:bg-[#600018] shadow-sm"
-                onClick={markRequested}
-              >
-                <Send className="w-3 h-3 mr-1" /> Chased — wait another 30 days
-              </Button>
-              <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={markReceived}>
-                <Inbox className="w-3 h-3 mr-1" /> Received
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-8 px-3"
-                onClick={() => setShowLinkInput((v) => !v)}
-              >
-                <Link2 className="w-3 h-3 mr-1" /> Found online
-              </Button>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-xs h-8 px-3 text-stone-500 hover:bg-stone-50"
-                onClick={clearOverride}
-              >
-                <FastForward className="w-3 h-3 mr-1" /> Not requesting it
-              </Button>
-            </div>
-          </>
+        {/* Link input panel — shown when "Found online" clicked */}
+        {(isGetDocument || isChase) && linkInputPanel}
+
+        {/* Received panel */}
+        {showReceivedPanel && receivedPanel}
+
+        {/* Details — collapsed by default */}
+        {(isGetDocument || isChase) && (
+          <div className="space-y-2 pt-1">
+            <details className="group rounded-lg border border-stone-200 bg-white overflow-hidden">
+              <summary className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-stone-700 cursor-pointer hover:bg-stone-50 list-none">
+                <MapPin className="w-3.5 h-3.5 text-[#800020]" />
+                Where to request it
+                <ChevronDown className="w-3.5 h-3.5 ml-auto text-stone-400 group-open:rotate-180 transition-transform" />
+              </summary>
+              <div className="px-3 pb-3">{whereItIsPanel}</div>
+            </details>
+            {isGetDocument && (
+              <details className="group rounded-lg border border-stone-200 bg-white overflow-hidden">
+                <summary className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-stone-700 cursor-pointer hover:bg-stone-50 list-none">
+                  <MailCheck className="w-3.5 h-3.5 text-[#800020]" />
+                  Check imported email
+                  {sourceHits.length > 0 && (
+                    <span className="ml-1 rounded-full bg-emerald-100 text-emerald-800 px-1.5 py-0.5 text-[10px] font-bold">
+                      {sourceHits.length}
+                    </span>
+                  )}
+                  <ChevronDown className="w-3.5 h-3.5 ml-auto text-stone-400 group-open:rotate-180 transition-transform" />
+                </summary>
+                <div className="px-3 pb-3">{sourcePanel}</div>
+              </details>
+            )}
+          </div>
         )}
 
         {isProcessInbox && (
@@ -690,7 +706,14 @@ export function NextGuide() {
 
         {how && (
           <div className="mt-4 rounded-lg bg-[#FAF6F0] border border-[#800020]/20 p-4">
-            <div className="text-sm font-bold text-[#800020] mb-2">{how.title}</div>
+            <button
+              className="text-sm font-bold text-[#800020] mb-2 flex items-center gap-1"
+              onClick={() => setShowHowTo(!showHowTo)}
+            >
+              {showHowTo ? '▾' : '▸'} {how.title}
+            </button>
+            {showHowTo && (
+              <>
             <ol className="list-decimal ml-5 space-y-1 text-sm text-stone-700">
               {how.steps.map((st) => <li key={st}>{st}</li>)}
             </ol>
@@ -703,6 +726,8 @@ export function NextGuide() {
               </div>
             )}
             <div className="mt-2 text-xs text-stone-500">This step ticks itself when OpenCode finishes it. Reload this page afterwards.</div>
+              </>
+            )}
           </div>
         )}
 

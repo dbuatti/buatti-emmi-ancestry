@@ -24,6 +24,7 @@ export interface RecordFrontMatter {
   on_familysearch: boolean;
   image_link?: string;
   links?: RecordLink[];
+  pages?: number[];
 }
 
 export interface RecordData {

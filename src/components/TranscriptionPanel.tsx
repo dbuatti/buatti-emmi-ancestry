@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FileText, Scan, CheckCircle2, AlertTriangle, Loader2, Save, ClipboardPaste } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ interface OcrLine {
   text: string;
   label: string | null;
   value: string;
+  page?: number;
+  junk?: boolean;
 }
 
 interface OcrQuality {
@@ -34,6 +36,8 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
   const [ocrLines, setOcrLines] = useState<OcrLine[]>([]);
   const [ocrQuality, setOcrQuality] = useState<OcrQuality | null>(null);
   const [ocrFile, setOcrFile] = useState<string>('');
+  const [ocrPageCount, setOcrPageCount] = useState<number>(0);
+  const [hideJunk, setHideJunk] = useState(true);
   const [running, setRunning] = useState(false);
   const [saving, setSaving] = useState(false);
   const [pastedText, setPastedText] = useState('');
@@ -42,18 +46,42 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
     summary?: { totalFields: number; goodFields: number; fairFields: number; lowFields: number; score: number; assessment: string };
   } | null>(null);
   const [validating, setValidating] = useState(false);
+  const [availableFiles, setAvailableFiles] = useState<{ name: string; ext: string }[]>([]);
+  const [selectedFile, setSelectedFile] = useState<string>('');
+
+  useEffect(() => {
+    if (!recordId) return;
+    fetch(`/api/record-files/${recordId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const files = (data?.files ?? []).filter((f: { ext: string }) =>
+          ['.jpg', '.jpeg', '.png', '.webp', '.pdf', '.tiff', '.tif'].includes(f.ext?.toLowerCase())
+        );
+        setAvailableFiles(files);
+        if (files.length > 0) {
+          // Prefer PNGs over PDFs
+          const png = files.find((f: { ext: string }) => f.ext?.toLowerCase() === '.png');
+          setSelectedFile(png ? png.name : files[0].name);
+        }
+      })
+      .catch(() => {});
+  }, [recordId]);
 
   const runOcr = async () => {
     setRunning(true);
     try {
-      const res = await fetch(`/api/correspondence/ocr/${recordId}`, { method: 'POST' });
+      const url = selectedFile
+        ? `/api/correspondence/ocr/${recordId}?file=${encodeURIComponent(selectedFile)}`
+        : `/api/correspondence/ocr/${recordId}`;
+      const res = await fetch(url, { method: 'POST' });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || 'OCR failed');
       setOcrText(data.text || '');
       setOcrLines(data.lines || []);
       setOcrQuality(data.quality || null);
       setOcrFile(data.file || '');
-      toast({ title: 'OCR complete', description: `${data.lines?.length ?? 0} lines extracted` });
+      setOcrPageCount(data.pageCount || data.quality?.pageCount || 0);
+      toast({ title: 'OCR complete', description: `${data.quality?.pageCount ? data.quality.pageCount + ' page(s), ' : ''}${data.lines?.length ?? 0} lines extracted` });
     } catch (e: unknown) {
       toast({ title: 'OCR failed', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
     } finally {
@@ -73,19 +101,33 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
     );
   };
 
+  const buildTranscription = () =>
+    ocrLines
+      .filter((l) => !l.junk)
+      .map((l) => (l.label ? `${l.label}: ${l.value}` : l.value))
+      .join('\n');
+
   const saveTranscription = async () => {
     setSaving(true);
     try {
-      // Build transcription text from lines
-      const transcription = ocrLines
-        .map((l) => (l.label ? `${l.label}: ${l.value}` : l.value))
-        .join('\n');
-      // Copy to clipboard for now (full save would need API endpoint)
-      await navigator.clipboard.writeText(transcription);
-      toast({ title: 'Transcription copied', description: 'Paste into record.md or use the check mode to verify.' });
+      const transcription = buildTranscription();
+      const res = await fetch(`/api/save-transcription/${recordId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcription, setTranscribed: true }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Save failed');
+      toast({ title: 'Saved to record.md', description: 'Transcription saved, step 2 ticked. Reload to see it.' });
       onTranscribed?.(ocrLines.map((l) => ({ label: l.label || '', value: l.value })));
     } catch (e: unknown) {
-      toast({ title: 'Save failed', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
+      // Fall back to clipboard if the save endpoint is unavailable
+      try {
+        await navigator.clipboard.writeText(buildTranscription());
+        toast({ title: 'Transcription copied', description: 'Save failed — copied instead. Paste into record.md manually.' });
+      } catch {
+        toast({ title: 'Save failed', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
+      }
     } finally {
       setSaving(false);
     }
@@ -122,12 +164,27 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
       <CardContent className="p-4 space-y-4">
         {/* OCR section */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="text-xs font-bold text-stone-700 uppercase tracking-wider">OCR Extraction</div>
-            <Button size="sm" variant="outline" className="text-xs h-7" onClick={runOcr} disabled={running}>
-              {running ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Scan className="w-3 h-3 mr-1" />}
-              {running ? 'Running OCR…' : 'Run OCR on image'}
-            </Button>
+            <div className="flex items-center gap-2">
+              {availableFiles.length > 1 && (
+                <select
+                  className="text-xs rounded border border-stone-300 bg-white px-2 py-1 font-sans"
+                  value={selectedFile}
+                  onChange={(e) => setSelectedFile(e.target.value)}
+                >
+                  {availableFiles.map((f) => (
+                    <option key={f.name} value={f.name}>
+                      {f.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <Button size="sm" variant="outline" className="text-xs h-7" onClick={runOcr} disabled={running}>
+                {running ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Scan className="w-3 h-3 mr-1" />}
+                {running ? 'Running OCR…' : 'Run OCR on image'}
+              </Button>
+            </div>
           </div>
           {ocrFile && (
             <p className="text-[10px] text-stone-400 font-sans">Source file: {ocrFile}</p>
@@ -153,11 +210,24 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
           )}
           {ocrLines.length > 0 && (
             <div className="space-y-2">
-              <div className="text-[10px] text-stone-500 font-sans">
-                Edit lines below, then save. Tick ✓ to confirm, or mark wrong to correct.
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-[10px] text-stone-500 font-sans">
+                  {ocrPageCount > 1 ? `${ocrPageCount} pages. ` : ''}Edit lines below, then save to record.md.
+                </div>
+                {ocrLines.some((l) => l.junk) && (
+                  <label className="flex items-center gap-1 text-[10px] text-stone-500 font-sans shrink-0 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={hideJunk}
+                      onChange={(e) => setHideJunk(e.target.checked)}
+                      className="w-3 h-3"
+                    />
+                    Hide seal noise ({ocrLines.filter((l) => l.junk).length})
+                  </label>
+                )}
               </div>
               <div className="max-h-64 overflow-y-auto space-y-1.5 border border-stone-200 rounded p-2 bg-white">
-                {ocrLines.map((line) => (
+                {ocrLines.filter((line) => !hideJunk || !line.junk).map((line) => (
                   <div key={line.id} className="flex items-start gap-2 text-xs">
                     <span className="text-stone-400 w-6 shrink-0 pt-1.5">{line.number}.</span>
                     <Input
@@ -176,9 +246,9 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
                 ))}
               </div>
               <div className="flex justify-end">
-                <Button size="sm" variant="outline" className="text-xs" onClick={saveTranscription} disabled={saving}>
+                <Button size="sm" variant="default" className="text-xs bg-[#800020] text-white hover:bg-[#600018]" onClick={saveTranscription} disabled={saving}>
                   {saving ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Save className="w-3 h-3 mr-1" />}
-                  {saving ? 'Saving…' : 'Copy transcription'}
+                  {saving ? 'Saving…' : 'Save to record.md'}
                 </Button>
               </div>
             </div>

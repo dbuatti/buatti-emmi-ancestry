@@ -17,9 +17,12 @@ transcribed_by: Claude (from the PDF's text layer, pasted by Daniele 09/11/2026)
 translated_by: Claude
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
+pages:
+  - 1
+  - 2
 original_filename: 1870-1900_Emmi-Egidio_birth-and-marriage_Linguaglossa.pdf
 original_sha256: 912a8e33e56362fbfe91a43a397df7f4ededacb0955f72df056354944a012095
 ---
@@ -55,3 +58,4 @@ The rest of the page is the form's printed boilerplate (Austria/Switzerland note
 
 ## Discrepancies
 - **Mother's surname: RAITI here vs NASTI elsewhere.** This 2026 extract gives **Raiti**. Egidio's marriage act (atto 59, 04/11/1900, Concetto Scarlata) and Antonino's death act (atto 27, 11/03/1889, Carmelo Vecchio) both give **Nasti**. Both readings are kept. The extract is a modern typed summary, so the original 1870 register page would settle it.
+

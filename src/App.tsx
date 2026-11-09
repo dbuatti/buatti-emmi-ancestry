@@ -25,7 +25,8 @@ import FamilyStories from "./pages/FamilyStories";
 const ParamRedirect = ({ to }: { to: (id: string) => string }) => {
   const { personId, recordId } = useParams();
   const id = personId || recordId || '';
-  return <Navigate to={to(id)} replace />;
+  const search = window.location.search;
+  return <Navigate to={to(id) + search} replace />;
 };
 
 const RESEARCH_NAV = [

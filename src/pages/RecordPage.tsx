@@ -1,6 +1,5 @@
-import { useParams, useSearchParams } from 'react-router-dom';
-import { CiecExtractPanel } from '@/components/CiecExtractPanel';
-import { useState } from 'react';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,15 +9,17 @@ import { RecordViewer } from '@/components/RecordViewer';
 import { RecordCheck } from '@/components/RecordCheck';
 import { RecordNextStep } from '@/components/RecordNextStep';
 import { TranscriptionPanel } from '@/components/TranscriptionPanel';
+import { CiecExtractPanel } from '@/components/CiecExtractPanel';
+import { ItalianExtractPanel } from '@/components/ItalianExtractPanel';
+import { SplitDocumentPanel } from '@/components/SplitDocumentPanel';
 import { parseRecordMarkdown, getWorkflowStepNumber } from '@/lib/records';
 import type { RecordFrontMatter, RecordLink } from '@/types/record';
-import { callApiOpenInFinder, callApiUpdateLinks } from '@/components/next-guide-api';
+import { callApi, callApiOpenInFinder, callApiUpdateLinks } from '@/components/next-guide-api';
+import { initialPeople } from '@/data/familyDataWrapper';
+import { getMeta } from '@/lib/person-meta';
 
 /**
  * Every records/<id>/record.md is loaded at build/dev time via import.meta.glob
- * (same mechanism as src/lib/record-loader.ts) so no record dead-ends with
- * "Record not found". A record.md change (via the local update endpoint) is
- * reloaded by Vite automatically.
  */
 const rawRecordFiles = import.meta.glob('/records/*/record.md', {
   query: '?raw',
@@ -31,8 +32,212 @@ for (const [filePath, raw] of Object.entries(rawRecordFiles)) {
   RECORDS[filePath.split('/').slice(-2, -1)[0]] = raw;
 }
 
+const STEP_NAMES = ['Filed', 'Transcribed', 'Verified', 'In app', 'On FamilySearch'];
+
+function StepProgress({ stepNum, verified, onFs }: { stepNum: number; verified: boolean; onFs: boolean }) {
+  return (
+    <div className="flex items-center gap-1 mb-4">
+      {STEP_NAMES.map((name, i) => {
+        const n = i + 1;
+        const done = n < stepNum || (n === stepNum && n <= 2) || (n === 3 && verified) || (n === 5 && onFs);
+        const current = n === stepNum;
+        return (
+          <div key={name} className="flex items-center gap-1">
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${
+                done
+                  ? 'bg-emerald-500 text-white'
+                  : current
+                  ? 'bg-[#800020] text-white ring-2 ring-[#800020]/30'
+                  : 'bg-stone-200 text-stone-500'
+              }`}
+            >
+              {done ? '✓' : n}
+            </div>
+            {i < STEP_NAMES.length - 1 && (
+              <div className={`w-4 h-0.5 ${done ? 'bg-emerald-400' : 'bg-stone-200'}`} />
+            )}
+          </div>
+        );
+      })}
+      <span className="ml-2 text-xs text-stone-500 font-sans">
+        {stepNum >= 5 && verified && onFs ? 'All done!' : `Step ${stepNum} of 5`}
+      </span>
+    </div>
+  );
+}
+
+function FamilySearchPanel({ recordId, frontMatter, body, setStatus }: {
+  recordId: string;
+  frontMatter: RecordFrontMatter;
+  body: string;
+  setStatus: (s: string | null) => void;
+}) {
+  const [files, setFiles] = useState<{ name: string; ext: string }[]>([]);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [marking, setMarking] = useState(false);
+  const people: string[] = (frontMatter.people as string[]) ?? [];
+
+  useEffect(() => {
+    fetch(`/api/record-files/${recordId}`)
+      .then((r) => r.json())
+      .then((data) => setFiles(data?.files ?? []))
+      .catch(() => {});
+  }, [recordId]);
+
+  const copy = async (key: string, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      setStatus('Copy failed');
+    }
+  };
+
+  const pdfFile = files.find((f) => /\.pdf$/i.test(f.name))?.name ?? `${recordId}.pdf`;
+  const eventDate = [frontMatter.date, frontMatter.place].filter(Boolean).join(' — ') || '(fill from transcription)';
+  const sourceTitle = `Record — ${frontMatter.comune || ''} ${frontMatter.year || ''}${frontMatter.atto ? `, atto ${frontMatter.atto}` : ''}`;
+  const citation = `${frontMatter.comune || ''} ${frontMatter.type || 'record'}${frontMatter.atto ? ` n. ${frontMatter.atto}` : ''}${frontMatter.year ? ` (${frontMatter.year})` : ''}${frontMatter.source_office ? `, ${frontMatter.source_office}` : ''}.`;
+
+  const markDone = async () => {
+    setMarking(true);
+    try {
+      const res = await fetch(`/api/update-record/${recordId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'front-matter', content: 'on_familysearch=true' }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'Failed');
+      setStatus('Marked as on FamilySearch');
+      window.location.reload();
+    } catch (e) {
+      setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setMarking(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-xs text-stone-600">Follow these steps to add this record as a source on FamilySearch.</p>
+      <div>
+        <div className="text-xs font-bold text-stone-700 mb-1">Step 1 — Find the person on FamilySearch</div>
+        {people.length === 0 ? (
+          <p className="text-xs text-amber-700">No people linked to this record yet. Link someone above first.</p>
+        ) : (
+          <div className="space-y-1.5">
+            {people.map((pid) => {
+              const person = initialPeople.find((p) => p.id === pid);
+              const fsId = getMeta(pid)?.familySearchId;
+              return (
+                <div key={pid} className="flex items-center gap-2 text-xs">
+                  <span className="text-stone-700">{person?.name || pid}</span>
+                  {fsId ? (
+                    <a
+                      className="text-purple-700 underline"
+                      href={`https://www.familysearch.org/tree/person/details/${fsId}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Open on FamilySearch ({fsId})
+                    </a>
+                  ) : (
+                    <a className="text-[#800020] underline" href={`/research/people/${pid}`}>
+                      Open person page — add FamilySearch ID
+                    </a>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      <div>
+        <div className="text-xs font-bold text-stone-700 mb-1">Step 2 — Upload the image</div>
+        <p className="text-xs text-stone-600 mb-2">On FamilySearch: person page, Memories, Add a Memory, Upload Memory. Drag the file in from Finder.</p>
+        <div className="flex gap-2 flex-wrap">
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs h-7 px-2"
+            onClick={async () => {
+              try {
+                await callApiOpenInFinder(recordId);
+                setStatus('Opened in Finder');
+              } catch (e) {
+                setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
+              }
+            }}
+          >
+            Show in Finder
+          </Button>
+          <a
+            className="inline-flex items-center rounded border border-stone-300 px-2 h-7 text-xs text-stone-700 hover:bg-stone-50"
+            href={`/records-local/${recordId}/${encodeURIComponent(pdfFile)}?download=1`}
+          >
+            Download PDF
+          </a>
+        </div>
+      </div>
+      <div>
+        <div className="text-xs font-bold text-stone-700 mb-1">Step 3 — Fill the "Add Source" form</div>
+        <div className="space-y-1.5">
+          {[
+            ['Event Date', eventDate],
+            ['Source Title', sourceTitle],
+            ['Citation', citation],
+          ].map(([label, text]) => (
+            <div key={label} className="flex items-center gap-2 text-xs">
+              <span className="w-24 shrink-0 font-semibold text-stone-600">{label}:</span>
+              <code className="flex-1 bg-white border border-stone-200 rounded px-2 py-1 truncate">{text}</code>
+              <Button size="sm" variant="outline" className="text-xs h-7 px-2" onClick={() => copy(label, text)}>
+                {copied === label ? 'Copied \u2713' : 'Copy'}
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div className="text-xs font-bold text-stone-700 mb-1">Step 4 — Mark as done</div>
+        {frontMatter.on_familysearch ? (
+          <p className="text-xs text-emerald-700 font-semibold">\u2705 This record is marked as on FamilySearch.</p>
+        ) : (
+          <Button
+            size="sm"
+            variant="default"
+            className="text-xs bg-purple-700 text-white hover:bg-purple-800"
+            disabled={marking}
+            onClick={markDone}
+          >
+            {marking ? 'Saving…' : 'Done — added to FamilySearch'}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function CollapsibleSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className="border border-stone-200 rounded-lg overflow-hidden">
+      <button
+        className="w-full flex items-center justify-between px-4 py-2.5 bg-[#F4EFE6] text-left hover:bg-stone-100 transition-colors"
+        onClick={() => setOpen(!open)}
+      >
+        <span className="text-xs font-bold text-stone-700 uppercase tracking-wider">{title}</span>
+        <span className="text-stone-400 text-xs">{open ? '▲' : '▼'}</span>
+      </button>
+      {open && <div className="p-4 space-y-3">{children}</div>}
+    </div>
+  );
+}
+
 export default function RecordPage() {
   const { recordId } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
   const [status, setStatus] = useState<string | null>(null);
@@ -124,7 +329,7 @@ export default function RecordPage() {
             variant="outline"
             size="sm"
             onClick={() => {
-              window.location.href = `/records/${recordId}`;
+              window.location.href = `/research/records/${recordId}`;
             }}
           >
             ← Back to transcription
@@ -133,7 +338,7 @@ export default function RecordPage() {
             {frontMatter.type || 'Untitled record'} — Check
           </h1>
           <Badge variant="outline">
-            {stepNum} of 5 steps done
+            Step {stepNum} of 5
           </Badge>
         </div>
 
@@ -141,15 +346,224 @@ export default function RecordPage() {
           <div className="xl:col-span-3 h-[calc(100vh-8rem)]">
             <RecordViewer recordId={frontMatter.id} sticky={true} />
           </div>
-          <div className="xl:col-span-2 h-[calc(100vh-8rem)] overflow-y-auto pr-1">
+          <div className="xl:col-span-2 h-[calc(100vh-8rem)] overflow-y-auto pr-1 space-y-3">
             <RecordCheck
               recordId={frontMatter.id}
               frontMatter={frontMatter}
               body={body}
               onVerified={() => {
-                window.location.href = `/records/${recordId}`;
+                window.location.reload();
               }}
             />
+            {/* People in this record — merged (linked pills with unlink, suggestions, manual link) */}
+          {recordId && (
+            <CollapsibleSection title="People in this record" defaultOpen={true}>
+              <div className="space-y-3">
+                {/* Linked people */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                    Linked people
+                  </div>
+                  {frontMatter.people && frontMatter.people.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {frontMatter.people.map((pid) => {
+                        const person = initialPeople.find((p) => p.id === pid);
+                        return (
+                          <span
+                            key={pid}
+                            className="inline-flex items-center gap-1 rounded-full bg-[#F4EFE6] border border-[#800020]/20 px-2 py-0.5 text-xs"
+                          >
+                            {person?.name || pid}
+                            <button
+                              className="text-stone-400 hover:text-red-600 transition-colors ml-0.5"
+                              onClick={async () => {
+                                if (!recordId) return;
+                                setStatus('Unlinking person...');
+                                try {
+                                  const updatedPeople = (frontMatter.people ?? []).filter((p: string) => p !== pid);
+                                  const res = await fetch(`/api/update-record-people/${recordId}`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ people: updatedPeople }),
+                                  });
+                                  const data = await res.json();
+                                  if (!data.ok) throw new Error(data.error || 'Failed to unlink person');
+                                  setStatus(`Unlinked ${person?.name || pid} from this record`);
+                                  window.location.reload();
+                                } catch (err) {
+                                  setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
+                                }
+                              }}
+                              title={`Unlink ${person?.name || pid}`}
+                              aria-label={`Unlink ${person?.name || pid}`}
+                            >
+                              ✕
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-stone-600">No people linked to this record yet.</p>
+                  )}
+                </div>
+
+                {/* Suggestions from transcription */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                    Suggested from the transcription
+                  </div>
+                  <div className="text-[10px] text-stone-500 mb-1.5">
+                    People whose full name appears in the transcribed text. Check the image before linking.
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {initialPeople
+                      .filter((p) => {
+                        const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
+                        const transText = transMatch ? transMatch[0].toLowerCase() : '';
+                        const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
+                        const alreadyLinked = (frontMatter.people ?? []).includes(p.id);
+                        if (alreadyLinked) return false;
+                        const matchCount = nameParts.filter((part) => transText.includes(part)).length;
+                        return matchCount >= nameParts.length && nameParts.length >= 2;
+                      })
+                      .slice(0, 8)
+                      .map((p) => (
+                        <Button
+                          key={p.id}
+                          size="sm"
+                          variant="outline"
+                          className="text-xs h-7 px-2"
+                          onClick={async () => {
+                            setStatus('Linking person...');
+                            try {
+                              const updatedPeople = [...(frontMatter.people ?? []), p.id];
+                              const res = await fetch(`/api/update-record-people/${recordId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ people: updatedPeople }),
+                              });
+                              const data = await res.json();
+                              if (!data.ok) throw new Error(data.error || 'Failed to link person');
+                              setStatus(`Linked ${p.name} to this record`);
+                              window.location.reload();
+                            } catch (err) {
+                              setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
+                            }
+                          }}
+                        >
+                          Link {p.name}
+                        </Button>
+                      ))}
+                    {initialPeople.filter((p) => {
+                      const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
+                      const transText = transMatch ? transMatch[0].toLowerCase() : '';
+                      const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
+                      if ((frontMatter.people ?? []).includes(p.id)) return false;
+                      const matchCount = nameParts.filter((part) => transText.includes(part)).length;
+                      return matchCount >= nameParts.length && nameParts.length >= 2;
+                    }).length === 0 && (
+                      <p className="text-[10px] text-stone-400">
+                        No automatic matches found. Use the dropdown below to link a person manually.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Manual link dropdown */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                    Link another person
+                  </div>
+                  <select
+                    className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full max-w-sm"
+                    defaultValue=""
+                    onChange={async (e) => {
+                      const pid = e.target.value;
+                      if (!pid || !recordId) return;
+                      setStatus('Linking person...');
+                      try {
+                        const updatedPeople = [...(frontMatter.people ?? []), pid];
+                        const res = await fetch(`/api/update-record-people/${recordId}`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ people: updatedPeople }),
+                        });
+                        const data = await res.json();
+                        if (!data.ok) throw new Error(data.error || 'Failed to link person');
+                        const person = initialPeople.find((p) => p.id === pid);
+                        setStatus(`Linked ${person?.name || pid} to this record`);
+                        window.location.reload();
+                      } catch (err) {
+                        setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
+                      }
+                    }}
+                  >
+                    <option value="">+ Link another person…</option>
+                    {initialPeople
+                      .filter((p) => !(frontMatter.people ?? []).includes(p.id))
+                      .map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.id})
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            </CollapsibleSection>
+          )}
+          {/* Links list (check mode) */}
+          {frontMatter.links && frontMatter.links.length > 0 && (
+            <div className="space-y-2">
+              <div className="text-xs font-bold text-stone-700 uppercase tracking-wider mb-1">
+                Links
+              </div>
+              <div className="space-y-1">
+                {frontMatter.links.map((link, i) => (
+                  <div
+                    key={`${link.url}-${i}`}
+                    className="flex items-center gap-2 rounded border border-stone-200 bg-white px-2 py-1.5"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-stone-700 truncate">
+                        {link.label || link.url || 'Untitled link'}
+                      </div>
+                      <div className="text-[10px] text-stone-400 font-mono truncate">
+                        {link.url}
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs h-6 px-2 text-stone-600 border-stone-300 hover:bg-stone-50 shrink-0"
+                      onClick={() => window.open(link.url, '_blank')}
+                    >
+                      Open \u2197
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-xs h-6 px-2 text-stone-400 border-stone-300 hover:bg-stone-50 shrink-0"
+                      onClick={() => navigator.clipboard.writeText(link.url)}
+                    >
+                      Copy
+                    </Button>
+                    {isDev && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-6 px-2 text-red-600 border-red-200 hover:bg-red-50 shrink-0"
+                        title="Delete this link"
+                        onClick={() => handleRemoveLink(i)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           </div>
         </div>
       </div>
@@ -160,15 +574,15 @@ export default function RecordPage() {
     <div className="max-w-7xl mx-auto p-4 space-y-6">
       <div className="flex flex-col lg:flex-row lg:gap-6">
         <div className="lg:w-1/3">
-          <RecordViewer recordId={frontMatter.id} />
+          <div className="lg:sticky lg:top-4">
+            <RecordViewer recordId={frontMatter.id} />
+          </div>
         </div>
-        <div className="lg:w-2/3 space-y-6">
-          <div className="flex items-center justify-between">
+        <div className="lg:w-2/3 space-y-4">
+          <div className="flex items-center justify-between flex-wrap gap-2">
             <h1 className="text-lg font-bold text-stone-800">{frontMatter.type || 'Untitled record'}</h1>
-            <div className="flex gap-2">
-              <Badge variant="outline">
-                {stepNum} of 5 steps done
-              </Badge>
+            <div className="flex gap-2 items-center">
+              <StepProgress stepNum={stepNum} verified={!!frontMatter.verified} onFs={!!frontMatter.on_familysearch} />
               {frontMatter.verified && (
                 <Badge variant="secondary">Verified</Badge>
               )}
@@ -183,36 +597,264 @@ export default function RecordPage() {
             frontMatter={frontMatter}
             isDev={isDev}
             onCheckAgainstImage={() => {
-              window.location.href = `/records/${recordId}?mode=check`;
+              navigate(`/research/records/${recordId}?mode=check`);
             }}
           />
 
-          {isDev && !frontMatter.transcribed && <CiecExtractPanel />}
+          {/* 1. Record details */}
+          <CollapsibleSection title="Record details" defaultOpen={true}>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-stone-600">
+              <div><span className="font-bold">ID:</span> {frontMatter.id}</div>
+              <div><span className="font-bold">Comune:</span> {frontMatter.comune || '\u2014'}</div>
+              <div><span className="font-bold">Year:</span> {frontMatter.year || '\u2014'}</div>
+              <div><span className="font-bold">Atto:</span> {frontMatter.atto || '\u2014'}</div>
+              <div><span className="font-bold">Date:</span> {frontMatter.date || '\u2014'}</div>
+              <div><span className="font-bold">Place:</span> {frontMatter.place || '\u2014'}</div>
+              <div><span className="font-bold">Source:</span> {frontMatter.source_office || '\u2014'}</div>
+              <div><span className="font-bold">Protocol:</span> {frontMatter.protocol || 'n/a'}</div>
+              <div><span className="font-bold">Pages:</span> {Array.isArray(frontMatter.pages) ? frontMatter.pages.join(', ') : (frontMatter.pages ?? 'all shown')}</div>
+              <div><span className="font-bold">People:</span> {(frontMatter.people ?? []).join(', ') || '\u2014'}</div>
+            </div>
+            {isDev && frontMatter.image_link && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-7 px-2 text-stone-600 border-stone-300 hover:bg-stone-50"
+                onClick={() => {
+                  window.open(frontMatter.image_link, '_blank');
+                }}
+              >
+                <span className="mr-1">\u2197</span> View original
+              </Button>
+            )}
+          </CollapsibleSection>
 
-          <div className="grid grid-cols-2 gap-4 text-xs text-stone-600">
-            <div><span className="font-bold">ID:</span> {frontMatter.id}</div>
-            <div><span className="font-bold">Comune:</span> {frontMatter.comune}</div>
-            <div><span className="font-bold">Year:</span> {frontMatter.year}</div>
-            <div><span className="font-bold">Atto:</span> {frontMatter.atto}</div>
-            <div><span className="font-bold">Date:</span> {frontMatter.date}</div>
-            <div><span className="font-bold">Place:</span> {frontMatter.place}</div>
-            <div><span className="font-bold">Source:</span> {frontMatter.source_office}</div>
-            <div><span className="font-bold">Protocol:</span> {frontMatter.protocol || 'n/a'}</div>
-          </div>
+          {/* 2. Transcription */}
+          <CollapsibleSection title="Transcription" defaultOpen={true}>
+            <Card>
+              <CardContent className="pt-4">
+                <RecordBody record={frontMatter} body={body} />
+              </CardContent>
+            </Card>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const m = body.match(/## Transcription[\s\S]*?(?=## |$)/);
+                  navigator.clipboard.writeText(m ? m[0] : body);
+                  setStatus('Transcription copied');
+                }}
+              >
+                Copy transcription
+              </Button>
+              {!frontMatter.verified && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-emerald-200 text-emerald-700 hover:border-emerald-400 hover:text-emerald-900"
+                  onClick={() => {
+                    navigate(`/research/records/${recordId}?mode=check`);
+                  }}
+                >
+                  Verify against image
+                </Button>
+              )}
+              {isDev && recordId && frontMatter.transcribed && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-7 px-2 text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={async () => {
+                    const ok = window.confirm('Clear the transcription and reset to "pending"? This cannot be undone.');
+                    if (!ok) return;
+                    setStatus('Clearing transcription...');
+                    try {
+                      await fetch(`/api/save-transcription/${recordId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ transcription: '# Italian transcription\n\nTranscription pending.\n\n# English translation\n\nTranslation pending.\n\n# Uncertain readings\n\nN/A - image not yet transcribed.', setTranscribed: false }),
+                      });
+                      setStatus('Transcription cleared');
+                      window.location.reload();
+                    } catch (e) {
+                      setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
+                    }
+                  }}
+                >
+                  Clear transcription
+                </Button>
+              )}
+            </div>
+          </CollapsibleSection>
 
-          {/* View original button (image_link) */}
-          {isDev && frontMatter.image_link && (
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs h-7 px-2 text-stone-600 border-stone-300 hover:bg-stone-50"
-              onClick={() => {
-                window.open(frontMatter.image_link, '_blank');
-              }}
-            >
-              <span className="mr-1">↗</span> View original
-            </Button>
+          {/* 3. People in this record (single, merged) */}
+          {recordId && (
+            <CollapsibleSection title="People in this record" defaultOpen={true}>
+              <div className="space-y-3">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                    Linked people
+                  </div>
+                  {frontMatter.people && frontMatter.people.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {frontMatter.people.map((pid) => {
+                        const person = initialPeople.find((p) => p.id === pid);
+                        return (
+                          <span
+                            key={pid}
+                            className="inline-flex items-center gap-1 rounded-full bg-[#F4EFE6] border border-[#800020]/20 px-2 py-0.5 text-xs"
+                          >
+                            {person?.name || pid}
+                            <button
+                              className="text-stone-400 hover:text-red-600 transition-colors ml-0.5"
+                              onClick={async () => {
+                                if (!recordId) return;
+                                setStatus('Unlinking person...');
+                                try {
+                                  const updatedPeople = (frontMatter.people ?? []).filter((p: string) => p !== pid);
+                                  const res = await fetch(`/api/update-record-people/${recordId}`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ people: updatedPeople }),
+                                  });
+                                  const data = await res.json();
+                                  if (!data.ok) throw new Error(data.error || 'Failed to unlink person');
+                                  setStatus(`Unlinked ${person?.name || pid} from this record`);
+                                  window.location.reload();
+                                } catch (err) {
+                                  setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
+                                }
+                              }}
+                              title={`Unlink ${person?.name || pid}`}
+                              aria-label={`Unlink ${person?.name || pid}`}
+                            >
+                              \u2715
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-stone-600">No people linked to this record yet.</p>
+                  )}
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                    Suggested from the transcription
+                  </div>
+                  <div className="text-[10px] text-stone-500 mb-1.5">
+                    People whose full name appears in the transcribed text. Check the image before linking.
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {initialPeople
+                      .filter((p) => {
+                        const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
+                        const transText = transMatch ? transMatch[0].toLowerCase() : '';
+                        const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
+                        const alreadyLinked = (frontMatter.people ?? []).includes(p.id);
+                        if (alreadyLinked) return false;
+                        const matchCount = nameParts.filter((part) => transText.includes(part)).length;
+                        return matchCount >= nameParts.length && nameParts.length >= 2;
+                      })
+                      .slice(0, 8)
+                      .map((p) => (
+                        <Button
+                          key={p.id}
+                          size="sm"
+                          variant="outline"
+                          className="text-xs h-7 px-2"
+                          onClick={async () => {
+                            setStatus('Linking person...');
+                            try {
+                              const updatedPeople = [...(frontMatter.people ?? []), p.id];
+                              const res = await fetch(`/api/update-record-people/${recordId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ people: updatedPeople }),
+                              });
+                              const data = await res.json();
+                              if (!data.ok) throw new Error(data.error || 'Failed to link person');
+                              setStatus(`Linked ${p.name} to this record`);
+                              window.location.reload();
+                            } catch (err) {
+                              setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
+                            }
+                          }}
+                        >
+                          Link {p.name}
+                        </Button>
+                      ))}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+                    Link another person
+                  </div>
+                  <select
+                    className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full max-w-sm"
+                    defaultValue=""
+                    onChange={async (e) => {
+                      const pid = e.target.value;
+                      if (!pid || !recordId) return;
+                      setStatus('Linking person...');
+                      try {
+                        const updatedPeople = [...(frontMatter.people ?? []), pid];
+                        const res = await fetch(`/api/update-record-people/${recordId}`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ people: updatedPeople }),
+                        });
+                        const data = await res.json();
+                        if (!data.ok) throw new Error(data.error || 'Failed to link person');
+                        const person = initialPeople.find((p) => p.id === pid);
+                        setStatus(`Linked ${person?.name || pid} to this record`);
+                        window.location.reload();
+                      } catch (err) {
+                        setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
+                      }
+                    }}
+                  >
+                    <option value="">+ Link another person\u2026</option>
+                    {initialPeople
+                      .filter((p) => !(frontMatter.people ?? []).includes(p.id))
+                      .map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name} ({p.id})
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              </div>
+            </CollapsibleSection>
           )}
+
+          {/* 4. FamilySearch — Add as Source */}
+          <CollapsibleSection title="FamilySearch \u2014 Add as Source" defaultOpen={!!frontMatter.verified && !frontMatter.on_familysearch}>
+            <FamilySearchPanel recordId={frontMatter.id} frontMatter={frontMatter} body={body} setStatus={setStatus} />
+          </CollapsibleSection>
+
+          {/* 5. Tools (collapsed) */}
+          <CollapsibleSection title="Tools" defaultOpen={false}>
+            <div className="space-y-4">
+              {isDev && (
+                <CollapsibleSection title="Comune extract reader (OCR)" defaultOpen={!frontMatter.transcribed}>
+                  <CiecExtractPanel recordId={recordId} people={frontMatter.people} />
+                </CollapsibleSection>
+              )}
+              {isDev && (
+                <CollapsibleSection title="Italian extract reader (standard estratto)" defaultOpen={false}>
+                  <ItalianExtractPanel recordId={recordId} />
+                </CollapsibleSection>
+              )}
+              {isDev && recordId && (
+                <TranscriptionPanel recordId={frontMatter.id} />
+              )}
+              {isDev && recordId && (
+                <SplitDocumentPanel recordId={recordId} />
+              )}
+            </div>
+          </CollapsibleSection>
 
           {/* Links list */}
           {frontMatter.links && frontMatter.links.length > 0 && (
@@ -240,7 +882,7 @@ export default function RecordPage() {
                       className="text-xs h-6 px-2 text-stone-600 border-stone-300 hover:bg-stone-50 shrink-0"
                       onClick={() => window.open(link.url, '_blank')}
                     >
-                      Open ↗
+                      Open \u2197
                     </Button>
                     <Button
                       size="sm"
@@ -266,58 +908,6 @@ export default function RecordPage() {
               </div>
             </div>
           )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xs font-bold uppercase tracking-wider">Transcription</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecordBody record={frontMatter} body={body} />
-            </CardContent>
-          </Card>
-
-          {/* In-app transcription + quality checker */}
-          {isDev && recordId && (
-            <TranscriptionPanel recordId={frontMatter.id} />
-          )}
-
-          <div className="flex gap-2 flex-wrap">
-            <Button variant="outline" size="sm">
-              Copy transcription
-            </Button>
-            <Button variant="outline" size="sm">
-              Copy source title
-            </Button>
-            {isDev && !frontMatter.verified && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-emerald-200 text-emerald-700 hover:border-emerald-400 hover:text-emerald-900"
-                onClick={() => {
-                  window.location.href = `/records/${recordId}?mode=check`;
-                }}
-              >
-                Check against image
-              </Button>
-            )}
-            {isDev && recordId && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-xs h-7 px-2 text-stone-600 border-stone-300 hover:bg-stone-50"
-                onClick={async () => {
-                  try {
-                    await callApiOpenInFinder(recordId);
-                    setStatus('Opened in Finder');
-                  } catch (e) {
-                    setStatus(`Error: ${e instanceof Error ? e.message : String(e)}`);
-                  }
-                }}
-              >
-                Show in Finder
-              </Button>
-            )}
-          </div>
 
           {/* Add link form (local mode only) */}
           {isDev && recordId && (

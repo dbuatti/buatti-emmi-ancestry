@@ -7,7 +7,6 @@ comune: ''
 register: ''
 year: ''
 atto: ''
-people: []
 source_office: ''
 protocol: ''
 fs_status: not on FamilySearch
@@ -20,6 +19,8 @@ in_app: false
 on_familysearch: false
 original_filename: CHIAPPINI .pdf
 original_sha256: 92e4c2d7c746bba4667705a02f0ddabf8fc94c97dcc151915e0fbc2986c33ca2
+people:
+  - bruna-lilia-chiappini
 ---
 
 # Italian transcription
@@ -33,3 +34,4 @@ Translation pending.
 # Uncertain readings
 
 N/A - image not yet transcribed.
+

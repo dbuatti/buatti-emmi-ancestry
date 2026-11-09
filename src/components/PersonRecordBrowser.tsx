@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, FileText, ExternalLink, Image as ImageIcon, ZoomIn } from 'lucide-react';
+import { ChevronLeft, ChevronRight, FileText, ExternalLink, Image as ImageIcon, ZoomIn, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -119,8 +119,14 @@ export function PersonRecordBrowser({ person, onOpenRecord }: PersonRecordBrowse
             <RecordImagePreview recordId={current.id} />
           </div>
 
-          {/* Open full record */}
-          <div className="flex justify-end mt-2">
+          {/* Open full record + download */}
+          <div className="flex justify-end gap-2 mt-2">
+            <a
+              href={`/records-local/${current.id}/${current.id}.pdf?download=1`}
+              className="inline-flex items-center text-xs text-[#800020] underline"
+            >
+              <Download className="w-3 h-3 mr-1" /> Download PDF
+            </a>
             <Button
               size="sm"
               variant="outline"

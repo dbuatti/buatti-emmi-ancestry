@@ -224,6 +224,136 @@ function localRecordsApiPlugin(): Plugin {
           return;
         }
 
+        // ---- POST /api/split-pdf/<id> ----
+        // Splits a multi-page PDF into individual page images in records-local/<id>/
+        const splitPdfMatch = url.match(/^\/api\/split-pdf\/([^/]+)$/);
+        if (method === "POST" && splitPdfMatch) {
+          const recordId = splitPdfMatch[1];
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          const dir = path.join(RECORDS_LOCAL, recordId);
+          if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+            return sendJson(res, 404, { error: "Record folder not found" });
+          }
+          const files = fs
+            .readdirSync(dir)
+            .filter((f) => fs.statSync(path.join(dir, f)).isFile())
+            .filter((f) => /\.pdf$/i.test(f));
+          if (files.length === 0) {
+            return sendJson(res, 404, { error: "No PDF files in record folder" });
+          }
+          const targetFile = files[0];
+          const filePath = path.join(dir, targetFile);
+          const realPath = path.resolve(filePath);
+          const realRoot = path.resolve(RECORDS_LOCAL);
+          if (!realPath.startsWith(realRoot + path.sep)) {
+            return sendJson(res, 403, { error: "Path traversal denied" });
+          }
+          try {
+            const { execFileSync } = await import("node:child_process");
+            // Get page count
+            const info = execFileSync("pdfinfo", [realPath], { encoding: "utf8", timeout: 30000 });
+            const pageMatch = info.match(/Pages:\s*(\d+)/);
+            const pageCount = pageMatch ? parseInt(pageMatch[1], 10) : 1;
+            if (pageCount <= 1) {
+              return sendJson(res, 200, { ok: true, message: "PDF has only 1 page, nothing to split", pageCount: 1 });
+            }
+            // Split into individual pages
+            const baseName = path.basename(targetFile, ".pdf");
+            const splitFiles = [];
+            for (let p = 1; p <= pageCount; p++) {
+              const outPath = path.join(dir, `${baseName}_p${p}.png`);
+              execFileSync("pdftoppm", ["-png", "-r", "300", "-f", String(p), "-l", String(p), "-singlefile", realPath, outPath.replace(/\.png$/, "")], {
+                encoding: "utf8",
+                timeout: 60000,
+              });
+              // pdftoppm may append -1.png; find the actual file
+              const candidates = fs.readdirSync(dir).filter((f) => f.startsWith(`${baseName}_p${p}`) && f.endsWith(".png"));
+              if (candidates.length > 0) {
+                splitFiles.push(candidates[0]);
+              }
+            }
+            return sendJson(res, 200, { ok: true, pageCount, splitFiles, message: `Split into ${splitFiles.length} page images` });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/save-transcription/<id> ----
+        // Writes transcription text directly to record.md body and sets transcribed=true
+        const saveTransMatch = url.match(/^\/api\/save-transcription\/([^/]+)$/);
+        if (method === "POST" && saveTransMatch) {
+          const recordId = saveTransMatch[1];
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          readBody(req)
+            .then((raw) => {
+              try {
+                const { transcription, setTranscribed } = JSON.parse(raw);
+                if (!transcription || typeof transcription !== "string") {
+                  return sendJson(res, 400, { error: "transcription required" });
+                }
+                const recordMd = path.resolve(
+                  RECORDS_LOCAL,
+                  "..",
+                  "records",
+                  recordId,
+                  "record.md"
+                );
+                if (!fs.existsSync(recordMd)) {
+                  return sendJson(res, 404, { error: "Record not found" });
+                }
+                let fileRaw = fs.readFileSync(recordMd, "utf-8");
+                const fmMatch = fileRaw.match(
+                  /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
+                );
+                if (!fmMatch) {
+                  return sendJson(res, 500, { error: "Invalid front matter" });
+                }
+                const [, fmYaml, bodyText] = fmMatch;
+                const lines = fmYaml.split("\n");
+
+                // Set transcribed flag in front matter if requested
+                if (setTranscribed === true) {
+                  let found = false;
+                  for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].startsWith("transcribed:")) {
+                      lines[i] = "transcribed: true";
+                      found = true;
+                      break;
+                    }
+                  }
+                  if (!found) {
+                    lines.push("transcribed: true");
+                  }
+                } else if (setTranscribed === false) {
+                  let found = false;
+                  for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].startsWith("transcribed:")) {
+                      lines[i] = "transcribed: false";
+                      found = true;
+                      break;
+                    }
+                  }
+                  if (!found) {
+                    lines.push("transcribed: false");
+                  }
+                }
+
+                const newFmYaml = lines.join("\n");
+                const newRaw = `---\n${newFmYaml}\n---\n${transcription}\n`;
+                fs.writeFileSync(recordMd, newRaw);
+                return sendJson(res, 200, { ok: true });
+              } catch (e: any) {
+                return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
         // ---- GET /api/record-files/<id> ----
         if (method === "GET" && url.startsWith("/api/record-files/")) {
           const recordId = url.split("/").pop() || "";
@@ -247,8 +377,8 @@ function localRecordsApiPlugin(): Plugin {
         }
 
         // ---- POST /api/correspondence/ocr/<recordId> ----
-        // Runs tesseract OCR on the first image file in records-local/<recordId>/
-        // and returns extracted text + structured lines with confidence.
+        // Runs tesseract OCR. For PDFs, converts ALL pages. For multiple image files,
+        // OCRs each one. Returns per-page results with "--- Page N ---" markers.
         const ocrMatch = url.match(/^\/api\/correspondence\/ocr\/([^/]+)$/);
         if (method === "POST" && ocrMatch) {
           const recordId = ocrMatch[1];
@@ -259,6 +389,8 @@ function localRecordsApiPlugin(): Plugin {
           if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
             return sendJson(res, 404, { error: "Record folder not found" });
           }
+          const urlObj = new URL(url, "http://localhost");
+          const requestedFile = urlObj.searchParams.get("file");
           const files = fs
             .readdirSync(dir)
             .filter((f) => fs.statSync(path.join(dir, f)).isFile())
@@ -266,59 +398,121 @@ function localRecordsApiPlugin(): Plugin {
           if (files.length === 0) {
             return sendJson(res, 404, { error: "No image/PDF files in record folder" });
           }
-          const targetFile = files[0];
-          const filePath = path.join(dir, targetFile);
-          const realPath = path.resolve(filePath);
-          const realRoot = path.resolve(RECORDS_LOCAL);
-          if (!realPath.startsWith(realRoot + path.sep)) {
-            return sendJson(res, 403, { error: "Path traversal denied" });
-          }
           try {
             const { execFileSync } = await import("node:child_process");
-            let ocrInput = realPath;
-            // If PDF, convert to PNG first (tesseract can't read PDFs directly)
-            if (/\.pdf$/i.test(targetFile)) {
-              const tmpPng = path.join(os.tmpdir(), `ocr-${Date.now()}.png`);
-              execFileSync("pdftoppm", ["-png", "-r", "300", "-singlefile", realPath, tmpPng.replace(/\.png$/, "")], {
-                encoding: "utf8",
-                timeout: 60000,
-              });
-              // pdftoppm appends -1.png or similar; find the actual file
-              const tmpDir = path.dirname(tmpPng);
-              const tmpBase = path.basename(tmpPng, ".png");
-              const candidates = fs.readdirSync(tmpDir).filter((f) => f.startsWith(tmpBase) && f.endsWith(".png"));
-              if (candidates.length > 0) {
-                ocrInput = path.join(tmpDir, candidates[0]);
+            // Resolve binaries absolutely — the dev server's PATH may not
+            // include /opt/homebrew/bin when launched from a GUI app.
+            const binCandidates = (name: string) =>
+              [`/opt/homebrew/bin/${name}`, `/usr/local/bin/${name}`, name];
+            const resolveBin = (name: string): string => {
+              for (const c of binCandidates(name)) {
+                if (c === name) return c;
+                try {
+                  if (fs.existsSync(c)) return c;
+                } catch { /* ignore */ }
+              }
+              return name;
+            };
+            const PDFTOPPM = resolveBin("pdftoppm");
+            const TESSERACT = resolveBin("tesseract");
+            // Resolve symlinks (/tmp -> /private/tmp) — this tesseract build
+            // fails to open files whose path contains a symlink.
+            const real = (p: string): string => {
+              try { return fs.realpathSync(p); } catch { return p; }
+            };
+            // Junk-line detector: drops seal/stamp specks (single chars, ©,
+            // isolated punctuation) from the editable line list. Raw page
+            // text is kept intact.
+            const isJunkLine = (line: string): boolean => {
+              const t = line.trim();
+              if (t.length === 0) return true;
+              if (t.length <= 2 && !/[0-9]/.test(t)) return true;
+              if (/^[©®©|—–\-_=+*~°º§¶•·…\/\\()\[\]{}<>"'.,;:!?]+$/.test(t)) return true;
+              return false;
+            };
+            let ocrInputs: string[] = [];
+            // If a specific file is requested, OCR just that one
+            if (requestedFile && files.includes(requestedFile)) {
+              const fp = path.join(dir, requestedFile);
+              if (/\.pdf$/i.test(requestedFile)) {
+                const tmpBase = path.join(os.tmpdir(), `ocr-${Date.now()}`);
+                execFileSync(PDFTOPPM, ["-png", "-r", "600", real(fp), real(path.dirname(tmpBase)) + "/" + path.basename(tmpBase)], { encoding: "utf8", timeout: 120000 });
+                const cands = fs.readdirSync(path.dirname(tmpBase)).filter((f) => f.startsWith(path.basename(tmpBase)) && f.endsWith(".png")).sort();
+                ocrInputs = cands.map((f) => path.join(path.dirname(tmpBase), f));
+              } else {
+                ocrInputs = [fp];
+              }
+            } else {
+              // No specific file — prefer PNGs over PDFs
+              const pngs = files.filter((f) => /\.png$/i.test(f));
+              if (pngs.length > 0) {
+                ocrInputs = pngs.map((f) => path.join(dir, f));
+              } else {
+                // Fall back to first PDF, convert all pages
+                const pdf = files.find((f) => /\.pdf$/i.test(f));
+                if (pdf) {
+                  const realPath = path.join(dir, pdf);
+                  const tmpBase = path.join(os.tmpdir(), `ocr-${Date.now()}`);
+                  execFileSync(PDFTOPPM, ["-png", "-r", "600", real(realPath), real(path.dirname(tmpBase)) + "/" + path.basename(tmpBase)], { encoding: "utf8", timeout: 120000 });
+                  const cands = fs.readdirSync(path.dirname(tmpBase)).filter((f) => f.startsWith(path.basename(tmpBase)) && f.endsWith(".png")).sort();
+                  ocrInputs = cands.map((f) => path.join(path.dirname(tmpBase), f));
+                } else {
+                  ocrInputs = [path.join(dir, files[0])];
+                }
               }
             }
-            // Run tesseract with Italian + English, output to stdout
-            const result = execFileSync("tesseract", [
-              ocrInput, "stdout",
-              "-l", "ita+eng",
-              "--psm", "6",
-            ], { encoding: "utf8", timeout: 120000, maxBuffer: 10 * 1024 * 1024 });
-            const text = result || "";
-            // Parse lines: split by newline, filter empty, assign line numbers
-            const rawLines = text.split("\n").filter((l) => l.trim().length > 0);
-            const lines = rawLines.map((line, i) => ({
-              id: `line-${i + 1}`,
-              number: i + 1,
-              text: line.trim(),
-              // Simple heuristic: lines with colons are label:value pairs
-              label: line.includes(":") ? line.split(":")[0].trim() : null,
-              value: line.includes(":") ? line.split(":").slice(1).join(":").trim() : line.trim(),
-            }));
-            // Quality assessment
-            const totalChars = text.replace(/\s/g, "").length;
-            const avgLineLength = rawLines.length > 0 ? totalChars / rawLines.length : 0;
+            if (ocrInputs.length === 0) {
+              return sendJson(res, 404, { error: "No files to OCR" });
+            }
+            // Run tesseract on each input
+            const pageResults = [];
+            for (let pi = 0; pi < ocrInputs.length; pi++) {
+              const result = execFileSync(TESSERACT, [
+                real(ocrInputs[pi]), "stdout",
+                "-l", "ita+eng",
+                "--psm", "6",
+              ], { encoding: "utf8", timeout: 120000, maxBuffer: 10 * 1024 * 1024 });
+              const text = result || "";
+              const rawLines = text.split("\n").filter((l) => l.trim().length > 0);
+              const lines = rawLines.map((line, i) => ({
+                id: `p${pi + 1}-line-${i + 1}`,
+                number: i + 1,
+                text: line.trim(),
+                label: line.includes(":") ? line.split(":")[0].trim() : null,
+                value: line.includes(":") ? line.split(":").slice(1).join(":").trim() : line.trim(),
+                page: pi + 1,
+                junk: isJunkLine(line),
+              }));
+              const cleanedText = rawLines.filter((l) => !isJunkLine(l)).join("\n");
+              const totalChars = text.replace(/\s/g, "").length;
+              const avgLineLength = rawLines.length > 0 ? totalChars / rawLines.length : 0;
+              pageResults.push({
+                page: pi + 1,
+                text,
+                cleanedText,
+                lines,
+                quality: {
+                  lineCount: rawLines.length,
+                  totalChars,
+                  avgLineLength: Math.round(avgLineLength),
+                  hasLabels: lines.filter((l) => l.label).length,
+                  confidence: rawLines.length > 5 ? "good" : rawLines.length > 2 ? "fair" : "low",
+                },
+              });
+            }
+            const markedText = pageResults.map((p) => `--- Page ${p.page} ---\n${p.text}`).join("\n\n");
+            const allLines = pageResults.flatMap((p) => p.lines);
+            const totalChars = pageResults.reduce((sum, p) => sum + p.quality.totalChars, 0);
+            const totalLines = pageResults.reduce((sum, p) => sum + p.quality.lineCount, 0);
             const quality = {
-              lineCount: rawLines.length,
+              lineCount: totalLines,
               totalChars,
-              avgLineLength: Math.round(avgLineLength),
-              hasLabels: lines.filter((l) => l.label).length,
-              confidence: rawLines.length > 5 ? "good" : rawLines.length > 2 ? "fair" : "low",
+              avgLineLength: totalLines > 0 ? Math.round(totalChars / totalLines) : 0,
+              hasLabels: allLines.filter((l) => l.label).length,
+              confidence: totalLines > 5 ? "good" : totalLines > 2 ? "fair" : "low",
+              pageCount: pageResults.length,
             };
-            return sendJson(res, 200, { ok: true, text, lines, quality, file: targetFile });
+            return sendJson(res, 200, { ok: true, text: markedText, lines: allLines, quality, file: requestedFile || files[0], pageCount: pageResults.length, pages: pageResults });
           } catch (e) {
             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
           }
@@ -402,6 +596,174 @@ function localRecordsApiPlugin(): Plugin {
           }
         }
 
+        // ---- POST /api/split-into-records ----
+        if (method === "POST" && url === "/api/split-into-records") {
+          readBody(req)
+            .then(async (raw) => {
+              try {
+                const { sourceRecordId, sourceFile, assignments } = JSON.parse(raw);
+                if (!sourceRecordId || !Array.isArray(assignments) || assignments.length === 0) {
+                  return sendJson(res, 400, { error: "sourceRecordId and assignments required" });
+                }
+                const sourceDir = path.join(RECORDS_LOCAL, sourceRecordId);
+                if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+                  return sendJson(res, 404, { error: "Source record folder not found" });
+                }
+                // Find the source PDF
+                const pdfFile = sourceFile || fs.readdirSync(sourceDir).find((f) => /\.pdf$/i.test(f));
+                if (!pdfFile) {
+                  return sendJson(res, 404, { error: "No PDF in source folder" });
+                }
+                const sourcePdf = path.join(sourceDir, pdfFile);
+                const realSource = path.resolve(sourcePdf);
+                const realRoot = path.resolve(RECORDS_LOCAL);
+                if (!realSource.startsWith(realRoot + path.sep)) {
+                  return sendJson(res, 403, { error: "Path traversal denied" });
+                }
+
+                // Step 1: pdfseparate into temp single-page PDFs
+                const tmpDir = path.join(os.tmpdir(), `split-${Date.now()}`);
+                fs.mkdirSync(tmpDir, { recursive: true });
+                const pagePattern = path.join(tmpDir, "page-%d.pdf");
+                const { execFileSync } = await import("node:child_process");
+                execFileSync("pdfseparate", [realSource, pagePattern], { encoding: "utf8", timeout: 60000 });
+                const pageFiles = fs.readdirSync(tmpDir).filter((f) => /^page-\d+\.pdf$/.test(f)).sort((a, b) => {
+                  const na = parseInt(a.match(/page-(\d+)\.pdf/)?.[1] || "0", 10);
+                  const nb = parseInt(b.match(/page-(\d+)\.pdf/)?.[1] || "0", 10);
+                  return na - nb;
+                });
+                const totalPages = pageFiles.length;
+
+                // Step 2: process each assignment
+                const results = [];
+                for (const assign of assignments) {
+                  const pages = assign.pages;
+                  if (!Array.isArray(pages) || pages.length === 0) continue;
+
+                  // Determine target record ID
+                  let targetId = assign.targetRecordId;
+                  let created = false;
+                  if (!targetId || targetId === "new") {
+                    // Create a new record
+                    const newRec = assign.newRecord || {};
+                    const TYPE_NAMES: Record<string, string> = {
+                      birth: "Birth Record", baptism: "Baptism Record", marriage: "Marriage Record",
+                      death: "Death Record", burial: "Burial Record", migration_naturalisation: "Naturalisation Record",
+                    };
+                    const slug = (s: unknown) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+                    const year = newRec.year || "undated";
+                    const placeSlug = slug(newRec.place) || "unknown-place";
+                    const personSlug = slug(newRec.people?.[0] || "unknown").replace(/^([a-z]+)-([a-z]+)$/i, "$2-$1");
+                    const baseId = `${year}_${placeSlug}_${newRec.type || "record"}_${personSlug}`;
+                    let id = baseId;
+                    let n = 2;
+                    const recordsRoot = path.resolve(process.cwd(), "records");
+                    while (fs.existsSync(path.join(recordsRoot, id))) {
+                      id = `${baseId}-${n++}`;
+                    }
+                    targetId = id;
+                    created = true;
+
+                    // Create record.md
+                    const recordsDir = path.join(recordsRoot, targetId);
+                    fs.mkdirSync(recordsDir, { recursive: true });
+                    const frontMatter = [
+                      "---",
+                      `id: ${targetId}`,
+                      `type: ${TYPE_NAMES[newRec.type] ?? "Record"}`,
+                      `date: ''`,
+                      `place: ${newRec.place || ""}`,
+                      "comune: ''",
+                      "register: ''",
+                      `year: '${year}'`,
+                      `atto: '${newRec.atto || ""}'`,
+                      "people:",
+                      ...(newRec.people || []).map((p: string) => `  - ${p}`),
+                      "source_office: ''",
+                      "protocol: ''",
+                      "transcribed_by: ''",
+                      "translated_by: ''",
+                      "filed: true",
+                      "transcribed: false",
+                      "verified: false",
+                      "in_app: false",
+                      "on_familysearch: false",
+                      "pages:",
+                      ...pages.map((pg: number) => `  - ${pg}`),
+                      "---",
+                      "",
+                      "# Italian transcription",
+                      "",
+                      "Transcription pending.",
+                      "",
+                      "# English translation",
+                      "",
+                      "Translation pending.",
+                      "",
+                      "# Uncertain readings",
+                      "",
+                      "N/A - image not yet transcribed.",
+                    ].join("\\n");
+                    fs.writeFileSync(path.join(recordsDir, "record.md"), frontMatter);
+                  }
+
+                  // Create target record folder
+                  const targetDir = path.join(RECORDS_LOCAL, targetId);
+                  fs.mkdirSync(targetDir, { recursive: true });
+
+                  // Build the per-record PDF using pdfunite
+                  const pagePdfs = pages.map((pg: number) => path.join(tmpDir, `page-${pg}.pdf`));
+                  const outPdf = path.join(targetDir, `${targetId}.pdf`);
+                  if (pagePdfs.length === 1) {
+                    fs.copyFileSync(pagePdfs[0], outPdf);
+                  } else {
+                    execFileSync("pdfunite", [...pagePdfs, outPdf], { encoding: "utf8", timeout: 60000 });
+                  }
+
+                  // Write pages to front matter if record already exists
+                  const recordMd = path.join(process.cwd(), "records", targetId, "record.md");
+                  if (fs.existsSync(recordMd)) {
+                    let fileRaw = fs.readFileSync(recordMd, "utf-8");
+                    const fmMatch = fileRaw.match(/^---\\n([\\s\\S]*?)\\n---\\n([\\s\\S]*)$/);
+                    if (fmMatch) {
+                      const [, fmYaml, bodyText] = fmMatch;
+                      const lines = fmYaml.split("\\n");
+                      // Remove existing pages block
+                      let filtered: string[] = [];
+                      let inPages = false;
+                      for (const line of lines) {
+                        if (line.startsWith("pages:")) { inPages = true; continue; }
+                        if (inPages) {
+                          if (line.trim() && !line.startsWith(" ")) { inPages = false; filtered.push(line); }
+                          continue;
+                        }
+                        filtered.push(line);
+                      }
+                      // Append new pages block
+                      filtered.push("pages:");
+                      for (const pg of pages) filtered.push(`  - ${pg}`);
+                      const newYaml = filtered.join("\\n");
+                      fs.writeFileSync(recordMd, `---\\n${newYaml}\\n---\\n${bodyText}\\n`);
+                    }
+                  }
+
+                  results.push({ targetRecordId: targetId, pages, file: `${targetId}.pdf`, created });
+                }
+
+                // Clean up temp
+                try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch {}
+
+                const createdCount = results.filter((r) => r.created).length;
+                const msg = `Split into ${results.length} record(s)${createdCount > 0 ? ` (${createdCount} new)` : ""}.`;
+                return sendJson(res, 200, { ok: true, results, message: msg });
+              } catch (e) {
+                return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
         // ---- POST /api/open-in-finder/<id> ----
         if (method === "POST" && url.startsWith("/api/open-in-finder/")) {
           const recordId = url.split("/").pop() || "";
@@ -446,6 +808,153 @@ function localRecordsApiPlugin(): Plugin {
                 });
               } catch (e: any) {
                 return sendJson(res, 500, { error: e.message });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/update-record-people/<id> ----
+        if (method === "POST" && url.startsWith("/api/update-record-people/")) {
+          const recordId = url.split("/").pop() || "";
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          readBody(req)
+            .then(async (raw) => {
+              try {
+                const { people } = JSON.parse(raw);
+                if (!Array.isArray(people)) {
+                  return sendJson(res, 400, { error: "people must be an array" });
+                }
+                const recordMd = path.resolve(
+                  RECORDS_LOCAL,
+                  "..",
+                  "records",
+                  recordId,
+                  "record.md"
+                );
+                if (!fs.existsSync(recordMd)) {
+                  return sendJson(res, 404, { error: "Record not found" });
+                }
+                let fileRaw = fs.readFileSync(recordMd, "utf-8");
+                const fmMatch = fileRaw.match(
+                  /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
+                );
+                if (!fmMatch) {
+                  return sendJson(res, 500, { error: "Invalid front matter" });
+                }
+                const [, fmYaml, bodyText] = fmMatch;
+                const lines = fmYaml.split("\n");
+                let newYaml: string;
+
+                // Remove any existing people block
+                let filteredLines: string[] = [];
+                let inPeopleBlock = false;
+                for (const line of lines) {
+                  if (line.startsWith("people:")) {
+                    inPeopleBlock = true;
+                    continue;
+                  }
+                  if (inPeopleBlock) {
+                    if (line.trim() && !line.startsWith(" ")) {
+                      inPeopleBlock = false;
+                      filteredLines.push(line);
+                    }
+                    continue;
+                  }
+                  filteredLines.push(line);
+                }
+
+                // Append new people block
+                if (people.length > 0) {
+                  filteredLines.push("people:");
+                  for (const p of people) {
+                    if (typeof p !== "string" || !p.trim()) continue;
+                    filteredLines.push(`  - ${p.trim()}`);
+                  }
+                } else {
+                  filteredLines.push("people: []");
+                }
+
+                newYaml = filteredLines.join("\n");
+                const newRaw = `---\n${newYaml}\n---\n${bodyText}\n`;
+                fs.writeFileSync(recordMd, newRaw);
+                return sendJson(res, 200, { ok: true });
+              } catch (e) {
+                return sendJson(res, 500, { error: e instanceof Error ? e.message : String(e) });
+              }
+            })
+            .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
+          return;
+        }
+
+        // ---- POST /api/update-record-pages/<id> ----
+        if (method === "POST" && url.startsWith("/api/update-record-pages/")) {
+          const recordId = url.split("/").pop() || "";
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          readBody(req)
+            .then(async (raw) => {
+              try {
+                const { pages } = JSON.parse(raw);
+                if (!Array.isArray(pages)) {
+                  return sendJson(res, 400, { error: "pages must be an array" });
+                }
+                const recordMd = path.resolve(
+                  RECORDS_LOCAL,
+                  "..",
+                  "records",
+                  recordId,
+                  "record.md"
+                );
+                if (!fs.existsSync(recordMd)) {
+                  return sendJson(res, 404, { error: "Record not found" });
+                }
+                let fileRaw = fs.readFileSync(recordMd, "utf-8");
+                const fmMatch = fileRaw.match(
+                  /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
+                );
+                if (!fmMatch) {
+                  return sendJson(res, 500, { error: "Invalid front matter" });
+                }
+                const [, fmYaml, bodyText] = fmMatch;
+                const lines = fmYaml.split("\n");
+                let newYaml: string;
+
+                // Remove any existing pages block
+                let filteredLines: string[] = [];
+                let inPagesBlock = false;
+                for (const line of lines) {
+                  if (line.startsWith("pages:")) {
+                    inPagesBlock = true;
+                    continue;
+                  }
+                  if (inPagesBlock) {
+                    if (line.trim() && !line.startsWith(" ")) {
+                      inPagesBlock = false;
+                      filteredLines.push(line);
+                    }
+                    continue;
+                  }
+                  filteredLines.push(line);
+                }
+
+                // Append new pages block
+                if (pages.length > 0) {
+                  filteredLines.push("pages:");
+                  for (const pg of pages) {
+                    filteredLines.push(`  - ${pg}`);
+                  }
+                }
+
+                newYaml = filteredLines.join("\n");
+                const newRaw = `---\n${newYaml}\n---\n${bodyText}\n`;
+                fs.writeFileSync(recordMd, newRaw);
+                return sendJson(res, 200, { ok: true });
+              } catch (e) {
+                return sendJson(res, 500, { error: e instanceof Error ? e.message : String(e) });
               }
             })
             .catch(() => sendJson(res, 500, { error: "Failed to read body" }));
@@ -1071,7 +1580,13 @@ function localRecordsApiPlugin(): Plugin {
                   : ext === ".webp"
                     ? "image/webp"
                     : "application/octet-stream";
-          res.writeHead(200, { "Content-Type": mime });
+          const download = new URLSearchParams(url.split("?")[1] || "").get("download") === "1";
+          const headers: Record<string, string> = { "Content-Type": mime };
+          if (download) {
+            const fallback = fileName.replace(/[^\\x20-\\x7E]/g, "_").replace(/["\\\\]/g, "_");
+            headers["Content-Disposition"] = `attachment; filename="${fallback}"`;
+          }
+          res.writeHead(200, headers);
           const stream = fs.createReadStream(realPath);
           stream.pipe(res);
           stream.on("error", () =>

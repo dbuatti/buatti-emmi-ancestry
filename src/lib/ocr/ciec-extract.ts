@@ -207,12 +207,20 @@ function cleanTokens(value: string): { tokens: string[]; dropped: string[]; last
   const tokens: string[] = [];
   const dropped: string[] = [];
   let lastRun: string[] = [];
+  // Valid short name components (Italian/French prepositions and articles)
+  const VALID_SHORT = new Set(['DE', 'DI', 'DA', 'LA', 'LE', 'DEL', 'DEI', 'DELLE', 'DU', 'DES', 'VAN', 'VON', 'D', 'L']);
   for (const tok of value.split(' ')) {
     const t = tok.replace(/[|\\;:,.]+$/g, '').replace(/^[|\\;:,.]+/g, '');
     if (!t) continue;
     // Real name tokens are ≥2 letters (allow apostrophe: D'AGATA)
-    if (/^[A-Z][A-Z']+$/.test(t) && t.length >= 2) { tokens.push(t); lastRun.push(t); }
-    else { dropped.push(tok); lastRun = []; }
+    // Drop 2-letter tokens that aren't valid name components (OCR artifacts like BY, CE, Ht)
+    if (/^[A-Z][A-Z']+$/.test(t) && t.length >= 2) {
+      if (t.length === 2 && !VALID_SHORT.has(t)) {
+        dropped.push(tok); lastRun = [];
+      } else {
+        tokens.push(t); lastRun.push(t);
+      }
+    } else { dropped.push(tok); lastRun = []; }
   }
   return { tokens, dropped, lastRun };
 }
@@ -232,11 +240,31 @@ const KIND_IT: Record<CiecForm, string> = {
   birth: 'NASCITA', marriage: 'MATRIMONIO', death: 'MORTE', unknown: '',
 };
 
-export function parseCiecExtract(rawText: string): CiecResult {
-  const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+export function parseCiecExtract(rawText: string, formHint?: 'birth' | 'marriage' | 'death' | 'auto'): CiecResult {
+  // If the text contains multiple forms (FORMULA A + FORMULA B), extract only
+  // the relevant section based on formHint.
+  let textToParse = rawText;
+  if (formHint && formHint !== 'auto') {
+    const formMarker = formHint === 'birth' ? 'FORMULA A' : formHint === 'marriage' ? 'FORMULA B' : formHint === 'death' ? 'FORMULA C' : null;
+    if (formMarker) {
+      const idx = rawText.toUpperCase().indexOf(formMarker);
+      if (idx !== -1) {
+        const nextFormulas = ['FORMULA A', 'FORMULA B', 'FORMULA C'].filter((f) => f !== formMarker);
+        let endIdx = rawText.length;
+        for (const nf of nextFormulas) {
+          const ni = rawText.toUpperCase().indexOf(nf, idx + formMarker.length);
+          if (ni !== -1 && ni < endIdx) endIdx = ni;
+        }
+        textToParse = rawText.slice(idx, endIdx);
+      }
+    }
+  }
+
+  const lines = textToParse.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
   const text = lines.join('\n');
   const nText = norm(text);
-  const form = detectForm(text);
+  const detectedForm = detectForm(text);
+  const form = (formHint && formHint !== 'auto') ? formHint : detectedForm;
   const isCiecForm = form !== 'unknown' && /STATO CIVILE|ETAT CIVIL/.test(nText);
   const fields: CiecField[] = [];
   const problems: string[] = [];
@@ -297,8 +325,11 @@ export function parseCiecExtract(rawText: string): CiecResult {
 
   // --- Names --------------------------------------------------------------
   // French label lines carry the values: NOM <child> / NOM <father> <mother>
-  const noms = valuesAfter(lines, /^NOM\b/);
-  const prenoms = valuesAfter(lines, /^PRENOMS\b/);
+  // For marriage forms, strip "AVANT LE MARIAGE" / "APRES LE MARIAGE" prefixes
+  const rawNoms = valuesAfter(lines, /^NOM\b/);
+  const noms = rawNoms.map((v) => v.replace(/^(AVANT|APR[EÈ]S) LE MARIAGE\s*/i, '').trim());
+  const rawPrenoms = valuesAfter(lines, /^PRENOMS\b/);
+  const prenoms = rawPrenoms.map((v) => v.replace(/^(AVANT|APR[EÈ]S) LE MARIAGE\s*/i, '').trim());
   lines.forEach((l, i) => { if (/^(\d{1,2} )?(NOM|PRENOMS)\b/.test(norm(l))) used.add(i); });
 
   if (form === 'birth' || form === 'death') {
@@ -327,6 +358,39 @@ export function parseCiecExtract(rawText: string): CiecResult {
       fields.push(field('father', 'Padre (cognome, prenomi)', 'Father (surname, first names)', `${pSur.join(' ')} / ${pGiv.join(' ')}`, 'low', note));
       fields.push(field('mother', 'Madre (cognome, prenomi)', 'Mother (surname, first names)', '?', 'low', note));
     } else problems.push('Parents not found.');
+  }
+
+  // --- Marriage-specific fields (Formula B) ---
+  if (form === 'marriage') {
+    // Husband and wife surnames: "NOM AVANT LE MARIAGE EMMI SGROI"
+    const mSur = noms[0] ? cleanTokens(noms[0]).tokens : [];
+    if (mSur.length >= 2) {
+      fields.push(field('husbandSurname', 'Marito — Cognome', 'Husband — Surname', mSur[0], 'high'));
+      fields.push(field('wifeSurname', 'Moglie — Cognome', 'Wife — Surname', mSur[1], 'high'));
+    } else if (mSur.length === 1) {
+      fields.push(field('husbandSurname', 'Marito — Cognome', 'Husband — Surname', mSur[0], 'medium', 'Could not split husband/wife surnames'));
+    }
+    // Given names: "PRÉNOMS EGIDIO CONCETTA"
+    const mGiv = prenoms[0] ? cleanTokens(prenoms[0]).tokens : [];
+    if (mGiv.length >= 2) {
+      fields.push(field('husbandGiven', 'Marito — Prenomi', 'Husband — Given names', mGiv[0], 'high'));
+      fields.push(field('wifeGiven', 'Moglie — Prenomi', 'Wife — Given names', mGiv[1], 'high'));
+    } else if (mGiv.length === 1) {
+      fields.push(field('husbandGiven', 'Marito — Prenomi', 'Husband — Given names', mGiv[0], 'medium', 'Could not split husband/wife given names'));
+    }
+    // Birth dates: "DATE ET LIEU DE NAISSANCE 03/02/1870 LINGUAGLOSSA (CT) ... LINGUAGLOSSA (CT)"
+    const birthDates = text.match(/(\d{2}\/\d{2}\/\d{4})\s+([A-Z][A-Z\s()]+?)(?:\s+\d{2}\/\d{2}\/\d{4}|\s+Anno)/g);
+    if (birthDates && birthDates.length >= 1) {
+      fields.push(field('husbandBirth', 'Marito — Data e luogo di nascita', 'Husband — Date and place of birth', birthDates[0].trim(), 'medium'));
+    }
+    if (birthDates && birthDates.length >= 2) {
+      fields.push(field('wifeBirth', 'Moglie — Data e luogo di nascita', 'Wife — Date and place of birth', birthDates[1].trim(), 'medium'));
+    }
+    // Annotations
+    const mAnn = nText.match(/ALTRE ENUNCIAZIONI DELL['']?ATTO\s+AUTRES ENONCIATIONS DE L['']?ACTE\s*(.+?)(?:\s+N\.B\.|\s+MODELLO|\s+EXTRAIT|\s+<<)/s);
+    if (mAnn && mAnn[1].trim() && mAnn[1].trim() !== 'NESSUNA ANNOTAZIONE') {
+      fields.push(field('annotations', 'Altre enunciazioni', 'Other particulars', mAnn[1].trim(), 'medium'));
+    }
   }
 
   // --- Sex ----------------------------------------------------------------
@@ -436,7 +500,7 @@ export function parseCiecExtract(rawText: string): CiecResult {
 
 /** English for the standard marriage annotation; null when the wording differs. */
 export function translateAnnotation(it: string): string | null {
-  const m = it.trim().match(/^(.+?) ha contratto matrimonio con (.+?) il (\d{2}\/\d{2}\/\d{4}) nel Comune di (.+?)\.?\s+L'atto fu i?\/?trascritto nei registri di matrimonio del Comune di (.+?) anno (\d{4}) parte\s*(.*?)\s*n\.?\s*(\d+)\.?$/i);
+  const m = it.trim().match(/^(.+?) ha contratto matrimonio con (.+?) il (\d{2}\/\d{2}\/\d{4}) nel Comune di (.+?)\.?\s+L'atto fu i?\/?trascritto nei registri di matrimonio del Comune di (.+?) anno (\d{4}) parte\s*(.*?)\s*n\.?\s*(\d+)/i);
   if (!m) return null;
   const [, a, b, date, place, regPlace, year, ps, n] = m;
   // "Emmi Egidio" (surname first) → "Egidio Emmi"; keeps multi-word surnames together only when 2 words

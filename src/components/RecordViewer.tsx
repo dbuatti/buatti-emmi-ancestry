@@ -6,6 +6,7 @@ import { Image as ImageIcon, AlertCircle, Maximize, ExternalLink, ZoomIn, ZoomOu
 interface RecordViewerProps {
   recordId: string;
   sticky?: boolean;
+  pages?: number[];
 }
 
 interface RecordFile {
@@ -29,7 +30,7 @@ const MIN_SCALE = 0.5;
 const MAX_SCALE = 4;
 const SCALE_STEP = 0.25;
 
-export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
+export function RecordViewer({ recordId, sticky = false, pages }: RecordViewerProps) {
   const [files, setFiles] = useState<RecordFile[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -67,9 +68,26 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
         }
         const data = await res.json();
         if (cancelled) return;
-        setFiles(data.files);
-        if (data.files.length > 0) {
-          setSelected(data.files[0].name);
+        // Filter files based on pages prop (if provided)
+        let filteredFiles = data.files;
+        if (pages && pages.length > 0) {
+          filteredFiles = data.files.filter((f) => {
+            const pageMatch = f.name.match(/_p(\d+)\./);
+            if (pageMatch) {
+              return pages.includes(parseInt(pageMatch[1], 10));
+            }
+            // Non-page files (like the original PDF) are always included
+            return !/_p\d+\./.test(f.name);
+          });
+        }
+        setFiles(filteredFiles.length > 0 ? filteredFiles : data.files);
+        if (filteredFiles.length > 0) {
+          // Prefer PNGs over PDFs for default view
+          const imgFile = filteredFiles.find((f) => ['.jpg', '.jpeg', '.png', '.webp'].includes(f.ext?.toLowerCase()));
+          setSelected(imgFile ? imgFile.name : filteredFiles[0].name);
+        } else if (data.files.length > 0) {
+          const imgFile = data.files.find((f) => ['.jpg', '.jpeg', '.png', '.webp'].includes(f.ext?.toLowerCase()));
+          setSelected(imgFile ? imgFile.name : data.files[0].name);
         }
       } catch (e: any) {
         if (cancelled) return;
@@ -94,6 +112,12 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
 
   const handleWheel = useCallback(
     (e: React.WheelEvent) => {
+      // Only prevent default (and zoom) when already zoomed
+      // When not zoomed, allow normal scrolling/text selection in iframe
+      if (pz.scale <= 1 && e.deltaY !== 0) {
+        // Don't prevent default — let the iframe handle scrolling
+        return;
+      }
       e.preventDefault();
       const delta = -e.deltaY * 0.001;
       setPz((prev) => {
@@ -366,10 +390,14 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
               {/* Main view - full height */}
               <div
                 className="flex-1 flex items-center justify-center w-full h-full"
-                style={{
-                  transform: `scale(${pz.scale}) translate(${pz.tx}px, ${pz.ty}px)`,
-                  transformOrigin: "center center",
-                }}
+                style={
+                  pz.scale !== 1 || pz.tx !== 0 || pz.ty !== 0
+                    ? {
+                        transform: `scale(${pz.scale}) translate(${pz.tx}px, ${pz.ty}px)`,
+                        transformOrigin: "center center",
+                      }
+                    : undefined
+                }
               >
                 {isPdf ? (
                   <iframe
