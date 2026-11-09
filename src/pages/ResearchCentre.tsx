@@ -9,6 +9,7 @@ import { RequestReview } from '@/components/RequestReview';
 import { NewItemsView } from '@/components/NewItemsView';
 import { NextCorrespondenceAction } from '@/components/NextCorrespondenceAction';
 import { DecisionsLog } from '@/components/DecisionsLog';
+import { ScanStatusBanner } from '@/components/ScanStatusBanner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
@@ -64,10 +65,14 @@ export function ResearchCentre() {
             <Mail className="w-8 h-8 text-[#800020]" />
             Correspondence
           </h1>
-          <p className="text-stone-600 font-sans">
-            Browse, read and review imported Gmail correspondence and attachments.
+          <p className="text-stone-600 font-sans max-w-3xl">
+            The living inbox of research correspondence — Gmail messages and attachments Daniele sends or
+            receives, swept daily, classified against the family tree, and turned into tracked requests,
+            drafts and chases.
           </p>
         </div>
+
+        <ScanStatusBanner />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4">
@@ -78,6 +83,10 @@ export function ResearchCentre() {
           </TabsList>
 
           <TabsContent value="correspondence">
+            <p className="text-xs text-stone-500 font-sans mb-3 max-w-3xl">
+              Archive view: the full imported history of Gmail threads. Read, classify relevance, and follow
+              the next-action trail (get document, chase, process inbox).
+            </p>
             <NextCorrespondenceAction />
             <div className="mb-4 flex items-center gap-3">
               <label className="text-sm text-stone-600 font-sans">Relevance:</label>
@@ -112,14 +121,23 @@ export function ResearchCentre() {
           </TabsContent>
 
           <TabsContent value="newitems">
+            <p className="text-xs text-stone-500 font-sans mb-3 max-w-3xl">
+              Unreviewed messages the daily sweep detected as new. Triage here before they age into the archive.
+            </p>
             <NewItemsView />
           </TabsContent>
 
           <TabsContent value="requests">
+            <p className="text-xs text-stone-500 font-sans mb-3 max-w-3xl">
+              Approved research requests we are waiting on (or chasing — 30-day window before the next chase).
+            </p>
             <RequestReview />
           </TabsContent>
 
           <TabsContent value="decisions">
+            <p className="text-xs text-stone-500 font-sans mb-3 max-w-3xl">
+              Audit trail of correspondence-driven actions: classifications, request states, and resolutions.
+            </p>
             <DecisionsLog />
           </TabsContent>
         </Tabs>

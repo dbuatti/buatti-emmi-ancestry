@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, ListTodo, Users, FileText, ArrowRight } from 'lucide-react';
+import { Mail, ListTodo, Users, FileText, FolderOpen, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -8,6 +8,7 @@ const HUBS = [
   { to: '/research/tasks', icon: ListTodo, title: 'Tasks', desc: 'Walk through every pending task, one at a time.' },
   { to: '/research/people', icon: Users, title: 'People', desc: 'Browse and edit person records and life events.' },
   { to: '/research/records', icon: FileText, title: 'Records', desc: 'View and verify transcription records.' },
+  { to: '/research/documents', icon: FolderOpen, title: 'Documents', desc: 'Where images and documents are stored, and how the inbox → record pipeline works.' },
 ];
 
 export default function ResearchHub() {

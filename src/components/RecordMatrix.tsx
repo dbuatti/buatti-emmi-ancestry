@@ -12,20 +12,6 @@ const RECORD_TYPES = [
   'Passenger List',
 ] as const;
 
-const PEOPLE_IDS = [
-  'alfredo-buatti-sr', 'ida-galanti',
-  'egidio-emmi', 'concetta-sgroi',
-  'rosario-patane-sr', 'venera-vecchio',
-  'ezio-buatti', 'bruna-lilia-chiappini',
-  'gregorio-emmi', 'rosaria-patane',
-  'alfred-buatti', 'venera-buatti',
-  'antonino-emmi', 'rosaria-nasti',
-  'gregorio-sgroi', 'santa-cali',
-  'sebastiano-patane-sr', 'rosaria-dagata',
-  'vincenzo-vecchio', 'rosaria-raciti',
-  'remo-chiappini', 'irma-pirri',
-];
-
 function StatusIcon({ status, record }: { status: string; record: string }) {
   if (status === 'Found') return <Check className="w-3.5 h-3.5 text-emerald-600" />;
   if (status === 'Searching') return <Search className="w-3.5 h-3.5 text-amber-500" />;
@@ -33,7 +19,7 @@ function StatusIcon({ status, record }: { status: string; record: string }) {
 }
 
 export function RecordMatrix({ people }: { people: Person[] }) {
-  const peopleMap = new Map(people.map(p => [p.id, p]));
+  const rows = people;
 
   return (
     <div className="bg-[#F4EFE6] border border-stone-200 rounded-xl p-6 shadow-inner overflow-x-auto">
@@ -44,7 +30,8 @@ export function RecordMatrix({ people }: { people: Person[] }) {
           <p className="text-xs text-stone-500 font-sans">
             <Check className="inline w-3 h-3 text-emerald-600" /> Found &nbsp;
             <Search className="inline w-3 h-3 text-amber-500" /> Searching &nbsp;
-            <X className="inline w-3 h-3 text-red-400" /> Not Found
+            <X className="inline w-3 h-3 text-red-400" /> Not Found &nbsp;
+            <span className="text-stone-400">— every person stored, across all family lines</span>
           </p>
         </div>
       </div>
@@ -62,10 +49,7 @@ export function RecordMatrix({ people }: { people: Person[] }) {
           </tr>
         </thead>
         <tbody>
-          {PEOPLE_IDS.map(id => {
-            const person = peopleMap.get(id);
-            if (!person) return null;
-
+          {rows.map(person => {
             const genColor = person.generation === 0 ? 'text-stone-400' :
               person.generation === 1 ? 'text-stone-600' :
               person.generation === 2 ? 'text-stone-800 font-bold' :
@@ -81,7 +65,7 @@ export function RecordMatrix({ people }: { people: Person[] }) {
             const totalCount = person.records?.length ?? 0;
 
             return (
-              <tr key={id} className="border-b border-stone-200 hover:bg-stone-100/50 transition-colors">
+              <tr key={person.id} className="border-b border-stone-200 hover:bg-stone-100/50 transition-colors">
                 <td className="py-1.5 pr-3 whitespace-nowrap sticky left-0 bg-[#F4EFE6] z-10">
                   <span className="font-medium text-stone-800">{person.name}</span>
                 </td>

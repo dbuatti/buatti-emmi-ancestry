@@ -5,6 +5,7 @@ import type { Person } from '@/types';
 import { Users, Calendar, MapPin, Briefcase, Home, Ship, Shield, GraduationCap, Ruler, FileText, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { PersonRecordBrowser } from '@/components/PersonRecordBrowser';
 
 const byId = (id: string) => initialPeople.find((p) => p.id === id);
 
@@ -233,6 +234,14 @@ const FamilyPerson = () => {
             </div>
           )}
         </section>
+      )}
+
+      {/* Person record browser (swipe/click through records) */}
+      {verifiedRecords.length > 0 && (
+        <PersonRecordBrowser
+          person={person}
+          onOpenRecord={(rid) => navigate(`/research/records/${rid}`)}
+        />
       )}
 
       {/* FamilySearch public link */}

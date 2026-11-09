@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams, Link, useLocation, Outlet } from "react-router-dom";
+
 import ResearchGoals from "./pages/ResearchGoals";
 import NotFound from "./pages/NotFound";
 import RecordPage from "./pages/RecordPage";
@@ -9,12 +10,15 @@ import PersonPage from "./pages/PersonPage";
 import FamilySearchCheckPage from "./pages/FamilySearchCheckPage";
 import ResearchHub from "./pages/ResearchHub";
 import TaskPage from "./pages/TaskPage";
+import Records from "./pages/Records";
 import { ResearchCentre } from "./pages/ResearchCentre";
 import ResearchAssistant from "./pages/ResearchAssistant";
+import Documents from "./pages/Documents";
 import FamilyLayout from "./layouts/FamilyLayout";
 import FamilyTree from "./pages/FamilyTree";
 import FamilyPeople from "./pages/FamilyPeople";
 import FamilyPerson from "./pages/FamilyPerson";
+import ResearchPeople from "./pages/ResearchPeople";
 import FamilySources from "./pages/FamilySources";
 import FamilyStories from "./pages/FamilyStories";
 
@@ -22,6 +26,43 @@ const ParamRedirect = ({ to }: { to: (id: string) => string }) => {
   const { personId, recordId } = useParams();
   const id = personId || recordId || '';
   return <Navigate to={to(id)} replace />;
+};
+
+const RESEARCH_NAV = [
+  { to: '/research', label: 'Hub' },
+  { to: '/research/centre', label: 'Correspondence' },
+  { to: '/research/tasks', label: 'Tasks' },
+  { to: '/research/people', label: 'People' },
+  { to: '/research/records', label: 'Records' },
+  { to: '/research/documents', label: 'Documents' },
+  { to: '/research/assistant', label: 'Assistant' },
+  { to: '/research/goals', label: 'Goals' },
+];
+
+const ResearchLayout = () => {
+  const { pathname } = useLocation();
+  return (
+    <>
+      <div className="bg-[#F4EFE6] border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-3">
+          <nav aria-label="Research" className="flex flex-wrap gap-1.5 items-center">
+            {RESEARCH_NAV.map((n) => (
+              <Link
+                key={n.to}
+                to={n.to}
+                className={`text-xs font-sans font-medium px-3 py-1.5 rounded-md transition-colors ${
+                  pathname === n.to ? 'bg-[#800020] text-white shadow-sm' : 'text-stone-700 hover:bg-stone-100'
+                }`}
+              >
+                {n.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </div>
+      <Outlet />
+    </>
+  );
 };
 
 const App = () => (
@@ -40,16 +81,20 @@ const App = () => (
           <Route path="/family/sources" element={<FamilySources />} />
           <Route path="/family/stories" element={<FamilyStories />} />
         </Route>
-        <Route path="/research" element={<ResearchHub />} />
-        <Route path="/research/tasks" element={<TaskPage />} />
-        <Route path="/research/centre" element={<ResearchCentre />} />
-        <Route path="/research/assistant" element={<ResearchAssistant />} />
-
-        {/* Research Workspace canonical routes */}
-        <Route path="/research/goals" element={<ResearchGoals />} />
-        <Route path="/research/records/:recordId" element={<RecordPage />} />
-        <Route path="/research/people/:personId" element={<PersonPage />} />
-        <Route path="/research/familysearch/:personId" element={<FamilySearchCheckPage />} />
+        {/* Research Workspace: shared sub-nav so every /research/* page is navigable */}
+        <Route element={<ResearchLayout />}>
+          <Route path="/research" element={<ResearchHub />} />
+          <Route path="/research/tasks" element={<TaskPage />} />
+          <Route path="/research/centre" element={<ResearchCentre />} />
+          <Route path="/research/assistant" element={<ResearchAssistant />} />
+          <Route path="/research/goals" element={<ResearchGoals />} />
+          <Route path="/research/records" element={<Records />} />
+          <Route path="/research/records/:recordId" element={<RecordPage />} />
+          <Route path="/research/people" element={<ResearchPeople />} />
+          <Route path="/research/people/:personId" element={<PersonPage />} />
+          <Route path="/research/familysearch/:personId" element={<FamilySearchCheckPage />} />
+          <Route path="/research/documents" element={<Documents />} />
+        </Route>
 
         {/* Legacy routes preserved via redirects */}
         <Route path="/research-goals" element={<Navigate to="/research/goals" replace />} />

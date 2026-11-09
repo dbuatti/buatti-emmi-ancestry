@@ -25,6 +25,49 @@ if (isFamilyBuild) {
 
 const RECORDS_LOCAL = path.resolve(__dirname, "records-local");
 
+const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+const GEMINI_MODEL = "gemini-2.5-flash";
+
+// Gemini key pool: .local/gemini_api_key.txt holds one key per line, `#` comment
+// lines and blank lines are skipped, and placeholders like YOUR_KEY_HERE are
+// ignored. Keys must start with "AIza...". The app rotates through the pool in
+// order; a key that fails (quota / invalid) is marked unusable and the next one
+// is tried.
+let geminiKeyPool: string[] = [];
+let geminiKeyCursor = 0;
+const geminiUnusable = new Set<number>();
+
+function loadGeminiKeyPool(): string[] {
+  geminiKeyPool = [];
+  const geminiKeyPath = path.resolve(process.cwd(), ".local", "gemini_api_key.txt");
+  if (fs.existsSync(geminiKeyPath)) {
+    const keyLines = fs.readFileSync(geminiKeyPath, "utf8").split("\n");
+    for (const ln of keyLines) {
+      const t = ln.trim();
+      if (!t || t.startsWith("#") || t === "YOUR_KEY_HERE" || !t.startsWith("AIza")) continue;
+      geminiKeyPool.push(t);
+    }
+  }
+  geminiKeyCursor = 0;
+  geminiUnusable.clear();
+  return geminiKeyPool;
+}
+
+function nextGeminiKey(): { key: string | null; index: number } {
+  if (geminiKeyPool.length === 0) loadGeminiKeyPool();
+  const n = geminiKeyPool.length;
+  if (n === 0) return { key: null, index: -1 };
+  for (let i = 0; i < n; i++) {
+    const idx = (geminiKeyCursor + i) % n;
+    if (geminiUnusable.has(idx)) continue;
+    geminiKeyCursor = (idx + 1) % n;
+    return { key: geminiKeyPool[idx], index: idx };
+  }
+  geminiKeyCursor = 0;
+  geminiUnusable.clear();
+  return { key: n > 0 ? geminiKeyPool[0] : null, index: 0 };
+}
+
 interface CorrespondenceStatement {
   get(...params: unknown[]): Record<string, unknown> | undefined;
   all(...params: unknown[]): Record<string, unknown>[];
@@ -79,7 +122,7 @@ function localRecordsApiPlugin(): Plugin {
       const isSafeFileName = (name: string): boolean =>
         /^[A-Za-z0-9_.() \-]+$/.test(name) && !name.includes("..");
 
-      server.middlewares.use((req, res, next) => {
+      server.middlewares.use(async (req, res, next) => {
         const url = req.url || "";
         const method = req.method || "GET";
 
@@ -201,6 +244,162 @@ function localRecordsApiPlugin(): Plugin {
               ext: path.extname(f).toLowerCase(),
             }));
           return sendJson(res, 200, { files });
+        }
+
+        // ---- POST /api/correspondence/ocr/<recordId> ----
+        // Runs tesseract OCR on the first image file in records-local/<recordId>/
+        // and returns extracted text + structured lines with confidence.
+        const ocrMatch = url.match(/^\/api\/correspondence\/ocr\/([^/]+)$/);
+        if (method === "POST" && ocrMatch) {
+          const recordId = ocrMatch[1];
+          if (!isSafeRecordId(recordId)) {
+            return sendJson(res, 400, { error: "Invalid record id" });
+          }
+          const dir = path.join(RECORDS_LOCAL, recordId);
+          if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+            return sendJson(res, 404, { error: "Record folder not found" });
+          }
+          const files = fs
+            .readdirSync(dir)
+            .filter((f) => fs.statSync(path.join(dir, f)).isFile())
+            .filter((f) => /\.(jpg|jpeg|png|webp|tiff|tif|pdf)$/i.test(f));
+          if (files.length === 0) {
+            return sendJson(res, 404, { error: "No image/PDF files in record folder" });
+          }
+          const targetFile = files[0];
+          const filePath = path.join(dir, targetFile);
+          const realPath = path.resolve(filePath);
+          const realRoot = path.resolve(RECORDS_LOCAL);
+          if (!realPath.startsWith(realRoot + path.sep)) {
+            return sendJson(res, 403, { error: "Path traversal denied" });
+          }
+          try {
+            const { execFileSync } = await import("node:child_process");
+            let ocrInput = realPath;
+            // If PDF, convert to PNG first (tesseract can't read PDFs directly)
+            if (/\.pdf$/i.test(targetFile)) {
+              const tmpPng = path.join(os.tmpdir(), `ocr-${Date.now()}.png`);
+              execFileSync("pdftoppm", ["-png", "-r", "300", "-singlefile", realPath, tmpPng.replace(/\.png$/, "")], {
+                encoding: "utf8",
+                timeout: 60000,
+              });
+              // pdftoppm appends -1.png or similar; find the actual file
+              const tmpDir = path.dirname(tmpPng);
+              const tmpBase = path.basename(tmpPng, ".png");
+              const candidates = fs.readdirSync(tmpDir).filter((f) => f.startsWith(tmpBase) && f.endsWith(".png"));
+              if (candidates.length > 0) {
+                ocrInput = path.join(tmpDir, candidates[0]);
+              }
+            }
+            // Run tesseract with Italian + English, output to stdout
+            const result = execFileSync("tesseract", [
+              ocrInput, "stdout",
+              "-l", "ita+eng",
+              "--psm", "6",
+            ], { encoding: "utf8", timeout: 120000, maxBuffer: 10 * 1024 * 1024 });
+            const text = result || "";
+            // Parse lines: split by newline, filter empty, assign line numbers
+            const rawLines = text.split("\n").filter((l) => l.trim().length > 0);
+            const lines = rawLines.map((line, i) => ({
+              id: `line-${i + 1}`,
+              number: i + 1,
+              text: line.trim(),
+              // Simple heuristic: lines with colons are label:value pairs
+              label: line.includes(":") ? line.split(":")[0].trim() : null,
+              value: line.includes(":") ? line.split(":").slice(1).join(":").trim() : line.trim(),
+            }));
+            // Quality assessment
+            const totalChars = text.replace(/\s/g, "").length;
+            const avgLineLength = rawLines.length > 0 ? totalChars / rawLines.length : 0;
+            const quality = {
+              lineCount: rawLines.length,
+              totalChars,
+              avgLineLength: Math.round(avgLineLength),
+              hasLabels: lines.filter((l) => l.label).length,
+              confidence: rawLines.length > 5 ? "good" : rawLines.length > 2 ? "fair" : "low",
+            };
+            return sendJson(res, 200, { ok: true, text, lines, quality, file: targetFile });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/ocr-validate ----
+        // Accepts pasted text, parses it, and returns a quality assessment
+        // with field-by-field validation against known patterns.
+        const ocrValidateMatch = url === "/api/correspondence/ocr-validate";
+        if (method === "POST" && ocrValidateMatch) {
+          try {
+            const raw = await readBody(req);
+            const { text } = JSON.parse(raw || "{}");
+            if (!text || typeof text !== "string") {
+              return sendJson(res, 400, { ok: false, error: "text required" });
+            }
+            const lines = text.split("\n").filter((l) => l.trim().length > 0);
+            // Parse field patterns
+            const fields: { field: string; value: string; confidence: string; note?: string }[] = [];
+            const datePattern = /(\d{1,2})[\/\.\-](\d{1,2})[\/\.\-](\d{2,4})/;
+            const yearPattern = /\b(1[6-9]\d{2}|20[0-2]\d)\b/;
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (trimmed.includes(":")) {
+                const [label, ...valueParts] = trimmed.split(":");
+                const value = valueParts.join(":").trim();
+                let confidence = "fair";
+                const notes: string[] = [];
+                if (datePattern.test(value)) {
+                  confidence = "good";
+                  notes.push("date pattern found");
+                }
+                if (yearPattern.test(value)) {
+                  if (confidence !== "good") confidence = "fair";
+                  notes.push("year found");
+                }
+                if (value.length < 3) {
+                  confidence = "low";
+                  notes.push("value too short");
+                }
+                if (value.length > 100) {
+                  confidence = "low";
+                  notes.push("value unusually long");
+                }
+                fields.push({
+                  field: label.trim(),
+                  value,
+                  confidence,
+                  note: notes.length > 0 ? notes.join("; ") : undefined,
+                });
+              } else if (trimmed.length > 0) {
+                fields.push({
+                  field: "unstructured",
+                  value: trimmed,
+                  confidence: "low",
+                  note: "no label:value separator found",
+                });
+              }
+            }
+            const totalFields = fields.length;
+            const goodFields = fields.filter((f) => f.confidence === "good").length;
+            const fairFields = fields.filter((f) => f.confidence === "fair").length;
+            const lowFields = fields.filter((f) => f.confidence === "low").length;
+            const score = totalFields > 0
+              ? Math.round(((goodFields * 1.0 + fairFields * 0.6 + lowFields * 0.2) / totalFields) * 100)
+              : 0;
+            return sendJson(res, 200, {
+              ok: true,
+              fields,
+              summary: {
+                totalFields,
+                goodFields,
+                fairFields,
+                lowFields,
+                score,
+                assessment: score >= 80 ? "good" : score >= 50 ? "fair" : "poor",
+              },
+            });
+          } catch (e) {
+            return sendJson(res, 400, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
         }
 
         // ---- POST /api/open-in-finder/<id> ----
@@ -1086,12 +1285,22 @@ function localCorrespondenceApiPlugin(): Plugin {
             for (const t of tables) {
               counts[t] = Number(db.prepare(`SELECT COUNT(*) AS n FROM ${t}`).get()?.n ?? 0);
             }
+            const scan = db
+              .prepare("SELECT account_email, last_scan_at, last_scan_status, last_error FROM scan_state ORDER BY account_email")
+              .all()
+              .map((r: any) => ({
+                account_email: String(r.account_email),
+                last_scan_at: r.last_scan_at ? String(r.last_scan_at) : null,
+                last_scan_status: String(r.last_scan_status ?? "ok"),
+                last_error: r.last_error ? String(r.last_error) : null,
+              }));
             return sendJson(res, 200, {
               ok: true,
               dbPath: (await loadDbModule()).getDbPath(),
               schemaVersion: version,
               tables,
               counts,
+              scan,
             });
           } catch (e) {
             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
@@ -1337,6 +1546,21 @@ function localCorrespondenceApiPlugin(): Plugin {
           }
         }
 
+        // ---- GET /api/correspondence/attachment-integrity ----
+        if (method === "GET" && url === "/api/correspondence/attachment-integrity") {
+          try {
+            const { execFileSync } = await import("node:child_process");
+            const output = execFileSync("python3", [
+              path.resolve(process.cwd(), "scripts", "check-attachment-integrity.py"),
+              "--json",
+            ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
+            const data = JSON.parse(output);
+            return sendJson(res, 200, { ok: true, ...data });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
         // ---- GET /api/correspondence/attachment-gate/:messageId ----
         const gateMatch = url.match(/^\/api\/correspondence\/attachment-gate\/(\d+)$/);
         if (method === "GET" && gateMatch) {
@@ -1383,40 +1607,43 @@ function localCorrespondenceApiPlugin(): Plugin {
              let draft = "";
              let usedModel = "";
 
-             // Gemini path (if key present)
-             const geminiKeyPath = path.resolve(process.cwd(), ".local", "gemini_api_key.txt");
-             let geminiKey = "";
-             if (fs.existsSync(geminiKeyPath)) {
-               const keyLines = fs.readFileSync(geminiKeyPath, "utf8").split("\n");
-               for (const ln of keyLines) {
-                 const t = ln.trim();
-                 if (!t || t.startsWith("#")) continue;
-                 geminiKey = t;
-                 break;
-               }
-               if (geminiKey === "YOUR_KEY_HERE" || !geminiKey) geminiKey = "";
-             }
-
-             const wantGemini = (modelChoice === "gemini" || modelChoice === "") && geminiKey;
-             if (wantGemini) {
+             const generateGeminiDraft = async (key: string) => {
                const geminiPrompt = `${prompt}\n\nGenerate ONLY the email body (no subject, no signature placeholders). Keep it concise and professional.`;
                const { execFileSync } = await import("node:child_process");
-               const geminiModel = "gemini-2.5-flash";
                const result = execFileSync("curl", [
                  "-s", "-X", "POST",
-                 `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
+                 `${GEMINI_API_BASE}/${GEMINI_MODEL}:generateContent?key=${key}`,
                  "-H", "Content-Type: application/json",
                  "-d", JSON.stringify({
                    contents: [{ parts: [{ text: geminiPrompt }] }],
                    generationConfig: { temperature: 0.3, maxOutputTokens: 1024, thinkingConfig: { thinkingBudget: 0 } },
                  }),
                ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
-               try {
-                 const geminiResponse = JSON.parse(result);
-                 draft = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                 usedModel = geminiModel;
-               } catch {
-                 draft = "";
+               const geminiResponse = JSON.parse(result);
+               if (geminiResponse?.error) {
+                 return { ok: false as const, text: "" };
+               }
+               const text = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+               return { ok: true as const, text };
+             };
+
+             // Gemini via key pool (rotate to next key when one fails)
+             const useGemini = (modelChoice === "gemini" || modelChoice === "");
+             if (useGemini) {
+               for (let attempt = 0; attempt < 3; attempt++) {
+                 const { key, index } = nextGeminiKey();
+                 if (!key) break;
+                 try {
+                   const out = await generateGeminiDraft(key);
+                   if (out.ok) {
+                     draft = out.text;
+                     usedModel = GEMINI_MODEL;
+                     break;
+                   }
+                   geminiUnusable.add(index);
+                 } catch {
+                   geminiUnusable.add(index);
+                 }
                }
              }
 
@@ -1458,33 +1685,43 @@ function localCorrespondenceApiPlugin(): Plugin {
                return sendJson(res, 400, { ok: false, error: "text required" });
              }
              const targetLang = target === "it" ? "Italian" : "English";
-             const geminiKeyPath = path.resolve(process.cwd(), ".local", "gemini_api_key.txt");
-             let geminiKey = "";
-             if (fs.existsSync(geminiKeyPath)) {
-               const keyLines = fs.readFileSync(geminiKeyPath, "utf8").split("\n");
-               for (const ln of keyLines) {
-                 const t = ln.trim();
-                 if (!t || t.startsWith("#")) continue;
-                 geminiKey = t;
-                 break;
+             const prompt = `Translate the following text to ${targetLang}. Output ONLY the translation, nothing else.\n\n${text}`;
+             const generateGeminiTranslation = async (key: string) => {
+               const { execFileSync } = await import("node:child_process");
+               const result = execFileSync("curl", [
+                 "-s", "-X", "POST",
+                 `${GEMINI_API_BASE}/${GEMINI_MODEL}:generateContent?key=${key}`,
+                 "-H", "Content-Type: application/json",
+                 "-d", JSON.stringify({
+                   contents: [{ parts: [{ text: prompt }] }],
+                   generationConfig: { temperature: 0.1, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
+                 }),
+               ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
+               const geminiResponse = JSON.parse(result);
+               if (geminiResponse?.error) {
+                 return { ok: false as const, text: "" };
+               }
+               const text = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+               return { ok: true as const, text };
+             };
+             let translation = "";
+             for (let attempt = 0; attempt < 3; attempt++) {
+               const { key, index } = nextGeminiKey();
+               if (!key) break;
+               try {
+                 const out = await generateGeminiTranslation(key);
+                 if (out.ok) {
+                   translation = out.text;
+                   break;
+                 }
+                 geminiUnusable.add(index);
+               } catch {
+                 geminiUnusable.add(index);
                }
              }
-             if (!geminiKey) {
-               return sendJson(res, 503, { ok: false, error: "No Gemini key configured (.local/gemini_api_key.txt)" });
+             if (!translation) {
+               return sendJson(res, 503, { ok: false, error: "Gemini unavailable after rotating through configured keys (.local/gemini_api_key.txt)" });
              }
-             const prompt = `Translate the following text to ${targetLang}. Output ONLY the translation, nothing else.\n\n${text}`;
-             const { execFileSync } = await import("node:child_process");
-             const result = execFileSync("curl", [
-               "-s", "-X", "POST",
-               `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${geminiKey}`,
-               "-H", "Content-Type: application/json",
-               "-d", JSON.stringify({
-                 contents: [{ parts: [{ text: prompt }] }],
-                 generationConfig: { temperature: 0.1, maxOutputTokens: 2048, thinkingConfig: { thinkingBudget: 0 } },
-               }),
-             ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
-             const geminiResponse = JSON.parse(result);
-             const translation = geminiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || "";
              return sendJson(res, 200, { ok: true, translation: translation.trim() });
            } catch (e) {
              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
@@ -2216,6 +2453,30 @@ function localCorrespondenceApiPlugin(): Plugin {
             const raw = fs.readFileSync(filePath, "utf8");
             const parsed = JSON.parse(raw);
             return sendJson(res, 200, parsed);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/source?q=... (source-in-email lookup) ----
+        if (method === "GET" && (url === "/api/correspondence/source" || url.startsWith("/api/correspondence/source?"))) {
+          try {
+            const urlObj = new URL(url, "http://localhost");
+            const q = urlObj.searchParams.get("q")?.trim() || "";
+            const db = await loadDb();
+            if (!q) {
+              return sendJson(res, 200, { ok: true, query: "", hits: [], count: 0 });
+            }
+            const rows = db.prepare(
+              `SELECT m.id, m.account_email, m.gmail_message_id, m.gmail_thread_id, m.direction,
+                      m.from_name, m.from_email, m.subject, m.snippet, m.received_at, m.sent_at,
+                      (SELECT COUNT(*) FROM attachments a WHERE a.message_id = m.id) AS attachment_count
+               FROM messages m
+               WHERE (m.subject LIKE ? OR m.from_name LIKE ? OR m.from_email LIKE ? OR m.snippet LIKE ? OR m.body_text LIKE ?)
+               ORDER BY m.received_at DESC
+               LIMIT 25`
+            ).all(`%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`, `%${q}%`);
+            return sendJson(res, 200, { ok: true, query: q, hits: rows, count: rows.length });
           } catch (e) {
             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
           }

@@ -1,1 +1,14 @@
-{}
+{
+  "gregorio-emmi|marriage": {
+    "requestedOn": "2026-11-05",
+    "requestedFrom": "servizio1@comune.fiumefreddo-di-sicilia.ct.it"
+  },
+  "gregorio-emmi|death": {
+    "requestedOn": "2026-11-05",
+    "requestedFrom": "servizio1@comune.fiumefreddo-di-sicilia.ct.it"
+  },
+  "gregorio-emmi|burial": {
+    "requestedOn": "2026-11-05",
+    "requestedFrom": "servizio1@comune.fiumefreddo-di-sicilia.ct.it"
+  }
+}
