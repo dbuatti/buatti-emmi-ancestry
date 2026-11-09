@@ -14,7 +14,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (Daniele selected-text reading 10/11/2026 — Daniele to verify every line)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename: 2026 07 10 Marriage Record - Branxton Parish - Buatti and Chiappini.pdf
@@ -68,5 +68,6 @@ mentioned: []
 - Celebrant discrepancy: this extract names Rev Z Lewandowski, but NSW certificate 27340/1952 says Fr Zefferino Grisendi solemnised the marriage. One of them (or a transcription between register and certificate) is off — flag for Daniele.
 - "Acoli, Italy" is the parish's misspelling of Ascoli (both families). Kept verbatim with [sic].
 - Irma Pirri is listed without any deceased notation here, while the NSW certificate records her as deceased. Consistent (she died 1930–1952) but the extract does not state it.
+
 
 
