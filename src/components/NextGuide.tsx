@@ -701,16 +701,17 @@ export function NextGuide() {
                 >
                   <Inbox className="w-4 h-4 mr-1.5" /> Document received
                 </Button>
+                <div className="text-[11px] text-stone-500 font-sans">Nothing arrived yet?</div>
                 <div className="flex flex-wrap gap-2">
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-xs h-8 px-3"
+                    className="text-xs min-h-[40px] px-4 border-[#800020]/40 text-[#800020] font-semibold"
                     onClick={markRequested}
                     title={
                       typeof task.daysWaiting === 'number' && task.daysWaiting >= 30
                         ? 'Logs a chase today — the card returns in 30 days'
-                        : 'Nothing to do yet — hides this card for 30 days, then it returns as a chase'
+                        : 'Hides this card for 30 days, then it returns as a chase'
                     }
                   >
                     <Send className="w-3 h-3 mr-1" />
@@ -721,13 +722,16 @@ export function NextGuide() {
                   <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={() => setShowLinkInput((v) => !v)}>
                     <Link2 className="w-3 h-3 mr-1" /> Found online
                   </Button>
-                  <Button size="sm" variant="outline" className="text-xs h-8 px-3" onClick={checkSentCorrespondence}>
-                    <Send className="w-3 h-3 mr-1" /> Check sent mail
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-xs h-8 px-3"
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 pt-0.5">
+                  <button
+                    className="text-[11px] font-sans text-stone-500 underline hover:text-[#800020] min-h-[32px]"
+                    onClick={checkSentCorrespondence}
+                  >
+                    Check sent mail
+                  </button>
+                  <button
+                    className="text-[11px] font-sans text-stone-500 underline hover:text-[#800020] min-h-[32px]"
                     onClick={() =>
                       navigate(
                         `/research/triangulate?person=${encodeURIComponent(task.personId)}&target=${encodeURIComponent(
@@ -738,16 +742,14 @@ export function NextGuide() {
                       )
                     }
                   >
-                    <Crosshair className="w-3 h-3 mr-1" /> Triangulate
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-xs h-8 px-3 text-stone-400 hover:bg-stone-50"
+                    Triangulate
+                  </button>
+                  <button
+                    className="text-[11px] font-sans text-stone-400 underline hover:text-red-600 min-h-[32px]"
                     onClick={clearOverride}
                   >
                     Not requesting it
-                  </Button>
+                  </button>
                 </div>
               </>
             ) : (
