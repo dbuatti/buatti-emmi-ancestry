@@ -126,50 +126,74 @@ export default function Records() {
         </div>
 
         {/* Filters */}
-        <div className="mb-6 flex flex-wrap items-center gap-3">
-          <select
-            className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-          >
-            <option value="all">All types</option>
-            {types.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-          <select
-            className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans"
-            value={personFilter}
-            onChange={(e) => setPersonFilter(e.target.value)}
-          >
-            <option value="all">All people</option>
-            {people.map((p) => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-          <select
-            className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans"
-            value={stepFilter}
-            onChange={(e) => setStepFilter(e.target.value)}
-          >
-            <option value="all">All steps</option>
-            <option value="filed">Filed</option>
-            <option value="transcribed">Transcribed</option>
-            <option value="verified">Verified</option>
-            <option value="in_app">In app</option>
-            <option value="on_familysearch">On FamilySearch</option>
-          </select>
-          <select
-            className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="date">Sort: Date</option>
-            <option value="type">Sort: Type</option>
-            <option value="step">Sort: Step</option>
-            <option value="name">Sort: Name</option>
-          </select>
-          <span className="text-xs text-stone-500 font-sans">
+        <div className="mb-6 flex flex-wrap items-end gap-3">
+          <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-stone-500 font-sans">
+            Type
+            <select
+              className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans font-normal min-h-[40px]"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+            >
+              <option value="all">All types</option>
+              {types.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-stone-500 font-sans">
+            Person
+            <select
+              className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans font-normal min-h-[40px]"
+              value={personFilter}
+              onChange={(e) => setPersonFilter(e.target.value)}
+            >
+              <option value="all">All people</option>
+              {people.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-stone-500 font-sans">
+            Step
+            <select
+              className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans font-normal min-h-[40px]"
+              value={stepFilter}
+              onChange={(e) => setStepFilter(e.target.value)}
+            >
+              <option value="all">All steps</option>
+              <option value="filed">Filed</option>
+              <option value="transcribed">Transcribed</option>
+              <option value="verified">Verified</option>
+              <option value="in_app">In app</option>
+              <option value="on_familysearch">On FamilySearch</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-stone-500 font-sans">
+            Sort
+            <select
+              className="rounded border border-stone-300 bg-white px-3 py-2 text-sm font-sans font-normal min-h-[40px]"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="date">Date</option>
+              <option value="type">Type</option>
+              <option value="step">Step</option>
+              <option value="name">Name</option>
+            </select>
+          </label>
+          {(typeFilter !== 'all' || personFilter !== 'all' || stepFilter !== 'all') && (
+            <button
+              className="rounded border border-stone-300 bg-white px-3 min-h-[40px] text-sm font-sans text-stone-600 hover:border-[#800020] hover:text-[#800020]"
+              onClick={() => {
+                setTypeFilter('all');
+                setPersonFilter('all');
+                setStepFilter('all');
+              }}
+            >
+              Reset
+            </button>
+          )}
+          <span className="text-xs text-stone-500 font-sans pb-2">
             {filtered.length} of {records.length} records
           </span>
         </div>

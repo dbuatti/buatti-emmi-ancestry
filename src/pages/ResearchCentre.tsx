@@ -88,10 +88,11 @@ export function ResearchCentre() {
               the next-action trail (get document, chase, process inbox).
             </p>
             <NextCorrespondenceAction />
-            <div className="mb-4 flex items-center gap-3">
-              <label className="text-sm text-stone-600 font-sans">Relevance:</label>
+            <div className="mb-4 flex flex-wrap items-end gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-[11px] font-semibold uppercase tracking-wide text-stone-500 font-sans">Relevance</label>
               <Select value={relevance} onValueChange={(v) => setRelevance(v as 'definite' | 'possible' | 'all')}>
-                <SelectTrigger className="w-40 bg-white border-stone-300">
+                <SelectTrigger className="w-40 bg-white border-stone-300 min-h-[40px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -100,6 +101,10 @@ export function ResearchCentre() {
                   <SelectItem value="all">All</SelectItem>
                 </SelectContent>
               </Select>
+              </div>
+              <p className="text-[11px] text-stone-500 font-sans pb-2">
+                Definite = from a government office or archive · Possible = may be relevant · All = everything imported
+              </p>
             </div>
 
             <Card className="border-stone-200">

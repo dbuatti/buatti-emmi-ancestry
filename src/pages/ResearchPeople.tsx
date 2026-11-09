@@ -99,12 +99,21 @@ const ResearchPeople = () => {
       return matchesSearch && matchesLine && matchesGen;
     });
     if (sortBy === 'completeness') {
+      const unresolvedQs = (pid: string) =>
+        initialOpenQuestions.filter(
+          (q) =>
+            q.status !== 'Resolved' &&
+            q.question?.toLowerCase().includes(pid.toLowerCase().replace(/-/g, ' '))
+        ).length;
       filtered.sort((a, b) => {
         const ta = taskCounts.get(a.id) ?? 0;
         const tb = taskCounts.get(b.id) ?? 0;
         const va = verifiedCounts.get(a.id) ?? 0;
         const vb = verifiedCounts.get(b.id) ?? 0;
-        return calculateCompleteness(b, initialOpenQuestions, tb, vb).score - calculateCompleteness(a, initialOpenQuestions, ta, va).score;
+        return (
+          calculateCompleteness(b, initialOpenQuestions, tb, vb, unresolvedQs(b.id)).score -
+          calculateCompleteness(a, initialOpenQuestions, ta, va, unresolvedQs(a.id)).score
+        );
       });
     } else if (sortBy === 'records') {
       filtered.sort((a, b) => (b.records?.length ?? 0) - (a.records?.length ?? 0));
@@ -200,7 +209,12 @@ const ResearchPeople = () => {
         <div className="space-y-3">
           {filteredPeople.map((person) => {
             const personVerifiedCount = verifiedCounts.get(person.id) ?? 0;
-            const comp = calculateCompleteness(person, initialOpenQuestions, taskCounts.get(person.id) ?? 0, personVerifiedCount);
+            const unresolvedPersonQs = initialOpenQuestions.filter(
+              (q) =>
+                q.status !== 'Resolved' &&
+                q.question?.toLowerCase().includes(person.id.toLowerCase().replace(/-/g, ' '))
+            ).length;
+            const comp = calculateCompleteness(person, initialOpenQuestions, taskCounts.get(person.id) ?? 0, personVerifiedCount, unresolvedPersonQs);
             const leads = personLeads(person.id);
             const qs = personQuestions(person.id);
             const tc = personThreadCount(person.id);
@@ -219,11 +233,11 @@ const ResearchPeople = () => {
                       {person.researchStatus?.status && (
                         <Badge
                           className={`text-xs ${
-                            person.researchStatus.status === 'Confirmed'
+                            person.researchStatus.status.startsWith('Confirmed')
                               ? 'bg-emerald-100 text-emerald-800'
-                              : person.researchStatus.status === 'In Progress'
+                              : person.researchStatus.status.startsWith('In Progress')
                               ? 'bg-amber-100 text-amber-800'
-                              : person.researchStatus.status === 'Ruled Out'
+                              : person.researchStatus.status.startsWith('Ruled Out')
                               ? 'bg-red-100 text-red-800'
                               : 'bg-stone-100 text-stone-700'
                           }`}
@@ -288,8 +302,11 @@ const ResearchPeople = () => {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="text-[10px] h-6 px-2 border-[#800020] text-[#800020]"
-                                    onClick={() => navigate(`/records/${linkedRecord.id}?mode=check`)}
+                                    className="text-xs min-h-[36px] px-3 border-[#800020] text-[#800020]"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(`/research/records/${linkedRecord.id}?mode=check`);
+                                    }}
                                   >
                                     Vet
                                   </Button>
@@ -298,8 +315,11 @@ const ResearchPeople = () => {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="text-[10px] h-6 px-2 text-stone-500"
-                                    onClick={() => navigate(`/records/${linkedRecord.id}`)}
+                                    className="text-xs min-h-[36px] px-3 text-stone-500"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      navigate(`/research/records/${linkedRecord.id}`);
+                                    }}
                                   >
                                     View
                                   </Button>
@@ -409,8 +429,11 @@ const ResearchPeople = () => {
 
                 <CardContent className="p-4 pt-0">
                   <button
-                    className="text-xs text-[#800020] font-sans underline"
-                    onClick={() => setExpanded(isExpanded ? null : person.id)}
+                    className="text-xs text-[#800020] font-sans underline min-h-[36px] px-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setExpanded(isExpanded ? null : person.id);
+                    }}
                   >
                     {isExpanded ? 'Collapse' : 'Expand details'}
                   </button>

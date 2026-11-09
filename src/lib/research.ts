@@ -4,6 +4,7 @@ import type { OpenQuestion } from '@/types';
 export interface CompletenessResult {
   score: number;
   found: number;
+  requested: number;
   searching: number;
   notFound: number;
   total: number;
@@ -20,36 +21,45 @@ export function calculateCompleteness(
   person: Person,
   openQuestions?: OpenQuestion[],
   pendingTaskCount?: number,
-  verifiedRecordCount?: number
+  verifiedRecordCount?: number,
+  relevantQuestionCount?: number
 ): CompletenessResult {
   const records = person.records;
 
-  // Records score (40%): Found+verified=1, Found (unverified)=0.5, Searching=0.25, Not Found=0
+  // Records score (40%): verified Found=1, Found (unverified)=0.5,
+  // Requested=0.35, Searching=0.25, Not Found (or anything else)=0.
+  // Verified count is capped at the number of Found records so stray
+  // verified links can't inflate the score beyond what's actually found.
   let recordsScore = 0;
   let found = 0;
+  let requested = 0;
   let searching = 0;
   let notFound = 0;
   const total = records?.length ?? 0;
   if (records && records.length > 0) {
     for (const record of records) {
       if (record.status === 'Found') found++;
+      else if (record.status === 'Requested') requested++;
       else if (record.status === 'Searching') searching++;
       else notFound++;
     }
-    const verified = verifiedRecordCount ?? 0;
+    const verified = Math.min(verifiedRecordCount ?? 0, found);
     const unverifiedFound = Math.max(0, found - verified);
-    // Verified records score full, unverified found score half, searching quarter
-    recordsScore = (verified * 1.0 + unverifiedFound * 0.5 + searching * 0.25) / total;
+    recordsScore =
+      (verified * 1.0 + unverifiedFound * 0.5 + requested * 0.35 + searching * 0.25) / total;
   }
 
-  // Research status score (20%): Confirmed=1, In Progress=0.5, Outstanding=0.2, Ruled Out=0
+  // Research status score (20%): statuses carry suffixes
+  // ("Confirmed — Fully Mapped", "In Progress — Marriage Cert Requested"),
+  // so match on the leading word.
+  const leadingStatus = (person.researchStatus?.status ?? '').split(' — ')[0];
   const statusMap: Record<string, number> = {
     'Confirmed': 1.0,
     'In Progress': 0.5,
     'Outstanding': 0.2,
     'Ruled Out': 0.0,
   };
-  const statusScore = statusMap[person.researchStatus?.status ?? ''] ?? 0;
+  const statusScore = statusMap[leadingStatus] ?? 0;
 
   // Facts score (20%): count present key facts
   const keyFacts = [
@@ -61,14 +71,18 @@ export function calculateCompleteness(
   ];
   const factsScore = keyFacts.filter(Boolean).length / keyFacts.length;
 
-  // Open questions score (10%): penalty for unresolved questions about this person's line
+  // Open questions score (10%): penalty for unresolved questions ABOUT THIS
+  // PERSON. When the caller passes a person-scoped unresolved count, use it;
+  // otherwise fall back to the person's whole line (legacy behaviour).
+  // Each unresolved question reduces score by 20%, floored at 0.
   let questionsScore = 1.0;
-  if (openQuestions && openQuestions.length > 0) {
+  if (relevantQuestionCount !== undefined) {
+    questionsScore = Math.max(0, 1 - relevantQuestionCount * 0.2);
+  } else if (openQuestions && openQuestions.length > 0) {
     const lineCategory = person.line === 'Buatti' || person.line === 'Chiappini' ? 'Buatti/Chiappini' : 'Emmi/Patanè';
     const personQuestions = openQuestions.filter(
       (q) => q.category === lineCategory && q.status !== 'Resolved'
     );
-    // Each unresolved question reduces score by 20%, floored at 0
     questionsScore = Math.max(0, 1 - personQuestions.length * 0.2);
   }
 
@@ -92,6 +106,7 @@ export function calculateCompleteness(
   return {
     score,
     found,
+    requested,
     searching,
     notFound,
     total,

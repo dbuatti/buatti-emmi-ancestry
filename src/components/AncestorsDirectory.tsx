@@ -81,7 +81,7 @@ export function AncestorsDirectory({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPeople.map(person => (
           <Card key={person.id}
-            onClick={() => { onSelectPerson(person.id); onNavigateToTree(); }}
+            onClick={() => onSelectPerson(person.id)}
             className="border-stone-300 bg-[#FAF6F0] hover:border-[#800020] hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">

@@ -19,7 +19,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (tesseract OCR, to be checked by Daniele)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename: CHIAPPINI .pdf
@@ -59,3 +59,4 @@ original_sha256: 92e4c2d7c746bba4667705a02f0ddabf8fc94c97dcc151915e0fbc2986c33ca
 ## Source
 
 Received 06/08/2026 from Comune di San Benedetto del Tronto together with Lilia's birth estratto (same PDF, same protocol 0066017/2026). This is the marriage SBT referenced as "n. 45/1930" in the 02/11/2026 refusal letter — released here as an estratto per riassunto.
+

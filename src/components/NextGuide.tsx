@@ -195,7 +195,7 @@ export function NextGuide() {
       <Card className="bg-white rounded-xl shadow-sm border-2 border-[#800020]/20">
         <div className="bg-[#FAF6F0] rounded-t-xl p-4 border-b border-[#800020]/20">
           <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider">Next task</h2>
-          <a href={`/people/${task.personId}`} className="text-[10px] text-stone-500 mt-0.5 underline">{task.personName}</a>
+          <a href={`/research/people/${task.personId}`} className="text-[10px] text-stone-500 mt-0.5 underline">{task.personName}</a>
         </div>
         <CardContent className="p-4 space-y-3">
           <div className="text-sm font-semibold text-stone-800">
@@ -295,7 +295,7 @@ export function NextGuide() {
         requestedFrom: (officeInput ?? task.office ?? '').trim(),
         receivedOn: null,
       });
-      setStatus(`Saved: requested_on ${today}`);
+      setStatus(`Saved: Marked as requested — this card comes back as a chase in 30 days if nothing arrives.`);
     } catch (e) {
       setStatus(`Error: ${(e as Error).message}`);
     }
@@ -536,7 +536,7 @@ export function NextGuide() {
           <div className="mt-1">
             <div className="text-[11px] uppercase tracking-wide text-stone-500">Working on</div>
             <a
-              href={`/people/${task.personId}`}
+              href={`/research/people/${task.personId}`}
               className="block text-2xl font-serif font-bold text-[#800020] leading-tight hover:underline"
               title="Open this person's page"
             >

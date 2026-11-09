@@ -18,7 +18,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (tesseract OCR, to be checked by Daniele)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename: CHIAPPINI .pdf
@@ -58,3 +58,4 @@ original_sha256: 92e4c2d7c746bba4667705a02f0ddabf8fc94c97dcc151915e0fbc2986c33ca
 
 - Luogo del matrimonio: read as "GRETA (Australia)" — likely Greta, Victoria. Check the image.
 - PDF page 2 of the same file is a different record (marriage atto 45/1930, Remo Chiappini x Irma Pirri) — split into record 1930_San-Benedetto_marriage_Chiappini-Pirri_atto45. Original 2-page PDF archived in records-local/_sources/.
+

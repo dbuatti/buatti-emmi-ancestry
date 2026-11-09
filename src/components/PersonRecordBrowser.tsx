@@ -12,6 +12,16 @@ interface PersonRecordBrowserProps {
   onOpenRecord?: (recordId: string) => void;
 }
 
+const STEP_WORDS: Record<string, string> = {
+  filed: 'Filed',
+  transcribed: 'Transcribed',
+  verified: 'Verified',
+  in_app: 'In app',
+  on_familysearch: 'On FamilySearch',
+};
+
+const isDev = import.meta.env.DEV;
+
 export function PersonRecordBrowser({ person, onOpenRecord }: PersonRecordBrowserProps) {
   const [records, setRecords] = useState<RecordEntry[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -85,10 +95,11 @@ export function PersonRecordBrowser({ person, onOpenRecord }: PersonRecordBrowse
           <div className="flex items-center justify-between">
             <div>
               <div className="font-semibold text-stone-800 text-sm">
-                {current.frontMatter.type || 'Record'} — {current.frontMatter.id}
+                {current.frontMatter.type || 'Record'}
+                {current.frontMatter.date ? ` · ${current.frontMatter.date}` : ''}
               </div>
               <div className="text-xs text-stone-500 font-sans">
-                {current.frontMatter.date || 'undated'} · {current.frontMatter.place || '—'}
+                {current.frontMatter.place || 'Place unknown'}
                 {current.frontMatter.protocol ? ` · prot. ${current.frontMatter.protocol}` : ''}
               </div>
             </div>
@@ -103,7 +114,7 @@ export function PersonRecordBrowser({ person, onOpenRecord }: PersonRecordBrowse
                   : 'bg-stone-100 text-stone-600'
               }`}
             >
-              {current.step}
+              {STEP_WORDS[current.step] ?? current.step}
             </Badge>
           </div>
 
@@ -121,20 +132,24 @@ export function PersonRecordBrowser({ person, onOpenRecord }: PersonRecordBrowse
 
           {/* Open full record + download */}
           <div className="flex justify-end gap-2 mt-2">
-            <a
-              href={`/records-local/${current.id}/${current.id}.pdf?download=1`}
-              className="inline-flex items-center text-xs text-[#800020] underline"
-            >
-              <Download className="w-3 h-3 mr-1" /> Download PDF
-            </a>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs"
-              onClick={() => onOpenRecord?.(current.id)}
-            >
-              <ExternalLink className="w-3 h-3 mr-1" /> Open full record
-            </Button>
+            {isDev && (
+              <a
+                href={`/records-local/${current.id}/${current.id}.pdf?download=1`}
+                className="inline-flex items-center min-h-[36px] text-xs text-[#800020] underline"
+              >
+                <Download className="w-3 h-3 mr-1" /> Download PDF
+              </a>
+            )}
+            {onOpenRecord && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs min-h-[36px]"
+                onClick={() => onOpenRecord(current.id)}
+              >
+                <ExternalLink className="w-3 h-3 mr-1" /> Open full record
+              </Button>
+            )}
           </div>
         </div>
 
@@ -143,28 +158,32 @@ export function PersonRecordBrowser({ person, onOpenRecord }: PersonRecordBrowse
           <Button
             size="sm"
             variant="outline"
-            className="text-xs"
+            className="text-xs min-h-[40px]"
             onClick={goPrev}
             disabled={!hasPrev}
           >
             <ChevronLeft className="w-3 h-3 mr-1" /> Previous
           </Button>
-          <div className="flex gap-1">
+          <div className="flex gap-0.5">
             {records.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentIndex(i)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i === currentIndex ? 'bg-[#800020]' : 'bg-stone-300 hover:bg-stone-400'
-                }`}
+                className="w-8 h-8 flex items-center justify-center"
                 aria-label={`Go to record ${i + 1}`}
-              />
+              >
+                <span
+                  className={`w-2 h-2 rounded-full transition-colors ${
+                    i === currentIndex ? 'bg-[#800020]' : 'bg-stone-300 hover:bg-stone-400'
+                  }`}
+                />
+              </button>
             ))}
           </div>
           <Button
             size="sm"
             variant="outline"
-            className="text-xs"
+            className="text-xs min-h-[40px]"
             onClick={goNext}
             disabled={!hasNext}
           >
@@ -228,7 +247,8 @@ function RecordImagePreview({ recordId }: { recordId: string }) {
         href={imageUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="absolute top-2 right-2 bg-white/80 rounded p-1 text-stone-600 hover:text-[#800020]"
+        className="absolute top-2 right-2 bg-white/80 rounded p-2.5 text-stone-600 hover:text-[#800020]"
+        aria-label="Open image larger"
       >
         <ZoomIn className="w-4 h-4" />
       </a>

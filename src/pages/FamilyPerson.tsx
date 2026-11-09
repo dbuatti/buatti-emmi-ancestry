@@ -238,10 +238,7 @@ const FamilyPerson = () => {
 
       {/* Person record browser (swipe/click through records) */}
       {verifiedRecords.length > 0 && (
-        <PersonRecordBrowser
-          person={person}
-          onOpenRecord={(rid) => navigate(`/research/records/${rid}`)}
-        />
+        <PersonRecordBrowser person={person} />
       )}
 
       {/* FamilySearch public link */}

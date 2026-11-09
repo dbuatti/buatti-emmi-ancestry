@@ -125,7 +125,7 @@ function PersonPageInner() {
     if (rec) {
       if (step === 0) return <Hint text='Save the file into FAMILY TREE › _inbox, then in OpenCode:' cmd="process inbox" />;
       if (step === 1) return <Hint text="Switch OpenCode to the VL model, paste a close-up, then:" cmd="transcribe next" />;
-      if (step === 2) return <Button size="sm" className="text-xs h-7 bg-[#800020] text-white" onClick={() => navigate(`/records/${rec.id}?mode=check`)}>Open check</Button>;
+      if (step === 2) return <Button size="sm" className="text-xs h-7 bg-[#800020] text-white" onClick={() => navigate(`/research/records/${rec.id}?mode=check`)}>Open check</Button>;
       if (step === 3) return <Hint text="In OpenCode (coding model):" cmd={`run step 4 for ${rec.id}`} />;
       if (step === 4) return <Button size="sm" className="text-xs h-7 bg-[#800020] text-white" onClick={() => navigate('/')}>FamilySearch card (Next task)</Button>;
       return <span className="text-xs text-emerald-700 inline-flex items-center"><Check className="w-3 h-3 mr-1" /> Done</span>;
@@ -364,7 +364,7 @@ function PersonPageInner() {
           <ul className="space-y-1">
             {personRecords.map((r) => (
               <li key={r.id} className="flex items-center justify-between text-sm">
-                <button className="underline text-left" onClick={() => navigate(`/records/${r.id}`)}>{r.id}</button>
+                <button className="underline text-left" onClick={() => navigate(`/research/records/${r.id}`)}>{r.id}</button>
                 <span className="text-[11px] text-stone-500">{STEP_LABEL[Math.min(r.stepNumber, 5)]}</span>
               </li>
             ))}
@@ -390,7 +390,7 @@ function PersonSwitcher({ current }: { current: Person }) {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
-  const go = (id: string) => { setQ(''); setOpen(false); navigate(`/people/${id}`); };
+  const go = (id: string) => { setQ(''); setOpen(false); navigate(`/research/people/${id}`); };
 
   const idx = ORDERED.findIndex((p) => p.id === current.id);
   const prev = idx > 0 ? ORDERED[idx - 1] : null;
@@ -568,7 +568,7 @@ function StepGuide(props: {
           <>Switch back to the coding model and type <CopyCmd cmd="continue" /> — it saves the lines and compares them with the tree, then stops.</>,
           <>If the handwriting is too hard: open a fresh Claude chat with the close-up and ask for a line-by-line transcription.</>,
         ]} />
-        <Button size="sm" variant="outline" className="text-xs" onClick={() => navigate(`/records/${id}`)}><ExternalLink className="w-3 h-3 mr-1" /> Open record</Button>
+        <Button size="sm" variant="outline" className="text-xs" onClick={() => navigate(`/research/records/${id}`)}><ExternalLink className="w-3 h-3 mr-1" /> Open record</Button>
       </div>
     );
   }
@@ -582,7 +582,7 @@ function StepGuide(props: {
           <>Leave unreadable words as <b>[?]</b> — never fill them from memory or the tree.</>,
           <>Click <b>Verified</b>, then use your browser's Back button to return here.</>,
         ]} />
-        <Button size="sm" className="text-xs bg-[#800020] text-white" onClick={() => navigate(`/records/${id}?mode=check`)}>Open check</Button>
+        <Button size="sm" className="text-xs bg-[#800020] text-white" onClick={() => navigate(`/research/records/${id}?mode=check`)}>Open check</Button>
       </div>
     );
   }
