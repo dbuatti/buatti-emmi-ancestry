@@ -823,9 +823,12 @@ function localRecordsApiPlugin(): Plugin {
           readBody(req)
             .then(async (raw) => {
               try {
-                const { people } = JSON.parse(raw);
-                if (!Array.isArray(people)) {
+                const { people, mentioned } = JSON.parse(raw);
+                if (people !== undefined && !Array.isArray(people)) {
                   return sendJson(res, 400, { error: "people must be an array" });
+                }
+                if (mentioned !== undefined && !Array.isArray(mentioned)) {
+                  return sendJson(res, 400, { error: "mentioned must be an array" });
                 }
                 const recordMd = path.resolve(
                   RECORDS_LOCAL,
@@ -846,38 +849,43 @@ function localRecordsApiPlugin(): Plugin {
                 }
                 const [, fmYaml, bodyText] = fmMatch;
                 const lines = fmYaml.split("\n");
-                let newYaml: string;
 
-                // Remove any existing people block
-                let filteredLines: string[] = [];
-                let inPeopleBlock = false;
-                for (const line of lines) {
-                  if (line.startsWith("people:")) {
-                    inPeopleBlock = true;
-                    continue;
-                  }
-                  if (inPeopleBlock) {
-                    if (line.trim() && !line.startsWith(" ")) {
-                      inPeopleBlock = false;
-                      filteredLines.push(line);
+                // Rewrite one YAML list block (people or mentioned).
+                // Absent key = leave untouched; empty array writes `key: []`.
+                const rewriteBlock = (input: string[], key: string, values: unknown): string[] => {
+                  if (values === undefined) return input;
+                  const list = Array.isArray(values) ? values : [];
+                  const out: string[] = [];
+                  let inBlock = false;
+                  for (const line of input) {
+                    if (line.startsWith(key + ":")) {
+                      inBlock = true;
+                      continue;
                     }
-                    continue;
+                    if (inBlock) {
+                      if (line.trim() && !line.startsWith(" ")) {
+                        inBlock = false;
+                        out.push(line);
+                      }
+                      continue;
+                    }
+                    out.push(line);
                   }
-                  filteredLines.push(line);
-                }
-
-                // Append new people block
-                if (people.length > 0) {
-                  filteredLines.push("people:");
-                  for (const p of people) {
-                    if (typeof p !== "string" || !p.trim()) continue;
-                    filteredLines.push(`  - ${p.trim()}`);
+                  if (list.length > 0) {
+                    out.push(key + ":");
+                    for (const p of list) {
+                      if (typeof p !== "string" || !p.trim()) continue;
+                      out.push(`  - ${p.trim()}`);
+                    }
+                  } else {
+                    out.push(key + ": []");
                   }
-                } else {
-                  filteredLines.push("people: []");
-                }
+                  return out;
+                };
 
-                newYaml = filteredLines.join("\n");
+                let rewritten = rewriteBlock(lines, "people", people);
+                rewritten = rewriteBlock(rewritten, "mentioned", mentioned);
+                const newYaml = rewritten.join("\n");
                 const newRaw = `---\n${newYaml}\n---\n${bodyText}\n`;
                 fs.writeFileSync(recordMd, newRaw);
                 return sendJson(res, 200, { ok: true });

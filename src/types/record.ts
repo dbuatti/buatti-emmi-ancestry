@@ -13,6 +13,7 @@ export interface RecordFrontMatter {
   year: string;
   atto: string;
   people: string[];
+  mentioned: string[];
   source_office: string;
   protocol: string;
   transcribed_by: string;

@@ -9,6 +9,7 @@ import { RecordViewer } from '@/components/RecordViewer';
 import { RecordCheck } from '@/components/RecordCheck';
 import { RecordNextStep } from '@/components/RecordNextStep';
 import { TranscriptionPanel } from '@/components/TranscriptionPanel';
+import { RecordPeopleSection } from '@/components/RecordPeopleSection';
 import { CiecExtractPanel } from '@/components/CiecExtractPanel';
 import { ItalianExtractPanel } from '@/components/ItalianExtractPanel';
 import { SplitDocumentPanel } from '@/components/SplitDocumentPanel';
@@ -77,6 +78,7 @@ function FamilySearchPanel({ recordId, frontMatter, body, setStatus }: {
   const [copied, setCopied] = useState<string | null>(null);
   const [marking, setMarking] = useState(false);
   const people: string[] = (frontMatter.people as string[]) ?? [];
+  const mentioned: string[] = (frontMatter.mentioned as string[]) ?? [];
 
   useEffect(() => {
     fetch(`/api/record-files/${recordId}`)
@@ -154,6 +156,23 @@ function FamilySearchPanel({ recordId, frontMatter, body, setStatus }: {
           </div>
         )}
       </div>
+      {mentioned.length > 0 && (
+        <div className="text-[11px] font-sans text-stone-500">
+          Also named in this act:{' '}
+          {mentioned.map((pid, i) => {
+            const mp = initialPeople.find((pp) => pp.id === pid);
+            return (
+              <span key={pid}>
+                {i > 0 && ', '}
+                <a className="text-[#800020] underline" href={`/research/people/${pid}`}>
+                  {mp?.name || pid}
+                </a>
+              </span>
+            );
+          })}
+          {' '}— attach the source to them, not this record.
+        </div>
+      )}
       <div>
         <div className="text-xs font-bold text-stone-700 mb-1">Step 2 — Upload the image</div>
         <p className="text-xs text-stone-600 mb-2">On FamilySearch: person page, Memories, Add a Memory, Upload Memory. Drag the file in from Finder.</p>
@@ -355,161 +374,16 @@ export default function RecordPage() {
                 window.location.reload();
               }}
             />
-            {/* People in this record — merged (linked pills with unlink, suggestions, manual link) */}
+            {/* People in this record — subjects + mentioned */}
           {recordId && (
             <CollapsibleSection title="People in this record" defaultOpen={true}>
-              <div className="space-y-3">
-                {/* Linked people */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-                    Linked people
-                  </div>
-                  {frontMatter.people && frontMatter.people.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      {frontMatter.people.map((pid) => {
-                        const person = initialPeople.find((p) => p.id === pid);
-                        return (
-                          <span
-                            key={pid}
-                            className="inline-flex items-center gap-1 rounded-full bg-[#F4EFE6] border border-[#800020]/20 px-2 py-0.5 text-xs"
-                          >
-                            {person?.name || pid}
-                            <button
-                              className="text-stone-400 hover:text-red-600 transition-colors ml-0.5"
-                              onClick={async () => {
-                                if (!recordId) return;
-                                setStatus('Unlinking person...');
-                                try {
-                                  const updatedPeople = (frontMatter.people ?? []).filter((p: string) => p !== pid);
-                                  const res = await fetch(`/api/update-record-people/${recordId}`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ people: updatedPeople }),
-                                  });
-                                  const data = await res.json();
-                                  if (!data.ok) throw new Error(data.error || 'Failed to unlink person');
-                                  setStatus(`Unlinked ${person?.name || pid} from this record`);
-                                  window.location.reload();
-                                } catch (err) {
-                                  setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
-                                }
-                              }}
-                              title={`Unlink ${person?.name || pid}`}
-                              aria-label={`Unlink ${person?.name || pid}`}
-                            >
-                              ✕
-                            </button>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-stone-600">No people linked to this record yet.</p>
-                  )}
-                </div>
-
-                {/* Suggestions from transcription */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-                    Suggested from the transcription
-                  </div>
-                  <div className="text-[10px] text-stone-500 mb-1.5">
-                    People whose full name appears in the transcribed text. Check the image before linking.
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {initialPeople
-                      .filter((p) => {
-                        const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
-                        const transText = transMatch ? transMatch[0].toLowerCase() : '';
-                        const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
-                        const alreadyLinked = (frontMatter.people ?? []).includes(p.id);
-                        if (alreadyLinked) return false;
-                        const matchCount = nameParts.filter((part) => transText.includes(part)).length;
-                        return matchCount >= nameParts.length && nameParts.length >= 2;
-                      })
-                      .slice(0, 8)
-                      .map((p) => (
-                        <Button
-                          key={p.id}
-                          size="sm"
-                          variant="outline"
-                          className="text-xs h-7 px-2"
-                          onClick={async () => {
-                            setStatus('Linking person...');
-                            try {
-                              const updatedPeople = [...(frontMatter.people ?? []), p.id];
-                              const res = await fetch(`/api/update-record-people/${recordId}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ people: updatedPeople }),
-                              });
-                              const data = await res.json();
-                              if (!data.ok) throw new Error(data.error || 'Failed to link person');
-                              setStatus(`Linked ${p.name} to this record`);
-                              window.location.reload();
-                            } catch (err) {
-                              setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
-                            }
-                          }}
-                        >
-                          Link {p.name}
-                        </Button>
-                      ))}
-                    {initialPeople.filter((p) => {
-                      const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
-                      const transText = transMatch ? transMatch[0].toLowerCase() : '';
-                      const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
-                      if ((frontMatter.people ?? []).includes(p.id)) return false;
-                      const matchCount = nameParts.filter((part) => transText.includes(part)).length;
-                      return matchCount >= nameParts.length && nameParts.length >= 2;
-                    }).length === 0 && (
-                      <p className="text-[10px] text-stone-400">
-                        No automatic matches found. Use the dropdown below to link a person manually.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {/* Manual link dropdown */}
-                <div>
-                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-                    Link another person
-                  </div>
-                  <select
-                    className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full max-w-sm"
-                    defaultValue=""
-                    onChange={async (e) => {
-                      const pid = e.target.value;
-                      if (!pid || !recordId) return;
-                      setStatus('Linking person...');
-                      try {
-                        const updatedPeople = [...(frontMatter.people ?? []), pid];
-                        const res = await fetch(`/api/update-record-people/${recordId}`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ people: updatedPeople }),
-                        });
-                        const data = await res.json();
-                        if (!data.ok) throw new Error(data.error || 'Failed to link person');
-                        const person = initialPeople.find((p) => p.id === pid);
-                        setStatus(`Linked ${person?.name || pid} to this record`);
-                        window.location.reload();
-                      } catch (err) {
-                        setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
-                      }
-                    }}
-                  >
-                    <option value="">+ Link another person…</option>
-                    {initialPeople
-                      .filter((p) => !(frontMatter.people ?? []).includes(p.id))
-                      .map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name} ({p.id})
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
+              <RecordPeopleSection
+                recordId={recordId}
+                people={frontMatter.people ?? []}
+                mentioned={frontMatter.mentioned ?? []}
+                body={body}
+                setStatus={setStatus}
+              />
             </CollapsibleSection>
           )}
           {/* Links list (check mode) */}
@@ -688,144 +562,16 @@ export default function RecordPage() {
             </div>
           </CollapsibleSection>
 
-          {/* 3. People in this record (single, merged) */}
+          {/* 3. People in this record — subjects + mentioned */}
           {recordId && (
             <CollapsibleSection title="People in this record" defaultOpen={true}>
-              <div className="space-y-3">
-                <div>
-                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-                    Linked people
-                  </div>
-                  {frontMatter.people && frontMatter.people.length > 0 ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      {frontMatter.people.map((pid) => {
-                        const person = initialPeople.find((p) => p.id === pid);
-                        return (
-                          <span
-                            key={pid}
-                            className="inline-flex items-center gap-1 rounded-full bg-[#F4EFE6] border border-[#800020]/20 px-2 py-0.5 text-xs"
-                          >
-                            {person?.name || pid}
-                            <button
-                              className="text-stone-400 hover:text-red-600 transition-colors ml-0.5"
-                              onClick={async () => {
-                                if (!recordId) return;
-                                setStatus('Unlinking person...');
-                                try {
-                                  const updatedPeople = (frontMatter.people ?? []).filter((p: string) => p !== pid);
-                                  const res = await fetch(`/api/update-record-people/${recordId}`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ people: updatedPeople }),
-                                  });
-                                  const data = await res.json();
-                                  if (!data.ok) throw new Error(data.error || 'Failed to unlink person');
-                                  setStatus(`Unlinked ${person?.name || pid} from this record`);
-                                  window.location.reload();
-                                } catch (err) {
-                                  setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
-                                }
-                              }}
-                              title={`Unlink ${person?.name || pid}`}
-                              aria-label={`Unlink ${person?.name || pid}`}
-                            >
-                              ✕
-                            </button>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-stone-600">No people linked to this record yet.</p>
-                  )}
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-                    Suggested from the transcription
-                  </div>
-                  <div className="text-[10px] text-stone-500 mb-1.5">
-                    People whose full name appears in the transcribed text. Check the image before linking.
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {initialPeople
-                      .filter((p) => {
-                        const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
-                        const transText = transMatch ? transMatch[0].toLowerCase() : '';
-                        const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
-                        const alreadyLinked = (frontMatter.people ?? []).includes(p.id);
-                        if (alreadyLinked) return false;
-                        const matchCount = nameParts.filter((part) => transText.includes(part)).length;
-                        return matchCount >= nameParts.length && nameParts.length >= 2;
-                      })
-                      .slice(0, 8)
-                      .map((p) => (
-                        <Button
-                          key={p.id}
-                          size="sm"
-                          variant="outline"
-                          className="text-xs h-7 px-2"
-                          onClick={async () => {
-                            setStatus('Linking person...');
-                            try {
-                              const updatedPeople = [...(frontMatter.people ?? []), p.id];
-                              const res = await fetch(`/api/update-record-people/${recordId}`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ people: updatedPeople }),
-                              });
-                              const data = await res.json();
-                              if (!data.ok) throw new Error(data.error || 'Failed to link person');
-                              setStatus(`Linked ${p.name} to this record`);
-                              window.location.reload();
-                            } catch (err) {
-                              setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
-                            }
-                          }}
-                        >
-                          Link {p.name}
-                        </Button>
-                      ))}
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-                    Link another person
-                  </div>
-                  <select
-                    className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full max-w-sm"
-                    defaultValue=""
-                    onChange={async (e) => {
-                      const pid = e.target.value;
-                      if (!pid || !recordId) return;
-                      setStatus('Linking person...');
-                      try {
-                        const updatedPeople = [...(frontMatter.people ?? []), pid];
-                        const res = await fetch(`/api/update-record-people/${recordId}`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ people: updatedPeople }),
-                        });
-                        const data = await res.json();
-                        if (!data.ok) throw new Error(data.error || 'Failed to link person');
-                        const person = initialPeople.find((p) => p.id === pid);
-                        setStatus(`Linked ${person?.name || pid} to this record`);
-                        window.location.reload();
-                      } catch (err) {
-                        setStatus(`Error: ${err instanceof Error ? err.message : String(err)}`);
-                      }
-                    }}
-                  >
-                    <option value="">+ Link another person…</option>
-                    {initialPeople
-                      .filter((p) => !(frontMatter.people ?? []).includes(p.id))
-                      .map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name} ({p.id})
-                        </option>
-                      ))}
-                  </select>
-                </div>
-              </div>
+              <RecordPeopleSection
+                recordId={recordId}
+                people={frontMatter.people ?? []}
+                mentioned={frontMatter.mentioned ?? []}
+                body={body}
+                setStatus={setStatus}
+              />
             </CollapsibleSection>
           )}
 
