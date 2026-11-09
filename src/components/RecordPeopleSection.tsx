@@ -166,29 +166,55 @@ export function RecordPeopleSection({
         </div>
       )}
 
-      <div>
-        <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
-          Link subject
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1">
+          <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+            Link subject
+          </div>
+          <select
+            className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full min-h-[36px]"
+            defaultValue=""
+            onChange={(e) => {
+              const pid = e.target.value;
+              if (!pid) return;
+              const person = initialPeople.find((pp) => pp.id === pid);
+              save([...people, pid], mentioned, `Linked ${person?.name || pid} as subject`);
+            }}
+          >
+            <option value="">+ Link someone this record is about…</option>
+            {initialPeople
+              .filter((p) => !people.includes(p.id) && !mentioned.includes(p.id))
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.id})
+                </option>
+              ))}
+          </select>
         </div>
-        <select
-          className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full max-w-sm min-h-[36px]"
-          defaultValue=""
-          onChange={(e) => {
-            const pid = e.target.value;
-            if (!pid) return;
-            const person = initialPeople.find((pp) => pp.id === pid);
-            save([...people, pid], mentioned, `Linked ${person?.name || pid} as subject`);
-          }}
-        >
-          <option value="">+ Link someone this record is about…</option>
-          {initialPeople
-            .filter((p) => !people.includes(p.id) && !mentioned.includes(p.id))
-            .map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name} ({p.id})
-              </option>
-            ))}
-        </select>
+        <div className="flex-1">
+          <div className="text-[10px] uppercase tracking-wide text-stone-500 font-bold mb-1">
+            Mark as mentioned
+          </div>
+          <select
+            className="text-xs rounded border border-stone-300 bg-white px-2 py-1.5 font-sans w-full min-h-[36px]"
+            defaultValue=""
+            onChange={(e) => {
+              const pid = e.target.value;
+              if (!pid) return;
+              const person = initialPeople.find((pp) => pp.id === pid);
+              save(people, [...mentioned, pid], `Marked ${person?.name || pid} as mentioned`);
+            }}
+          >
+            <option value="">+ Mark someone named in it…</option>
+            {initialPeople
+              .filter((p) => !people.includes(p.id) && !mentioned.includes(p.id))
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} ({p.id})
+                </option>
+              ))}
+          </select>
+        </div>
       </div>
     </div>
   );

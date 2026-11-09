@@ -39,8 +39,8 @@ original_sha256:
   en: Deceduto: BUATTI ALFREDO
 - Data del decesso: 5 settembre 1964 («il giorno Cinque del mese di settembre dell'anno millenovecentosessantaquattro»)
   en: Data del decesso: 5 September 1964 (act reads "il giorno Cinque del mese di settembre…")
-- Ora del decesso: ore tre [?]
-  en: Ora del decesso: three o'clock [?]
+- Ora del decesso: ore diciassette e minuti [illeggibili]
+  en: Ora del decesso: five o'clock and unreadable minutes
 - Luogo del decesso: ospedale [nome illeggibile — verificare sull'immagine]
   en: Luogo del decesso: hospital [name illegible — check the image]
 - Stato: cittadino italiano, residente in Ascoli Piceno, pensionato
@@ -65,7 +65,7 @@ original_sha256:
 ## Uncertain readings
 
 - Numero: read "148 V" in handwriting — confirm the number (and what V marks) against the image.
-- Ora: Daniele reads "alle ore tre", OCR suggests "diciassette" (17) — check the image.
+- Ora: Daniele reads "ORA DIECISETTE" on the image — settled 10/11/2026 (was "tre" vs "diciassette").
 - Ospedale: death place name garbled in both readings — read fresh from the image.
 - Padre/Madre/Stato civile: handwriting per Daniele's caveat — confirm each against the image.
 - Copia conforme date: reads like 5/1/2036, taken as 5/11/2026 (D13 reply date) — confirm.
