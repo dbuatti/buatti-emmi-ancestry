@@ -58,5 +58,5 @@ The rest of the page is the form's printed boilerplate (Austria/Switzerland note
 
 ## Discrepancies
 - **Mother's surname: RAITI here vs NASTI elsewhere.** This 2026 extract gives **Raiti**. Egidio's marriage act (atto 59, 04/11/1900, Concetto Scarlata) and Antonino's death act (atto 27, 11/03/1889, Carmelo Vecchio) both give **Nasti**. Both readings are kept. The extract is a modern typed summary, so the original 1870 register page would settle it.
-- **Comune re-issue (Oct 2026) reads atto N. 311, not 31.** Linguaglossa anagrafe re-sent the birth + marriage extracts on 27/10/2026 (4-page PDF, archived in records-local/_sources/); its birth page clearly reads "ESTRATTO DELL'ATTO DI NASCITA N. 311". Pages 1–2 filed alongside the record PDF as `..._comune-reissue-2026-10-p1/p2.pdf`. The 31-vs-311 question now leans 311, but Daniele adjudicates.
+- **Atto number: CLOSED 10/11/2026 as 31.** Daniele reads "31" plus a vertical stroke beside it — one mark producing three readings: text layer "31 l", OCR "311", re-issue "311". The stroke is not a digit.
 
