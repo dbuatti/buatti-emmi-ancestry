@@ -10,6 +10,7 @@ import { RecordCheck } from '@/components/RecordCheck';
 import { RecordNextStep } from '@/components/RecordNextStep';
 import { TranscriptionPanel } from '@/components/TranscriptionPanel';
 import { RecordPeopleSection } from '@/components/RecordPeopleSection';
+import { TreeHintsPanel } from '@/components/TreeHintsPanel';
 import { CiecExtractPanel } from '@/components/CiecExtractPanel';
 import { ItalianExtractPanel } from '@/components/ItalianExtractPanel';
 import { SplitDocumentPanel } from '@/components/SplitDocumentPanel';
@@ -573,6 +574,16 @@ export default function RecordPage() {
                 setStatus={setStatus}
               />
             </CollapsibleSection>
+          )}
+
+          {isDev && recordId && (
+            <TreeHintsPanel
+              recordId={recordId}
+              subjects={(frontMatter.people ?? []) as string[]}
+              body={body}
+              transcribed={!!frontMatter.transcribed}
+              setStatus={setStatus}
+            />
           )}
 
           {/* 4. FamilySearch — Add as Source */}

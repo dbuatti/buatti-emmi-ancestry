@@ -14,7 +14,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (tesseract OCR draft 10/11/2026 — Daniele to verify every line)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename:
@@ -67,6 +67,7 @@ mentioned:
 D13 request (sent 05/11/2026 to Dott.ssa Diletta Falciatori): copia integrale of the death act of GALANTI Ida (d. 26/01/1970). Reply received same day via PEC (thread 1a1abc46de4b71d3, registered as prot. 0101199/2026): 2-page PDF with one death act per page — page 1 = Ida Galanti, page 2 = Alfredo Buatti. Filed page 1 here as a standalone PDF (rotation corrected: source pages carried a wrong /Rotate 270 flag, reset to 0). The _Marcato.pdf twin is the PEC-marked copy of the same document. Original 2-page PDF archived in records-local/_sources/.
 
 Why this matters: the act names the deceased's parents — this settles whether Ida is the 1893 daughter of Antonio Galanti × Rosati Virginia or the 1904 daughter of Ignazio Galanti × Curcozzi Clementina.
+
 
 
 
