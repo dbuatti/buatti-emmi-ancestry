@@ -1839,6 +1839,7 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
         # Start heartbeat (renews lock during long-running scans)
         start_heartbeat(DB_PATH, account_email)
         print("Heartbeat started.")
+        print(f"[{now_iso()}] Gmail sync starting (mode={mode}, account={account_email})")
 
     try:
         # Check if bootstrap is complete

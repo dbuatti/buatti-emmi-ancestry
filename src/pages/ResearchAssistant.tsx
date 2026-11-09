@@ -80,6 +80,9 @@ const ResearchAssistant = () => {
             onChange={e => setSearchQuery(e.target.value)}
             className="bg-white border-stone-300"
           />
+          <Button onClick={() => navigate(-1)} className="text-sm px-3 py-1.5 text-stone-600 hover:text-stone-800">
+            ← Back
+          </Button>
           <Button onClick={() => navigate('/')} className="text-sm px-3 py-1.5 text-stone-600 hover:text-stone-800">
             ← Back to Tree
           </Button>
