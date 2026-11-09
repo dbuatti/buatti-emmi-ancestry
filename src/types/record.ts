@@ -12,6 +12,8 @@ export interface RecordFrontMatter {
   register: string;
   year: string;
   atto: string;
+  parte: string;
+  serie: string;
   people: string[];
   mentioned: string[];
   source_office: string;

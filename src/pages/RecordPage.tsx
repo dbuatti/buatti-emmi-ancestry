@@ -100,8 +100,9 @@ function FamilySearchPanel({ recordId, frontMatter, body, setStatus }: {
 
   const pdfFile = files.find((f) => /\.pdf$/i.test(f.name))?.name ?? `${recordId}.pdf`;
   const eventDate = [frontMatter.date, frontMatter.place].filter(Boolean).join(' — ') || '(fill from transcription)';
-  const sourceTitle = `Record — ${frontMatter.comune || ''} ${frontMatter.year || ''}${frontMatter.atto ? `, atto ${frontMatter.atto}` : ''}`;
-  const citation = `${frontMatter.comune || ''} ${frontMatter.type || 'record'}${frontMatter.atto ? ` n. ${frontMatter.atto}` : ''}${frontMatter.year ? ` (${frontMatter.year})` : ''}${frontMatter.source_office ? `, ${frontMatter.source_office}` : ''}.`;
+  const parteSerie = [frontMatter.parte ? `parte ${frontMatter.parte}` : '', frontMatter.serie ? `serie ${frontMatter.serie}` : ''].filter(Boolean).join(', ');
+  const sourceTitle = `Record — ${frontMatter.comune || ''} ${frontMatter.year || ''}${frontMatter.atto ? `, atto ${frontMatter.atto}` : ''}${parteSerie ? ` (${parteSerie})` : ''}`;
+  const citation = `${frontMatter.comune || ''} ${frontMatter.type || 'record'}${frontMatter.atto ? ` n. ${frontMatter.atto}` : ''}${parteSerie ? `, ${parteSerie}` : ''}${frontMatter.year ? ` (${frontMatter.year})` : ''}${frontMatter.source_office ? `, ${frontMatter.source_office}` : ''}.`;
 
   const markDone = async () => {
     setMarking(true);
@@ -483,6 +484,8 @@ export default function RecordPage() {
               <div><span className="font-bold">Comune:</span> {frontMatter.comune || '\u2014'}</div>
               <div><span className="font-bold">Year:</span> {frontMatter.year || '\u2014'}</div>
               <div><span className="font-bold">Atto:</span> {frontMatter.atto || '\u2014'}</div>
+              <div><span className="font-bold">Parte:</span> {frontMatter.parte || '—'}</div>
+              <div><span className="font-bold">Serie:</span> {frontMatter.serie || '—'}</div>
               <div><span className="font-bold">Date:</span> {frontMatter.date || '\u2014'}</div>
               <div><span className="font-bold">Place:</span> {frontMatter.place || '\u2014'}</div>
               <div><span className="font-bold">Source:</span> {frontMatter.source_office || '\u2014'}</div>

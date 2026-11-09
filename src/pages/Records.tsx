@@ -227,6 +227,7 @@ export default function Records() {
                               {fm.place ? ` · ${fm.place}` : ''}
                               {fm.comune && fm.comune !== fm.place ? ` · ${fm.comune}` : ''}
                               {fm.atto ? ` · atto ${fm.atto}` : ''}
+                              {(fm.parte || fm.serie) ? ` · ${[fm.parte ? `P. ${fm.parte}` : '', fm.serie ? `S. ${fm.serie}` : ''].filter(Boolean).join(' ')}` : ''}
                               {recPeople.length > 0 ? ` · ${recPeople.join(', ')}` : ''}
                             </div>
                           </div>

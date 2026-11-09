@@ -109,6 +109,8 @@ function defaultFrontMatter(): RecordFrontMatter {
     register: '',
     year: '',
     atto: '',
+    parte: '',
+    serie: '',
     people: [],
     mentioned: [],
     source_office: '',

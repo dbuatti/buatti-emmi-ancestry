@@ -7,6 +7,8 @@ comune: Ascoli Piceno
 register: Atti di Morte 1964
 year: '1964'
 atto: '148'
+parte: 'II'
+serie: 'B'
 people:
   - alfredo-buatti-sr
 source_office: Comune di Ascoli Piceno — Ufficio Stato Civile

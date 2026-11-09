@@ -7,6 +7,8 @@ comune: San Benedetto del Tronto
 register: Atti di Matrimonio 1930
 year: '1930'
 atto: '45'
+parte: '2'
+serie: 'A'
 people:
   - remo-chiappini
   - irma-pirri
