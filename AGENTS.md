@@ -207,3 +207,44 @@ Implementation not started. Phases: 3 (UI dashboard), 4 (backend intelligence), 
 - [2026-11-09 (cont.)] **ALL TASKS BY PERSON BUILT (user: "see all the tasks for each person in the person page, click into individual task").** New `src/components/AllTasksByPerson.tsx` — shows all tasks grouped by person with expandable detail cards, filter by person/task, click-through to records/check mode. Wired into TaskPage (`/research/tasks`) below NextGuide. Each person card shows task count; expanding shows all tasks with badges, notes, where-it-is, office, requested date, and action buttons. **Gates**: tsc clean, eslint clean, vite build exit 0. Plan now complete: all 12 features from the user's original list have been built and verified.
 - [2026-11-09 (cont.)] **SORT BY COMPLETION % ADDED (user: "I want to be able to sort table by completion percentage").** Added sort dropdown to ResearchPeople page: Name, Completion %, Records. Completion % sorts by `calculateCompleteness().score` descending. Wired into existing filter row. **Gates**: tsc clean, eslint clean, vite build exit 0. All 13 features from the user's request list now built and verified.
 - [2026-11-09 (cont.)] **VETTING + BROADENED COMPLETENESS SCORE (user: "Broaden the score... Also I need to VET each record and give them a full confirmation").** Modified `calculateCompleteness()` in `src/lib/research.ts`: now factors in research status (20%), key facts (20%), open questions (10% penalty), pending tasks (10% penalty), and record vetting (Found+verified=1.0, Found unverified=0.5, Searching=0.25, Not Found=0). Added `verifiedRecordCount` parameter. Updated ResearchPeople and FamilyPeople call sites to pass openQuestions, taskCounts, and verifiedCounts. ResearchPeople expanded detail now shows per-record vetting status (Vetted ✓ badge) with "Vet" button linking to check mode for unverified records, and a vetted/total counter. **Why Egidio shows 90%**: 3 records all Found (40%) + Confirmed status (20%) + 5/5 facts (20%) + 1 unresolved question (8%) + 0 pending tasks (10%) = 98%... but actually 8 unresolved Emmi/Patanè questions → questions score 0 → 90%. The score now reflects that records are found but NOT vetted (unverified found = 0.5 instead of 1.0), so vetting records will raise the score. **Gates**: tsc clean, eslint clean, vite build exit 0.
+
+---
+## Session Summary — 09/11/2026 (Full Day)
+
+### What was built (13 features, all gated clean)
+1. **Records hub page** (`/research/records`) — fixed missing index route, new `src/pages/Records.tsx`
+2. **Research People page** (`/research/people`) — full-fledged analyst view replacing redirect
+3. **Attachment Inspector** — readability status, extracted text, link-to-person/record, cross-reference suggestions
+4. **Fact Qualification Panel** — per-fact verify/unverify with source attribution
+5. **Self-doubting cross-reference** — suggests FamilySearch/BDM/Antenati/NAA when facts missing/ambiguous
+6. **Backup script** (`scripts/backup-sources.sh`) — backs up all sources to timestamped destination
+7. **In-app OCR transcription** — tesseract on record images, editable lines, copy transcription
+8. **Text quality checker** — paste text → per-field confidence + overall score
+9. **Attachment integrity check** — verifies file exists, readable, size matches, magic bytes
+10. **Person Task List** — all tasks per person with click-through
+11. **Person Record Browser** — swipe/click carousel on family tree person page
+12. **All Tasks by Person** — grouped view on Tasks page
+13. **Sort by completion %** — dropdown on Research People page
+
+### Infrastructure
+- `getAllTasksForPerson()` added to `scripts/next-task.ts`
+- `calculateCompleteness()` broadened: records (40%) + status (20%) + facts (20%) + questions (10%) + tasks (10%), with vetting factored in (unverified Found = 0.5)
+- Gemini backlog query scoped to office-sourced messages only (28 → 24 after retries)
+- Ollama fallback confirmed working for bulk analysis (no rate limits)
+- OpenRequestsSummary.tsx syntax error fixed (`<2` → `{'<'}2`)
+- localRecordsApiPlugin middleware made async for OCR endpoint
+
+### Tested live
+- OCR on 1870 Lingua Glossa birth certificate → 30+ lines extracted (Italian + French)
+- Text validation → 5 fields, score 68%
+- Attachment integrity → 1573 total, 111 downloaded, 0 hard failures, 11 MIME warnings
+- Backup script → all 7 source groups backed up
+- All research pages → zero console errors
+- Sort by completion % → working on Research People page
+
+### Commits
+- `0a0eed6e` "Local OCR panel and quality checker" — pushed to origin/main
+- Working tree clean, branch up to date with origin/main
+
+### Still running
+- Ollama backlog sweep (PID 93327) — processing office-sourced research messages
