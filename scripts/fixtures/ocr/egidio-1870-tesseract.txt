@@ -1,0 +1,59 @@
+FORMULA A
+FORMULE A
+al STATO
+ITALIA 2) SERVIZIO DELLO STATO CIVILE LINGUAGLOSSA
+ETAT
+SERVICE DE L'ETAT CIVIL DE
+1 | ;
+A ESTRATTO DELL'ATTO DI NASCITA N. 311.
+U
+EXTRAIT DE L'ACTE DE NAISSANCE N.
+DATA E LUOGO DI NASCITA sli ae
+DATE ET LIEU DE NAISSANCE 03/02/1870 LINGUAGLOSSA
+COGNOME ai
+NOM EMMI i
+PRENOMI
+PRÉNOMS EGIDIO
+SESSO PADRE MADRE
+7 |\SEXE maschile PÈRE MÈRE
+COGNOME Ht
+NOM EMMI RAITI
+PRENOMI
+PRENOMS ANTONINO ROSARIA
+ALTRE ENUNCIAZIONI DELL’ATTO
+AUTRES ENONCIATIONS DE L'ACTE
+Emmi Egidio ha contratto matrimonio con Sgroi Concetta il 04/11/1900 nel Comune di Linguaglossa. L'atto fu i/trascritto nei
+registri di matrimonio del Comune di Linguaglossa anno 1900 parte/serie /n.59. Did
+| È
+N.B.
+In relazione al disposto dell'art.2. comma 2, dell'accordo firmato a Vienna il 29/3/1990. Gli atti destinati all'Austria devono essere completati dai se-guenti dati
+ultima residenza dei genitori in Austria; luogo e data del matrimonio dei genitori; per i figli naturali; luogo e data di nascita della madre, ove ciò risulti;
+et
+In relazione al disposto dell'art.5, comma 1, lettera b) dell'accordo bilaterale Italia-Svizzera firmato a Berna il 16/11/1966, gli atti destinati alla Svizzera devono essere
+completati dai seguenti dati
+luogo di origine in Svizzera dei genitori; |
+n DATA DI RILASCIO Giorno Mese Anno
+FIRMA - BOLLO Jo Mo —_ AN
+DATE DE DÉLIVRANCE, 2 71012026.
+SIGNATURE, SCEAU PA Fi a UFFICIALE DI STATO CIVILE DELEGATO
+<{ XI O V\. FOTI MARIA ANGELA
+SYMBOLES / ZEICHEN / SYMBOLS/ SIMBOLOS / SYMBOAA / SIMBOLI /
+SYMBOLEN / SIMBOLOS / ISARETLER / SIMBOLI
+- Jo Jour / Tag / Day / Dia / Giorno00/0'Hipépa / Dag / Dia / Giin / Dan
+- Mo Mois / Monat / Month / Mes / Mijv / Mese / Maand / Més / Ay / Mesec
+- An Année / Jahr / Year / Afio / ‘Etog / Anno / Jaar / Ano / Yil / Godina
+- M Masculin / Minnlich / Masculine / Masculino / Appev / Maschile / Mannelijk / Masculino:/ Erkek / Muski
+- F Féminin / Weiblich / Feminine / Feminino / ©nAu / Femminile / Vrouwelijk / Feminino / Kadin / Zenski
+- Mar Mariage / Eheschliessung / Marriage / Matrimonio / TOépog / DOOMatrimonio ‘/ (DO0000Huwelijk /
+Casamento / Evlenme / Zakljuéenje braka
+- Sc Séparation de corps / Trennung von Tisch und Bett / Legal separation / Separacién personal / Xwpiopdc &x6
+tpanétys yai yoitns / Separazione personale / Scheiding van tafel en bed / Separacio de pessoas e bens / Ayrilik /
+Fizitka rastava
+- Div Divorce / Scheidung / Divorce / Divorcio / Au{yiov / Divorzio / Echtscheiding / Divércio / Bosanma / Razvod
+-A Annulation / Nichtigerklarung / Annulment / Anulacién / Ayép@oic/ Annullamento / Nietigverkiaring / Anulagao /
+Iptal / Ponistenje _ ti
+- D Décès / Tod / Death / Defuncién / @avatog / Morte / Overlijden / Obito / Òliimii:/ Smrt
+- Dm Décès du mari / Tod des Ehemanns / Death of the husband / Defuncion del marido / Odvatos tod cvlsyov /
+Morte del marito / Overlijden van de man / Obito do marido / Kocanin Oliimii / Smrt muza
+- Df Décès de la femme / Tod der Ehefrau / Deaeth of the wife / Defuncién de la mujer / ®d&vatog tig ovtsyov / Morte
+della moglie / Overlijden van de vrouw / Obito de mulher / Karinin Oliimii / Smrt Zene

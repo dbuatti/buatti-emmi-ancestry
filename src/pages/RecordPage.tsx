@@ -1,4 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom';
+import { CiecExtractPanel } from '@/components/CiecExtractPanel';
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -128,10 +129,10 @@ export default function RecordPage() {
             ← Back to transcription
           </Button>
           <h1 className="text-lg font-bold text-stone-800">
-            {frontMatter.type} — Check
+            {frontMatter.type || 'Untitled record'} — Check
           </h1>
           <Badge variant="outline">
-            Step {stepNum} of 5
+            {stepNum} of 5 steps done
           </Badge>
         </div>
 
@@ -162,10 +163,10 @@ export default function RecordPage() {
         </div>
         <div className="lg:w-2/3 space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-bold text-stone-800">{frontMatter.type}</h1>
+            <h1 className="text-lg font-bold text-stone-800">{frontMatter.type || 'Untitled record'}</h1>
             <div className="flex gap-2">
               <Badge variant="outline">
-                Step {stepNum} of 5
+                {stepNum} of 5 steps done
               </Badge>
               {frontMatter.verified && (
                 <Badge variant="secondary">Verified</Badge>
@@ -184,6 +185,8 @@ export default function RecordPage() {
               window.location.href = `/records/${recordId}?mode=check`;
             }}
           />
+
+          {isDev && !frontMatter.transcribed && <CiecExtractPanel />}
 
           <div className="grid grid-cols-2 gap-4 text-xs text-stone-600">
             <div><span className="font-bold">ID:</span> {frontMatter.id}</div>

@@ -73,7 +73,7 @@ extraction, no lifecycle tracking beyond availability, no bridge to genealogy re
 ---
 # HANDOFF.md — briefing pack for a fresh session
 
-**Last updated: 09/11/2026 (session continues — assistant panel: purpose column, pill filters, chase-filter fix, translate button; Gemini analyse/translate backend with --model/--backlog + retry/backoff; NextGuide sent-correspondence auto-detect; thread-links phase 2 from analyses)**
+**Last updated: 09/11/2026 (OCR: comune-extract reader `src/lib/ocr/ciec-extract.ts` + panel + `pnpm test:ocr`; Egidio 1870 atto 31 transcribed, unverified; earlier — assistant panel: purpose column, pill filters, chase-filter fix, translate button; Gemini analyse/translate backend with --model/--backlog + retry/backoff; NextGuide sent-correspondence auto-detect; thread-links phase 2 from analyses)**
 **Repo:** `~/dyad-apps/Buatti-Emmi Ancestry` · branch `main`
 **Read this first, then `AGENTS.md` (the full PM log).** This file is a distilled briefing;
 `AGENTS.md` is the unabridged history and is where new entries get appended.
@@ -432,5 +432,6 @@ git status --short | grep -v -E "node_modules|dist/|\.dyad|\.DS_Store"
   hits → **HTTP 429 rate limit** (free tier throttling; retry/backoff + pacing now in place).
   Comprehensive suite re-run: 16/18 (2 known false-ish: build-grep false negative; draft fell back
   to qwen because Gemini was 429-ing).
+- **09/11/2026 (OCR)** — Structured reader for multilingual comune estratti (`src/lib/ocr/ciec-extract.ts`, `CiecExtractPanel`, `pnpm test:ocr`): field extraction, boilerplate filtering, two-reading cross-check, record.md output. Egidio 1870 atto 31 transcribed (`verified: false`; atto 31-vs-311 and Raiti-vs-Nasti flagged). YAML `null` no longer shows as "null". The local OCR panel is still uncommitted on Daniele's Mac.
 
 *(Append one dated line here at the end of every session, and update "Last updated" above.)*

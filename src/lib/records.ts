@@ -145,6 +145,8 @@ function parseYaml(yaml: string): Record<string, unknown> {
     const key = trimmed.slice(0, colonIdx).trim();
     lastKey = key;
     let value = trimmed.slice(colonIdx + 1).trim();
+    // YAML null (unquoted `null` or `~`) means "no value" — never show the word "null"
+    if (value === 'null' || value === '~') value = '';
     // Remove surrounding quotes
     if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
