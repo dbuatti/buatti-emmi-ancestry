@@ -50,6 +50,7 @@ const TITLES = new Set([
   'fu', 'late', 'sig', 'sig.', 'signor', 'signora', 'dott', 'dott.', 'don', 'don.',
   'cav', 'cav.', 'di', 'de', 'della', 'del', 'e', 'ed', 'da', 'dal', 'in',
   'residente', 'resident', 'domiciliato', 'nato', 'nata', 'vedovo', 'vedova',
+  'marito', 'moglie', 'sposo', 'sposa', 'sposi', 'coniuge',
 ]);
 
 function tokensOf(raw: string): string[] {
@@ -198,6 +199,16 @@ export function buildHints(
           suggestedId: uniqueId(display, existingIds),
           suggestedGender: subject.gender === 'M' ? 'F' : 'M',
         });
+      } else if (linkedId) {
+        hints.push({
+          ...base,
+          key: `${recordId}|new-spouse|${slug(display)}`,
+          kind: 'new-person',
+          reason: `No person page exists for this name, and it differs from the linked spouse (${nameOf(all, linkedId)}) — possible second marriage, or a misreading.`,
+          conflictsWith: linkedId,
+          suggestedId: uniqueId(display, existingIds),
+          suggestedGender: subject.gender === 'M' ? 'F' : 'M',
+        });
       } else {
         hints.push({
           ...base,
@@ -225,6 +236,16 @@ export function buildHints(
         reason: linkedId
           ? `Differs from the linked ${role} (${nameOf(all, linkedId)}).`
           : `${subject.name} has no ${role} linked.`,
+        conflictsWith: linkedId,
+        suggestedId: uniqueId(display, existingIds),
+        suggestedGender: role === 'father' ? 'M' : 'F',
+      });
+    } else if (linkedId) {
+      hints.push({
+        ...base,
+        key: `${recordId}|new-${role}|${slug(display)}`,
+        kind: 'new-person',
+        reason: `No person page exists for this name, and it differs from the linked ${role} (${nameOf(all, linkedId)}) — possible misreading, or a second ${role === 'father' ? 'father-figure' : 'mother-figure'}.`,
         conflictsWith: linkedId,
         suggestedId: uniqueId(display, existingIds),
         suggestedGender: role === 'father' ? 'M' : 'F',
