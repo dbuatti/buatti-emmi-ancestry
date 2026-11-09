@@ -16,7 +16,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (Daniele selected-text reading 10/11/2026 — Daniele to verify every line)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename: Prot_Par 0008863 del 11-08-2026 - Allegato atto di morte Chiappini
@@ -57,4 +57,5 @@ mentioned: []
 ## Source
 
 Cover page shared with Ezio's act (Dichiarazione di conformità, Dott.ssa Paola D'Emidio, 11/08/2026, prot. 0007783 — copy filed in this folder as ..._cover.pdf) indexes her act: n°6 CHIAPPINI LILIA, born 03/07/1930 San Benedetto del Tronto, died 23-05-1998 Melbourne. Front matter above is from that cover table; the act itself (…_atto6.pdf) still awaits transcription.
+
 

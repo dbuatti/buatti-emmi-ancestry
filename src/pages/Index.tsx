@@ -22,7 +22,6 @@ import { AncestorsDirectory } from '@/components/AncestorsDirectory';
 import { ResearchLog } from '@/components/ResearchLog';
 import { TimelineTab } from '@/components/TimelineTab';
 import { EvidenceWiki } from '@/components/EvidenceWiki';
-import { RecordMatrix } from '@/components/RecordMatrix';
 import { ResearchCentre } from '@/pages/ResearchCentre';
 import AIProgress from '@/pages/AIProgress';
 import { DEFAULT_NEW_PERSON } from '@/lib/constants';
@@ -172,9 +171,6 @@ const Index = () => {
               <TabsTrigger value="evidence" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
                 <ScrollText className="w-4 h-4" /> Evidence Wiki
               </TabsTrigger>
-              <TabsTrigger value="records" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
-                <Search className="w-4 h-4" /> Record Matrix
-              </TabsTrigger>
               <TabsTrigger value="research-centre" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
                 <FlaskConical className="w-4 h-4" /> Research Centre
               </TabsTrigger>
@@ -248,9 +244,7 @@ const Index = () => {
           <TabsContent value="evidence" className="space-y-6">
             <EvidenceWiki />
           </TabsContent>
-          <TabsContent value="records" className="space-y-6">
-            <RecordMatrix people={people} />
-          </TabsContent>
+
           <TabsContent value="research-centre" className="space-y-6">
             <ResearchCentre />
           </TabsContent>

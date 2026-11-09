@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, ListTodo, Users, FileText, FolderOpen, Crosshair, ArrowRight } from 'lucide-react';
+import { Mail, ListTodo, Users, FileText, FolderOpen, Crosshair, ArrowRight, Table2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -8,6 +8,7 @@ const HUBS = [
   { to: '/research/tasks', icon: ListTodo, title: 'Tasks', desc: 'Walk through every pending task, one at a time.' },
   { to: '/research/people', icon: Users, title: 'People', desc: 'Browse and edit person records and life events.' },
   { to: '/research/records', icon: FileText, title: 'Records', desc: 'View and verify transcription records.' },
+  { to: '/research/matrix', icon: Table2, title: 'Matrix', desc: 'Every person × every record type: what is documented, claimed, or missing.' },
   { to: '/research/documents', icon: FolderOpen, title: 'Documents', desc: 'Where images and documents are stored, and how the inbox → record pipeline works.' },
   { to: '/research/triangulate', icon: Crosshair, title: 'Triangulator', desc: 'Everything known about one person, turned into search constraints and a request draft.' },
 ];

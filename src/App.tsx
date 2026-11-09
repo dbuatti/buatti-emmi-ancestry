@@ -15,6 +15,7 @@ import { ResearchCentre } from "./pages/ResearchCentre";
 import ResearchAssistant from "./pages/ResearchAssistant";
 import Documents from "./pages/Documents";
 import Triangulate from "./pages/Triangulate";
+import Matrix from "./pages/Matrix";
 import FamilyLayout from "./layouts/FamilyLayout";
 import FamilyTree from "./pages/FamilyTree";
 import FamilyPeople from "./pages/FamilyPeople";
@@ -38,6 +39,7 @@ const RESEARCH_NAV = [
   { to: '/research/records', label: 'Records' },
   { to: '/research/documents', label: 'Documents' },
   { to: '/research/triangulate', label: 'Triangulate' },
+  { to: '/research/matrix', label: 'Matrix' },
   { to: '/research/assistant', label: 'Assistant' },
   { to: '/research/goals', label: 'Goals' },
 ];
@@ -98,6 +100,7 @@ const App = () => (
           <Route path="/research/familysearch/:personId" element={<FamilySearchCheckPage />} />
           <Route path="/research/documents" element={<Documents />} />
           <Route path="/research/triangulate" element={<Triangulate />} />
+          <Route path="/research/matrix" element={<Matrix />} />
         </Route>
 
         {/* Legacy routes preserved via redirects */}
