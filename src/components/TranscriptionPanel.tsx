@@ -74,8 +74,14 @@ export function TranscriptionPanel({ recordId, onTranscribed }: TranscriptionPan
         ? `/api/correspondence/ocr/${recordId}?file=${encodeURIComponent(selectedFile)}`
         : `/api/correspondence/ocr/${recordId}`;
       const res = await fetch(url, { method: 'POST' });
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(
+          'OCR runs on your Mac dev server (pnpm dev), not on the deployed site. Open this page via localhost to use in-app OCR.'
+        );
+      }
       const data = await res.json();
-      if (!data.ok) throw new Error(data.error || 'OCR failed');
+      if (!res.ok || !data.ok) throw new Error(data.error || `OCR failed (HTTP ${res.status})`);
       setOcrText(data.text || '');
       setOcrLines(data.lines || []);
       setOcrQuality(data.quality || null);

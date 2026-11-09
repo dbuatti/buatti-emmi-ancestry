@@ -670,7 +670,7 @@ export const initialPeople: Person[] = [
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'No records found — entirely unknown' },
-      { type: 'Marriage Record', status: 'Requested', notes: 'To Irma Pirri — San Benedetto del Tronto, 1930. Copia integrale of the 1930 marriage act requested from SBT anagrafe (Rosa De Falco) — email sent Aug 2026. The act names both sets of parents. Also recorded as father on NSW marriage cert 27340/1952.' },
+      { type: 'Marriage Record', status: 'Found', notes: 'To Irma Pirri — 13 Sep 1930, SBT, atto 45 parte 2 serie A. Estratto per riassunto received 06/08/2026 (prot. 0066017/2026, same PDF as Lilia birth). Transcribed in-app (needs Daniele check). WARNING: this riassunto does NOT name parents (names/ages/places only) — parents still need the D10 estratto-with-parents. Filed: 1930_San-Benedetto_marriage_Chiappini-Pirri_atto45. Also recorded as father on NSW marriage cert 27340/1952.' },
       { type: 'Death Record', status: 'Not Found', notes: 'No records found' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
@@ -704,7 +704,7 @@ export const initialPeople: Person[] = [
     ],
     records: [
       { type: 'Birth Record', status: 'Not Found', notes: 'Name now known — search Ascoli Piceno area' },
-      { type: 'Marriage Record', status: 'Requested', notes: 'To Remo Chiappini — San Benedetto del Tronto, 1930 (Lilia born Jul 1930). Copia integrale of the 1930 marriage act requested from SBT anagrafe (Rosa De Falco) — email sent Aug 2026. The act names both sets of parents.' },
+      { type: 'Marriage Record', status: 'Found', notes: 'To Remo Chiappini — 13 Sep 1930, SBT, atto 45 parte 2 serie A. Estratto per riassunto received 06/08/2026 (prot. 0066017/2026, same PDF as Lilia birth). Transcribed in-app (needs Daniele check). WARNING: this riassunto does NOT name parents — parents still need the D10 estratto-with-parents. Filed: 1930_San-Benedetto_marriage_Chiappini-Pirri_atto45.' },
       { type: 'Death Record', status: 'Requested', notes: 'DIED BEFORE 4 Oct 1952 (recorded on NSW marriage cert 27340/1952). Window 1930–1952, probably San Benedetto del Tronto. D14 SENT 05/11/2026 to Sig.ra Rosa De Falco (Comune di SBT, Ufficio Stato Civile): copia integrale of her death act showing her parents, 1930–1952 window, flagging the family story that she may have died at "San Giorgio" (probably Porto San Giorgio, Fermo). The request states explicitly that this is a DEATH act, not one of the birth/marriage acts SBT refused on privacy grounds on 02/11/2026. Secondary route: Curia di San Benedetto del Tronto (Sig.ra Veccia) for the parish burial record.' }
     ,
       { type: 'Baptism Record', status: 'Not Found', notes: 'Not yet located' },
@@ -2196,7 +2196,7 @@ export const initialPeople: Person[] = [
       'Trove (Aug 2026): "Buatti Chiappini" and bare "Buatti" return nothing across Trove\'s digitised NSW papers — the surname Buatti is effectively absent from the digitised text. Weak negative (Trove AND-search plus patchy digitisation of Hunter Valley papers for the early 1950s).',
     ],
     records: [
-      { type: 'Birth Record', status: 'Searching', notes: '3 Jul 1930 — embargo until 2030, contact Comune di San Benedetto del Tronto' },
+      { type: 'Birth Record', status: 'Found', notes: '3 Jul 1930 — estratto atto 196 received 06/08/2026 from SBT (prot. 0066017/2026, same PDF as Remo x Irma marriage). Transcribed in-app from OCR (needs Daniele check). Parents NOT named in estratto. Annotations confirm Lilia x Ezio 1952 marriage + 1998 death. Filed: 1930_San-Benedetto_birth_Chiappini-Lilia_atto196.' },
       { type: 'Death Record', status: 'Found', notes: '23 May 1998 — atto di morte Parte 2ª serie C n. 6/1998 (Maltignano copia integrale received 11 Aug 2026). Transcribed by Consolato Generale Melbourne (Prot. 9211, 22.09.1998, Cancelliere Stefano Cirilli; Posizione consolare L9952, Matricola 36094).' },
       { type: 'Burial Record', status: 'Found', notes: 'Springvale Botanical Cemetery, Spotted Gums, Row AS, Grave 68' },
       { type: 'Alien Registration', status: 'Found', notes: 'No. 290730 — issued same batch as Ezio (290718), Sydney 27 Sep 1952. Per Ezio\'s marriage notification (Form RA 6).' },
