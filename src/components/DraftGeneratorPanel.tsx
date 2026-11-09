@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Copy, Send, Save, Loader2, Check, AlertCircle } from 'lucide-react';
+import { Copy, Send, Save, Loader2, Check, AlertCircle, Languages } from 'lucide-react';
 
 interface DraftGeneratorPanelProps {
   threadId: string;
@@ -38,6 +38,8 @@ export const DraftGeneratorPanel = ({
   const [subject, setSubject] = useState('');
   const [to, setTo] = useState('');
   const [saved, setSaved] = useState(false);
+  const [translation, setTranslation] = useState<string | null>(null);
+  const [translating, setTranslating] = useState(false);
 
   const buildPrompt = () => {
     const parts = [
@@ -75,7 +77,10 @@ export const DraftGeneratorPanel = ({
       const res = await fetch('/api/correspondence/person-requests');
       if (!res.ok) return [];
       const data = await res.json();
-      const holding = new Set((data.people || []).filter((p: any) => p.hold).map((p: any) => p.person_id));
+      interface PersonRequest { person_id: string; hold?: boolean; }
+      const holding = new Set<string>(
+        ((data.people || []) as PersonRequest[]).filter((p) => p.hold).map((p) => p.person_id),
+      );
       const held: string[] = [];
       for (const name of people) {
         if (holding.has(slugify(name))) held.push(name);
@@ -186,6 +191,29 @@ export const DraftGeneratorPanel = ({
     toast({ title: 'Copied', description: 'Draft copied to clipboard' });
   };
 
+  const translateDraft = async () => {
+    if (!draft.trim()) return;
+    setTranslating(true);
+    setTranslation(null);
+    try {
+      const res = await fetch('/api/assistant/translate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: draft, target: 'en' }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `API error: ${res.status}`);
+      }
+      const data = await res.json();
+      setTranslation(data.translation || '');
+    } catch (e) {
+      toast({ title: 'Translation failed', description: e instanceof Error ? e.message : String(e), variant: 'destructive' });
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   return (
     <Card className="border-stone-200">
       <CardHeader className="p-4">
@@ -259,11 +287,27 @@ export const DraftGeneratorPanel = ({
           >
             <Copy className="w-4 h-4 mr-1" /> Copy
           </Button>
+          <Button
+            variant="outline"
+            onClick={translateDraft}
+            disabled={!draft.trim() || translating}
+          >
+            <Languages className="w-4 h-4 mr-2" /> {translating ? 'Translating…' : 'Translate to English'}
+          </Button>
         </div>
 
         {saved && (
           <div className="text-xs text-emerald-600 flex items-center gap-1">
             <Check className="w-3 h-3" /> Saved to local drafts
+          </div>
+        )}
+
+        {translation && (
+          <div className="pt-2 border-t border-stone-200">
+            <p className="text-xs font-semibold text-stone-700 mb-1">English Translation</p>
+            <div className="bg-stone-50 border border-stone-200 rounded p-3 text-sm text-stone-700 whitespace-pre-wrap">
+              {translation}
+            </div>
           </div>
         )}
 

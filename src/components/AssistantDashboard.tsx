@@ -46,7 +46,7 @@ export const AssistantDashboard = ({
     setter(prev => (prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]));
 
   // Derive pill options with counts from all pending threads (before other filters).
-  const allPending = summary?.pending_actions || [];
+  const allPending = useMemo(() => summary?.pending_actions || [], [summary]);
   const institutionPills = useMemo(() => {
     const counts = new Map<string, number>();
     for (const t of allPending) {
@@ -93,7 +93,7 @@ export const AssistantDashboard = ({
         const allowed = ['reply_required', 'action_required', 'awaiting_response', 'follow_up_due'];
         if (!allowed.includes((t.classification || '').toLowerCase())) return false;
       }
-      if (filterStatus === 'chase' && ((t.days_waiting ?? 0) > 30)) return false;
+      if (filterStatus === 'chase' && ((t.days_waiting ?? 0) <= 30)) return false;
       if (filterStatus === 'no-action' && (t.classification || '').toLowerCase() !== 'no_action_needed') return false;
       if (filterAccount === 'daniele' && t.account_email !== 'daniele.buatti@gmail.com') return false;
       if (filterAccount === 'info' && t.account_email !== 'info@danielebuatti.com') return false;
@@ -206,7 +206,7 @@ export const AssistantDashboard = ({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="border-b border-stone-200">
-                <tr><th className="text-left p-3 font-semibold text-stone-700">Thread</th><th className="text-left p-3 font-semibold text-stone-700">Account</th><th className="text-left p-3 font-semibold text-stone-700">Institution</th><th className="text-left p-3 font-semibold text-stone-700">People</th><th className="text-left p-3 font-semibold text-stone-700">Status</th><th className="text-left p-3 font-semibold text-stone-700">Days</th><th className="text-left p-3 font-semibold text-stone-700">Snippet</th></tr>
+                <tr><th className="text-left p-3 font-semibold text-stone-700">Thread</th><th className="text-left p-3 font-semibold text-stone-700">Account</th><th className="text-left p-3 font-semibold text-stone-700">Institution</th><th className="text-left p-3 font-semibold text-stone-700">People</th><th className="text-left p-3 font-semibold text-stone-700">Status</th><th className="text-left p-3 font-semibold text-stone-700">Days</th><th className="text-left p-3 font-semibold text-stone-700">Snippet</th><th className="text-left p-3 font-semibold text-stone-700">Purpose</th></tr>
               </thead>
               <tbody>
                 {threads.map(t => (
@@ -218,6 +218,7 @@ export const AssistantDashboard = ({
                     <td className={`p-3 font-serif font-semibold ${statusColor(t.classification)}`}>{statusLabel(t.classification)}</td>
                     <td className={`p-3 font-serif ${(t.days_waiting ?? 0) > 30 ? 'text-red-600' : 'text-stone-500'}`}>{t.days_waiting ?? '-'}</td>
                     <td className="p-3 font-serif text-xs line-clamp-2">{t.latest_inbound_snippet || '-'}</td>
+                    <td className="p-3 font-serif text-xs max-w-[260px]">{t.purpose || '-'}</td>
                   </tr>
                 ))}
               </tbody>

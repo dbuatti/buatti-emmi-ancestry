@@ -20,6 +20,7 @@ THREADS_PATH = ROOT / "correspondence" / "extracted" / "threads.json"
 ACTIONS_PATH = ROOT / "correspondence" / "extracted" / "actions.json"
 EVENT_REQ = ROOT / "src" / "data" / "event-requests.json"
 COMPOSE_AUTH = ROOT / ".local" / "gmail_auth_compose.json"
+REQUEST_LINKS_PATH = ROOT / "correspondence" / "extracted" / "request-links.json"
 
 
 def load_compose_accounts():
@@ -55,6 +56,25 @@ def main():
     if EVENT_REQ.exists():
         er = json.load(open(EVENT_REQ))
         event_req = er.get("events", {})
+
+    # Purpose lookup: map each gmail thread id -> what this correspondence is about,
+    # derived from request-links.json (the request each thread belongs to).
+    request_purpose = {}
+    if REQUEST_LINKS_PATH.exists():
+        rl = json.load(open(REQUEST_LINKS_PATH))
+        for req in (rl.get("requests", {}) or {}).values():
+            items = [i.get("description", "") for i in req.get("requested_items", []) or [] if i.get("description")]
+            items = [d for d in items if d and d.lower() != "no specific action requested"]
+            purpose = "; ".join(items[:2]) if items else ""
+            gtid = req.get("source_thread")
+            if gtid:
+                request_purpose.setdefault(gtid, purpose)
+            for lr in req.get("linked_replies", []) or []:
+                if lr.get("thread_id"):
+                    request_purpose.setdefault(lr["thread_id"], purpose)
+            for ev in req.get("linked_events", []) or []:
+                if ev.get("thread_id"):
+                    request_purpose.setdefault(ev["thread_id"], purpose)
 
     conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
@@ -123,6 +143,7 @@ def main():
             "people": person_names,
             "protocol_refs": protocol_refs,
             "classification": classification,
+            "purpose": request_purpose.get(gtid, ""),
             "days_waiting": days_waiting,
             "latest_inbound_snippet": snippet,
             "status": r["status"],
@@ -166,6 +187,7 @@ def main():
             "people": person_names,
             "protocol_refs": protocol_refs,
             "classification": classification or "",
+            "purpose": request_purpose.get(gtid, ""),
             "days_waiting": days_wait,
             "latest_inbound_snippet": snippet,
             "has_unanswered_inbound": r["has_unanswered_inbound"],

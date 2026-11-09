@@ -7,6 +7,7 @@ export interface ThreadSummary {
   people: string[];
   protocol_refs: string[];
   classification: string;
+  purpose?: string;
   days_waiting: number | null;
   latest_inbound_snippet: string;
   status?: string;
@@ -25,6 +26,7 @@ export interface Suggestion {
   classification: string;
   days_waiting: number | null;
   protocol_refs: string[];
+  purpose?: string;
   latest_inbound_snippet: string;
   rule_id: string;
   confidence: number;

@@ -75,6 +75,13 @@ export const ThreadSummaryCard = ({ thread }: ThreadSummaryCardProps) => {
           </div>
         )}
 
+        {thread.purpose && (
+          <div>
+            <p className="text-xs text-stone-500 uppercase tracking-wide mb-2">Purpose of this correspondence</p>
+            <p className="text-sm text-stone-700">{thread.purpose}</p>
+          </div>
+        )}
+
         {thread.latest_inbound_snippet && (
           <div>
             <p className="text-xs text-stone-500 uppercase tracking-wide mb-2">Latest Inbound Snippet</p>
