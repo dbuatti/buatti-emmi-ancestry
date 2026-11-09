@@ -14,6 +14,17 @@ export function getDbPath() {
   return process.env.CORRESPONDENCE_DB_PATH || DEFAULT_DB_PATH;
 }
 
+const DEFAULT_ATTACHMENTS_DIR = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "correspondence",
+  "attachments",
+);
+
+export function getAttachmentsDir() {
+  return process.env.CORRESPONDENCE_ATTACHMENTS_DIR || DEFAULT_ATTACHMENTS_DIR;
+}
+
 export function openDb(dbPath) {
   const resolved = dbPath || getDbPath();
   fs.mkdirSync(path.dirname(resolved), { recursive: true });

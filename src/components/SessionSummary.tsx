@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 const SESSION_DATE = '5 November 2026';
 
 const DONE: string[] = [
+  'NEW: a page per person — click a person → "Open full page →" (or go to /people/<id>). Save their FamilySearch link, other profiles, links and notes; see every life event with its next action; records naming them; FamilySearch page check.',
   'Built the records system: save to FAMILY TREE › _inbox → type "process inbox" in OpenCode → follow the Next card (file → transcribe → check → apply → FamilySearch).',
   'Organised the FAMILY TREE folder into the app (189 files, all checked): records-local/, reference/, correspondence/, private/ (your ID — never published), _unsorted/ (111 still to identify). Images never go online.',
   'Gregorio — birth (Linguaglossa, Nati 1915 atto 202): all 5 steps done. Born 23 Oct 1915 per the civil act; box 10 gives his marriage reference and 1961 citizenship act.',
@@ -15,7 +16,7 @@ const DONE: string[] = [
 ];
 
 const NEXT: string[] = [
-  'FIRST, in OpenCode (coding model): paste the "Bottom-up queue" prompt from the top of HANDOFF.md. Until then the Next card only knows Gregorio.',
+  'The closest-relative queue is built (Next card starts with you). Open your own page and Gregorio\'s page and paste their FamilySearch links.',
   'Restart the app (Ctrl + C, then pnpm dev). In OpenCode: commit everything and push.',
   'GitHub: make the repo private (Settings → General → Danger Zone → Change visibility).',
   'Gmail (info@ Drafts): send the Fiumefreddo marriage request, then click "Requested" on that Next card.',

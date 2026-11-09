@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:family": "node scripts/build-family-data.mjs && FAMILY_BUILD=1 vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "export:tree": "node scripts/export-family-tree.mjs",
@@ -48,6 +49,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "react": "^19.2.3",
@@ -67,6 +69,7 @@
     "@dyad-sh/react-vite-component-tagger": "^0.9.0",
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^22.5.5",
     "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",

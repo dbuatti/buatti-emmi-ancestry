@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { initialPeople } from '@/data/familyData';
+import { initialPeople } from '@/data/familyDataWrapper';
 import { FamilySearchCheck } from '@/components/FamilySearchCheck';
 
 export default function FamilySearchCheckPage() {

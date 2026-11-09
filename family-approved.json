@@ -1,0 +1,52 @@
+{
+  "living": [],
+  "deceased": [
+    "alfred-buatti",
+    "ezio-buatti",
+    "daniele-buatti",
+    "venera-buatti",
+    "roberto-buatti",
+    "stefano-buatti",
+    "marco-buatti",
+    "john-buatti-extended",
+    "angie-mcwilliams-extended",
+    "connie-emmi-extended",
+    "john-emmi-extended",
+    "greg-emmi-extended",
+    "ross-emmi-extended",
+    "pietro-patane",
+    "maria-ragonesi-patane",
+    "rosaria-patane",
+    "gregorio-emmi",
+    "bruna-lilia-chiappini",
+    "maurizio-buatti",
+    "paola-buatti",
+    "angela-buatti",
+    "michele-buatti"
+  ],
+  "fields": [
+    "id",
+    "name",
+    "generation",
+    "line",
+    "gender",
+    "birthDate",
+    "birthPlace",
+    "deathDate",
+    "deathPlace",
+    "burialPlace",
+    "burialDetails",
+    "burialLink",
+    "spouses",
+    "parents",
+    "children",
+    "siblings",
+    "records"
+  ],
+  "recordFields": [
+    "id",
+    "type",
+    "status",
+    "notes"
+  ]
+}

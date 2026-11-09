@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { initialPeople } from '../data/familyData';
+import { initialPeople } from '@/data/familyData';
 import { generateGoals, type ResearchGoal } from '@/lib/researchGoals';
 import { BookOpen, ArrowLeft, Search, CheckCircle2, Clock, XCircle } from 'lucide-react';
 

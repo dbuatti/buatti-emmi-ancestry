@@ -54,7 +54,7 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
 
   // Reset pan/zoom when a new file is selected
   useEffect(() => {
-    setPz({ scale: 1, tx: 0, ty: 0 });
+    setPz({ scale: 1, tx: 0, ty: 0, isDragging: false, startX: 0, startY: 0, startTx: 0, startTy: 0 });
   }, [selected]);
 
   useEffect(() => {
@@ -163,7 +163,7 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
   };
 
   const resetView = () => {
-    setPz({ scale: 1, tx: 0, ty: 0 });
+    setPz({ scale: 1, tx: 0, ty: 0, isDragging: false, startX: 0, startY: 0, startTx: 0, startTy: 0 });
   };
 
   const toggleFullScreen = () => {
@@ -379,7 +379,7 @@ export function RecordViewer({ recordId, sticky = false }: RecordViewerProps) {
                   />
                 ) : (
                   <img
-                    ref={containerRef}
+                    ref={containerRef as React.Ref<HTMLImageElement>}
                     src={fileUrl}
                     alt={selectedFile.name}
                     className="max-w-full max-h-full object-contain cursor-pointer"

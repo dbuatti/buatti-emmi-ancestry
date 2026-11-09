@@ -15,7 +15,7 @@ export function parseRecordMarkdown(raw: string): RecordData {
   }
 
   const [, fmYaml, body] = frontMatterMatch;
-  const frontMatter = parseYaml(fmYaml) as RecordFrontMatter;
+  const frontMatter = parseYaml(fmYaml) as unknown as RecordFrontMatter;
 
   // Parse links (list of {label, url}) manually from YAML text
   const links: RecordLink[] = [];

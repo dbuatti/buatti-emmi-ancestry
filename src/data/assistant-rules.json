@@ -1,0 +1,71 @@
+{
+  "version": "1.0",
+  "auto_approval": "high_confidence",
+  "rules": [
+    {
+      "id": "comune_ascoli_piceno_galanti_parents",
+      "name": "Comune di Ascoli Piceno - Galanti parents tiebreaker",
+      "description": "Auto-email Comune di Ascoli Piceno when waiting >30 days for Ida Galanti's parents birth date to resolve 1893 vs 1904 tiebreaker",
+      "enabled": true,
+      "trigger": {
+        "institutions": ["Comune di Ascoli Piceno"],
+        "min_days_waiting": 30,
+        "min_days_since_email": 7,
+        "keywords": ["Ida Galanti", "parents", "birth date", "1893", "1904", "tiebreaker", "Galanti parents"],
+        "classification": ["awaiting_response", "follow_up_due", "action_required", "reply_required"]
+      },
+      "confidence": 95,
+      "auto_action": "suggest",
+      "draft_template": "Dear {institution},\n\nI am following up on my earlier request for Ida Galanti's death certificate (prot. {protocol_ref}, {date}) and Alfredo Buatti's death certificate (prot. {protocol_ref2}, {date2}).\n\nAs you know, the death certificates were provided by the Municipality of Ascoli Piceno on {date} and include the following:\n\n- For Ida Galanti (d. 26/01/1970): The death certificate includes no names of her parents.\n- For Alfredo Buatti (d. 09/05/1964): The death certificate includes no names of his parents.\n\nThese are needed to resolve the birth date tiebreaker for Ida Galanti (1893 vs 1904) which is critical for establishing her father's identity.\n\nCould you please advise on the procedure for obtaining this information? Is there a specific form or fee required for requesting the parents' details from older civil registry records?\n\nThank you for your assistance.",
+      "human_review": true
+    },
+    {
+      "id": "iis_ulpiani_student_file",
+      "name": "IIS Celso Ulpiani - Ezio student file",
+      "description": "Auto-suggest follow-up for Ezio Buatti's student file request",
+      "enabled": true,
+      "trigger": {
+        "institutions": ["IIS \"Celso Ulpiani\""],
+        "keywords": ["student file", "Ricerca storica", "Buatti Ezio", "diploma"],
+        "classification": ["awaiting_response"],
+        "min_days_waiting": 5
+      },
+      "confidence": 85,
+      "auto_action": "suggest",
+      "draft_template": "Gentile Segreteria dell'Istituto \"Celso Ulpiani\",\n\nLa prego, non trovo parole adeguate per ringraziarVi.\nRitrovare il fascicolo originale da studente di mio nonno, a oltre 80 anni di distanza, \u00e8 un risultato che non avrei mai immaginato possibile.\n\nIl fascicolo contiene il certificato di cultura generale del Liceo scientifico \"A. Orsini\" (1940), l'ammissione al R. Istituto Tecnico Commerciale \"Umberto I\" (1938-1940), l'iscrizione all'IIS \"Celso Ulpiani\" (1938-1942), il diploma Perito Agrario (1941-42), e la dichiarazione delle leggi razziali (1944) firmata da Alfredo Buatti.\n\nSono Daniele Buatti, figlio di Ezio Buatti. Se possibile, vorrei ricevere una copia integrale del fascicolo posiz. n. { fascicolo_number } della Posizione Studentesca.\n\nLa ringrazio per l'attenzione e la disponibilit\u00e0.",
+      "human_review": true
+    },
+    {
+      "id": "comune_san_benedetto_marriage",
+      "name": "Comune di San Benedetto del Tronto - Marriage certificate",
+      "description": "Auto-suggest follow-up for marriage certificate request",
+      "enabled": false,
+      "trigger": {
+        "institutions": ["Comune di San Benedetto del Tronto"],
+        "keywords": ["matrimonio", "marriage", "0066863", "0067141"],
+        "classification": ["awaiting_response"],
+        "min_days_waiting": 30
+      },
+      "confidence": 70,
+      "auto_action": "suggest",
+      "draft_template": "Gentile Signora Rosa De Falco,\n\nVorrei cortesemente un seguito in merito alla richiesta di copia integrale dell'atto di matrimonio n. 45, anno 1930, parte 2 serie A \u2014 CHIAPPINI Remo \u00d7 PIRRI Irma (prot. {protocol_ref}).\n\nL'ha gi\u00e0 beccato a breve? Se no, posso fornire qualsiasi informazione aggiuntiva necessaria per completare la pratica.\n\nGrazie,",
+      "human_review": true
+    },
+    {
+      "id": "naa_bankruptcy_ack",
+      "name": "NAA - Bankruptcy acknowledgement",
+      "description": "Auto-suggest thank-you for NAA bankruptcy file acknowledgement",
+      "enabled": true,
+      "trigger": {
+        "institutions": ["NAA"],
+        "keywords": ["bankruptcy", "BUATTI Ezio", "248/1957"],
+        "classification": ["awaiting_response"],
+        "min_days_waiting": 5
+      },
+      "confidence": 60,
+      "auto_action": "suggest",
+      "draft_template": "Gentili Signori,\n\nLa ringrazio per avermi informato che il fascicolo di fallimento del sig. Ezio Buatti (N. 248 del 1957) \u00e8 in fase di esame presso NAA. Sono disposto a pagare la quota di \u20ac300 richiesta se pu\u00f2 fornirmi i dettagli sulla procedura di pagamento e la tempistica prevista per l'esame.\n\nLa prego di confermarmi come procedere.",
+      "human_review": true
+    }
+  ]
+}

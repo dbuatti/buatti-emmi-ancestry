@@ -73,6 +73,7 @@ export interface ResearchObjective {
   status: 'open' | 'answered' | 'investigating' | 'closed';
   message_id?: number;
   attachment_id?: number;
+  enquiry_id?: number;
 }
 
 export function ResearchCentreDashboard() {
@@ -411,6 +412,7 @@ export function ResearchCentreDashboard() {
         </CardContent>
       </Card>
     );
+  };
 
   const ObjectiveCard = ({ objective }: { objective: ResearchObjective }) => {
     const formatDate = (iso?: string) => {
@@ -479,6 +481,7 @@ export function ResearchCentreDashboard() {
         </CardContent>
       </Card>
     );
+  };
 
   const AttachmentOverviewCard = ({ attachment }: { attachment: CorrespondenceAttachment }) => {
     const getStatusColor = (att: CorrespondenceAttachment) => {
@@ -546,6 +549,7 @@ export function ResearchCentreDashboard() {
         </CardContent>
       </Card>
     );
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF6F0] text-stone-900 font-serif selection:bg-[#800020]/20 selection:text-[#800020]">

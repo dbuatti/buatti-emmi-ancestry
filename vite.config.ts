@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { defineConfig, type Plugin } from "vite";
 import dyadComponentTagger from "@dyad-sh/react-vite-component-tagger";
 import react from "@vitejs/plugin-react-swc";
@@ -6,11 +7,28 @@ import fs from "fs";
 import os from "os";
 import type { ServerResponse, IncomingMessage } from "http";
 
+// Detect if we're running in family mode (use a custom env var; Vite forces
+// NODE_ENV to 'production' during `vite build`, which would defeat the check).
+const isFamilyBuild = process.env.FAMILY_BUILD === '1';
+
+// Conditional alias for familyData
+const conditionalAlias = (isFamilyBuild
+  ? { "@/data/familyData": path.resolve(__dirname, "./src/data/family/familyData.generated.ts") }
+  : {}) as Record<string, string>;
+
+// Override the plugins configuration for family build
+if (isFamilyBuild) {
+  // In family mode, we only need the react plugin
+  // We don't need the local API plugins in the family build
+  // For simplicity, we'll just keep the original plugins but we could filter them here
+}
+
 const RECORDS_LOCAL = path.resolve(__dirname, "records-local");
 
 interface CorrespondenceStatement {
   get(...params: unknown[]): Record<string, unknown> | undefined;
   all(...params: unknown[]): Record<string, unknown>[];
+  run(...params: unknown[]): { changes: number };
 }
 
 interface CorrespondenceDb {
@@ -490,6 +508,65 @@ function localRecordsApiPlugin(): Plugin {
           return;
         }
 
+        // ---- GET /api/free-routes ----
+        if (method === "GET" && url === "/api/free-routes") {
+          try {
+            const p = path.resolve(process.cwd(), "src", "data", "free-routes.json");
+            const store = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf-8")) : { version: 1, routes: {} };
+            return sendJson(res, 200, store);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/decisions ----
+        if (method === "GET" && url === "/api/decisions") {
+          try {
+            const storePath = path.resolve(process.cwd(), "src", "data", "decisions-log.json");
+            let store = { version: 1, entries: [] as unknown[] };
+            if (fs.existsSync(storePath)) {
+              try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || store; } catch { /* keep default */ }
+            }
+            return sendJson(res, 200, store);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/decisions ----
+        if (method === "POST" && url === "/api/decisions") {
+          readBody(req)
+            .then((raw) => {
+              try {
+                const { kind, subject, detail, by } = JSON.parse(raw || "{}");
+                if (typeof kind !== "string" || !kind.trim()) {
+                  return sendJson(res, 400, { ok: false, error: "kind required" });
+                }
+                const storePath = path.resolve(process.cwd(), "src", "data", "decisions-log.json");
+                let store: { version: number; entries: unknown[] } = { version: 1, entries: [] };
+                if (fs.existsSync(storePath)) {
+                  try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || store; } catch { store = { version: 1, entries: [] }; }
+                }
+                if (!Array.isArray(store.entries)) store.entries = [];
+                store.entries.unshift({
+                  ts: new Date().toISOString(),
+                  kind: kind.trim(),
+                  subject: typeof subject === "string" ? subject : "",
+                  detail: typeof detail === "string" ? detail : "",
+                  by: typeof by === "string" ? by : "user",
+                });
+                // keep last 500
+                store.entries = store.entries.slice(0, 500);
+                fs.writeFileSync(storePath, JSON.stringify(store, null, 2) + "\n");
+                return sendJson(res, 200, { ok: true, entry: store.entries[0] });
+              } catch (e) {
+                return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+              }
+            })
+            .catch(() => sendJson(res, 500, { ok: false, error: "Failed to read body" }));
+          return;
+        }
+
         // ---- POST /api/tree-overrides ----
         // Sidecar persistence for UI-added/edited data (Add Ancestor, delete
         // person, Add Lead / Add Question, status updates). familyData.ts is
@@ -502,12 +579,7 @@ function localRecordsApiPlugin(): Plugin {
             .then((raw) => {
               try {
                 const body = JSON.parse(raw);
-                const storePath = path.resolve(
-                  __dirname,
-                  "src",
-                  "data",
-                  "tree-overrides.json"
-                );
+                const storePath = path.resolve(process.cwd(), ".local", "tree-overrides.json");
                 let store: Record<string, unknown> = {};
                 if (fs.existsSync(storePath)) {
                   try { store = JSON.parse(fs.readFileSync(storePath, "utf-8")) || {}; } catch { store = {}; }
@@ -816,15 +888,167 @@ function localRecordsApiPlugin(): Plugin {
 }
 
 
+
+const CORRESPONDENCE_MIME_BY_EXT: Record<string, string> = {
+  pdf: "application/pdf",
+  xml: "application/xml",
+  eml: "message/rfc822",
+  p7s: "application/pkcs7-signature",
+  txt: "text/plain",
+  html: "text/html",
+  json: "application/json",
+  png: "image/png",
+};
+
+const GENERIC_MIME_TYPES = new Set(["", "application/octet-stream", "binary/octet-stream"]);
+
+function sniffMimeType(data: Buffer): string | null {
+  if (data.subarray(0, 5).toString("latin1") === "%PDF-") return "application/pdf";
+  const head = data.subarray(0, 256).toString("utf8").replace(/^\uFEFF/, "").trimStart();
+  if (head.startsWith("<?xml")) return "application/xml";
+  if (data.subarray(0, 2).toString("latin1") === "PK") return "application/zip";
+  return null;
+}
+
+function attachmentContentDisposition(kind: "inline" | "attachment", filename: string): string {
+  const fallback = filename.replace(/[^\x20-\x7E]/g, "_").replace(/["\\]/g, "_");
+  const encoded = encodeURIComponent(filename).replace(/'/g, "%27");
+  return `${kind}; filename="${fallback}"; filename*=UTF-8''${encoded}`;
+}
+
+
+// ---- Safe write helper (mirrors scripts/safe_write.py) ----
+function computeHash(content: string): string {
+  return crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+}
+
+function auditLog(entry: Record<string, unknown>) {
+  const auditPath = path.resolve(process.cwd(), "correspondence", "extracted", "audit-log.jsonl");
+  const dir = path.dirname(auditPath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.appendFileSync(auditPath, JSON.stringify(entry) + "\n", "utf8");
+}
+
+function isPidRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function acquireLock(lockPath: string, timeoutMs: number = 10000): number {
+  const start = Date.now();
+  const dir = path.dirname(lockPath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+  while (true) {
+    try {
+      const fd = fs.openSync(lockPath, 'wx');
+      fs.writeSync(fd, process.pid + "\n" + Date.now());
+      fs.closeSync(fd);
+      return fs.openSync(lockPath, 'r+');
+    } catch (e: any) {
+      if (e.code !== 'EEXIST') throw e;
+
+      try {
+        const content = fs.readFileSync(lockPath, 'utf8');
+        const lines = content.trim().split("\n");
+        const pid = parseInt(lines[0], 10);
+        const ts = parseFloat(lines[1] || '0');
+        const age = (Date.now() - ts) / 1000;
+
+        if (!isNaN(pid) && !isPidRunning(pid)) {
+          try { fs.unlinkSync(lockPath); } catch {}
+          continue;
+        }
+        if (isNaN(pid) && age > 60) {
+          try { fs.unlinkSync(lockPath); } catch {}
+          continue;
+        }
+      } catch {
+        try { fs.unlinkSync(lockPath); } catch {}
+        continue;
+      }
+
+      if (Date.now() - start > timeoutMs) {
+        throw new Error("Lock timeout: could not acquire " + lockPath);
+      }
+      const waitUntil = Date.now() + 50;
+      while (Date.now() < waitUntil) { /* spin */ }
+    }
+  }
+}
+
+function releaseLock(fd: number, lockPath: string) {
+  try { fs.closeSync(fd); } catch {}
+  try { fs.unlinkSync(lockPath); } catch {}
+}
+
+function safeWriteJson(filePath: string, data: unknown, source: string, expectedVersion?: string | null, changedFields?: string[], reason?: string): string {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+  const lockPath = filePath + ".lock";
+  const lockFd = acquireLock(lockPath, 10000);
+  try {
+    let currentContent: string | null = null;
+    let currentHash: string | null = null;
+    if (fs.existsSync(filePath)) {
+      currentContent = fs.readFileSync(filePath, "utf8");
+      currentHash = computeHash(currentContent);
+    }
+
+    if (expectedVersion && expectedVersion !== currentHash) {
+      auditLog({
+        ts: new Date().toISOString(),
+        file: filePath.replace(process.cwd() + "/", ""),
+        source,
+        status: "rejected",
+        changed_fields: changedFields || [],
+        reason: reason || null,
+        version_before: currentHash ? currentHash.slice(0, 12) : null,
+        error: "Stale version: file modified since last read",
+      });
+      throw new Error("Stale version: " + filePath + " has been modified since last read.");
+    }
+
+    const tempPath = filePath + ".tmp." + process.pid;
+    const content = JSON.stringify(data, null, 2) + "\n";
+    fs.writeFileSync(tempPath, content, "utf8");
+    fs.renameSync(tempPath, filePath);
+
+    const newContent = fs.readFileSync(filePath, "utf8");
+    const newHash = computeHash(newContent);
+
+    auditLog({
+      ts: new Date().toISOString(),
+      file: filePath.replace(process.cwd() + "/", ""),
+      source,
+      status: "accepted",
+      changed_fields: changedFields || [],
+      reason: reason || null,
+      version_before: currentHash ? currentHash.slice(0, 12) : null,
+      version_after: newHash.slice(0, 12),
+    });
+
+    return newHash;
+  } finally {
+    releaseLock(lockFd, lockPath);
+  }
+}
+
+
 function localCorrespondenceApiPlugin(): Plugin {
   return {
     name: "local-correspondence-api",
     configureServer(server) {
-      let dbModulePromise: Promise<{ getDb: () => CorrespondenceDb; getDbPath: () => string }> | null = null;
-      const loadDbModule = async (): Promise<{ getDb: () => CorrespondenceDb; getDbPath: () => string }> => {
+      let dbModulePromise: Promise<{ getDb: () => CorrespondenceDb; getDbPath: () => string; getAttachmentsDir: () => string }> | null = null;
+      const loadDbModule = async (): Promise<{ getDb: () => CorrespondenceDb; getDbPath: () => string; getAttachmentsDir: () => string }> => {
         if (!dbModulePromise) {
           dbModulePromise = import("./scripts/correspondence-db.mjs").then(
-            (m) => ({ getDb: m.getDb, getDbPath: m.getDbPath })
+            (m) => ({ getDb: m.getDb, getDbPath: m.getDbPath, getAttachmentsDir: m.getAttachmentsDir })
           );
         }
         const mod = await dbModulePromise;
@@ -836,6 +1060,14 @@ function localCorrespondenceApiPlugin(): Plugin {
         res.writeHead(status, { "Content-Type": "application/json" });
         res.end(JSON.stringify(body));
       };
+
+      const readBody = (req: IncomingMessage): Promise<string> =>
+        new Promise((resolve, reject) => {
+          let data = "";
+          req.on("data", (chunk) => (data += chunk));
+          req.on("end", () => resolve(data));
+          req.on("error", reject);
+        });
 
       server.middlewares.use(async (req, res, next) => {
         const url = req.url || "";
@@ -903,15 +1135,19 @@ function localCorrespondenceApiPlugin(): Plugin {
           try {
             const db = await loadDb();
             const urlObj = new URL(url, "http://localhost");
-            const relevance = urlObj.searchParams.get("relevance") || "definite";
+            const relevance = urlObj.searchParams.get("relevance");
             const account = urlObj.searchParams.get("account");
             const type = urlObj.searchParams.get("type");
             const status = urlObj.searchParams.get("status");
             const search = urlObj.searchParams.get("search");
             const dateFilter = urlObj.searchParams.get("date");
 
-            const params = [relevance];
-            let whereClause = "mc.genealogy_relevance = ?";
+            const params: any[] = [];
+            let whereClause = "1=1";
+            if (relevance && relevance !== "all") {
+              whereClause += " AND mc.genealogy_relevance = ?";
+              params.push(relevance);
+            }
 
             if (account) {
               whereClause += " AND m.account_email = ?";
@@ -926,9 +1162,9 @@ function localCorrespondenceApiPlugin(): Plugin {
               params.push(status);
             }
             if (search) {
-              whereClause += " AND (m.subject LIKE ? OR m.from_name LIKE ? OR m.from_email LIKE ? OR m.account_email LIKE ? OR m.snippet LIKE ?)";
+              whereClause += " AND (m.subject LIKE ? OR m.from_name LIKE ? OR m.from_email LIKE ? OR m.account_email LIKE ? OR m.snippet LIKE ? OR m.body_text LIKE ?)";
               const s = `%${search}%`;
-              params.push(s, s, s, s, s);
+              params.push(s, s, s, s, s, s);
             }
             if (dateFilter) {
               const now = new Date();
@@ -965,6 +1201,38 @@ function localCorrespondenceApiPlugin(): Plugin {
           }
         }
 
+        // ---- GET /api/correspondence/threads/:thread_id/messages ----
+        const threadMessagesMatch = url.match(/^\/api\/correspondence\/threads\/([^/]+)\/messages$/);
+        if (method === "GET" && threadMessagesMatch) {
+          try {
+            const db = await loadDb();
+            const gmailThreadId = decodeURIComponent(threadMessagesMatch[1]);
+            const rows = db.prepare(
+              `SELECT m.id, m.direction, m.from_name, m.from_email, m.to_json, m.subject,
+                      m.received_at, m.sent_at, m.body_text, m.snippet, m.account_email,
+                      mc.message_type, mc.action_status, mc.genealogy_relevance
+               FROM messages m
+               LEFT JOIN message_classification mc ON mc.message_id = m.id
+               WHERE m.gmail_thread_id = ?
+               ORDER BY COALESCE(m.received_at, m.sent_at)`
+            ).all(gmailThreadId);
+
+            const attStmt = db.prepare(
+              `SELECT id, filename, safe_filename, mime_type, size_bytes, gmail_attachment_id,
+                      (local_path IS NOT NULL AND local_path != '') AS downloaded,
+                      unavailable, unavailable_reason
+               FROM attachments WHERE message_id = ?`
+            );
+            const messages = rows.map((r: any) => {
+              const attachments = attStmt.all(r.id).map((a: any) => ({ ...a, downloaded: Boolean(a.downloaded) }));
+              return { ...r, attachments, attachment_count: attachments.length };
+            });
+            return sendJson(res, 200, { ok: true, messages, count: messages.length });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
         // ---- GET /api/correspondence/messages/:id/detail ----
         const messageDetailMatch = url.match(/^\/api\/correspondence\/messages\/(\d+)\/detail$/);
         if (method === "GET" && messageDetailMatch) {
@@ -974,7 +1242,9 @@ function localCorrespondenceApiPlugin(): Plugin {
             const msg = db.prepare(
               `SELECT m.id, m.account_email, m.gmail_message_id, m.gmail_thread_id, m.direction,
                       m.from_name, m.from_email, m.to_json, m.cc_json, m.subject, m.received_at,
-                      m.sent_at, m.snippet, m.body_text, m.body_html_path, m.language, m.raw_path,
+                      m.sent_at, m.snippet, m.body_text, m.language,
+                      (m.body_html_path IS NOT NULL AND m.body_html_path != '') AS has_body_html,
+                      (m.raw_path IS NOT NULL AND m.raw_path != '') AS has_raw,
                       mc.message_type, mc.action_status, mc.genealogy_relevance
                FROM messages m
                JOIN message_classification mc ON mc.message_id = m.id
@@ -987,9 +1257,10 @@ function localCorrespondenceApiPlugin(): Plugin {
 
             const attachments = db.prepare(
               `SELECT id, filename, safe_filename, mime_type, size_bytes, gmail_attachment_id,
-                      local_path, ocr_text, created_at, unavailable, unavailable_reason, unavailable_at
+                      (local_path IS NOT NULL AND local_path != '') AS downloaded,
+                      created_at, unavailable, unavailable_reason, unavailable_at
                FROM attachments WHERE message_id = ?`
-            ).all(messageId);
+            ).all(messageId).map((a: any) => ({ ...a, downloaded: Boolean(a.downloaded) }));
 
             return sendJson(res, 200, {
               ok: true,
@@ -1004,6 +1275,1335 @@ function localCorrespondenceApiPlugin(): Plugin {
           }
         }
 
+        // ---- GET /api/correspondence/attachments/:id ----
+        const attachmentMatch = url.match(/^\/api\/correspondence\/attachments\/(\d+)(?:\?([^#]*))?$/);
+        if (method === "GET" && attachmentMatch) {
+          try {
+            const db = await loadDb();
+            const att = db.prepare(
+              `SELECT id, filename, safe_filename, mime_type, size_bytes, gmail_attachment_id,
+                      local_path, ocr_text, created_at, unavailable, unavailable_reason, unavailable_at
+               FROM attachments WHERE id = ?`
+            ).get(attachmentMatch[1]);
+
+            if (!att) {
+              return sendJson(res, 404, { ok: false, error: "Attachment not found" });
+            }
+            if (!att.local_path) {
+              return sendJson(res, 404, { ok: false, error: "Attachment not downloaded yet" });
+            }
+
+            const attachmentsDir = (await loadDbModule()).getAttachmentsDir();
+            const resolvedPath = path.resolve(String(att.local_path));
+            const allowedRoot = path.resolve(attachmentsDir);
+            if (!resolvedPath.startsWith(allowedRoot + path.sep)) {
+              return sendJson(res, 403, { ok: false, error: "Attachment path not allowed" });
+            }
+
+            const data = fs.readFileSync(resolvedPath);
+            const storedMime = typeof att.mime_type === "string" ? att.mime_type.trim() : "";
+            const extension = path.extname(String(att.safe_filename || att.filename || "")).replace(".", "").toLowerCase();
+            const mimeType = GENERIC_MIME_TYPES.has(storedMime.toLowerCase())
+              ? (CORRESPONDENCE_MIME_BY_EXT[extension] || sniffMimeType(data) || "application/octet-stream")
+              : storedMime;
+            const originalFilename = String(att.filename || att.safe_filename || "attachment");
+            const download = new URLSearchParams(attachmentMatch[2] || "").get("download") === "1";
+            res.writeHead(200, {
+              "Content-Type": mimeType,
+              "Content-Length": data.length,
+              "Content-Disposition": attachmentContentDisposition(download ? "attachment" : "inline", originalFilename),
+              "X-Content-Type-Options": "nosniff",
+            });
+            return res.end(data);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/assistant/suggestions ----
+        if (method === "GET" && url === "/api/assistant/suggestions") {
+          try {
+            const { execFileSync } = await import("node:child_process");
+            const evaluatorPath = path.resolve(process.cwd(), "scripts", "assistant-rules-evaluator.py");
+            const output = execFileSync("python3", [evaluatorPath], {
+              cwd: process.cwd(),
+              encoding: "utf8",
+              timeout: 60000,
+            });
+            const data = JSON.parse(output);
+            return sendJson(res, 200, { ok: true, ...data });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/attachment-gate/:messageId ----
+        const gateMatch = url.match(/^\/api\/correspondence\/attachment-gate\/(\d+)$/);
+        if (method === "GET" && gateMatch) {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "attachment-gate.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, gate: null, reason: "attachment gate has not been run yet" });
+            }
+            const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+            const gate = (data && data.messages && data.messages[String(gateMatch[1])]) || null;
+            return sendJson(res, 200, { ok: true, gate });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+}
+ 
+         // ---- GET /api/assistant/summary ----
+         if (method === "GET" && url === "/api/assistant/summary") {
+           try {
+             const { execFileSync } = await import("node:child_process");
+             const scriptPath = path.resolve(process.cwd(), "scripts", "assistant-summary.py");
+             const output = execFileSync("python3", [scriptPath], {
+               cwd: process.cwd(),
+               encoding: "utf8",
+               timeout: 30000,
+             });
+             const data = JSON.parse(output);
+             return sendJson(res, 200, { ok: true, ...data });
+           } catch (e) {
+             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+           }
+         }
+ 
+         // ---- POST /api/assistant/draft ----
+         if (method === "POST" && url === "/api/assistant/draft") {
+           try {
+             const raw = await readBody(req);
+             const { threadId, gmailThreadId, accountEmail, prompt } = JSON.parse(raw || "{}");
+             if (!threadId || !prompt) {
+               return sendJson(res, 400, { ok: false, error: "Missing threadId or prompt" });
+             }
+ 
+             // Call Ollama qwen2.5:14b for draft generation
+             const { execFileSync } = await import("node:child_process");
+             const ollamaPrompt = `${prompt}\n\nGenerate ONLY the email body (no subject, no signature placeholders). Keep it concise and professional.`;
+             const result = execFileSync("curl", [
+               "-s", "-X", "POST", "http://localhost:11434/api/generate",
+               "-H", "Content-Type: application/json",
+               "-d", JSON.stringify({
+                 model: "qwen2.5:14b",
+                 prompt: ollamaPrompt,
+                 stream: false,
+                 options: { temperature: 0.3, top_p: 0.9, num_predict: 512 },
+               }),
+             ], { cwd: process.cwd(), encoding: "utf8", timeout: 120000 });
+ 
+             const ollamaResponse = JSON.parse(result);
+             const draft = ollamaResponse.response || "";
+ 
+             // Generate subject from draft first line or institution
+             const subject = `Re: ${accountEmail.includes("info") ? "Genealogy Inquiry" : "Genealogy Correspondence"}`;
+ 
+             return sendJson(res, 200, { ok: true, draft, subject });
+           } catch (e) {
+             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+           }
+         }
+ 
+         // ---- POST /api/assistant/draft-save ----
+         if (method === "POST" && url === "/api/assistant/draft-save") {
+           try {
+             const raw = await readBody(req);
+             const { threadId, gmailThreadId, accountEmail, draft, subject, to } = JSON.parse(raw || "{}");
+             if (!threadId || !draft) {
+               return sendJson(res, 400, { ok: false, error: "Missing threadId or draft" });
+             }
+ 
+             const draftsDir = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+             if (!fs.existsSync(draftsDir)) fs.mkdirSync(draftsDir, { recursive: true });
+ 
+             const safeId = gmailThreadId.replace(/[^A-Za-z0-9_-]/g, "_");
+             const draftPath = path.join(draftsDir, `${safeId}.json`);
+             const draftData = {
+               threadId,
+               gmailThreadId,
+               accountEmail,
+               draft,
+               subject,
+               to,
+               createdAt: new Date().toISOString(),
+             };
+             fs.writeFileSync(draftPath, JSON.stringify(draftData, null, 2), "utf8");
+ 
+             return sendJson(res, 200, { ok: true, path: draftPath });
+           } catch (e) {
+             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+           }
+         }
+ 
+         // ---- POST /api/assistant/draft-send-gmail ----
+         if (method === "POST" && url === "/api/assistant/draft-send-gmail") {
+           try {
+             const raw = await readBody(req);
+             const { threadId, gmailThreadId, accountEmail, draft, subject, to } = JSON.parse(raw || "{}");
+             if (!threadId || !draft || !accountEmail) {
+               return sendJson(res, 400, { ok: false, error: "Missing required fields" });
+             }
+ 
+             // Only available for accounts with compose scope
+             const composeAuthPath = path.resolve(process.cwd(), ".local", "gmail_auth_compose.json");
+             if (!fs.existsSync(composeAuthPath)) {
+               return sendJson(res, 403, { ok: false, error: "No compose auth configured" });
+             }
+             const composeAuth = JSON.parse(fs.readFileSync(composeAuthPath, "utf8"));
+             if (!composeAuth[accountEmail] || !composeAuth[accountEmail].scopes?.some((s: string) => s.includes("gmail.compose"))) {
+               return sendJson(res, 403, { ok: false, error: "Account does not have Gmail compose scope" });
+             }
+ 
+             // Use googleapis to create draft in Gmail
+             const { google } = require("googleapis");
+             const auth = new google.auth.OAuth2(
+               composeAuth[accountEmail].client_id,
+               composeAuth[accountEmail].client_secret,
+               "http://localhost:8080/oauth2callback"
+             );
+             auth.setCredentials({
+               access_token: composeAuth[accountEmail].access_token,
+               refresh_token: composeAuth[accountEmail].refresh_token,
+             });
+ 
+             const gmail = google.gmail({ version: "v1", auth });
+ 
+             // Build RFC 2822 message
+             const messageParts = [
+               `From: ${accountEmail}`,
+               `To: ${to || accountEmail}`,
+               `Subject: ${subject}`,
+               `In-Reply-To: <${gmailThreadId}>`,
+               `References: <${gmailThreadId}>`,
+               "Content-Type: text/plain; charset=UTF-8",
+               "",
+               draft,
+             ];
+             const rawMessage = messageParts.join("\r\n");
+             const encodedMessage = Buffer.from(rawMessage).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+ 
+             await gmail.users.drafts.create({
+               userId: "me",
+               requestBody: {
+                 message: { raw: encodedMessage, threadId: gmailThreadId },
+               },
+             });
+ 
+             return sendJson(res, 200, { ok: true, message: "Draft created in Gmail" });
+           } catch (e) {
+             return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+           }
+         }
+ 
+         // ---- GET /api/correspondence/request-links ----
+        if (method === "GET" && url === "/api/correspondence/request-links") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "request-links.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, request_links: { version: 1, requests: {} } });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            return sendJson(res, 200, { ok: true, request_links: JSON.parse(raw) });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+        const requestLinkMatch = url.match(/^\/api\/correspondence\/request-links\/([^/]+)$/);
+        if (method === "GET" && requestLinkMatch) {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "request-links.json");
+            if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "not found" });
+            const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+            const r = (data.requests || {})[requestLinkMatch[1]];
+            if (!r) return sendJson(res, 404, { ok: false, error: "request not found" });
+            return sendJson(res, 200, { ok: true, request: r });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/request-links/:id/confirm-link ----
+        const confirmLinkMatch = url.match(/^\/api\/correspondence\/request-links\/([^/]+)\/confirm-link$/);
+        if (method === "POST" && confirmLinkMatch) {
+          try {
+            const raw = await readBody(req);
+            const { thread_id, message_id } = JSON.parse(raw || "{}");
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "build-request-links.py"), "--confirm-link", confirmLinkMatch[1], String(thread_id), String(message_id)], { cwd: process.cwd(), timeout: 60000 });
+            return sendJson(res, 200, { ok: true });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/request-links/:id/reject-link ----
+        const rejectLinkMatch = url.match(/^\/api\/correspondence\/request-links\/([^/]+)\/reject-link$/);
+        if (method === "POST" && rejectLinkMatch) {
+          try {
+            const raw = await readBody(req);
+            const { thread_id, message_id } = JSON.parse(raw || "{}");
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "build-request-links.py"), "--reject-link", rejectLinkMatch[1], String(thread_id), String(message_id)], { cwd: process.cwd(), timeout: 60000 });
+            return sendJson(res, 200, { ok: true });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/request-links/:id/mark-reviewed ----
+        const markReviewedMatch = url.match(/^\/api\/correspondence\/request-links\/([^/]+)\/mark-reviewed$/);
+        if (method === "POST" && markReviewedMatch) {
+          try {
+            const raw = await readBody(req);
+            const { reason } = JSON.parse(raw || "{}");
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "build-request-links.py"), "--mark-reviewed", markReviewedMatch[1], reason || "reviewed"], { cwd: process.cwd(), timeout: 60000 });
+            return sendJson(res, 200, { ok: true });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/request-links/:id/review-ambiguity ----
+        const reviewAmbMatch = url.match(/^\/api\/correspondence\/request-links\/([^/]+)\/review-ambiguity$/);
+        if (method === "POST" && reviewAmbMatch) {
+          try {
+            const raw = await readBody(req);
+            const { decision } = JSON.parse(raw || "{}");
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "build-request-links.py"), "--review-ambiguity", reviewAmbMatch[1], decision || "reviewed"], { cwd: process.cwd(), timeout: 60000 });
+            return sendJson(res, 200, { ok: true });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/request-links/:id/confirm-fulfilled ----
+        const confirmMatch = url.match(/^\/api\/correspondence\/request-links\/([^/]+)\/confirm-fulfilled$/);
+        if (method === "POST" && confirmMatch) {
+          try {
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "build-request-links.py"), "--confirm-fulfilled", confirmMatch[1]], { cwd: process.cwd(), timeout: 60000 });
+            return sendJson(res, 200, { ok: true });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/person-requests (per-person open request counts) ----
+        if (method === "GET" && url === "/api/correspondence/person-requests") {
+          try {
+            const db = await loadDb();
+            // Open actions linked to a person via thread_links.
+            const stmt = db.prepare(`
+              SELECT tl.entity_id AS person_id,
+                     a.id AS action_id,
+                     a.description AS description,
+                     a.status AS status,
+                     a.owner AS owner,
+                     t.id AS thread_id,
+                     t.subject AS subject,
+                     t.status AS thread_status
+              FROM thread_links tl
+              JOIN threads t ON t.id = tl.thread_id
+              LEFT JOIN actions a ON a.thread_id = t.id
+              WHERE tl.entity_type = 'person'
+            `);
+            const rows = stmt.all();
+            const byPerson = new Map();
+            for (const r of rows) {
+              const pid = String(r.person_id);
+              if (!byPerson.has(pid)) byPerson.set(pid, { person_id: pid, open_count: 0, actions: [] });
+              const entry = byPerson.get(pid);
+              if (r.status === 'open' || r.status === null) {
+                entry.open_count += 1;
+                entry.actions.push({
+                  action_id: r.action_id,
+                  description: r.description,
+                  owner: r.owner,
+                  thread_id: r.thread_id,
+                  subject: r.subject,
+                  thread_status: r.thread_status,
+                });
+              }
+            }
+            const result = Array.from(byPerson.values()).map((e) => ({
+              ...e,
+              hold: e.open_count >= 2,
+              rule: e.open_count >= 2
+                ? 'HOLD: 2+ open requests for this person — wait for replies before sending more.'
+                : 'OK: fewer than 2 open requests.',
+            }));
+            return sendJson(res, 200, { ok: true, people: result });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/threads/:id/close (close loop + thank-you draft) ----
+        const closeThreadMatch = url.match(/^\/api\/correspondence\/threads\/([^/]+)\/close$/);
+        if (method === "POST" && closeThreadMatch) {
+          try {
+            const idParam = decodeURIComponent(closeThreadMatch[1]);
+            const db = await loadDb();
+            // Resolve to db thread row.
+            let row = db.prepare("SELECT id, account_email, gmail_thread_id, subject FROM threads WHERE gmail_thread_id = ?").get(idParam);
+            if (!row) {
+              const n = Number(idParam);
+              if (!isNaN(n)) row = db.prepare("SELECT id, account_email, gmail_thread_id, subject FROM threads WHERE id = ?").get(n);
+            }
+            if (!row) return sendJson(res, 404, { ok: false, error: "Thread not found" });
+            const tid = Number(row.id);
+            const gtid = String(row.gmail_thread_id);
+            const acct = String(row.account_email);
+            const subject = String(row.subject || '');
+            // Mark thread completed.
+            db.prepare("UPDATE threads SET status='completed', waiting_on='none', updated_at=datetime('now') WHERE id=?").run(tid);
+            // Mark actions done.
+            db.prepare("UPDATE actions SET status='done', completed_at=datetime('now') WHERE thread_id=? AND status='open'").run(tid);
+            // Generate thank-you draft file.
+            const draftsDir = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+            fs.mkdirSync(draftsDir, { recursive: true });
+            const thankYou = "Gentili Signori,\n\nDesidero ringraziarvi per la risposta e per il lavoro svolto in relazione alla mia richiesta. " +
+              "Apprezzo molto la vostra disponibilità e la professionalità dimostrata.\n\n" +
+              "Cordiali saluti,\nDaniele Buatti\ndaniele.buatti@gmail.com\ninfo@danielebuatti.com";
+            // Record a decision (memory as data).
+            try {
+              const decPath = path.resolve(process.cwd(), "src", "data", "decisions-log.json");
+              let decStore: { version: number; entries: unknown[] } = { version: 1, entries: [] };
+              if (fs.existsSync(decPath)) {
+                try { decStore = JSON.parse(fs.readFileSync(decPath, "utf-8")) || decStore; } catch { decStore = { version: 1, entries: [] }; }
+              }
+              if (!Array.isArray(decStore.entries)) decStore.entries = [];
+              decStore.entries.unshift({ ts: new Date().toISOString(), kind: "close_thread", subject: gtid, detail: `Closed thread "${subject}" and generated thank-you draft.`, by: "user" });
+              decStore.entries = decStore.entries.slice(0, 500);
+              fs.writeFileSync(decPath, JSON.stringify(decStore, null, 2) + "\\n");
+            } catch { /* non-fatal */ }
+
+            const draftPath = path.resolve(draftsDir, gtid + "_thankyou.json");
+            fs.writeFileSync(draftPath, JSON.stringify({
+              thread_id: gtid,
+              draft_text: thankYou,
+              language: "Italian",
+              generated_at: new Date().toISOString(),
+              model: "template",
+              context_summary: `Thank-you / close for thread: ${subject}`,
+              review_status: "draft",
+              edited_text: null,
+              reviewed_at: null,
+              reply_reason: "close_loop",
+              provenance: { source_thread: gtid, account: acct },
+            }, null, 2), "utf8");
+            return sendJson(res, 200, { ok: true, thread_id: gtid, draft_path: draftPath });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/drafts ----
+        if (method === "GET" && url === "/api/correspondence/drafts") {
+          try {
+            const draftsDir = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+            if (!fs.existsSync(draftsDir)) return sendJson(res, 200, { ok: true, drafts: [] });
+            const files = fs.readdirSync(draftsDir).filter((f: string) => f.endsWith(".json"));
+            let threadsData: any = {};
+            try {
+              const tp = path.resolve(process.cwd(), "correspondence", "extracted", "threads.json");
+              if (fs.existsSync(tp)) threadsData = (JSON.parse(fs.readFileSync(tp, "utf8")) || {}).threads || {};
+            } catch { /* ignore */ }
+            const drafts: any[] = [];
+            for (const f of files) {
+              try {
+                const raw = fs.readFileSync(path.join(draftsDir, f), "utf8");
+                const d = JSON.parse(raw);
+                const thread = threadsData[d.thread_id] || {};
+                const lastInbound = thread.chronology ? thread.chronology.filter((c: any) => c.direction === 'in').pop() : null;
+                const originalSummary = lastInbound ? (lastInbound.subject || lastInbound.evidence || '').slice(0, 200) : (thread.title || '').slice(0, 200);
+                const _readiness = d.readiness || d.review_status || "draft";
+                const _suppressed = !!(d.suppressed) || !!(d.provenance && d.provenance.suppressed) || !!(d.provenance && d.provenance.suggested_new_correspondence && d.provenance.suggested_new_correspondence.suppressed);
+                const _suppressionReason = (d.suppression_reason) ||
+                  (d.provenance && d.provenance.suppression_reason) ||
+                  (d.provenance && d.provenance.suggested_new_correspondence && d.provenance.suggested_new_correspondence.suppression_reason) || null;
+                // Lifecycle category: actionable | needs_review | blocked | sent | retired
+                const _lifecycle = (() => {
+                  const r = String(_readiness).toLowerCase();
+                  if (r === 'retired' || r === 'superseded') return 'retired';
+                  if (r === 'sent' || r === 'possible_sent_reply') return 'sent';
+                  if (r === 'blocked' || _suppressed) return 'blocked';
+                  if (r === 'incomplete') return 'needs_review';
+                  if (r === 'ready' || r === 'ready_for_review') return 'actionable';
+                  return 'needs_review';
+                })();
+                drafts.push({
+                  filename: f,
+                  thread_id: d.thread_id,
+                  draft_type: d.draft_type || "reply",
+                  recipient: d.recipient,
+                  recipient_email: d.recipient_email || null,
+                  subject: d.subject_suggestion || thread.title || null,
+                  readiness: _readiness,
+                  status: d.status || _readiness,
+                  lifecycle: d.lifecycle || _lifecycle,
+                  lifecycle_category: _lifecycle,
+                  is_actionable: _lifecycle === 'actionable',
+                  is_retired: _lifecycle === 'retired',
+                  is_blocked: _lifecycle === 'blocked',
+                  is_suppressed: _suppressed,
+                  suppressed: _suppressed,
+                  reply_required: d.reply_required !== undefined ? !!d.reply_required : null,
+                  retirement_reason: d.retirement_reason || null,
+                  postal_address_supplied: !!d.postal_address_supplied,
+                  physical_certificate_outstanding: !!d.physical_certificate_outstanding,
+                  warnings: d.warnings || [],
+                  verification_readiness: (d.verification && d.verification.readiness) || d.readiness || null,
+                  verification_findings: (d.verification && d.verification.findings) || [],
+                  gmail_draft_id: d.gmail_draft_id || null,
+                  gmail_draft_created_at: d.gmail_draft_created_at || null,
+                  gmail_draft_status: d.gmail_draft_status || null,
+                  gmail_body_changed: !!d.gmail_draft_id && !!d.gmail_draft_body_hash && d.gmail_draft_body_hash !== crypto.createHash('sha256').update(d.draft_text || '').digest('hex'),
+                  sent_message_id: d.sent_message_id || null,
+                  sent_at: d.sent_at || null,
+                  match_confidence: d.match_confidence || null,
+                  match_type: d.match_type || null,
+                  has_gmail_draft: !!d.gmail_draft_id,
+                  source_messages: (d.provenance && d.provenance.source_messages) || [],
+                  request_links: (d.provenance && d.provenance.request_links) || [],
+                  suppression_reason: _suppressionReason,
+                  ancestors: thread.person_names || [],
+                  record_refs: thread.record_refs || [],
+                  reply_reason: d.reply_reason || null,
+                  generated_at: d.generated_at,
+                  draft_text: d.draft_text,
+                  draft_text_en: d.draft_text_en || null,
+                  subject_translation_en: d.subject_translation_en || null,
+                  translation_status: d.translation_status || null,
+                  translation_error: d.translation_error || null,
+                  correspondence_action: d.draft_type === "new_correspondence"
+                    ? (d.thread_id && !d.thread_id.endsWith("_new") ? "Start new thread (originating from existing correspondence)" : "New standalone enquiry")
+                    : "Reply in existing thread",
+                });
+              } catch { /* skip malformed */ }
+            }
+            const _prio: any = { actionable: 0, needs_review: 1, blocked: 2, sent: 3, retired: 4 };
+            drafts.sort((a: any, b: any) => (_prio[a.lifecycle_category] ?? 9) - (_prio[b.lifecycle_category] ?? 9) || String(a.filename).localeCompare(String(b.filename)));
+            return sendJson(res, 200, { ok: true, drafts });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+        // ---- POST /api/correspondence/drafts/:filename/translate ----
+        const translateMatch = url.match(/^\/api\/correspondence\/drafts\/([^/]+)\/translate$/);
+        if (method === "POST" && translateMatch) {
+          try {
+            const filename = decodeURIComponent(translateMatch[1]);
+            const draftPath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", filename);
+            const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+            if (!draftPath.startsWith(allowedRoot + path.sep)) {
+              return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+            }
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "translate-draft.py"), draftPath], { cwd: process.cwd(), timeout: 300000 });
+            const updated = JSON.parse(fs.readFileSync(draftPath, "utf8"));
+            return sendJson(res, 200, { ok: true, translation_status: updated.translation_status, draft_text_en: updated.draft_text_en, subject_translation_en: updated.subject_translation_en, translation_error: updated.translation_error });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/drafts/:filename/create-gmail ----
+        const createGmailMatch = url.match(/^\/api\/correspondence\/drafts\/([^/]+)\/create-gmail$/);
+        if (method === "POST" && createGmailMatch) {
+          try {
+            const filename = decodeURIComponent(createGmailMatch[1]);
+            const draftPath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", filename);
+            const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+            if (!draftPath.startsWith(allowedRoot + path.sep)) {
+              return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+            }
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "create-gmail-draft.py"), draftPath, "--approve"], { cwd: process.cwd(), timeout: 120000 });
+            const updated = JSON.parse(fs.readFileSync(draftPath, "utf8"));
+            return sendJson(res, 200, { ok: true, gmail_draft_id: updated.gmail_draft_id, gmail_draft_status: updated.gmail_draft_status });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/sweep/summary ----
+        if (method === "GET" && url === "/api/sweep/summary") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "sweep-summary.json");
+            if (!fs.existsSync(filePath)) return sendJson(res, 200, { ok: true, summary: null });
+            return sendJson(res, 200, { ok: true, summary: JSON.parse(fs.readFileSync(filePath, "utf8")) });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+        // ---- POST /api/sweep/run ----
+        if (method === "POST" && url === "/api/sweep/run") {
+          try {
+            const raw = await readBody(req);
+            const body = JSON.parse(raw || "{}");
+            const args = [path.resolve(process.cwd(), "scripts", "run-sweep.py")];
+            if (body.dry_run) args.push("--dry-run");
+            if (body.limit) { args.push("--limit"); args.push(String(body.limit)); }
+            if (body.since) { args.push("--since"); args.push(String(body.since)); }
+            if (body.skip_sync) args.push("--skip-sync");
+            if (body.skip_analysis) args.push("--skip-analysis");
+            if (body.skip_drafts) args.push("--skip-drafts");
+            if (body.max_drafts) { args.push("--max-drafts"); args.push(String(body.max_drafts)); }
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", args, { cwd: process.cwd(), timeout: 590000 });
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "sweep-summary.json");
+            const summary = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, "utf8")) : null;
+            return sendJson(res, 200, { ok: true, summary });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/analysis/:id ----
+        const analysisMatch = url.match(/^\/api\/correspondence\/analysis\/(\d+)$/);
+        if (method === "GET" && analysisMatch) {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "analysis", `message_${analysisMatch[1]}.json`);
+            const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "analysis");
+            if (!filePath.startsWith(allowedRoot + path.sep)) {
+              return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+            }
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 404, { ok: false, error: "Analysis not available" });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(raw);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/reviews ----
+        if (method === "GET" && url === "/api/correspondence/reviews") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "reviews.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, reviews: {} });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const data = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, reviews: (data && data.reviews) || {} });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/reviews ----
+        if (method === "POST" && url === "/api/correspondence/reviews") {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const payload = JSON.parse(body || "{}");
+              const messageId = String(payload.message_id || "");
+              const factKey = String(payload.fact_key || "");
+              const decision = String(payload.decision || "pending");
+              if (!messageId || !factKey) {
+                return sendJson(res, 400, { ok: false, error: "message_id and fact_key required" });
+              }
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "reviews.json");
+              let store: { reviews: Record<string, Record<string, any>> } = { reviews: {} };
+              if (fs.existsSync(filePath)) {
+                try { const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")); store = (parsed && parsed.reviews) ? parsed : { reviews: {} }; } catch { store = { reviews: {} }; }
+              }
+              if (!store.reviews) store.reviews = {};
+              if (!store.reviews[messageId]) store.reviews[messageId] = {};
+              store.reviews[messageId][factKey] = {
+                decision,
+                original: payload.original ?? null,
+                edited_value: payload.edited_value ?? null,
+                evidence: payload.evidence ?? null,
+                reviewed_at: new Date().toISOString(),
+              };
+              fs.mkdirSync(path.dirname(filePath), { recursive: true });
+              const expectedVersion = (payload as any)?.expected_version || null;
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["reviews"], "Review saved via UI");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- GET /api/correspondence/threads ----
+        if (method === "GET" && url === "/api/correspondence/threads") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "threads.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 404, { ok: false, error: "Thread intelligence not available" });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(raw);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/thread-reviews ----
+        if (method === "GET" && url === "/api/correspondence/thread-reviews") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "thread-reviews.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, reviews: {} });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const data = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, reviews: (data && data.reviews) || {} });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/thread-reviews ----
+        if (method === "POST" && url === "/api/correspondence/thread-reviews") {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const payload = JSON.parse(body || "{}");
+              const threadId = String(payload.thread_id || "");
+              if (!threadId) {
+                return sendJson(res, 400, { ok: false, error: "thread_id required" });
+              }
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "thread-reviews.json");
+              let store: { reviews: Record<string, Record<string, any>> } = { reviews: {} };
+              if (fs.existsSync(filePath)) {
+                try { const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")); store = (parsed && parsed.reviews) ? parsed : { reviews: {} }; } catch { store = { reviews: {} }; }
+              }
+              if (!store.reviews) store.reviews = {};
+              if (!store.reviews[threadId]) store.reviews[threadId] = {};
+              const existing = store.reviews[threadId];
+              if (payload.status !== undefined) existing.status = payload.status;
+              if (payload.title !== undefined) existing.title = payload.title;
+              if (payload.note !== undefined) {
+                if (!Array.isArray(existing.notes)) existing.notes = [];
+                existing.notes.push({ text: payload.note, at: new Date().toISOString() });
+              }
+              if (payload.link_target !== undefined && payload.link_decision !== undefined) {
+                if (!existing.link_decisions) existing.link_decisions = {};
+                existing.link_decisions[payload.link_target] = payload.link_decision;
+              }
+              existing.reviewed_at = new Date().toISOString();
+              store.reviews[threadId] = existing;
+              fs.mkdirSync(path.dirname(filePath), { recursive: true });
+              const expectedVersion = (payload as any)?.expected_version || null;
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["thread_reviews"], "Thread review saved via UI");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- GET /api/correspondence/actions ----
+        if (method === "GET" && url === "/api/correspondence/actions") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "actions.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 404, { ok: false, error: "Actions not available" });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            res.writeHead(200, { "Content-Type": "application/json" });
+            return res.end(raw);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/pipeline-status ----
+        if (method === "GET" && url === "/api/correspondence/pipeline-status") {
+          try {
+            const logPath = path.resolve(process.cwd(), ".local", "pipeline.log");
+            const lockPath = path.resolve(process.cwd(), ".local", "pipeline.lock");
+            const isRunning = fs.existsSync(lockPath);
+            let lastRun = null;
+            let lastLines: string[] = [];
+            if (fs.existsSync(logPath)) {
+              const raw = fs.readFileSync(logPath, "utf8");
+              const lines = raw.split("\n").filter(Boolean);
+              lastLines = lines.slice(-10);
+              // Find last "Pipeline run complete" or "Pipeline run started"
+              for (let i = lines.length - 1; i >= 0; i--) {
+                if (lines[i].includes("Pipeline run complete") || lines[i].includes("Pipeline run started")) {
+                  lastRun = lines[i];
+                  break;
+                }
+              }
+            }
+            return sendJson(res, 200, { ok: true, isRunning, lastRun, lastLines });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/new-items ----
+        if (method === "GET" && url === "/api/correspondence/new-items") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "new-items.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, detected_at: null, new_message_count: 0, items: [], message: "No detection run yet." });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, parsed);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/review-state ----
+        if (method === "GET" && url === "/api/correspondence/review-state") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "review-state.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, last_reviewed_message_id: 0, last_reviewed_at: null });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, parsed);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/detect-new ----
+        if (method === "POST" && url === "/api/correspondence/detect-new") {
+          try {
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "detect-new-correspondence.py")], { cwd: process.cwd(), timeout: 300000 });
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "new-items.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, new_message_count: 0, items: [] });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, parsed);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/mark-reviewed ----
+        if (method === "POST" && url === "/api/correspondence/mark-reviewed") {
+          try {
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "detect-new-correspondence.py"), "--mark-reviewed"], { cwd: process.cwd(), timeout: 60000 });
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "review-state.json");
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, parsed);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/draft-new/:thread_id (generate new correspondence draft) ----
+        const draftNewMatch = url.match(/^\/api\/correspondence\/draft-new\/([^/?]+)$/);
+        if (method === "POST" && draftNewMatch) {
+          try {
+            const threadId = decodeURIComponent(draftNewMatch[1]);
+            const { execFileSync } = await import("node:child_process");
+            // The script is authoritative: it re-verifies an existing draft in
+            // memory, refuses suppressed suggestions, and records readiness.
+            const output = execFileSync(
+              "python3",
+              [path.resolve(process.cwd(), "scripts", "draft-new-correspondence.py"), threadId],
+              { cwd: process.cwd(), encoding: "utf8", timeout: 300000 },
+            );
+            const result = JSON.parse(output);
+            return sendJson(res, result.ok ? 200 : 409, result);
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/draft-new/:thread_id ----
+        const draftNewGetMatch = url.match(/^\/api\/correspondence\/draft-new\/([^/?]+)$/);
+        if (method === "GET" && draftNewGetMatch) {
+          try {
+            const threadId = decodeURIComponent(draftNewGetMatch[1]);
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", threadId + "_new.json");
+            const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+            if (!filePath.startsWith(allowedRoot + path.sep)) {
+              return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+            }
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 404, { ok: false, error: "No new correspondence draft available" });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, draft: parsed });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/draft-new/:thread_id/save ----
+        const draftNewSaveMatch = url.match(/^\/api\/correspondence\/draft-new\/([^/?]+)\/save$/);
+        if (method === "POST" && draftNewSaveMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const threadId = decodeURIComponent(draftNewSaveMatch[1]);
+              const payload = JSON.parse(body || "{}");
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", threadId + "_new.json");
+              const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+              if (!filePath.startsWith(allowedRoot + path.sep)) {
+                return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+              }
+              if (!fs.existsSync(filePath)) {
+                return sendJson(res, 404, { ok: false, error: "No draft to save" });
+              }
+              const existing = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              const expectedVersion = payload.expected_version || null;
+              if (payload.edited_text !== undefined) existing.edited_text = payload.edited_text;
+              existing.reviewed_at = new Date().toISOString();
+              safeWriteJson(filePath, existing, "app_ui", expectedVersion, ["edited_text"], "Draft edit saved via UI");
+              return sendJson(res, 200, { ok: true, draft: existing });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/corrections (register a correction) ----
+        if (method === "POST" && url === "/api/corrections") {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const payload = JSON.parse(body || "{}");
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "corrections.json");
+              let store: { version: number; corrections: Record<string, any>; generated_at: string | null } = { version: 1, corrections: {}, generated_at: null };
+              if (fs.existsSync(filePath)) {
+                try { const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")); store = parsed; } catch { store = { version: 1, corrections: {}, generated_at: null }; }
+              }
+              if (!store.corrections) store.corrections = {};
+              // Generate ID
+              const corrId = "corr_" + String(Object.keys(store.corrections).length + 1).padStart(4, "0");
+              const entry = {
+                id: corrId,
+                timestamp: new Date().toISOString(),
+                source: payload.source || "app_ui",
+                source_detail: payload.source_detail || "UI correction",
+                message_id: payload.message_id || null,
+                thread_id: payload.thread_id || null,
+                field: payload.field || "",
+                stage: payload.stage || "other",
+                original: payload.original ?? null,
+                corrected: payload.corrected ?? null,
+                evidence: payload.evidence ?? null,
+                correction_type: payload.correction_type || "other",
+                scope: payload.scope || "case_specific",
+                model_version: payload.model_version || null,
+                prompt_version: payload.prompt_version || null,
+                human_confirmed: payload.human_confirmed !== false,
+                rule_proposed: null,
+                rule_approved: null,
+                notes: payload.notes || "",
+              };
+              store.corrections[corrId] = entry;
+              store.generated_at = new Date().toISOString();
+              const expectedVersion = payload.expected_version || null;
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, [payload.field || "correction"], "Correction registered via UI");
+              return sendJson(res, 200, { ok: true, correction_id: corrId });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/corrections/:id/confirm ----
+        const corrConfirmMatch = url.match(/^\/api\/corrections\/([^/]+)\/confirm$/);
+        if (method === "POST" && corrConfirmMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const corrId = decodeURIComponent(corrConfirmMatch[1]);
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "corrections.json");
+              if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "No corrections file" });
+              const store = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              if (!store.corrections?.[corrId]) return sendJson(res, 404, { ok: false, error: "Correction not found" });
+              const expectedVersion = JSON.parse(body || "{}")?.expected_version || null;
+              store.corrections[corrId].human_confirmed = true;
+              store.corrections[corrId].confirmed_at = new Date().toISOString();
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["human_confirmed"], "Correction confirmed via UI");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/corrections/:id/reject ----
+        const corrRejectMatch = url.match(/^\/api\/corrections\/([^/]+)\/reject$/);
+        if (method === "POST" && corrRejectMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const corrId = decodeURIComponent(corrRejectMatch[1]);
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "corrections.json");
+              if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "No corrections file" });
+              const store = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              if (!store.corrections?.[corrId]) return sendJson(res, 404, { ok: false, error: "Correction not found" });
+              const expectedVersion = JSON.parse(body || "{}")?.expected_version || null;
+              store.corrections[corrId].human_confirmed = false;
+              store.corrections[corrId].rejected = true;
+              store.corrections[corrId].rejected_at = new Date().toISOString();
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["human_confirmed", "rejected"], "Correction rejected via UI");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- GET /api/correspondence/rules ----
+        if (method === "GET" && url === "/api/correspondence/rules") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "rules.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, rules: {}, count: 0 });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, rules: parsed.rules || {}, count: Object.keys(parsed.rules || {}).length });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/rules/:id/approve ----
+        const ruleApproveMatch = url.match(/^\/api\/rules\/([^/]+)\/approve$/);
+        if (method === "POST" && ruleApproveMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const ruleId = decodeURIComponent(ruleApproveMatch[1]);
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "rules.json");
+              if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "No rules file" });
+              const store = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              if (!store.rules?.[ruleId]) return sendJson(res, 404, { ok: false, error: "Rule not found" });
+              const payload = JSON.parse(body || "{}");
+              const expectedVersion = payload?.expected_version || null;
+              store.rules[ruleId].status = "active";
+              store.rules[ruleId].approved_at = new Date().toISOString();
+              store.rules[ruleId].approved_by = "human";
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["status", "approved_at"], "Rule approved via UI");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/rules/:id/reject ----
+        const ruleRejectMatch = url.match(/^\/api\/rules\/([^/]+)\/reject$/);
+        if (method === "POST" && ruleRejectMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const ruleId = decodeURIComponent(ruleRejectMatch[1]);
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "rules.json");
+              if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "No rules file" });
+              const store = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              if (!store.rules?.[ruleId]) return sendJson(res, 404, { ok: false, error: "Rule not found" });
+              const payload = JSON.parse(body || "{}");
+              const expectedVersion = payload?.expected_version || null;
+              store.rules[ruleId].status = "rejected";
+              store.rules[ruleId].rejected_at = new Date().toISOString();
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["status", "rejected_at"], "Rule rejected via UI");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/rules/propose ----
+        if (method === "POST" && url === "/api/rules/propose") {
+          try {
+            const { execFileSync } = await import("node:child_process");
+            execFileSync("python3", [path.resolve(process.cwd(), "scripts", "propose-rules.py")], { cwd: process.cwd(), timeout: 60000 });
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "rules.json");
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, rules: parsed.rules || {}, count: Object.keys(parsed.rules || {}).length });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/investigations ----
+        if (method === "GET" && url === "/api/correspondence/investigations") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "investigations.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, investigations: {}, count: 0 });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, investigations: parsed.investigations || {}, count: Object.keys(parsed.investigations || {}).length });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/investigations (create) ----
+        if (method === "POST" && url === "/api/correspondence/investigations") {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const payload = JSON.parse(body || "{}");
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "investigations.json");
+              let store: { version: number; investigations: Record<string, any>; generated_at: string | null } = { version: 1, investigations: {}, generated_at: null };
+              if (fs.existsSync(filePath)) {
+                try { const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")); store = parsed; } catch { store = { version: 1, investigations: {}, generated_at: null }; }
+              }
+              if (!store.investigations) store.investigations = {};
+              const invId = "inv_" + String(Object.keys(store.investigations).length + 1).padStart(3, "0");
+              const entry = {
+                id: invId,
+                created_at: new Date().toISOString(),
+                created_by: payload.created_by || "app_ui",
+                status: "pending",
+                thread_id: payload.thread_id || null,
+                lead_id: payload.lead_id || null,
+                title: payload.title || "Untitled investigation",
+                objective: payload.objective || "",
+                findings: [],
+                sources: [],
+                recommended_action: null,
+                draft_id: null,
+                activity_log: [{ ts: new Date().toISOString(), by: payload.created_by || "app_ui", action: "created", detail: "Investigation created" }],
+                human_decision: null,
+                updated_at: new Date().toISOString(),
+              };
+              store.investigations[invId] = entry;
+              store.generated_at = new Date().toISOString();
+              const expectedVersion = payload.expected_version || null;
+              safeWriteJson(filePath, store, "app_ui", expectedVersion, ["investigations"], "Investigation created");
+              return sendJson(res, 200, { ok: true, investigation_id: invId });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/investigations/:id/process (launch OpenCode) ----
+        const invProcessMatch = url.match(/^\/api\/investigations\/([^/]+)\/process$/);
+        if (method === "POST" && invProcessMatch) {
+          try {
+            const invId = decodeURIComponent(invProcessMatch[1]);
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "investigations.json");
+            if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "No investigations file" });
+            const store = JSON.parse(fs.readFileSync(filePath, "utf8"));
+            const inv = store.investigations?.[invId];
+            if (!inv) return sendJson(res, 404, { ok: false, error: "Investigation not found" });
+            if (inv.status !== "pending" && inv.status !== "in_progress") {
+              return sendJson(res, 400, { ok: false, error: "Investigation is not in a processable state: " + inv.status });
+            }
+
+            // Set status to in_progress
+            inv.status = "in_progress";
+            inv.updated_at = new Date().toISOString();
+            if (!Array.isArray(inv.activity_log)) inv.activity_log = [];
+            inv.activity_log.push({ ts: new Date().toISOString(), by: "app_ui", action: "process_requested", detail: "OpenCode processing requested from app" });
+            store.investigations[invId] = inv;
+            safeWriteJson(filePath, store, "app_ui", null, ["status", "activity_log"], "Investigation processing started");
+
+            // Launch OpenCode as child process
+            const { spawn } = await import("node:child_process");
+            const prompt = "Process investigation " + invId + " in correspondence/extracted/investigations.json. " +
+              "Read the investigation and its thread_id. Read all messages in that thread from the database. " +
+              "Research the recommended institution's official website for contact details and procedures. " +
+              "Write findings, sources, recommended_action, and draft_id back to the investigation file using the API: " +
+              "POST /api/investigations/" + invId + "/update with JSON body. " +
+              "Set status to in_progress while working, then leave status as in_progress for human review. " +
+              "Do NOT mark as completed or approved. Do NOT send any emails. " +
+              "Record all activity in the activity_log with by=opencode. " +
+              "Use safe_write for any file modifications.";
+
+            const child = spawn("opencode", ["run", prompt, process.cwd()], {
+              cwd: process.cwd(),
+              detached: true,
+              stdio: ["ignore", "pipe", "pipe"],
+            });
+            child.unref();
+
+            // Log the spawn
+            const logPath = path.resolve(process.cwd(), ".local", "opencode-tasks.log");
+            const logEntry = JSON.stringify({ ts: new Date().toISOString(), invId, pid: child.pid, prompt: prompt.slice(0, 200) }) + "\n";
+            fs.appendFileSync(logPath, logEntry, "utf8");
+
+            return sendJson(res, 200, { ok: true, pid: child.pid, message: "OpenCode launched for investigation " + invId });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/investigations/:id/update ----
+        const invUpdateMatch = url.match(/^\/api\/investigations\/([^/]+)\/update$/);
+        if (method === "POST" && invUpdateMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const invId = decodeURIComponent(invUpdateMatch[1]);
+              const payload = JSON.parse(body || "{}");
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "investigations.json");
+              if (!fs.existsSync(filePath)) return sendJson(res, 404, { ok: false, error: "No investigations file" });
+              const store = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              if (!store.investigations?.[invId]) return sendJson(res, 404, { ok: false, error: "Investigation not found" });
+              const inv = store.investigations[invId];
+              const expectedVersion = payload.expected_version || null;
+              if (payload.status !== undefined) inv.status = payload.status;
+              if (payload.findings !== undefined) inv.findings = payload.findings;
+              if (payload.sources !== undefined) inv.sources = payload.sources;
+              if (payload.recommended_action !== undefined) inv.recommended_action = payload.recommended_action;
+              if (payload.draft_id !== undefined) inv.draft_id = payload.draft_id;
+              if (payload.human_decision !== undefined) inv.human_decision = payload.human_decision;
+              if (payload.activity !== undefined) {
+                if (!Array.isArray(inv.activity_log)) inv.activity_log = [];
+                inv.activity_log.push({ ts: new Date().toISOString(), by: payload.activity_by || "opencode", action: payload.activity, detail: payload.activity_detail || "" });
+              }
+              inv.updated_at = new Date().toISOString();
+              store.investigations[invId] = inv;
+              safeWriteJson(filePath, store, payload.source || "app_ui", expectedVersion, ["investigation"], "Investigation updated");
+              return sendJson(res, 200, { ok: true });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- GET /api/correspondence/corrections ----
+        if (method === "GET" && url === "/api/correspondence/corrections") {
+          try {
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "corrections.json");
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 200, { ok: true, corrections: {}, count: 0 });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, corrections: parsed.corrections || {}, count: Object.keys(parsed.corrections || {}).length });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- GET /api/correspondence/draft-reply/:thread_id ----
+        const draftGetMatch = url.match(/^\/api\/correspondence\/draft-reply\/([^/?]+)$/);
+        if (method === "GET" && draftGetMatch) {
+          try {
+            const threadId = decodeURIComponent(draftGetMatch[1]);
+            const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", threadId + ".json");
+            const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+            if (!filePath.startsWith(allowedRoot + path.sep)) {
+              return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+            }
+            if (!fs.existsSync(filePath)) {
+              return sendJson(res, 404, { ok: false, error: "No draft available" });
+            }
+            const raw = fs.readFileSync(filePath, "utf8");
+            const parsed = JSON.parse(raw);
+            return sendJson(res, 200, { ok: true, draft: parsed });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
+        // ---- POST /api/correspondence/draft-reply/:thread_id (generate) ----
+        const draftGenMatch = url.match(/^\/api\/correspondence\/draft-reply\/([^/?]+)$/);
+        if (method === "POST" && draftGenMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", async () => {
+            try {
+              const threadId = decodeURIComponent(draftGenMatch[1]);
+              const payload = JSON.parse(body || "{}");
+              const force = payload.force === true;
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", threadId + ".json");
+              const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+              if (!filePath.startsWith(allowedRoot + path.sep)) {
+                return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+              }
+              // The script is authoritative: it re-verifies an existing draft in
+              // memory (never rewriting it) and records readiness, so the UI can
+              // never present an unverified draft as ready.
+              const { execFileSync } = await import("child_process");
+              const args = ["scripts/draft-reply.py", threadId];
+              if (force) args.push("--force");
+              const output = execFileSync("python3", args, { cwd: process.cwd(), encoding: "utf8", timeout: 300000 });
+              const result = JSON.parse(output);
+              return sendJson(res, result.ok ? 200 : 500, result);
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
+        // ---- POST /api/correspondence/draft-reply/:thread_id/save ----
+        const draftSaveMatch = url.match(/^\/api\/correspondence\/draft-reply\/([^/?]+)\/save$/);
+        if (method === "POST" && draftSaveMatch) {
+          let body = "";
+          req.on("data", (chunk) => { body += chunk; });
+          req.on("end", () => {
+            try {
+              const threadId = decodeURIComponent(draftSaveMatch[1]);
+              const payload = JSON.parse(body || "{}");
+              const filePath = path.resolve(process.cwd(), "correspondence", "extracted", "drafts", threadId + ".json");
+              const allowedRoot = path.resolve(process.cwd(), "correspondence", "extracted", "drafts");
+              if (!filePath.startsWith(allowedRoot + path.sep)) {
+                return sendJson(res, 403, { ok: false, error: "Path not allowed" });
+              }
+              if (!fs.existsSync(filePath)) {
+                return sendJson(res, 404, { ok: false, error: "Draft not found" });
+              }
+              const draft = JSON.parse(fs.readFileSync(filePath, "utf8"));
+              draft.edited_text = payload.edited_text ?? draft.edited_text;
+              draft.review_status = "edited";
+              draft.reviewed_at = new Date().toISOString();
+              fs.writeFileSync(filePath, JSON.stringify(draft, null, 2) + "\n", "utf8");
+              return sendJson(res, 200, { ok: true, draft });
+            } catch (e) {
+              return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+            }
+          });
+          return;
+        }
+
         next();
       });
     },
@@ -1015,10 +2615,14 @@ export default defineConfig(() => ({
     host: "::",
     port: 8080,
   },
+  ...(isFamilyBuild
+    ? { build: { rollupOptions: { input: path.resolve(__dirname, "family.html") } } }
+    : {}),
   plugins: [dyadComponentTagger(), react(), localRecordsApiPlugin(), localCorrespondenceApiPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      ...conditionalAlias,
     },
   },
 }));

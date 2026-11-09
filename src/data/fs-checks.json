@@ -1,15 +1,20 @@
 {
   "gregorio-emmi": {
-    "checkedOn": "2026-11-05",
-    "openItems": 7,
+    "checkedOn": "2026-11-09",
+    "openItems": 3,
     "open": [
-      "Add Birth: 23 October 1915 · Linguaglossa, Catania, Sicilia, Italia",
-      "Add Christening: 5 December 1915 · Linguaglossa, Catania, Sicilia, Italia",
-      "Add Marriage: 7 July 1948 · Fiumefreddo di Sicilia, Catania, Sicilia, Italia",
       "Concetta Sgroi: birth year differs",
-      "Possible Duplicate",
-      "Record hint",
-      "Missing Vital Event"
+      "Research help",
+      "Record hint"
+    ],
+    "snoozedOn": "2026-11-09"
+  },
+  "daniele-buatti": {
+    "checkedOn": "2026-11-05",
+    "openItems": 2,
+    "open": [
+      "Parent Venera Buatti (née Emmi) not found on the FamilySearch page",
+      "Research help"
     ]
   }
 }

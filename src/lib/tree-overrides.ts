@@ -9,7 +9,7 @@
  * the save call fails silently and behaviour degrades to the old in-memory UI.
  */
 import type { Person, ResearchLead, OpenQuestion } from '@/types';
-import overridesJson from '@/data/tree-overrides.json';
+import overridesJson from '../../.local/tree-overrides.json';
 
 export interface TreeOverrides {
   addedPeople: Person[];
@@ -73,12 +73,28 @@ export function saveTreeOverride(body: TreeOverrideOp, onError?: (message: strin
     body: JSON.stringify(body),
   })
     .then(res => {
-      // In the deployed build this endpoint does not exist (dev-only): surface
-      // the same warning without crashing.
-      if (!res.ok) onError?.('Could not save to the local sidecar — the change will be lost on refresh.');
-      return res;
+      // Only treat JSON responses as successful
+      if (!res.ok) {
+        onError?.(`Save failed: HTTP ${res.status}`);
+        return;
+      }
+      
+      if (!res.headers.get('content-type')?.includes('application/json')) {
+        onError?.('Save endpoint returned unexpected content type');
+        return;
+      }
+      
+      return res.json();
     })
-    .catch(() => {
-      onError?.('Could not save to the local sidecar — the change will be lost on refresh.');
+    .then(data => {
+      if (data?.ok !== true) {
+        onError?.('Save failed: invalid response format');
+        return;
+      }
+      // Success - confirmed
+      onError?.('Save successful');
+    })
+    .catch(err => {
+      onError?.(err instanceof Error ? err.message : 'Could not save to the local sidecar — the change will be lost on refresh.');
     });
 }

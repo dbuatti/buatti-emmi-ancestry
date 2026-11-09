@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "routes": {
+    "Comune di Ascoli Piceno": {
+      "paid": "Multi-year marriage/birth search (€250–300, year uncertain).",
+      "free": [
+        "Death acts <100 years old with exact date (free extract, small bollo ~€16)",
+        "Cemetery database (Borgo Solestà) — free online search",
+        "School/military records via Ufficio Scolastico / Archivio di Stato"
+      ]
+    },
+    "Comune di San Benedetto del Tronto": {
+      "paid": "Year-uncertain searches.",
+      "free": [
+        "Death acts with exact date (free extract)",
+        "Parish (Curia) records — separate, free enquiry"
+      ]
+    },
+    "Comune di Maltignano": {
+      "paid": "None known.",
+      "free": [
+        "Death acts with exact date (€16.52 bollo+segreteria)",
+        "Anagrafe questions (free)"
+      ]
+    },
+    "Archivio di Stato di Ascoli Piceno": {
+      "paid": "Some reproductions.",
+      "free": [
+        "Consultation of registers (free, in-person)",
+        "Morti allegati / censimento (Antenati, free)"
+      ]
+    },
+    "Università di Perugia": {
+      "paid": "None — provided free digital reproduction.",
+      "free": [
+        "Student file reproduction (free, on request)"
+      ]
+    },
+    "IIS \"Celso Ulpiani\" (Ascoli Piceno)": {
+      "paid": "None — provided free.",
+      "free": [
+        "Student file (free, on request)"
+      ]
+    }
+  }
+}

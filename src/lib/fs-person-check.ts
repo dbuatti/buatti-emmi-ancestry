@@ -55,7 +55,18 @@ export function parseFsPage(text: string): ParsedFsPage {
     if (block.some((l) => /^No Marriage Events$/.test(l))) out.marriage = { present: false, text: '' };
     else {
       const i = block.findIndex((l) => /^Marriage$/.test(l));
-      out.marriage = i === -1 ? null : { present: true, text: block[i + 1] ?? '' };
+      if (i === -1) out.marriage = null;
+      else {
+        // FamilySearch prints the date on the line after "Marriage" and the
+        // place on the line after that. Capture both so the place comparison
+        // doesn't produce a false "differs" when only the date was read.
+        const dateLine = block[i + 1] ?? '';
+        const placeLine = block[i + 2];
+        const text = placeLine && !/^(Male|Female|Marriage)$/.test(placeLine)
+          ? `${dateLine} ${placeLine}`.trim()
+          : dateLine.trim();
+        out.marriage = { present: true, text };
+      }
     }
   }
 
@@ -78,7 +89,7 @@ export function parseFsPage(text: string): ParsedFsPage {
   if (rStart !== -1) {
     const rEnd = lines.findIndex((l, i) => i > rStart && /^(Search Records|Notes|Show All)$/.test(l));
     const block = lines.slice(rStart + 1, rEnd === -1 ? rStart + 30 : rEnd)
-      .filter((l) => !/^(Quality Score:|Not Available at This Time|Learn more\.?|•|Male|Female|Deceased|Living)$/.test(l));
+      .filter((l) => !/^(Quality Score:|Show Quality Details|Not Available at This Time|Learn more\.?|•|Male|Female|Deceased|Living|High|Medium|Low)$/.test(l));
     let item: { title: string; detail: string } | null = null;
     for (const l of block) {
       if (/^(Possible Duplicate|Missing Vital Event|Data Problem|Record Hint|Research Suggestion)/.test(l)) {

@@ -169,7 +169,7 @@ export function NextGuide() {
       <Card className="bg-white rounded-xl shadow-sm border-2 border-[#800020]/20">
         <div className="bg-[#FAF6F0] rounded-t-xl p-4 border-b border-[#800020]/20">
           <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider">Next task</h2>
-          <div className="text-[10px] text-stone-500 mt-0.5">{task.personName}</div>
+          <a href={`/people/${task.personId}`} className="text-[10px] text-stone-500 mt-0.5 underline">{task.personName}</a>
         </div>
         <CardContent className="p-4 space-y-3">
           <div className="text-sm font-semibold text-stone-800">
@@ -299,7 +299,6 @@ export function NextGuide() {
     setStatus('Creating record…');
     try {
       const { id } = await callApiCreateRecord({
-        personId: task.personId,
         personName: task.personName,
         eventType: task.eventType ?? 'birth',
         note: task.whereItIs,
@@ -486,10 +485,20 @@ export function NextGuide() {
           <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider leading-none">
             Next task
           </h2>
-          <div className="flex items-center gap-1.5 text-[10px] text-stone-500 mt-0.5">
-            <span>Working on: {task.personName}{task.relationship ? ` (${task.relationship})` : ''}</span>
-            <span className="w-px h-3 bg-stone-300 mx-0.5" />
-            <span className="font-bold text-[#800020]">{progress}</span>
+          <div className="mt-1">
+            <div className="text-[11px] uppercase tracking-wide text-stone-500">Working on</div>
+            <a
+              href={`/people/${task.personId}`}
+              className="block text-2xl font-serif font-bold text-[#800020] leading-tight hover:underline"
+              title="Open this person's page"
+            >
+              {task.personName}
+            </a>
+            <div className="flex items-center gap-2 text-sm text-stone-600 mt-0.5">
+              {task.relationship && <span className="capitalize">{task.relationship === 'self' ? 'You' : task.relationship}</span>}
+              {task.relationship && <span className="w-px h-3 bg-stone-300" />}
+              <span className="font-bold text-[#800020]">{progress} done</span>
+            </div>
           </div>
         </div>
       </div>

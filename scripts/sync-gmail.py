@@ -16,6 +16,7 @@ Max messages per bootstrap run: 500 (strict cap, no pagination beyond first page
 
 import argparse
 import base64
+import hashlib
 import json
 import os
 import re
@@ -152,6 +153,17 @@ def decode_base64url(data):
         return base64.urlsafe_b64decode(padded).decode("utf-8", "replace")
     except Exception:
         return ""
+
+
+def decode_base64_bytes(data):
+    """Decode Gmail base64/base64url attachment data to raw bytes (binary-safe)."""
+    if not data:
+        return b""
+    padded = data + "=" * (4 - len(data) % 4)
+    try:
+        return base64.urlsafe_b64decode(padded.encode("ascii"))
+    except Exception:
+        return b""
 
 
 def strip_html_tags(html):
@@ -1114,6 +1126,207 @@ def is_message_complete(conn, message_id, raw_dir):
     return True, None
 
 
+# ---------------------------------------------------------------------------
+# Attachment download (Phase 2 — local file retrieval via Gmail API)
+# ---------------------------------------------------------------------------
+
+ATTACHMENTS_DOWNLOAD_DIR = PROJECT_ROOT / "correspondence" / "attachments"
+
+
+def attachment_storage_path(gmail_message_id, gmail_attachment_id, filename,
+                             size_bytes=0, mime_type="application/octet-stream"):
+    """Return a collision-safe local storage path for a Gmail attachment.
+
+    Layout:
+        correspondence/attachments/<gmail_message_id>/<sha256(gmail_attachment_id)[:32]>_<safe_filename>
+
+    The storage filename is prefixed with a short sha256 hex digest of the
+    (globally unique) Gmail attachment id, so two attachments that happen to
+    share an original filename can never land on the same physical file — even
+    when they come from different messages. The original filename is preserved
+    separately via the DB columns `filename` / `safe_filename` and appears as
+    the final path component (sanitised).
+
+    When gmail_attachment_id is missing (fallback identity path), a
+    deterministic sha256 of the composite identity (message + filename + mime +
+    size) is used, so fallback-detected attachments are collision-safe too.
+
+    Returns a pathlib.Path under ATTACHMENTS_DOWNLOAD_DIR.
+    """
+    if gmail_attachment_id:
+        unique_key = hashlib.sha256(
+            gmail_attachment_id.encode("utf-8")
+        ).hexdigest()[:32]
+    else:
+        unique_key = hashlib.sha256(
+            f"{gmail_message_id or ''}|{filename or ''}|{mime_type or ''}|{size_bytes or 0}".encode("utf-8")
+        ).hexdigest()[:32]
+    safe_name = sanitise_filename(filename)
+    message_key = gmail_message_id or "unknown"
+    return ATTACHMENTS_DOWNLOAD_DIR / message_key / f"{unique_key}_{safe_name}"
+
+
+def download_attachment(service, gmail_message_id, gmail_attachment_id, filename,
+                       size_bytes=0, mime_type="application/octet-stream"):
+    """Download a single Gmail attachment via the Gmail API.
+
+    GET /users/me/messages/{messageId}/attachments/{id}
+
+    Returns (local_path, error). local_path is None on failure.
+
+    Local storage: correspondence/attachments/<gmail_message_id>/<sha256(gmail_attachment_id)[:32]>_<safe_filename>
+    (collision-safe: unique per attachment, original filename preserved via safe_filename)
+    """
+    try:
+        resp = service.users().messages().attachments().get(
+            userId="me", id=gmail_attachment_id, messageId=gmail_message_id,
+        ).execute()
+        content = decode_base64_bytes(resp.get("data", ""))
+        if not content:
+            return None, "empty_attachment_data"
+        target = attachment_storage_path(
+            gmail_message_id, gmail_attachment_id, filename, size_bytes, mime_type,
+        )
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(content)
+        return str(target), None
+    except Exception as e:
+        return None, f"{type(e).__name__}: {e}"
+
+
+def run_download(dry_run=False, account_email=None, gmail_message_id=None):
+    """Download attachments from Gmail into local disk (Phase 2, RC).
+
+    Downloads only attachments that have a gmail_attachment_id and no local_path
+    yet (idempotent: once local_path is set, the row is skipped).
+
+    Storage is collision-safe: each attachment is written to a unique physical
+    path (correspondence/attachments/<gmail_message_id>/<sha256(gmail_attachment_id)[:32]>_<safe_filename>),
+    so identically-named attachments from different messages never overwrite
+    each other. Re-downloading the same Gmail attachment id deterministically
+    rewrites the same file with identical content.
+
+    gmail_message_id: optional Gmail message ID filter — download only that
+    message's attachments.
+
+    Returns summary dict: {"downloaded": [...], "skipped": [...], "failed": [...]}
+    """
+    if account_email is None:
+        account_email = DEFAULT_ACCOUNT_EMAIL
+
+    creds = load_research_ops_credentials(account_email)
+    if creds is None:
+        print(f"ERROR: No credentials for {account_email}.")
+        print(f"Re-authorize with read-only scope:")
+        print(f"  python scripts/sync-gmail.py --auth --account {account_email}")
+        return None
+
+    # Refresh token if needed
+    try:
+        from google.auth.transport.requests import Request
+        if creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            import json as _json
+            auth_file = RESEARCH_OPS_AUTH_FILE
+            if auth_file.exists():
+                accounts = _json.loads(auth_file.read_text())
+                if account_email in accounts:
+                    accounts[account_email]["access_token"] = creds.token
+                    if creds.expiry:
+                        accounts[account_email]["token_expiry"] = creds.expiry.strftime(
+                            "%Y-%m-%dT%H:%M:%SZ")
+                    auth_file.write_text(_json.dumps(accounts, indent=2, ensure_ascii=False))
+    except Exception as e:
+        print(f"ERROR: Token refresh failed: {e}")
+        return None
+
+    from googleapiclient.discovery import build
+    service = build("gmail", "v1", credentials=creds)
+
+    conn = get_db()
+    downloaded = []
+    skipped = []
+    failed = []
+
+    try:
+        query = """
+            SELECT a.id AS att_id, a.filename, a.safe_filename, a.mime_type,
+                   a.size_bytes, a.gmail_attachment_id, a.local_path, a.unavailable,
+                   m.gmail_message_id AS gmail_msg_id
+            FROM attachments a
+            JOIN messages m ON m.id = a.message_id
+            WHERE a.unavailable = 0
+              AND a.gmail_attachment_id IS NOT NULL
+              AND (a.local_path IS NULL OR a.local_path = '')
+              AND m.account_email = ?
+        """
+        params = [account_email]
+        if gmail_message_id:
+            query += " AND m.gmail_message_id = ?"
+            params.append(gmail_message_id)
+        query += " ORDER BY a.id"
+
+        rows = conn.execute(query, params).fetchall()
+
+        for att in rows:
+            if att["local_path"]:
+                skipped.append({
+                    "att_id": att["att_id"],
+                    "gmail_attachment_id": att["gmail_attachment_id"],
+                    "filename": att["filename"],
+                    "reason": "already_downloaded",
+                })
+                continue
+
+            local_path, err = download_attachment(
+                service, att["gmail_msg_id"], att["gmail_attachment_id"], att["filename"],
+                size_bytes=att["size_bytes"], mime_type=att["mime_type"],
+            )
+            if local_path is None:
+                failed.append({
+                    "att_id": att["att_id"],
+                    "gmail_attachment_id": att["gmail_attachment_id"],
+                    "filename": att["filename"],
+                    "error": err,
+                })
+                continue
+
+            if dry_run:
+                downloaded.append({
+                    "att_id": att["att_id"],
+                    "gmail_attachment_id": att["gmail_attachment_id"],
+                    "filename": att["filename"],
+                    "local_path": local_path,
+                    "dry_run": True,
+                })
+                continue
+
+            conn.execute(
+                "UPDATE attachments SET local_path = ? WHERE id = ?",
+                (local_path, att["att_id"]),
+            )
+            conn.commit()
+            downloaded.append({
+                "att_id": att["att_id"],
+                "gmail_attachment_id": att["gmail_attachment_id"],
+                "filename": att["filename"],
+                "local_path": local_path,
+            })
+
+    finally:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+    return {
+        "downloaded": downloaded,
+        "skipped": skipped,
+        "failed": failed,
+        "total_candidates": len(rows),
+    }
+
+
 # Map message_type to legacy category (for the category column CHECK constraint)
 LEGACY_CATEGORY_MAP = {
     "government": "personal",
@@ -1982,6 +2195,10 @@ def main():
                         help="List metadata only, no DB writes")
     parser.add_argument("--incremental", action="store_true",
                         help="Incremental sync (new messages only)")
+    parser.add_argument("--download", action="store_true",
+                        help="Download Gmail attachments to local disk (Phase 2)")
+    parser.add_argument("--download-message", default=None, metavar="GMAIL_MESSAGE_ID",
+                        help="Optional Gmail message ID to scope downloads to")
     args = parser.parse_args()
 
     if args.auth:
@@ -2035,6 +2252,17 @@ def main():
         print(f"Account: {args.account}")
         print(f"Scopes: {accounts[args.account]['scopes']}")
         sys.exit(0)
+
+    if args.download:
+        summary = run_download(
+            dry_run=args.dry_run,
+            account_email=args.account,
+            gmail_message_id=args.download_message,
+        )
+        if summary is None:
+            sys.exit(1)
+        print(json.dumps(summary, indent=2, default=str))
+        return
 
     mode = "incremental" if args.incremental else "bootstrap"
     # Override MAX_MESSAGES if specified

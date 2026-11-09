@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Users, Plus, BookOpen, Copy, Check } from 'lucide-react';
+import { AreaSwitcher } from '@/components/AreaSwitcher';
 import { Button } from '@/components/ui/button';
 import { BRAND_COLOR } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
@@ -68,7 +69,8 @@ export function AppHeader({ people, leads, questions, onReset, onAddPerson }: Ap
             </p>
           </div>
         </div>
-        <div className="flex flex-wrap gap-3 justify-end">
+        <div className="flex flex-wrap gap-3 justify-end items-center">
+          <AreaSwitcher />
           <a
             href="/research-goals"
             className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-sans font-medium border border-stone-300 hover:bg-stone-100 text-stone-700 transition-colors"

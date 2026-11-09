@@ -171,6 +171,122 @@ check("empty filename", sg.sanitise_filename("") == "unnamed")
 check("special chars replaced", sg.sanitise_filename("file name (1).pdf") == "file_name_1_.pdf")
 
 # ---------------------------------------------------------------------------
+# Test 4b: Attachment storage path (collision safety — Phase 2)
+# ---------------------------------------------------------------------------
+
+section("Attachment storage path (collision safety)")
+
+import base64 as _b64
+
+
+def _b64url_encode(data_bytes):
+    return _b64.urlsafe_b64encode(data_bytes).decode("ascii").rstrip("=")
+
+
+class _FakeAttachmentsApi:
+    """Minimal stand-in for the gmail attachments API resource."""
+
+    def __init__(self, data_bytes):
+        self._data = _b64url_encode(data_bytes)
+        self.last_call = None
+
+    def get(self, userId, id, messageId):
+        self.last_call = {"userId": userId, "id": id, "messageId": messageId}
+        return self
+
+    def execute(self):
+        return {"data": self._data}
+
+
+class _FakeGetChain:
+    """Stand-in for service.users().messages().attachments()."""
+
+    def __init__(self, api):
+        self._api = api
+
+    def users(self):
+        return self
+
+    def messages(self):
+        return self
+
+    def attachments(self):
+        return self
+
+    def get(self, userId, id, messageId):
+        self._api.last_call = {"userId": userId, "id": id, "messageId": messageId}
+        return self
+
+    def execute(self):
+        return {"data": self._api._data}
+
+
+_tmp_att_dir = Path(tempfile.gettempdir()) / "test-rc-attachments"
+import shutil as _shutil
+_shutil.rmtree(_tmp_att_dir, ignore_errors=True)
+sg.ATTACHMENTS_DOWNLOAD_DIR = _tmp_att_dir
+
+# Deterministic collision-safe paths
+check(
+    "same attachment id + filename → same storage path",
+    sg.attachment_storage_path("msg_gmail_1", "att_unique_1", "cert.pdf", 911, "application/pdf")
+    == sg.attachment_storage_path("msg_gmail_1", "att_unique_1", "cert.pdf", 911, "application/pdf"),
+)
+check(
+    "path under attachments dir",
+    str(sg.attachment_storage_path("msg_gmail_1", "att_unique_1", "cert.pdf", 911, "application/pdf"))
+    .startswith(str(_tmp_att_dir)),
+)
+p_one = sg.attachment_storage_path("msg_gmail_1", "att_unique_1", "cert.pdf", 911, "application/pdf")
+check("storage filename keeps original name (prefixed)", p_one.name.startswith(sg.hashlib.sha256(b"att_unique_1").hexdigest()[:32] + "_"))
+check("storage filename has no path separators", "/" not in p_one.name and "\\" not in p_one.name)
+
+# Collision safety: identical original filenames → different physical files
+p_two = sg.attachment_storage_path("msg_gmail_2", "att_unique_2", "cert.pdf", 911, "application/pdf")
+check("different attachment ids → different storage paths", p_one != p_two)
+p_three = sg.attachment_storage_path("msg_gmail_3", "att_unique_3", "cert.pdf", 911, "application/pdf")
+check("different messages, same filename → different storage paths", p_one != p_three)
+
+# Fallback identity (no gmail_attachment_id) is deterministic + collision-safe
+check(
+    "fallback identity: same inputs → same path",
+    sg.attachment_storage_path("msg_fb_1", None, "cert.pdf", 10, "application/pdf")
+    == sg.attachment_storage_path("msg_fb_1", None, "cert.pdf", 10, "application/pdf"),
+)
+check(
+    "fallback identity: different messages → different paths",
+    sg.attachment_storage_path("msg_fb_1", None, "cert.pdf", 10, "application/pdf")
+    != sg.attachment_storage_path("msg_fb_2", None, "cert.pdf", 10, "application/pdf"),
+)
+
+# Sanitised filename cannot escape the attachments dir
+p_evil = sg.attachment_storage_path("msg_gmail_1", "att_evil", "../../evil.pdf", 10, "application/pdf")
+check("sanitised storage filename has no separators", "/" not in p_evil.name and "\\" not in p_evil.name)
+check("sanitised storage filename has no dotdot segment", ".." not in p_evil.parts)
+
+# download_attachment writes to the collision-safe path
+svc_one = _FakeGetChain(_FakeAttachmentsApi(b"%PDF-1.4 fake cert one"))
+lp_one, err_one = sg.download_attachment(svc_one, "msg_gmail_1", "att_unique_1", "cert.pdf", size_bytes=11, mime_type="application/pdf")
+check("download returns path, no error", lp_one is not None and err_one is None)
+check("download wrote file under unique path", lp_one is not None and Path(lp_one).exists())
+check("download content byte-exact", lp_one is not None and Path(lp_one).read_bytes() == b"%PDF-1.4 fake cert one")
+_check_api_one = svc_one._api
+check("download service got attachment id", _check_api_one.last_call["id"] == "att_unique_1" and _check_api_one.last_call["messageId"] == "msg_gmail_1")
+
+svc_two = _FakeGetChain(_FakeAttachmentsApi(b"%PDF-1.4 fake cert two"))
+lp_two, err_two = sg.download_attachment(svc_two, "msg_gmail_2", "att_unique_2", "cert.pdf", size_bytes=11, mime_type="application/pdf")
+check("second download same original filename ok", lp_two is not None and err_two is None)
+check("second download landed on its own physical file", lp_two != lp_one and Path(lp_two).exists())
+check("both same-named files coexist", Path(lp_one).exists() and Path(lp_two).exists())
+
+check(
+    "redownload same attachment → same path (idempotent)",
+    sg.attachment_storage_path("msg_gmail_1", "att_unique_1", "cert.pdf", 911, "application/pdf") == Path(lp_one),
+)
+
+_shutil.rmtree(_tmp_att_dir, ignore_errors=True)
+
+# ---------------------------------------------------------------------------
 # Test 5: Direction detection
 # ---------------------------------------------------------------------------
 

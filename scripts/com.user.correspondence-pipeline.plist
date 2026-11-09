@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.correspondence-pipeline</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Library/Frameworks/Python.framework/Versions/3.11/bin/python3</string>
+        <string>/Users/danielebuatti/dyad-apps/Buatti-Emmi Ancestry/scripts/run-pipeline.py</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/danielebuatti/dyad-apps/Buatti-Emmi Ancestry</string>
+    <key>StartInterval</key>
+    <integer>1800</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/danielebuatti/Library/Logs/correspondence-pipeline.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/danielebuatti/Library/Logs/correspondence-pipeline.err</string>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>KeepAlive</key>
+    <false/>
+</dict>
+</plist>

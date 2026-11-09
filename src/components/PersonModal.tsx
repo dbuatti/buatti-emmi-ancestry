@@ -400,6 +400,9 @@ export function PersonModal({ person, people, open, onOpenChange, onSelectPerson
           {person.occupations && person.occupations.length > 0 && (
             <p className="text-xs opacity-70 mt-1 italic">{person.occupations.join(', ')}</p>
           )}
+          <a href={`/people/${person.id}`} className="inline-block mt-2 text-xs underline opacity-90 hover:opacity-100">
+            Open full page →
+          </a>
         </div>
 
         <Tabs defaultValue="overview" className="flex flex-col flex-1 overflow-hidden">

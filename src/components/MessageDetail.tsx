@@ -266,25 +266,35 @@ export function MessageDetail({ message, open, onOpenChange }: MessageDetailProp
                         {att.mime_type || 'unknown/mimetype'} · {att.size_bytes ? `${(att.size_bytes / 1024).toFixed(1)} KB` : '—'}
                       </div>
                     </div>
-                    <div>
-                      {att.local_path && !att.unavailable ? (
-                        <a
-                          href={att.local_path}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[10px] text-stone-400 underline underline-offset-1 hover:decoration-solid"
-                        >
-                          Local
-                        </a>
-                      ) : att.unavailable ? (
-                        <span className="text-[10px] text-stone-400">
-                          Unavailable ({att.unavailable_reason || '—'})
+                    <div className="flex flex-col items-end gap-1">
+                      {att.unavailable ? (
+                        <span className="text-[10px] text-red-600">
+                          Unavailable{att.unavailable_reason ? `: ${att.unavailable_reason}` : ''}
                         </span>
+                      ) : att.downloaded ? (
+                        <>
+                          <a
+                            href={`/api/correspondence/attachments/${att.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] text-[#800020] underline"
+                          >
+                            Open
+                          </a>
+                          <a
+                            href={`/api/correspondence/attachments/${att.id}?download=1`}
+                            className="text-[10px] text-stone-500 underline"
+                          >
+                            Download
+                          </a>
+                        </>
                       ) : att.gmail_attachment_id ? (
-                        <span className="text-[10px] text-stone-400">
-                          Gmail ID: {att.gmail_attachment_id}
+                        <span className="text-[10px] text-amber-600">
+                          Not downloaded (Gmail: {att.gmail_attachment_id.slice(0, 8)}…)
                         </span>
-                      ) : null}
+                      ) : (
+                        <span className="text-[10px] text-stone-400">Unknown</span>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -318,14 +318,12 @@ export default function RecordPage() {
               </h4>
               <div className="flex gap-2">
                 <Input
-                  size="sm"
                   placeholder="Paste URL"
                   value={newLinkUrl}
                   onChange={(e) => setNewLinkUrl(e.target.value)}
                   className="flex-1 text-xs"
                 />
                 <Input
-                  size="sm"
                   placeholder="Label (optional)"
                   value={newLinkLabel}
                   onChange={(e) => setNewLinkLabel(e.target.value)}

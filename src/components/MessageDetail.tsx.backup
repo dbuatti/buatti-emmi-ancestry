@@ -1,0 +1,787 @@
+import { useState, useEffect } from 'react';
+import { X, Mail, FileText, Download, ExternalLink, ShieldAlert, Clock, Info, User, List, Copy } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { CorrespondenceMessage } from '@/pages/ResearchCentre';
+import { LinkifiedText } from '@/components/LinkifiedText';
+
+export interface MessageDetailProps {
+  message: CorrespondenceMessage | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const QUALIFIERS = ['~', 'ca.', 'c.', 'lettura incerta', '?'];
+const PENDING_PROVENANCE_TEXT = 'Source provenance pending user confirmation';
+
+type AnalysisFact = Record<string, unknown>;
+
+type GateAttachment = {
+  attachment_id?: number;
+  filename?: string;
+  kind?: string;
+  status?: string;
+  method?: string | null;
+  chars?: number;
+  pages?: number | null;
+  confidence?: number | null;
+  text_path?: string | null;
+  page_images?: string | null;
+  notes?: string;
+  requires_visual_review?: boolean;
+  duplicate_of?: number;
+};
+
+type GateRecord = {
+  message_id?: number;
+  gate_status?: string;
+  has_documents?: boolean;
+  document_count?: number;
+  requires_human_review?: boolean;
+  blocks_no_action?: boolean;
+  document_receipt?: string;
+  fulfilment?: string;
+  attachments?: GateAttachment[];
+  gated_at?: string;
+  extraction_unverified?: boolean;
+};
+type AnalysisData = {
+  language?: string;
+  translation_en?: string;
+  translation_complete?: boolean;
+  _truncated?: boolean;
+  purpose_summary?: string;
+  people?: AnalysisFact[];
+  dates?: AnalysisFact[];
+  places?: AnalysisFact[];
+  institutions?: AnalysisFact[];
+  protocol_refs?: AnalysisFact[];
+  record_refs?: AnalysisFact[];
+  actions_requested?: AnalysisFact[];
+  actions_promised?: AnalysisFact[];
+  outstanding_questions?: AnalysisFact[];
+  next_steps?: AnalysisFact[];
+  uncertainties?: AnalysisFact[];
+};
+
+export function MessageDetail({ message, open, onOpenChange }: MessageDetailProps) {
+  const { toast } = useToast();
+  const [detail, setDetail] = useState<CorrespondenceMessage | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [reviews, setReviews] = useState<Record<string, Record<string, unknown>>>({});
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState<string>('');
+  const [gate, setGate] = useState<GateRecord | null>(null);
+
+  const activeMessage = detail ?? message;
+
+  const saveReview = async (factKey: string, decision: string, original: unknown, editedValue: unknown, evidence: unknown) => {
+    if (!activeMessage?.id) return;
+    try {
+      const res = await fetch('/api/correspondence/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message_id: activeMessage.id,
+          fact_key: factKey,
+          decision,
+          original,
+          edited_value: editedValue,
+          evidence,
+        }),
+      });
+      if (!res.ok) throw new Error('save failed');
+      const data = await res.json();
+      if (data?.ok) {
+        setReviews((prev) => {
+          const next = { ...prev };
+          if (!next[String(activeMessage.id)]) next[String(activeMessage.id)] = {};
+          next[String(activeMessage.id)] = { ...next[String(activeMessage.id)], [factKey]: {
+            decision, original, edited_value: editedValue, evidence, reviewed_at: new Date().toISOString(),
+          } };
+          return next;
+        });
+        toast({ title: 'Review saved', description: `${factKey}: ${decision}` });
+
+        // Capture correction for edited/rejected decisions (NOT for accepted)
+        if (decision === 'edited' || decision === 'rejected') {
+          const inferType = (key: string) => {
+            const k = key.toLowerCase();
+            if (k.includes('translation')) return 'translation';
+            if (k.includes('people') || k.includes('person')) return 'entity_extraction';
+            if (k.includes('date')) return 'chronology';
+            if (k.includes('evidence')) return 'evidence';
+            return 'other';
+          };
+          const inferStage = (key: string) => {
+            const k = key.toLowerCase();
+            if (k.includes('translation')) return 'translation';
+            if (k.includes('people') || k.includes('person')) return 'entity_extraction';
+            if (k.includes('date')) return 'chronology';
+            return 'entity_extraction';
+          };
+          fetch('/api/corrections', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message_id: activeMessage.id,
+              field: factKey,
+              original: original,
+              corrected: decision === 'rejected' ? null : editedValue,
+              evidence: evidence,
+              correction_type: inferType(factKey),
+              stage: inferStage(factKey),
+              scope: 'case_specific',
+              source: 'app_ui',
+              source_detail: 'MessageDetail review',
+              human_confirmed: true,
+              notes: decision === 'rejected' ? 'Rejected without replacement (negative feedback)' : 'Edited value',
+            }),
+          }).catch(() => {});
+        }
+      }
+    } catch (err) {
+      toast({ title: 'Error', description: 'Failed to save review', variant: 'destructive' });
+    }
+  };
+
+  useEffect(() => {
+    if (!open || !message?.id) {
+      setDetail(null);
+      return;
+    }
+    let cancelled = false;
+    const fetchDetail = async () => {
+      try {
+        const response = await fetch(`/api/correspondence/messages/${message.id}/detail`);
+        if (!response.ok) throw new Error('Failed to fetch message detail');
+        const data = await response.json();
+        if (!cancelled && data?.ok && data.message) {
+          setDetail(data.message);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          toast({
+            title: 'Error',
+            description: 'Failed to load message detail',
+            variant: 'destructive',
+          });
+        }
+      }
+    };
+    fetchDetail();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, message?.id, toast]);
+
+  useEffect(() => {
+    if (!open || !message?.id) {
+      setAnalysis(null);
+      setReviews({});
+      setGate(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch(`/api/correspondence/analysis/${message.id}`);
+        if (!cancelled && r.ok) {
+          const data = await r.json();
+          setAnalysis(data as AnalysisData);
+        } else {
+          setAnalysis(null);
+        }
+      } catch {
+        setAnalysis(null);
+      }
+      try {
+        const r = await fetch('/api/correspondence/reviews');
+        if (!cancelled && r.ok) {
+          const data = await r.json();
+          setReviews(data.reviews || {});
+        }
+      } catch {
+        // ignore
+      }
+      try {
+        const r = await fetch(`/api/correspondence/attachment-gate/${message.id}`);
+        if (!cancelled && r.ok) {
+          const data = await r.json();
+          setGate(data?.gate || null);
+        }
+      } catch {
+        // ignore
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [open, message?.id]);
+
+  if (!activeMessage) {
+    return null;
+  }
+
+  const formatDate = (iso?: string) => {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString('en-GB', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const bodyType: 'text' | 'html' | 'raw' = activeMessage.body_text
+    ? 'text'
+    : activeMessage.has_body_html
+      ? 'html'
+      : activeMessage.has_raw
+        ? 'raw'
+        : 'text';
+
+  const parseJsonList = (json?: string): { name?: string; email?: string }[] => {
+    if (!json) return [];
+    try {
+      const parsed = JSON.parse(json);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const fromDisplay = [activeMessage.from_name, activeMessage.from_email ? `<${activeMessage.from_email}>` : null]
+    .filter(Boolean)
+    .join(' ');
+
+  const toAddresses = parseJsonList(activeMessage.to_json).map((t) => t.email).filter(Boolean);
+  const ccAddresses = parseJsonList(activeMessage.cc_json).map((t) => t.email).filter(Boolean);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    onOpenChange(newOpen);
+    if (!newOpen) setDetail(null);
+  };
+
+  return (
+    <div>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="bg-[#FAF6F0] border-stone-300 font-sans max-w-4xl w-[calc(100vw-2rem)] max-h-[85vh] sm:max-h-[90vh] flex flex-col overflow-hidden">
+          <DialogHeader className="border-b border-stone-200 pb-4 shrink-0">
+            <DialogTitle className="text-2xl font-serif text-[#800020] flex items-center gap-3">
+              <ShieldAlert className="w-6 h-6 text-stone-900" />
+              {activeMessage.subject || 'Message Details'}
+            </DialogTitle>
+            <DialogDescription className="flex flex-wrap items-center gap-2">
+              {activeMessage.account_email}
+              {activeMessage.id != null && (
+                <span className="inline-flex items-center gap-1">
+                  · Message ID:
+                  <span className="font-mono select-all">{activeMessage.id}</span>
+                  <button
+                    type="button"
+                    className="text-stone-500 hover:text-[#800020]"
+                    onClick={() => { navigator.clipboard?.writeText(String(activeMessage.id)); }}
+                    title="Copy message ID"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </button>
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Scrollable content area */}
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
+          {/* Provenance section */}
+          <Card className="mb-4 border-stone-200">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                <Badge variant="secondary" className="text-xs font-medium">
+                  Source Provenance
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 text-xs text-stone-600 font-sans">
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Account</div>
+                  <div className="font-mono break-all">{activeMessage.account_email}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Message ID</div>
+                  <div className="font-mono break-all select-all">{activeMessage.id ?? '—'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Gmail Message ID</div>
+                  <div className="font-mono break-all text-[10px]">{activeMessage.gmail_message_id || '—'}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Thread ID</div>
+                  <div className="font-mono break-all">{activeMessage.gmail_thread_id || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Direction</div>
+                  <div className="font-mono break-all">
+                    {activeMessage.direction === 'in' ? 'Inbound' : activeMessage.direction === 'out' ? 'Outbound' : '—'}
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">From</div>
+                  <div className="font-mono break-all">{fromDisplay || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">To</div>
+                  <div className="font-mono break-all">{toAddresses.length > 0 ? toAddresses.join(', ') : '—'}</div>
+                </div>
+              </div>
+              {ccAddresses.length > 0 && (
+                <div className="grid grid-cols-2 gap-4 mb-3">
+                  <div>
+                    <div className="text-stone-400 text-xs mb-1">CC</div>
+                    <div className="font-mono break-all">{ccAddresses.join(', ')}</div>
+                  </div>
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Received</div>
+                  <div className="font-mono break-all">{formatDate(activeMessage.received_at || activeMessage.sent_at)}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Sent</div>
+                  <div className="font-mono break-all">{activeMessage.sent_at ? formatDate(activeMessage.sent_at) : '—'}</div>
+                </div>
+              </div>
+              <div>
+                <div className="text-stone-400 text-xs mb-1">Genealogy Relevance</div>
+                <div>
+                  <Badge variant={activeMessage.genealogy_relevance === 'definite' ? 'secondary' : 'outline'} className="text-xs">
+                    {activeMessage.genealogy_relevance || 'Unreviewed'}
+                  </Badge>
+                </div>
+              </div>
+              {activeMessage.message_type && (
+                <div className="mt-3 pt-3 border-t border-stone-200">
+                  <div className="text-stone-400 text-xs mb-1">Message Type</div>
+                  <Badge variant="outline" className="text-xs">
+                    {activeMessage.message_type.replace(/_/g, ' ')}
+                  </Badge>
+                </div>
+              )}
+              {activeMessage.action_status && (
+                <div className="mt-2 pt-2 border-t border-stone-200">
+                  <div className="text-stone-400 text-xs mb-1">Action Status</div>
+                  <Badge variant="outline" className="text-xs">
+                    {activeMessage.action_status.replace(/_/g, ' ')}
+                  </Badge>
+                </div>
+              )}
+              {activeMessage.attachment_count !== undefined && activeMessage.attachment_count > 0 && (
+                <div className="mt-3 pt-3 border-t border-stone-200">
+                  <div className="text-stone-400 text-xs mb-1">Attachments</div>
+                  <div className="font-mono break-all">
+                    {activeMessage.attachment_count} attachments
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Body / Content section */}
+          {activeMessage.body_text || activeMessage.has_body_html || activeMessage.has_raw ? (
+            <Card className="mb-4 border-stone-200">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Content
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 text-sm text-stone-700 break-all">
+                {bodyType === 'html' ? (
+                  <p className="text-stone-500">
+                    The HTML body of this message is stored locally and is not rendered in this view.
+                  </p>
+                ) : bodyType === 'raw' ? (
+                  <p className="text-stone-500">The raw message payload is stored locally.</p>
+                ) : activeMessage.body_text ? (
+                  <p className="whitespace-pre-wrap">{activeMessage.body_text}</p>
+                ) : null}
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="mb-4 border-stone-200">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-stone-400" />
+                  Content
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 text-stone-400 font-sans">
+                <p>No email body available. The message contains only metadata and provenance information.</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Attachment gate: what the gate found, and whether it could be read */}
+          {gate ? (
+            <Card className="mt-4 border-teal-200 bg-teal-50/40">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-teal-600" />
+                  Attachment gate
+                  <Badge className={gate.gate_status === 'documents_ready' ? 'bg-emerald-50 text-emerald-700 text-[9px]' : 'bg-amber-50 text-amber-700 text-[9px]'}>
+                    {gate.gate_status || 'not run'}
+                  </Badge>
+                  {gate.blocks_no_action && (
+                    <Badge className="bg-amber-100 text-amber-800 text-[9px]">needs review</Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 text-xs text-stone-600 font-sans space-y-1">
+                <div>
+                  <span className="font-semibold">Documents received:</span>{' '}
+                  {gate.document_count ?? 0} · <span className="font-semibold">Fulfilment:</span>{' '}
+                  {gate.fulfilment || 'unverified'} (unverified until you decide)
+                </div>
+                {Array.isArray(gate.attachments) && gate.attachments.filter((a) => a.kind === 'document' || a.kind === 'image').length > 0 && (
+                  <ul className="list-disc ml-4 space-y-1">
+                    {gate.attachments
+                      .filter((a) => a.kind === 'document' || a.kind === 'image')
+                      .map((a) => (
+                        <li key={a.attachment_id}>
+                          <span className="font-medium">{a.filename}</span>{' '}
+                          <span className="text-stone-400">— {a.status}</span>
+                          {typeof a.confidence === 'number' ? ` (OCR confidence ${a.confidence})` : ''}
+                          {a.requires_visual_review ? ' · needs visual review' : ''}
+                          {a.text_path ? (
+                            <span className="text-stone-400"> · extracted: {a.text_path}</span>
+                          ) : null}
+                        </li>
+                      ))}
+                  </ul>
+                )}
+                <div className="text-[10px] text-stone-500 italic pt-1">
+                  Receipt is not the same as fulfilment: the gate records that a document arrived and whether it could be read. Whether it answers the research request is decided by you.
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Attachment metadata section */}
+          {activeMessage.attachments && activeMessage.attachments.length > 0 ? (
+            <Card className="mt-4 border-stone-200">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                  <List className="w-5 h-5" />
+                  Attachments ({activeMessage.attachments.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 text-xs text-stone-600 font-sans">
+                {activeMessage.attachments.map((att, i) => (
+                  <div key={i} className="mb-3 flex items-start gap-3">
+                    <div className="w-8 h-8 rounded bg-stone-100 flex items-center justify-center flex-shrink-0 font-mono text-[10px]">
+                      {i + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-stone-800 line-clamp-1">{att.filename || 'unknown'}</div>
+                      <div className="text-[10px] text-stone-400 line-clamp-1">
+                        {att.mime_type || 'unknown/mimetype'} · {att.size_bytes ? `${(att.size_bytes / 1024).toFixed(1)} KB` : '—'}
+                      </div>
+                    </div>
+                    <div className="min-w-0 shrink-0">
+                      {att.downloaded && att.id != null && !att.unavailable ? (
+                        <div className="flex items-center gap-3">
+                          <a
+                            href={`/api/correspondence/attachments/${att.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[11px] text-[#800020] hover:underline"
+                            title="Open in a new tab"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            Open
+                          </a>
+                          <a
+                            href={`/api/correspondence/attachments/${att.id}?download=1`}
+                            download={att.filename || undefined}
+                            className="inline-flex items-center gap-1 text-[11px] text-stone-500 hover:underline"
+                            title="Download this attachment"
+                          >
+                            <Download className="w-3 h-3" />
+                            Download
+                          </a>
+                        </div>
+                      ) : att.unavailable ? (
+                        <span className="text-[10px] text-stone-400">
+                          Unavailable ({att.unavailable_reason || '—'})
+                        </span>
+                      ) : att.gmail_attachment_id ? (
+                        <span className="text-[10px] text-stone-400" title="Attachment not downloaded yet">
+                          Not downloaded
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Correspondence analysis & review (M2) */}
+          {analysis ? (
+            <Card className="mt-4 border-stone-200">
+              <CardHeader>
+                <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Correspondence analysis &amp; review
+                  <span className="ml-auto text-[10px] text-stone-400 font-normal">
+                    {(() => {
+                      const facts = (analysis.people || []).length + (analysis.dates || []).length + (analysis.places || []).length +
+                        (analysis.institutions || []).length + (analysis.protocol_refs || []).length + (analysis.record_refs || []).length +
+                        (analysis.actions_requested || []).length + (analysis.actions_promised || []).length +
+                        (analysis.outstanding_questions || []).length + (analysis.next_steps || []).length + (analysis.uncertainties || []).length;
+                      const msgReviews = reviews[String(activeMessage.id)] || {};
+                      const reviewed = Object.values(msgReviews).filter((r: Record<string, unknown>) => r.decision && r.decision !== 'pending').length;
+                      if (facts === 0) return 'No extracted facts';
+                      if (reviewed === 0) return 'Not reviewed';
+                      if (reviewed < facts) return `Partially reviewed (${reviewed}/${facts})`;
+                      return 'Reviewed';
+                    })()}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 text-xs text-stone-700 space-y-4">
+                {/* Original + translation */}
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div className="rounded border border-stone-200 bg-stone-50 p-3">
+                    <div className="text-[10px] uppercase tracking-wider text-stone-500 mb-1">Original ({analysis.language || 'unknown'})</div>
+                    <div className="whitespace-pre-wrap break-words max-h-64 overflow-auto">{activeMessage.body_text || '—'}</div>
+                  </div>
+                  <div className="rounded border border-stone-200 bg-white p-3">
+                    <div className="text-[10px] uppercase tracking-wider text-stone-500 mb-1 flex items-center gap-2">
+                      English translation
+                      {analysis.translation_complete === false && (
+                        <span className="text-amber-700 font-semibold">(incomplete — verify)</span>
+                      )}
+                      {analysis._truncated && (
+                        <span className="text-amber-700 font-semibold">(body truncated)</span>
+                      )}
+                    </div>
+                    <div className="whitespace-pre-wrap break-words max-h-64 overflow-auto">
+                      {analysis.translation_en || '—'}
+                    </div>
+                  </div>
+                </div>
+
+                {analysis.purpose_summary && (
+                  <div className="rounded border border-amber-200 bg-amber-50 p-3">
+                    <div className="text-[10px] uppercase tracking-wider text-amber-800 mb-1">Purpose (AI-generated, review required)</div>
+                    <div className="text-sm text-stone-800">{analysis.purpose_summary}</div>
+                  </div>
+                )}
+
+                {/* Extracted facts by category */}
+                {[
+                  { key: 'people', label: 'People', fields: (f: Record<string, unknown>) => `${String(f.name ?? '')}${f.role ? ' — ' + String(f.role) : ''}${f.notes ? ' (' + String(f.notes) + ')' : ''}` },
+                  { key: 'dates', label: 'Dates', fields: (f: Record<string, unknown>) => `${String(f.value ?? '')}${f.context ? ' — ' + String(f.context) : ''}` },
+                  { key: 'places', label: 'Places', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'institutions', label: 'Institutions', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'protocol_refs', label: 'Protocol references', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'record_refs', label: 'Record references', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'actions_requested', label: 'Actions requested', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'actions_promised', label: 'Actions promised', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'outstanding_questions', label: 'Outstanding questions', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'next_steps', label: 'Next steps', fields: (f: Record<string, unknown>) => String(f.value ?? '') },
+                  { key: 'uncertainties', label: 'Uncertainties', fields: (f: Record<string, unknown>) => String(f.issue ?? '') },
+                ].map((cat) => {
+                  const items = analysis[cat.key] || [];
+                  if (!items.length) return null;
+                  const msgReviews = reviews[String(activeMessage.id)] || {};
+                  return (
+                    <div key={cat.key}>
+                      <div className="text-xs font-bold text-[#800020] uppercase tracking-wider mb-2">{cat.label} ({items.length})</div>
+                      <div className="space-y-2">
+                        {items.map((item: Record<string, unknown>, idx: number) => {
+                          const factKey = `${cat.key}/${idx}`;
+                          const rv = (msgReviews[factKey] || { decision: 'pending' }) as { decision?: string; edited_value?: string | null };
+                          const decision = rv.decision || 'pending';
+                          const isEditing = editingKey === factKey;
+                          const displayValue = rv.edited_value != null ? rv.edited_value : (cat.key === 'uncertainties' ? item.issue : item.value ?? item.name ?? '');
+                          const badgeColor = decision === 'accepted' ? 'bg-emerald-100 text-emerald-800' :
+                            decision === 'rejected' ? 'bg-red-100 text-red-800' :
+                            decision === 'edited' ? 'bg-blue-100 text-blue-800' :
+                            'bg-stone-100 text-stone-600';
+                          return (
+                            <div key={idx} className="rounded border border-stone-200 bg-[#FCFAF7] p-2 space-y-1">
+                              <div className="flex items-start gap-2">
+                                <span className={`text-[10px] px-1.5 py-0.5 rounded ${badgeColor} shrink-0`}>{decision}</span>
+                                <div className="flex-1 min-w-0">
+                                  {isEditing ? (
+                                    <input
+                                      className="w-full rounded border border-stone-300 px-2 py-1 text-xs"
+                                      value={editValue}
+                                      onChange={(e) => setEditValue(e.target.value)}
+                                      autoFocus
+                                    />
+                                  ) : (
+                                    <div className="text-sm text-stone-800 break-words">
+                                      {cat.key === 'people' ? `${String(item.name ?? '')}${item.role ? ' — ' + String(item.role) : ''}${item.notes ? ' (' + String(item.notes) + ')' : ''}` : cat.fields(item as Record<string, unknown>)}
+                                    </div>
+                                  )}
+                                  {cat.key === 'people' && (
+                                    <div className="text-[10px] text-amber-700 mt-0.5">May be a different individual from similarly named people — verify before linking.</div>
+                                  )}
+                                  {item.evidence && (
+                                    <div className="text-[10px] text-stone-500 mt-1 italic break-words">
+                                      Evidence: "{String(item.evidence)}"
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap gap-1.5 mt-1">
+                                {!isEditing && (
+                                  <>
+                                    <button className="text-[10px] px-2 py-0.5 rounded border border-emerald-300 text-emerald-800 hover:bg-emerald-50"
+                                      onClick={() => saveReview(factKey, 'accepted', cat.key === 'uncertainties' ? item.issue : (item.value ?? item.name ?? ''), null, item.evidence)}>
+                                      Accept
+                                    </button>
+                                    <button className="text-[10px] px-2 py-0.5 rounded border border-blue-300 text-blue-800 hover:bg-blue-50"
+                                      onClick={() => { setEditingKey(factKey); setEditValue(String(cat.key === 'uncertainties' ? item.issue : (item.value ?? item.name ?? ''))); }}>
+                                      Edit
+                                    </button>
+                                    <button className="text-[10px] px-2 py-0.5 rounded border border-red-300 text-red-800 hover:bg-red-50"
+                                      onClick={() => saveReview(factKey, 'rejected', cat.key === 'uncertainties' ? item.issue : (item.value ?? item.name ?? ''), null, item.evidence)}>
+                                      Reject
+                                    </button>
+                                  </>
+                                )}
+                                {isEditing && (
+                                  <>
+                                    <button className="text-[10px] px-2 py-0.5 rounded border border-blue-300 text-blue-800 hover:bg-blue-50"
+                                      onClick={() => { saveReview(factKey, 'edited', cat.key === 'uncertainties' ? item.issue : (item.value ?? item.name ?? ''), editValue, item.evidence); setEditingKey(null); }}>
+                                      Save edit
+                                    </button>
+                                    <button className="text-[10px] px-2 py-0.5 rounded border border-stone-300 text-stone-600 hover:bg-stone-50"
+                                      onClick={() => setEditingKey(null)}>
+                                      Cancel
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <div className="text-[10px] text-stone-400 italic">
+                  AI suggestions are not verified facts. Accept/edit/reject each independently. Accepted suggestions are not promoted to the family tree.
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Source provenance expanded view */}
+          <Card className="mt-4 border-stone-200">
+            <CardHeader>
+              <CardTitle className="text-sm font-medium text-stone-600 flex items-center gap-2">
+                <ExternalLink className="w-5 h-5" />
+                Full Provenance
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 text-xs text-stone-600 font-sans break-all">
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Gmail Account</div>
+                  <div className="font-mono break-all">{activeMessage.account_email}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Message ID</div>
+                  <div className="font-mono break-all select-all">{activeMessage.id ?? '—'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Gmail Message ID</div>
+                  <div className="font-mono break-all text-[10px]">{activeMessage.gmail_message_id || '—'}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Thread ID</div>
+                  <div className="font-mono break-all">{activeMessage.gmail_thread_id || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Direction</div>
+                  <div className="font-mono break-all">
+                    {activeMessage.direction === 'in' ? 'Inbound' : activeMessage.direction === 'out' ? 'Outbound' : '—'}
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Subject</div>
+                  <div className="font-mono break-all">{activeMessage.subject || '(no subject)'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Received At</div>
+                  <div className="font-mono break-all">{activeMessage.received_at || activeMessage.sent_at || '—'}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Message Type</div>
+                  <div className="font-mono break-all">{activeMessage.message_type || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Action Status</div>
+                  <div className="font-mono break-all">{activeMessage.action_status || '—'}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-3">
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Genealogy Relevance</div>
+                  <div>
+                    <Badge variant={activeMessage.genealogy_relevance === 'definite' ? 'secondary' : 'outline'} className="text-xs">
+                      {activeMessage.genealogy_relevance || 'Unreviewed'}
+                    </Badge>
+                  </div>
+                </div>
+                <div>
+                  <div className="text-stone-400 text-xs mb-1">Attachment Count</div>
+                  <div className="font-mono break-all">{activeMessage.attachment_count || 0}</div>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-stone-200">
+                <div className="text-stone-400 text-xs mb-1">Notes</div>
+                <div className="font-mono break-all text-stone-500">
+                  This evidence record originates from a Gmail import of two email accounts.
+                  All classification data is stored locally in the SQLite database (.local/correspondence.db).
+                  The message can be located in Gmail using the provided account_email and gmail_message_id.
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Button
+        variant="outline"
+        className="mb-4 text-sm font-medium text-stone-700"
+        onClick={() => onOpenChange(true)}
+      >
+        View Message Details
+      </Button>
+    </div>
+  );
+}

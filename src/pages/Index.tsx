@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { initialPeople, initialResearchLeads, initialOpenQuestions, Person, ResearchLead, OpenQuestion } from '../data/familyData';
-import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText, Search, GitBranch, Waypoints, FlaskConical } from 'lucide-react';
+import { initialPeople, initialResearchLeads, initialOpenQuestions } from '@/data/familyData';
+import type { Person, ResearchLead, OpenQuestion } from '@/types';
+import { BookOpen, GitFork, Users, Clock, Info, Heart, Plus, ScrollText, Search, GitBranch, Waypoints, FlaskConical, Sparkles } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +24,7 @@ import { TimelineTab } from '@/components/TimelineTab';
 import { EvidenceWiki } from '@/components/EvidenceWiki';
 import { RecordMatrix } from '@/components/RecordMatrix';
 import { ResearchCentre } from '@/pages/ResearchCentre';
+import AIProgress from '@/pages/AIProgress';
 import { DEFAULT_NEW_PERSON } from '@/lib/constants';
 
 const Index = () => {
@@ -176,6 +178,9 @@ const Index = () => {
               <TabsTrigger value="research-centre" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
                 <FlaskConical className="w-4 h-4" /> Research Centre
               </TabsTrigger>
+              <TabsTrigger value="ai-progress" className="font-sans data-[state=active]:bg-[#800020] data-[state=active]:text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4" /> AI Progress
+              </TabsTrigger>
             </TabsList>
             <div className="text-xs text-stone-500 font-sans italic flex items-center gap-1">
               <Info className="w-3.5 h-3.5 text-[#800020]" /> Click on any ancestor to view their full profile.
@@ -248,6 +253,9 @@ const Index = () => {
           </TabsContent>
           <TabsContent value="research-centre" className="space-y-6">
             <ResearchCentre />
+          </TabsContent>
+          <TabsContent value="ai-progress" className="space-y-6">
+            <AIProgress />
           </TabsContent>
         </Tabs>
       </main>
