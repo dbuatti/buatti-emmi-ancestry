@@ -4,6 +4,8 @@ import { Copy, ExternalLink, Check, Clock } from 'lucide-react';
 import type { Person } from '@/types';
 import { getAllRecords, type RecordEntry } from '@/lib/record-loader';
 import { parseFsPage, comparePerson, OPEN_KINDS, type CheckItem, type CheckKind } from '@/lib/fs-person-check';
+import { parseFsSources, matchSource, type FsEventType } from '@/lib/fs-sources';
+import { callApiCreateRecord } from './next-guide-api';
 import fsChecks from '@/data/fs-checks.json';
 
 const GROUPS: { kind: CheckKind; heading: string; style: string }[] = [
@@ -32,6 +34,10 @@ export function FamilySearchCheck({ person, people }: { person: Person; people: 
   const [saved, setSaved] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [records, setRecords] = useState<Map<string, RecordEntry>>(new Map());
+  const [mode, setMode] = useState<'details' | 'sources'>('details');
+  const [sourcesText, setSourcesText] = useState('');
+  const [sourcesResult, setSourcesResult] = useState<ReturnType<typeof matchSource>[] | null>(null);
+  const [creating, setCreating] = useState<string | null>(null);
 
   useEffect(() => {
     getAllRecords().then((list) => setRecords(new Map(list.map((r) => [r.id, r]))));
@@ -45,6 +51,58 @@ export function FamilySearchCheck({ person, people }: { person: Person; people: 
     navigator.clipboard.writeText(value);
     setCopied(key);
     setTimeout(() => setCopied(null), 1500);
+  };
+
+  const personRecords = [...records.values()].map((r) => ({
+    id: r.id,
+    type: String(r.frontMatter.type || ''),
+    year: String((r.frontMatter as { year?: string }).year || ''),
+    date: String((r.frontMatter as { date?: string }).date || ''),
+  }));
+
+  const runSources = () => {
+    const entries = parseFsSources(sourcesText);
+    setSourcesResult(
+      entries.map((e) =>
+        matchSource(
+          e,
+          personRecords.filter((r) => {
+            const rec = records.get(r.id);
+            const ppl = ((rec?.frontMatter.people ?? []) as string[]);
+            return ppl.includes(person.id);
+          })
+        )
+      )
+    );
+  };
+
+  const createStub = async (m: ReturnType<typeof matchSource>, i: number) => {
+    const key = String(i);
+    setCreating(key);
+    try {
+      const data = await callApiCreateRecord({
+        personId: person.id,
+        personName: person.name,
+        eventType: m.entry.eventType as FsEventType as string,
+        note: `${m.entry.title}${m.entry.years.length > 0 ? ` (${m.entry.years.join(', ')})` : ''}`,
+        place: m.entry.place,
+        url: m.entry.urls[0] || '',
+      });
+      const newId = (data as { id: string }).id;
+      setSourcesResult((prev) =>
+        prev === null
+          ? prev
+          : prev.map((x, xi) =>
+              xi === i
+                ? { ...x, status: 'matched' as const, recordId: newId, reason: `Stub created: ${newId}. Download the image into it from FamilySearch.` }
+                : x
+            )
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setCreating(null);
+    }
   };
 
   const run = async () => {
@@ -102,6 +160,16 @@ export function FamilySearchCheck({ person, people }: { person: Person; people: 
         )}
       </div>
 
+      <div className="flex gap-2 mb-3">
+        <Button size="sm" variant={mode === 'details' ? 'default' : 'outline'} className={`text-xs ${mode === 'details' ? 'bg-[#800020] text-white hover:bg-[#600018]' : ''}`} onClick={() => setMode('details')}>
+          Details compare
+        </Button>
+        <Button size="sm" variant={mode === 'sources' ? 'default' : 'outline'} className={`text-xs ${mode === 'sources' ? 'bg-[#800020] text-white hover:bg-[#600018]' : ''}`} onClick={() => setMode('sources')}>
+          Sources → app
+        </Button>
+      </div>
+      {mode === 'details' && (
+      <>
       <ol className="list-decimal ml-5 text-xs text-stone-600 space-y-0.5">
         <li>Open the person on FamilySearch (Details tab).</li>
         <li>Press <b>Cmd + A</b>, then <b>Cmd + C</b>.</li>
@@ -124,6 +192,72 @@ export function FamilySearchCheck({ person, people }: { person: Person; people: 
           </Button>
         )}
       </div>
+      </>
+      )}
+      {mode === 'sources' && (
+      <>
+      <ol className="list-decimal ml-5 text-xs text-stone-600 space-y-0.5">
+        <li>Open the person on FamilySearch (Sources tab).</li>
+        <li>Press <b>Cmd + A</b>, then <b>Cmd + C</b>.</li>
+        <li>Paste below and click <b>Find missing</b> — entries already in the app are matched, the rest can become record stubs.</li>
+      </ol>
+      <textarea
+        className="w-full h-32 rounded border border-stone-300 p-2 text-xs font-mono mt-2"
+        placeholder="Paste the FamilySearch Sources list here"
+        value={sourcesText}
+        onChange={(e) => setSourcesText(e.target.value)}
+      />
+      <div className="flex gap-2">
+        <Button size="sm" className="text-xs bg-[#800020] text-white hover:bg-[#600018]" disabled={!sourcesText.trim()} onClick={runSources}>
+          <Check className="w-3 h-3 mr-1" /> Find missing
+        </Button>
+      </div>
+      {sourcesResult && (
+        <div className="space-y-2 mt-2">
+          {sourcesResult.length === 0 && (
+            <p className="text-xs text-stone-500">No source entries detected — paste the Sources tab content.</p>
+          )}
+          {sourcesResult.map((m, i) => (
+            <div
+              key={i}
+              className={`rounded-lg border p-3 ${
+                m.status === 'matched'
+                  ? 'border-emerald-200 bg-emerald-50'
+                  : m.status === 'possible'
+                    ? 'border-amber-200 bg-amber-50'
+                    : 'border-[#800020]/30 bg-white'
+              }`}
+            >
+              <div className="font-semibold text-stone-800 text-xs">{m.entry.title}</div>
+              <div className="text-[11px] text-stone-500 font-sans mt-0.5">
+                {m.entry.eventType}{m.entry.years.length > 0 ? ` · ${m.entry.years.join(', ')}` : ''}{m.entry.place ? ` · ${m.entry.place}` : ''}
+              </div>
+              <div className="text-xs text-stone-600 mt-1">{m.reason}</div>
+              {m.status === 'matched' && m.recordId && (
+                <a className="text-xs text-[#800020] underline" href={`/research/records/${m.recordId}`}>
+                  Open {m.recordId}
+                </a>
+              )}
+              {m.status !== 'matched' && (
+                <div className="mt-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-xs min-h-[36px]"
+                    disabled={creating === String(i) || m.entry.eventType === 'other'}
+                    onClick={() => createStub(m, i)}
+                    title={m.entry.eventType === 'other' ? 'Could not tell the record type — create the stub from the record page instead' : 'Create a record stub with this source attached'}
+                  >
+                    {creating === String(i) ? 'Creating…' : 'Create record stub'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      </>
+      )}
 
       {error && <div className="rounded border border-red-200 bg-red-50 p-2 text-xs text-red-700">{error}</div>}
       {saved && <div className="rounded border border-emerald-200 bg-emerald-50 p-2 text-xs text-emerald-800">{saved}</div>}

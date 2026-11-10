@@ -811,6 +811,7 @@ function localRecordsApiPlugin(): Plugin {
                     const TYPE_NAMES: Record<string, string> = {
                       birth: "Birth Record", baptism: "Baptism Record", marriage: "Marriage Record",
                       death: "Death Record", burial: "Burial Record", migration_naturalisation: "Naturalisation Record",
+                      census: "Population Register", military: "Military Record",
                     };
                     const slug = (s: unknown) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
                     const year = newRec.year || "undated";
@@ -1564,16 +1565,14 @@ function localRecordsApiPlugin(): Plugin {
             .then((raw) => {
               try {
                 const {
-                  personId,
                   personName,
                   eventType,
                   note,
                   place,
-                  url: linkUrl,
                 } = JSON.parse(raw);
-                if (!personId || !personName || !eventType || !linkUrl) {
+                if (!personName || !eventType) {
                   return sendJson(res, 400, {
-                    error: "personId, personName, eventType and url are required",
+                    error: "personName and eventType are required",
                   });
                 }
 
@@ -1586,6 +1585,12 @@ function localRecordsApiPlugin(): Plugin {
                   migration_naturalisation: "Naturalisation Record",
                 };
 
+                // personId optional: fall back to a slug of the display name.
+                const personId = String(
+                  JSON.parse(raw).personId ??
+                    (JSON.parse(raw).personName ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-")
+                ).replace(/^-+|-+$/g, "");
+                const linkUrl = String(JSON.parse(raw).url ?? "");
                 const slug = (s: unknown) =>
                   String(s ?? "")
                     .normalize("NFD")
@@ -1658,20 +1663,23 @@ function localRecordsApiPlugin(): Plugin {
                   "verified: false",
                   "in_app: false",
                   "on_familysearch: false",
-                  `image_link: ${JSON.stringify(String(linkUrl))}`,
+                  `image_link: ${JSON.stringify(linkUrl)}`,
                   "original_filename: ''",
                   "original_sha256: ''",
-                  "links:",
-                  '  - label: "Found online"',
-                  `    url: ${JSON.stringify(String(linkUrl))}`,
+                  ...(linkUrl
+                    ? [
+                        "links:",
+                        '  - label: "Found online"',
+                        `    url: ${JSON.stringify(linkUrl)}`,
+                      ]
+                    : []),
                 ];
 
                 const body = [
                   "",
                   "## Notes",
-                  `- Created ${new Date().toISOString().slice(0, 10)} from the Next card`,
-                  `  ("Found online") for ${personId}. Source link:`,
-                  `  ${linkUrl}`,
+                  `- Created ${new Date().toISOString().slice(0, 10)} from FamilySearch (Sources compare) for ${personId}.`,
+                  ...(linkUrl ? [`  Source link:`, `  ${linkUrl}`] : []),
                   "- No local copy yet: `filed` stays false until the document is",
                   "  downloaded and put through `process inbox`.",
                   "",

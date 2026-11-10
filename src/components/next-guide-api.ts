@@ -56,11 +56,12 @@ export async function callApiEventOverride(key: string, patch: Record<string, un
 
 /** Create records/<id>/record.md for a document found online. */
 export async function callApiCreateRecord(input: {
+  personId?: string;
   personName: string;
   eventType: string;
   note?: string;
   place?: string;
-  url: string;
+  url?: string;
 }) {
   const res = await fetch('/api/create-record', {
     method: 'POST',

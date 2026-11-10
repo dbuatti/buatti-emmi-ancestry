@@ -64,11 +64,21 @@ function tokensOf(raw: string): string[] {
 }
 
 // Labels that describe a person without naming them — never a hint source.
-const NON_NAME_LABELS = /profession|occupation|mestiere|professione|residen|domicil|\bâge\b|\betà\b|\banni\b|\bage\b/i;
+// Tested against the label with parentheticals removed, so an Italian format
+// note like "Padre (cognome, prenomi)" still counts as a naming line while
+// English attribute lines ("Mother maiden family name", "Father place of
+// birth", "Mother age") are skipped.
+const NON_NAME_LABELS = /family name|maiden|surname|given names?|christian|middle names?|place|birth|birthplace|nascita|luogo|address|indirizzo|date|data|profession|occupation|mestiere|professione|residen|domicil|\bâge\b|\betà\b|\banni\b|\bage\b/i;
+
+function labelCore(label: string): string {
+  return label.replace(/\([^)]*\)/g, ' ');
+}
 
 function personTokens(p: Person): string[] {
   return (p.name || '')
-    .replace(/\([^)]*\)/g, ' ')
+    // Parentheticals hold alternate/maiden names ("née Emmi", "aka Raiti") —
+    // keep their contents as matching evidence, not instead of the name.
+    .replace(/\(([^)]*)\)/g, ' $1 ')
     .replace(/["“”']/g, ' ')
     .split(/\s+/)
     .map((t) => t.replace(/\.+$/, '').toLowerCase())
@@ -109,6 +119,9 @@ function parseRoleName(
   if (toks.length === 0) return null;
   if (toks.length === 1) {
     if (!subjectSurname) return null;
+    // A lone family surname ("Mother family name: BUATTI") echoes the act's
+    // own surname — it names nobody new.
+    if (toks[0].toLowerCase() === subjectSurname.toLowerCase()) return null;
     return { surname: subjectSurname, given: toks[0], inferred: true };
   }
   // Act order: surname first.
@@ -159,20 +172,41 @@ export function buildHints(
 
   const matchOptions = (surname: string, given: string): string[] => {
     const wantTokens = [surname.toLowerCase(), ...given.toLowerCase().split(/\s+/)];
+    // Full list on purpose: callers slice for display but check linkage on all.
     return all
       .filter((p) => {
         const pt = personTokens(p);
         return wantTokens.every((t) => pt.includes(t));
       })
-      .map((p) => p.id)
-      .slice(0, 4);
+      .map((p) => p.id);
+  };
+
+  /**
+   * The parsed name restates someone already in the slot (full given names
+   * in another order, aka/maiden surname)? Then it is already connected —
+   * never propose linking or creating. A token shared with nobody but the
+   * act's own family surname (endemic in this tree) does NOT count: genuine
+   * conflicts like "ANTONINO EMMI" vs linked Egidio must still surface.
+   */
+  const restatesLinked = (
+    linkedId: string | undefined,
+    subjectSurname: string,
+    surname: string,
+    given: string
+  ): boolean => {
+    if (!linkedId) return false;
+    const linked = all.find((p) => p.id === linkedId);
+    if (!linked) return false;
+    const lt = personTokens(linked);
+    const parsedTokens = [surname.toLowerCase(), ...given.toLowerCase().split(/\s+/)];
+    return parsedTokens.some((t) => t !== subjectSurname.toLowerCase() && lt.includes(t));
   };
 
   for (const line of lines) {
     const role = roleOf(line.label, line.value);
     if (!role) continue;
-    // Profession / residence / age descriptors name nobody.
-    if (NON_NAME_LABELS.test(line.label)) continue;
+    // Profession / residence / age / attribute descriptors name nobody.
+    if (NON_NAME_LABELS.test(labelCore(line.label))) continue;
 
     // Anchor: the subject already linking a match wins (usually a no-op
     // skip); else the first subject with the slot empty; else subjects[0].
@@ -201,6 +235,8 @@ export function buildHints(
     const options = linkedAnchor.options;
     const { surname, given, inferred } = parsed;
     const display = `${given} ${surname}`;
+    // Display caps at 4; linkage checks above and below use the full list.
+    const shownOptions = options.slice(0, 4);
 
     const base = {
       subjectId: subject.id,
@@ -210,7 +246,7 @@ export function buildHints(
       surname,
       given,
       surnameInferred: inferred,
-      options,
+      options: shownOptions,
       lineLabel: line.label,
       lineValue: line.value,
       recordId,
@@ -218,6 +254,7 @@ export function buildHints(
 
     if (role === 'spouse') {
       const linkedId = slotFilled(subject, 'spouse');
+      if (restatesLinked(linkedId, surnameOfPerson(all, subject.name), surname, given)) continue; // already connected
       const hit = options.find((id) => (subject.spouses ?? []).includes(id));
       if (hit) continue; // already linked — nothing to propose
       if (options.length > 0) {
@@ -258,6 +295,7 @@ export function buildHints(
 
     // father / mother
     const linkedId = slotFilled(subject, role);
+    if (restatesLinked(linkedId, surname, given)) continue; // already connected
     const hit = options.find((id) =>
       (subject.parents ?? []).includes(id)
     );
