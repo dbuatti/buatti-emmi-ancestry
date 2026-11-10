@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MailOpen } from 'lucide-react';
 import { initialPeople } from '@/data/familyDataWrapper';
 import { recordTerms } from '@/lib/email-terms';
@@ -34,19 +34,24 @@ export function RecordMentions({
   const [loading, setLoading] = useState(false);
 
   const peopleKey = people.join('|');
+  const surnames = useMemo(
+    () =>
+      people.map((pid) => {
+        const person = initialPeople.find((p) => p.id === pid);
+        const clean = (person?.name ?? '')
+          .replace(/\([^)]*\)/g, ' ')
+          .replace(/["“”']/g, ' ')
+          .trim()
+          .split(/\s+/)
+          .map((t) => t.replace(/\.+$/, ''))
+          .filter((t) => t.length > 2 && !/^(sr|jr|ii|iii|iv|senior|junior)$/i.test(t));
+        return clean.length > 0 ? clean[clean.length - 1] : '';
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [peopleKey]
+  );
 
   useEffect(() => {
-    const surnames = people.map((pid) => {
-      const person = initialPeople.find((p) => p.id === pid);
-      const clean = (person?.name ?? '')
-        .replace(/\([^)]*\)/g, ' ')
-        .replace(/["“”']/g, ' ')
-        .trim()
-        .split(/\s+/)
-        .map((t) => t.replace(/\.+$/, ''))
-        .filter((t) => t.length > 2 && !/^(sr|jr|ii|iii|iv|senior|junior)$/i.test(t));
-      return clean.length > 0 ? clean[clean.length - 1] : '';
-    });
     const q = recordTerms({ atto }, surnames);
     if (q.length === 0) {
       setHits([]);
@@ -90,7 +95,7 @@ export function RecordMentions({
     return () => {
       cancelled = true;
     };
-  }, [recordId, atto, peopleKey]);
+  }, [recordId, atto, surnames]);
 
   return (
     <div className="space-y-2">
