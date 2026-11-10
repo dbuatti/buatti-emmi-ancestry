@@ -18,10 +18,12 @@ import {
   Crosshair,
   MapPin,
   ChevronDown,
+  Hourglass,
 } from 'lucide-react';
 import { initialPeople } from '@/data/familyData';
 import {
   getNextTask,
+  getWaitingTasks,
   getProgress,
   eventKey,
   toIsoDate,
@@ -234,17 +236,75 @@ export function NextGuide() {
   }
 
   if (!task) {
+    const waiting = getWaitingTasks(initialPeople, eventRequests as EventOverrides, new Date());
+    const markWaitingReceived = async (personId: string, eventType: string) => {
+      setStatus('Saving…');
+      try {
+        await callApiEventOverride(eventKey(personId, eventType), {
+          requestedOn: null,
+          receivedOn: toIsoDate(),
+        });
+        window.location.reload();
+      } catch (e) {
+        setStatus(`Error: ${(e as Error).message}`);
+      }
+    };
+    if (waiting.length === 0) {
+      return (
+        <Card className="border-emerald-200 bg-emerald-50 rounded-xl p-6 shadow-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-emerald-200 flex items-center justify-center text-emerald-600">
+              <Check className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-emerald-800">All tasks complete</h3>
+              <p className="text-xs text-emerald-600">No pending tasks.</p>
+            </div>
+          </div>
+        </Card>
+      );
+    }
     return (
-      <Card className="border-emerald-200 bg-emerald-50 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-emerald-200 flex items-center justify-center text-emerald-600">
-            <Check className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-emerald-800">All tasks complete</h3>
-            <p className="text-xs text-emerald-600">No pending tasks.</p>
-          </div>
+      <Card className="border-stone-200 bg-white rounded-xl shadow-sm">
+        <div className="p-4 border-b border-stone-100">
+          <h2 className="text-xs font-bold text-[#800020] uppercase tracking-wider leading-none flex items-center gap-2">
+            <Hourglass className="w-4 h-4" /> Waiting room
+          </h2>
+          <p className="text-xs text-stone-500 font-sans mt-1">
+            Nothing to chase — {waiting.length} request{waiting.length === 1 ? '' : 's'} waiting for replies.
+            They return on their own when due. If one arrives, log it here.
+          </p>
         </div>
+        <div className="p-4 space-y-2">
+          {waiting.map((w) => (
+            <div
+              key={`${w.personId}|${w.eventType}`}
+              className="flex items-center justify-between gap-3 rounded-lg border border-stone-200 px-3 py-2"
+            >
+              <div className="min-w-0">
+                <a
+                  href={`/research/people/${w.personId}`}
+                  className="block text-sm font-bold text-[#800020] leading-tight hover:underline truncate"
+                >
+                  {w.personName}
+                </a>
+                <div className="text-[11px] text-stone-500 font-sans truncate">
+                  {w.eventType} · {w.office ?? 'office unknown'} · requested {w.requestedOn ?? '—'}
+                  {typeof w.daysWaiting === 'number' ? ` (${w.daysWaiting}d)` : ''}
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="text-xs h-8 px-3 shrink-0"
+                onClick={() => markWaitingReceived(w.personId, w.eventType)}
+              >
+                <Inbox className="w-3 h-3 mr-1" /> Received
+              </Button>
+            </div>
+          ))}
+        </div>
+        {status && <div className="px-4 pb-3 text-[11px] text-stone-500 font-sans">{status}</div>}
       </Card>
     );
   }
@@ -692,6 +752,71 @@ export function NextGuide() {
         {/* Actions — one primary, rest secondary */}
         {(isGetDocument || isChase) && (
           <div className="space-y-2">
+            {/* Filed-but-unlinked record: the document is already here, don't request it again. */}
+            {(() => {
+              const matches = [...recordEntries.values()].filter((r) => {
+                const people = (r.frontMatter.people ?? []) as string[];
+                if (!people.includes(task.personId)) return false;
+                const t = String(r.frontMatter.type || '').toLowerCase();
+                switch (task.eventType) {
+                  case 'birth':
+                    return t.includes('birth') || t.includes('nascita');
+                  case 'baptism':
+                    return t.includes('bapt') || t.includes('battesimo') || t.includes('christening');
+                  case 'marriage':
+                    return t.includes('marri') || t.includes('matrimonio');
+                  case 'death':
+                    return t.includes('death') || t.includes('morte');
+                  case 'burial':
+                    return t.includes('buri') || t.includes('sepol');
+                  case 'migration_naturalisation':
+                    return (
+                      t.includes('migrat') ||
+                      t.includes('naturalis') ||
+                      t.includes('citizenship') ||
+                      t.includes('cittadinanza') ||
+                      t.includes('alien') ||
+                      t.includes('immigrat') ||
+                      t.includes('passenger') ||
+                      t.includes('pow')
+                    );
+                  default:
+                    return false;
+                }
+              });
+              if (matches.length === 0) return null;
+              return (
+                <div className="rounded-lg bg-emerald-50 border-2 border-emerald-500 px-3 py-2.5 space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-bold text-emerald-800">
+                    <Check className="w-4 h-4 shrink-0" /> Record is here — verify it, don't request it
+                  </div>
+                  {matches.map((m) => {
+                    const verified = m.frontMatter.verified === true;
+                    return (
+                      <div key={m.id} className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs text-emerald-900 font-sans">
+                          {String(m.frontMatter.type || 'Record')} ·{' '}
+                          {String(m.frontMatter.date || m.frontMatter.year || '')}
+                        </span>
+                        <Button
+                          size="sm"
+                          className="text-xs h-8 px-3 bg-emerald-700 text-white hover:bg-emerald-800 font-semibold"
+                          onClick={() =>
+                            navigate(
+                              verified
+                                ? `/research/records/${m.id}`
+                                : `/research/records/${m.id}?mode=check`
+                            )
+                          }
+                        >
+                          {verified ? 'Open record' : 'Verify record'}
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
             {task.requestedOn ? (
               <>
                 <Button

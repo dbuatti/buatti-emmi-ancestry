@@ -10,5 +10,9 @@
   "gregorio-emmi|burial": {
     "requestedOn": "2026-11-05",
     "requestedFrom": "servizio1@comune.fiumefreddo-di-sicilia.ct.it"
+  },
+  "gregorio-emmi|migration_naturalisation": {
+    "requestedOn": "2026-11-10",
+    "requestedFrom": "Comune di Linguaglossa"
   }
 }
