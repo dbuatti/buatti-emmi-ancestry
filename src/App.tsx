@@ -17,6 +17,8 @@ import Documents from "./pages/Documents";
 import Triangulate from "./pages/Triangulate";
 import Matrix from "./pages/Matrix";
 import FamilyLayout from "./layouts/FamilyLayout";
+import ResearchLayout from "./layouts/ResearchLayout";
+import Clues from "./pages/Clues";
 import FamilyTree from "./pages/FamilyTree";
 import FamilyPeople from "./pages/FamilyPeople";
 import FamilyPerson from "./pages/FamilyPerson";
@@ -29,45 +31,6 @@ const ParamRedirect = ({ to }: { to: (id: string) => string }) => {
   const id = personId || recordId || '';
   const search = window.location.search;
   return <Navigate to={to(id) + search} replace />;
-};
-
-const RESEARCH_NAV = [
-  { to: '/research', label: 'Hub' },
-  { to: '/research/centre', label: 'Correspondence' },
-  { to: '/research/tasks', label: 'Tasks' },
-  { to: '/research/people', label: 'People' },
-  { to: '/research/records', label: 'Records' },
-  { to: '/research/documents', label: 'Documents' },
-  { to: '/research/triangulate', label: 'Triangulate' },
-  { to: '/research/matrix', label: 'Matrix' },
-  { to: '/research/assistant', label: 'Assistant' },
-  { to: '/research/goals', label: 'Goals' },
-];
-
-const ResearchLayout = () => {
-  const { pathname } = useLocation();
-  return (
-    <>
-      <div className="bg-[#F4EFE6] border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-3">
-          <nav aria-label="Research" className="flex flex-wrap gap-1.5 items-center">
-            {RESEARCH_NAV.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                className={`text-xs font-sans font-medium px-3 py-1.5 rounded-md transition-colors ${
-                  pathname === n.to ? 'bg-[#800020] text-white shadow-sm' : 'text-stone-700 hover:bg-stone-100'
-                }`}
-              >
-                {n.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
-      <Outlet />
-    </>
-  );
 };
 
 const App = () => (
@@ -101,6 +64,7 @@ const App = () => (
           <Route path="/research/documents" element={<Documents />} />
           <Route path="/research/triangulate" element={<Triangulate />} />
           <Route path="/research/matrix" element={<Matrix />} />
+          <Route path="/research/clues" element={<Clues />} />
         </Route>
 
         {/* Legacy routes preserved via redirects */}
