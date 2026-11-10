@@ -389,6 +389,8 @@ function localRecordsApiPlugin(): Plugin {
             }
             const urlObj = new URL(url, "http://localhost");
             const requestedFile = urlObj.searchParams.get("file") || "";
+            const fromPage = Math.max(1, parseInt(urlObj.searchParams.get("from") || "1", 10) || 1);
+            const factsMode = urlObj.searchParams.get("mode") === "facts";
             const dir = path.join(RECORDS_LOCAL, recordId);
             if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
               return sendJson(res, 404, { error: "Record folder not found" });
@@ -406,10 +408,11 @@ function localRecordsApiPlugin(): Plugin {
             if (/\.pdf$/i.test(target)) {
               const info = execFileSync("pdfinfo", [fp], { encoding: "utf8", timeout: 30000 });
               const m = info.match(/Pages:\s+(\d+)/);
-              const n = Math.min(parseInt(m?.[1] || "1", 10), 4);
-              execFileSync(pdftoppm, ["-png", "-r", "300", "-f", "1", "-l", String(n), fp, tmpBase], { encoding: "utf8", timeout: 120000 });
+              const total = parseInt(m?.[1] || "1", 10);
+              const n = Math.min(Math.max(1, total - fromPage + 1), 4);
+              execFileSync(pdftoppm, ["-png", "-r", "300", "-f", String(fromPage), "-l", String(fromPage + n - 1), fp, tmpBase], { encoding: "utf8", timeout: 120000 });
               pagePngs = [];
-              for (let pgi = 1; pgi <= n; pgi++) pagePngs.push(`${tmpBase}-${pgi}.png`);
+              for (let pgi = 0; pgi < n; pgi++) pagePngs.push(`${tmpBase}-${fromPage + pgi}.png`);
             } else {
               pagePngs = [fp];
             }
@@ -417,7 +420,9 @@ function localRecordsApiPlugin(): Plugin {
             const keys = fs.readFileSync(keyFile, "utf-8").split("\n")
               .map((l) => l.trim()).filter((l) => l && !l.startsWith("#") && l.startsWith("AIza"));
             if (keys.length === 0) return sendJson(res, 500, { ok: false, error: "No Gemini keys configured" });
-            const prompt = "Transcribe this Italian civil registry act line by line. It mixes pre-printed form text with handwriting. Output format, one per line: `- <field label>: <exact reading as written>`. Rules: transcribe handwriting diplomatically (as written, not normalized); mark unreadable words [?]; keep Italian number words as written; do not translate; do not summarize; skip empty boilerplate lines.";
+            const prompt = factsMode
+              ? "List every genealogically useful fact visible in these document pages (names, dates, places, occupations, addresses, grades, protocol/act numbers, family relationships). One per line as '- fact'. Include the page number as '- Page N: ...' separators. Skip boilerplate and letterheads. Italian proper nouns verbatim; do not translate."
+              : "Transcribe this Italian civil registry act line by line. It mixes pre-printed form text with handwriting. Output format, one per line: `- <field label>: <exact reading as written>`. Rules: transcribe handwriting diplomatically (as written, not normalized); mark unreadable words [?]; keep Italian number words as written; do not translate; do not summarize; skip empty boilerplate lines.";
             const allLines: Array<{ id: string; number: number; text: string; label: string | null; value: string; page: number }> = [];
             const pageTexts: string[] = [];
             let lineNo = 0;
@@ -446,7 +451,7 @@ function localRecordsApiPlugin(): Plugin {
                 } catch (e) { lastErr = e instanceof Error ? e.message : String(e); }
               }
               if (!text.trim()) return sendJson(res, 502, { ok: false, error: `Gemini reading failed on page ${pi + 1}: ${lastErr}` });
-              pageTexts.push(`--- Page ${pi + 1} ---\n${text}`);
+              pageTexts.push(`--- Page ${typeof fromPage === 'number' ? fromPage + pi : pi + 1} ---\n${text}`);
               for (const rawLine of text.split("\n")) {
                 const t = rawLine.trim().replace(/^-\s*/, "");
                 if (!t) continue;
