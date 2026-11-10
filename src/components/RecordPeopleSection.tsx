@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { initialPeople } from '@/data/familyDataWrapper';
+import { suggestPerson } from '@/lib/person-suggest';
 
 /**
  * People linked to a record, split by role:
@@ -68,15 +69,15 @@ export function RecordPeopleSection({
           'Moved to subjects'
         );
 
+  const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
+  const transText = transMatch ? transMatch[0] : '';
   const suggestions = initialPeople
-    .filter((p) => {
-      const transMatch = body.match(/## Transcription[\s\S]*?(?=## |$)/);
-      const transText = transMatch ? transMatch[0].toLowerCase() : '';
-      const nameParts = p.name.toLowerCase().split(/\s+/).filter((part) => part.length > 3);
-      if (people.includes(p.id) || mentioned.includes(p.id)) return false;
-      const matchCount = nameParts.filter((part) => transText.includes(part)).length;
-      return matchCount >= nameParts.length && nameParts.length >= 2;
-    })
+    .filter(
+      (p) =>
+        !people.includes(p.id) &&
+        !mentioned.includes(p.id) &&
+        suggestPerson(p.name, transText)
+    )
     .slice(0, 8);
 
   const pill = (pid: string, role: 'people' | 'mentioned') => {
