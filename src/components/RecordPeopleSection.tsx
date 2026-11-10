@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 import { initialPeople } from '@/data/familyDataWrapper';
 import { suggestPerson } from '@/lib/person-suggest';
 
@@ -26,6 +27,23 @@ export function RecordPeopleSection({
   body: string;
   setStatus: (s: string | null) => void;
 }) {
+  const dismissKey = `record-people-dismissed-${recordId}`;
+  const [dismissed, setDismissed] = useState<string[]>(() => {
+    try {
+      return JSON.parse(localStorage.getItem(dismissKey) ?? '[]') as string[];
+    } catch {
+      return [];
+    }
+  });
+  const dismissSuggestion = (pid: string) => {
+    const next = [...dismissed, pid];
+    setDismissed(next);
+    try {
+      localStorage.setItem(dismissKey, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  };
   const save = async (nextPeople: string[], nextMentioned: string[], msg: string) => {
     setStatus(msg + '…');
     try {
@@ -76,6 +94,7 @@ export function RecordPeopleSection({
       (p) =>
         !people.includes(p.id) &&
         !mentioned.includes(p.id) &&
+        !dismissed.includes(p.id) &&
         suggestPerson(p.name, transText)
     )
     .slice(0, 8);
@@ -151,17 +170,25 @@ export function RecordPeopleSection({
           </div>
           <div className="flex flex-wrap gap-2">
             {suggestions.map((p) => (
-              <Button
-                key={p.id}
-                size="sm"
-                variant="outline"
-                className="text-xs h-7 px-2"
-                onClick={() =>
-                  save(people, [...mentioned, p.id], `Marked ${p.name} as mentioned`)
-                }
-              >
-                Mention {p.name}
-              </Button>
+              <span key={p.id} className="inline-flex items-center gap-1">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-xs h-7 px-2"
+                  onClick={() =>
+                    save(people, [...mentioned, p.id], `Marked ${p.name} as mentioned`)
+                  }
+                >
+                  Mention {p.name}
+                </Button>
+                <button
+                  className="text-[11px] text-stone-400 hover:text-stone-600 underline"
+                  onClick={() => dismissSuggestion(p.id)}
+                  title={`Hide this suggestion (you can still link ${p.name} via the dropdowns below)`}
+                >
+                  hide
+                </button>
+              </span>
             ))}
           </div>
         </div>

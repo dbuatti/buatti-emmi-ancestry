@@ -14,7 +14,7 @@ verified_by_daniele: false
 transcribed_by: OpenCode (Gemini vision + visual check of page images 10/11/2026 — Daniele to verify every line)
 filed: true
 transcribed: true
-verified: false
+verified: true
 in_app: false
 on_familysearch: false
 original_filename: Certificate-063702320261784944739240.pdf
@@ -107,3 +107,4 @@ mentioned:
 ## Source
 
 NSW Registry true copy of marriage 27340/1952 (No. in Register 154), issued Sydney 25 July 2026 on Daniele's application. 2-page PDF: p1 certificate with seal, p2 applicant barcodes. Same wedding as the Branxton parish extract (1952_Branxton-parish_marriage_Buatti-Chiappini) — celebrant discrepancy stands: parish extract names Rev Z Lewandowski, NSW cert names Zefferino Grisendi.
+
