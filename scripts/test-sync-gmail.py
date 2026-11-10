@@ -292,12 +292,17 @@ _shutil.rmtree(_tmp_att_dir, ignore_errors=True)
 
 section("Direction detection")
 
-# Simulate by checking logic inline (the sidecar determines direction from labels)
-def determine_direction(labels, from_email, account_email):
-    direction = "out" if "SENT" in labels else "in"
-    if direction == "in" and from_email.lower() == account_email.lower():
-        direction = "out"
-    return direction
+# Uses the real function the sync calls (not a copy of its logic).
+determine_direction = sg.message_direction
+
+check("unsent draft from the account → draft (never 'out')",
+      determine_direction(["DRAFT"], "info@danielebuatti.com", "info@danielebuatti.com") == "draft")
+check("draft label wins even alongside other labels",
+      determine_direction(["DRAFT", "IMPORTANT"], "info@danielebuatti.com", "info@danielebuatti.com") == "draft")
+check("sent copy to self (SENT + INBOX) → out",
+      determine_direction(["SENT", "INBOX"], "info@danielebuatti.com", "info@danielebuatti.com") == "out")
+check("address case ignored", determine_direction(["INBOX"], "Info@DanieleBuatti.com", "info@danielebuatti.com") == "out")
+check("missing labels tolerated", determine_direction(None, "comune@ap.it", "info@danielebuatti.com") == "in")
 
 check("sent label → out", determine_direction(["SENT", "INBOX"], "x@y.com", "info@danielebuatti.com") == "out")
 check("from account → out", determine_direction(["INBOX"], "info@danielebuatti.com", "info@danielebuatti.com") == "out")
@@ -1141,14 +1146,93 @@ for p in [ro_path, ro_path2]:
 # This is confirmed by code inspection — load_research_ops_credentials returns None
 # when read-only file is missing, with no comm-analytics fallback.
 
+
+# ---------------------------------------------------------------------------
+# Incremental listing follows every page (nothing between scans is skipped)
+# ---------------------------------------------------------------------------
+
+section("Incremental listing pagination")
+
+
+class _FakeList:
+    def __init__(self, pages, calls):
+        self.pages, self.calls = pages, calls
+
+    def list(self, **params):
+        self.calls.append(params)
+        token = params.get("pageToken")
+        idx = 0 if token is None else int(token)
+        page = self.pages[idx]
+        resp = {"messages": [{"id": i, "threadId": "t" + i} for i in page]}
+        if idx + 1 < len(self.pages):
+            resp["nextPageToken"] = str(idx + 1)
+        return types.SimpleNamespace(execute=lambda: resp)
+
+
+class _FakeService:
+    def __init__(self, pages):
+        self.calls = []
+        self._l = _FakeList(pages, self.calls)
+
+    def users(self):
+        return types.SimpleNamespace(messages=lambda: self._l)
+
+
+import types
+
+svc = _FakeService([["a", "b"], ["c", "d"], ["e"]])
+stubs, exhausted = sg.list_incremental_stubs(svc, "after:1 -in:drafts", page_size=2)
+check("all 3 pages read (5 messages)", [x["id"] for x in stubs] == ["a", "b", "c", "d", "e"])
+check("listing reported exhausted", exhausted is True)
+check("3 list calls made", len(svc.calls) == 3)
+check("query passed on every page", all(c["q"] == "after:1 -in:drafts" for c in svc.calls))
+
+svc = _FakeService([["a"], ["b"], ["c"], ["d"]])
+stubs, exhausted = sg.list_incremental_stubs(svc, "q", page_size=1, max_pages=2)
+check("page cap hit → not exhausted (checkpoint must hold)", exhausted is False and len(stubs) == 2)
+
+svc = _FakeService([["a", "b"], ["b", "c"]])
+stubs, exhausted = sg.list_incremental_stubs(svc, "q", page_size=2)
+check("duplicate ids across pages collapsed", [x["id"] for x in stubs] == ["a", "b", "c"])
+
+svc = _FakeService([[]])
+stubs, exhausted = sg.list_incremental_stubs(svc, "q")
+check("empty mailbox → no stubs, exhausted", stubs == [] and exhausted is True)
+check("page size never above Gmail's 500 limit",
+      sg.list_incremental_stubs(_FakeService([[]]), "q", page_size=9999) == ([], True))
+
+# ---------------------------------------------------------------------------
+# Drafts already imported as sent are found from their saved raw JSON
+# ---------------------------------------------------------------------------
+
+section("Find drafts imported as sent")
+
+import sqlite3 as _sq
+import tempfile as _tf
+
+_tmp = _tf.mkdtemp()
+_orig_raw = sg.get_raw_dir
+sg.get_raw_dir = lambda account: _tmp
+_c = _sq.connect(":memory:")
+_c.row_factory = _sq.Row
+_c.execute("CREATE TABLE messages (id INTEGER PRIMARY KEY, account_email TEXT, gmail_message_id TEXT, direction TEXT, subject TEXT, sent_at TEXT)")
+for i, (gid, direction, labels) in enumerate([
+    ("d1", "out", ["DRAFT"]),            # unsent draft stored as sent  -> found
+    ("s1", "out", ["SENT"]),             # really sent                  -> ignored
+    ("i1", "in", ["INBOX"]),             # incoming                     -> ignored
+    ("n1", "out", None),                 # no raw JSON saved            -> ignored (unknown)
+], start=1):
+    _c.execute("INSERT INTO messages VALUES (?,?,?,?,?,?)", (i, "a@b.c", gid, direction, "Subj " + gid, "2026-11-01T00:00:00Z"))
+    if labels is not None:
+        (Path(_tmp) / f"{gid}.json").write_text(json.dumps({"id": gid, "labelIds": labels}))
+(Path(_tmp) / "bad.json").write_text("{not json")
+found = sg.find_draft_rows(_c, "a@b.c")
+check("exactly the draft is found", [f["gmail_message_id"] for f in found] == ["d1"])
+check("other account untouched", sg.find_draft_rows(_c, "other@b.c") == [])
+sg.get_raw_dir = _orig_raw
+
 print(f"\n{'='*40}")
 print(f"Results: {PASS} passed, {FAIL} failed")
-if FAIL > 0:
-    sys.exit(1)
-if FAIL > 0:
-    sys.exit(1)
-if FAIL > 0:
-    sys.exit(1)
 if FAIL > 0:
     sys.exit(1)
 if FAIL > 0:

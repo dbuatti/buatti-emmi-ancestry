@@ -1,6 +1,9 @@
 export interface RecordStatus {
   type: string;
-  status: 'Found' | 'Not Found' | 'Searching' | 'Ruled Out' | 'Requested';
+  /** Known values drive badges; qualified variants ("Found (indirect)", "To Order") are kept verbatim. */
+  status: 'Found' | 'Not Found' | 'Searching' | 'Ruled Out' | 'Requested' | (string & {});
+  /** Record folder id (records/<id>/record.md) when this entry is backed by a filed record. */
+  recordId?: string;
   notes?: string;
   /** Direct link to the digitised record / catalogue entry, when one exists. */
   link?: string;
@@ -25,6 +28,9 @@ export interface Person {
   siblings?: string[];
   notes?: string[];
   occupations?: string[];
+  deathCause?: string;
+  /** Single-occupation shorthand used by some entries. */
+  occupation?: string | string[];
   residences?: string[];
   physicalDescription?: {
     height?: string;
@@ -53,7 +59,7 @@ export interface Person {
     details?: string;
   };
   researchStatus: {
-    status: 'Confirmed' | 'In Progress' | 'Outstanding' | 'Ruled Out';
+    status: 'Confirmed' | 'In Progress' | 'Outstanding' | 'Ruled Out' | (string & {});
     details?: string;
     nextSteps?: string[];
   };
@@ -87,7 +93,7 @@ export interface ResearchLead {
   id: string;
   title: string;
   category: 'Buatti/Chiappini' | 'Emmi/Patanè' | 'General';
-  status: 'To Investigate' | 'In Progress' | 'Ruled Out' | 'Completed';
+  status: 'To Investigate' | 'In Progress' | 'Ruled Out' | 'Completed' | (string & {});
   description: string;
   whyRuledOut?: string;
   nextSteps?: string;

@@ -1055,6 +1055,7 @@ export const initialPeople: Person[] = [
   {
     id: 'venera-patane-sibling',
     name: 'Venera Patanè (second, died in infancy)',
+    spouses: [],
     generation: 1,
     line: 'Patanè',
     gender: 'F',
@@ -1123,6 +1124,7 @@ export const initialPeople: Person[] = [
   {
     id: 'leonarda-patane-fiumefreddo',
     name: 'Leonarda Patanè',
+    spouses: [],
     generation: 1,
     line: 'Patanè',
     gender: 'F',
@@ -1148,6 +1150,7 @@ export const initialPeople: Person[] = [
   {
     id: 'venera-patane-infant',
     name: 'Venera Patanè (first, died in infancy)',
+    spouses: [],
     generation: 1,
     line: 'Patanè',
     gender: 'F',
@@ -1175,6 +1178,7 @@ export const initialPeople: Person[] = [
   {
     id: 'mariano-patane-jr',
     name: 'Mariano Patanè',
+    spouses: [],
     generation: 1,
     line: 'Patanè',
     gender: 'M',
@@ -1202,6 +1206,7 @@ export const initialPeople: Person[] = [
   {
     id: 'salvatore-patane-fiumefreddo',
     name: 'Salvatore Patanè',
+    spouses: [],
     generation: 1,
     line: 'Patanè',
     gender: 'M',
@@ -1718,6 +1723,7 @@ export const initialPeople: Person[] = [
   {
     id: 'giovanni-dagata',
     name: 'Giovanni D\'Agata',
+    spouses: [],
     generation: 0,
     line: 'Patanè',
     gender: 'M',

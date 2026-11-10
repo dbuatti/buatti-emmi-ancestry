@@ -9,6 +9,7 @@
     "build:family": "node scripts/build-family-data.mjs && FAMILY_BUILD=1 vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
+    "typecheck": "tsc -b --noEmit",
     "export:tree": "node scripts/export-family-tree.mjs",
     "test:ocr": "node --experimental-strip-types --no-warnings scripts/test-ciec-extract.mjs",
     "preview": "vite preview"

@@ -1773,6 +1773,147 @@ def backfill_pilot_manifest(conn, raw_dir, account_email=None):
 # Main sync (unchanged structure)
 # ---------------------------------------------------------------------------
 
+def message_direction(labels, from_email, account_email):
+    """Classify a Gmail message as 'in', 'out' or 'draft'.
+
+    A DRAFT label always wins: an unsent draft is written "from" the account, so
+    without this check it would be recorded as sent mail with a sent date —
+    making the app believe a request went out when it never left the Drafts
+    folder. Drafts are not correspondence and are never imported.
+    """
+    labels = labels or []
+    if "DRAFT" in labels:
+        return "draft"
+    if "SENT" in labels:
+        return "out"
+    if (from_email or "").lower() == (account_email or "").lower():
+        return "out"
+    return "in"
+
+
+INCREMENTAL_MAX_PAGES = 40  # 40 x 500 = 20,000 messages between two scans
+
+
+def list_incremental_stubs(service, query, page_size=500, max_pages=INCREMENTAL_MAX_PAGES):
+    """List every message matching `query`, following nextPageToken.
+
+    Returns (stubs, exhausted). `exhausted` is False only if max_pages was hit
+    with more pages still available — the caller must then NOT advance the
+    checkpoint, otherwise the unlisted messages would be skipped for good.
+    (The old code read one page of 500 and advanced the checkpoint regardless.)
+    """
+    stubs = []
+    seen = set()
+    token = None
+    for _ in range(max_pages):
+        params = {"userId": "me", "maxResults": min(page_size, 500), "q": query}
+        if token:
+            params["pageToken"] = token
+        resp = service.users().messages().list(**params).execute()
+        for st in resp.get("messages", []) or []:
+            if st["id"] not in seen:
+                seen.add(st["id"])
+                stubs.append(st)
+        token = resp.get("nextPageToken")
+        if not token:
+            return stubs, True
+    return stubs, False
+
+
+def find_draft_rows(conn, account_email):
+    """Messages already in the DB whose saved raw JSON carries the DRAFT label.
+
+    These were imported before drafts were excluded and currently show as sent.
+    Returns a list of dicts: id, gmail_message_id, subject, sent_at.
+    """
+    raw_dir = get_raw_dir(account_email)
+    out = []
+    rows = conn.execute(
+        """SELECT id, gmail_message_id, subject, sent_at FROM messages
+           WHERE account_email = ? AND direction = 'out'""",
+        (account_email,),
+    ).fetchall()
+    for r in rows:
+        raw_path = Path(raw_dir) / f"{r['gmail_message_id']}.json"
+        if not raw_path.exists():
+            continue
+        try:
+            labels = json.loads(raw_path.read_text()).get("labelIds", []) or []
+        except Exception:
+            continue
+        if "DRAFT" in labels:
+            out.append({"id": r["id"], "gmail_message_id": r["gmail_message_id"],
+                        "subject": r["subject"], "sent_at": r["sent_at"]})
+    return out
+
+
+def run_purge_drafts(account_email=None, apply=False):
+    """Report (default) or remove (--apply) unsent drafts that were imported as sent.
+
+    With --apply each candidate is re-checked live against Gmail first:
+      - still a draft, or gone from Gmail  -> row deleted (children cascade)
+      - now really sent (SENT, no DRAFT)   -> row kept, counted as 'now sent'
+    A backup of the database file is written before anything is deleted.
+    """
+    if account_email is None:
+        account_email = DEFAULT_ACCOUNT_EMAIL
+    conn = get_db()
+    try:
+        cands = find_draft_rows(conn, account_email)
+        print(f"{account_email}: {len(cands)} imported message(s) are unsent drafts shown as sent.")
+        for c in cands:
+            print(f"  draft  {c['gmail_message_id']}  {c['sent_at'] or ''}  {(c['subject'] or '')[:80]}")
+        if not apply or not cands:
+            if cands:
+                print("Nothing changed. Re-run with --apply to remove them.")
+            return {"candidates": len(cands), "deleted": 0, "now_sent": 0}
+
+        creds = load_research_ops_credentials(account_email)
+        if creds is None:
+            print("ERROR: no credentials — cannot re-check against Gmail. Nothing changed.")
+            return None
+        from googleapiclient.discovery import build
+        from googleapiclient.errors import HttpError
+        service = build("gmail", "v1", credentials=creds)
+
+        import shutil
+        backup = f"{DB_PATH}.before-purge-drafts-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+        conn.execute("PRAGMA wal_checkpoint(FULL)")
+        shutil.copy2(DB_PATH, backup)
+        print(f"Backup written: {backup}")
+
+        deleted = now_sent = failed = 0
+        for c in cands:
+            try:
+                live = service.users().messages().get(
+                    userId="me", id=c["gmail_message_id"], format="minimal").execute()
+                labels = live.get("labelIds", []) or []
+                still_draft = "DRAFT" in labels
+            except HttpError as e:
+                if getattr(e.resp, "status", None) == 404:
+                    still_draft = True  # draft was discarded, or sent under a new id
+                else:
+                    failed += 1
+                    print(f"  ! {c['gmail_message_id']}: {e}")
+                    continue
+            if not still_draft:
+                now_sent += 1
+                print(f"  kept   {c['gmail_message_id']} (now really sent)")
+                continue
+            try:
+                conn.execute("DELETE FROM messages WHERE id = ?", (c["id"],))
+                conn.commit()
+                deleted += 1
+            except sqlite3.Error as e:
+                conn.rollback()
+                failed += 1
+                print(f"  ! {c['gmail_message_id']}: could not delete ({e})")
+        print(f"Deleted {deleted}, kept (now sent) {now_sent}, failed {failed}.")
+        return {"candidates": len(cands), "deleted": deleted, "now_sent": now_sent, "failed": failed}
+    finally:
+        conn.close()
+
+
 def run_sync(dry_run=False, mode="bootstrap", account_email=None):
     """Run sync. mode='bootstrap' (historical) or 'incremental' (new messages).
 
@@ -1871,19 +2012,22 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
                 checkpoint_epoch = int(cp_dt.timestamp()) - (overlap * 60)
             except (ValueError, TypeError):
                 checkpoint_epoch = int(datetime.now(timezone.utc).timestamp()) - (24 * 3600)
-            query = f"after:{checkpoint_epoch}"
+            query = f"after:{checkpoint_epoch} -in:drafts"
             print(f"Incremental sync: fetching messages after {checkpoint_before} (with {overlap}min overlap)...")
         else:
             # Bootstrap: fetch historical messages (no date filter)
             query = "-in:spam -in:trash"
             print(f"Bootstrap sync: fetching up to {MAX_MESSAGES} historical messages...")
 
-        # Step 1: Fetch message list (strict cap for bootstrap, no pagination)
+        # Step 1: Fetch message list.
+        # Incremental follows every page (nothing between two scans may be
+        # skipped); bootstrap keeps its strict one-page cap and resume token.
+        listing_exhausted = True
         try:
             if mode == "incremental":
-                resp = service.users().messages().list(
-                    userId="me", maxResults=MAX_MESSAGES, q=query,
-                ).execute()
+                inc_stubs, listing_exhausted = list_incremental_stubs(
+                    service, query, page_size=MAX_MESSAGES)
+                resp = {"messages": inc_stubs}
             else:
                 list_params = {"userId": "me", "maxResults": MAX_MESSAGES, "q": "-in:spam -in:trash"}
                 if bootstrap_page_token:
@@ -1904,8 +2048,8 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
             sys.exit(1)
 
         stubs = resp.get("messages", [])
-        # Strict cap: do NOT follow nextPageToken
-        if len(stubs) > MAX_MESSAGES:
+        # Bootstrap only: strict cap, do NOT follow nextPageToken
+        if mode != "incremental" and len(stubs) > MAX_MESSAGES:
             stubs = stubs[:MAX_MESSAGES]
 
         print(f"Found {len(stubs)} messages.")
@@ -1942,7 +2086,12 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
         # Step 2: Fetch and import each message
         imported_count = 0
         skipped_count = 0
+        drafts_skipped = 0
         errors = []
+        if not listing_exhausted:
+            errors.append({"message_id": "-", "error":
+                           f"More than {INCREMENTAL_MAX_PAGES} pages of new mail; "
+                           "checkpoint held so nothing is skipped. Run the sync again."})
 
         for stub in stubs:
             msg_id = stub["id"]
@@ -1973,9 +2122,12 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
                 cc_parsed = parse_address_header(cc_header)
 
                 labels = msg.get("labelIds", [])
-                direction = "out" if "SENT" in labels else "in"
-                if direction == "in" and from_email.lower() == account_email.lower():
-                    direction = "out"
+                direction = message_direction(labels, from_email, account_email)
+                if direction == "draft":
+                    # Unsent draft: not correspondence. Never import it as sent.
+                    drafts_skipped += 1
+                    print(f"  ~ {msg_id} (draft, skipped) thread={thread_id_gmail}")
+                    continue
 
                 internal_date = msg.get("internalDate", "0")
                 iso_date = epoch_ms_to_iso(internal_date)
@@ -2169,7 +2321,8 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
                 pass
 
     # Results (only reached if no unhandled exception)
-    print(f"\nImported: {imported_count}, Skipped (dup): {skipped_count}, Errors: {len(errors)}")
+    print(f"\nImported: {imported_count}, Skipped (dup): {skipped_count}, "
+          f"Drafts ignored: {drafts_skipped}, Errors: {len(errors)}")
     if errors:
         for e in errors:
             print(f"  ! {e['message_id']}: {e['error']}")
@@ -2178,6 +2331,7 @@ def run_sync(dry_run=False, mode="bootstrap", account_email=None):
         "imported": imported_count,
         "skipped": skipped_count,
         "errors": len(errors),
+        "drafts_skipped": drafts_skipped,
         "total_processed": len(stubs),
         "bootstrap_complete": new_bootstrap_complete if new_bootstrap_complete is not None else bootstrap_complete,
     }
@@ -2200,7 +2354,18 @@ def main():
                         help="Download Gmail attachments to local disk (Phase 2)")
     parser.add_argument("--download-message", default=None, metavar="GMAIL_MESSAGE_ID",
                         help="Optional Gmail message ID to scope downloads to")
+    parser.add_argument("--purge-drafts", action="store_true",
+                        help="List unsent drafts that were imported as sent mail "
+                             "(add --apply to remove them after a live re-check)")
+    parser.add_argument("--apply", action="store_true",
+                        help="With --purge-drafts: actually delete (a DB backup is written first)")
     args = parser.parse_args()
+
+    if args.purge_drafts:
+        summary = run_purge_drafts(account_email=args.account, apply=args.apply)
+        if summary is None:
+            sys.exit(1)
+        return
 
     if args.auth:
         # Genuine separate OAuth flow using read-only scope only

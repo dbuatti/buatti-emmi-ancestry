@@ -295,7 +295,7 @@ export function buildHints(
 
     // father / mother
     const linkedId = slotFilled(subject, role);
-    if (restatesLinked(linkedId, surname, given)) continue; // already connected
+    if (restatesLinked(linkedId, surnameOfPerson(all, subject.name), surname, given)) continue; // already connected
     const hit = options.find((id) =>
       (subject.parents ?? []).includes(id)
     );
