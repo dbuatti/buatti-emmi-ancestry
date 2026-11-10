@@ -75,7 +75,7 @@ export function ResearchCentre() {
         <ScanStatusBanner />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="mb-4">
+          <TabsList className="mb-4 h-auto flex-wrap justify-start">
             <TabsTrigger value="correspondence">Correspondence</TabsTrigger>
             <TabsTrigger value="newitems">New items</TabsTrigger>
             <TabsTrigger value="requests">Request review</TabsTrigger>

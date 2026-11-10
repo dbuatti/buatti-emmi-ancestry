@@ -270,15 +270,15 @@ export function CorrespondenceList({ relevance, onSelectThread, setIsDetailOpen 
               </Select>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs text-stone-500">Sort:</span>
-            <Button size="sm" onClick={() => setSortBy('date')} className={sortBy === 'date' ? 'bg-[#800020] text-white' : 'bg-white border-stone-300'}>
+            <Button size="sm" onClick={() => setSortBy('date')} className={sortBy === 'date' ? 'bg-[#800020] text-white hover:bg-[#6b001a]' : 'bg-white border border-stone-300 text-stone-700 hover:bg-stone-100'}>
               <ArrowUpDown className="w-3 h-3 mr-1" /> Latest date {sortBy === 'date' && (sortDir === 'desc' ? '▼' : '▲')}
             </Button>
-            <Button size="sm" onClick={() => setSortBy('subject')} className={sortBy === 'subject' ? 'bg-[#800020] text-white' : 'bg-white border-stone-300'}>
+            <Button size="sm" onClick={() => setSortBy('subject')} className={sortBy === 'subject' ? 'bg-[#800020] text-white hover:bg-[#6b001a]' : 'bg-white border border-stone-300 text-stone-700 hover:bg-stone-100'}>
               Subject
             </Button>
-            <Button size="sm" onClick={() => setSortBy('count')} className={sortBy === 'count' ? 'bg-[#800020] text-white' : 'bg-white border-stone-300'}>
+            <Button size="sm" onClick={() => setSortBy('count')} className={sortBy === 'count' ? 'bg-[#800020] text-white hover:bg-[#6b001a]' : 'bg-white border border-stone-300 text-stone-700 hover:bg-stone-100'}>
               Messages
             </Button>
             <Button size="sm" variant="ghost" onClick={() => setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'))} className="text-xs">

@@ -147,15 +147,15 @@ export const AssistantDashboard = ({
         </CardContent></Card>
         <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle className="text-sm">Definite Leads</CardTitle></CardHeader><CardContent>
           <p className="text-3xl font-serif font-bold text-emerald-600">{summary.db_stats?.definite || 0}</p>
-          <p className="text-stone-500 text-sm">genealogy_relevance=definite</p>
+          <p className="text-stone-500 text-sm">From an office or archive about the family</p>
         </CardContent></Card>
         <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle className="text-sm">Possible Leads</CardTitle></CardHeader><CardContent>
           <p className="text-3xl font-serif font-bold text-orange-600">{summary.db_stats?.possible || 0}</p>
-          <p className="text-stone-500 text-sm">genealogy_relevance=possible</p>
+          <p className="text-stone-500 text-sm">Might be about the family — worth a look</p>
         </CardContent></Card>
         <Card><CardHeader className="p-3 border-b border-stone-200"><CardTitle className="text-sm">Unreviewed</CardTitle></CardHeader><CardContent>
-          <p className="text-3xl font-serif font-bold text-stone-300">{summary.db_stats?.unreviewed || 0}</p>
-          <p className="text-stone-500 text-sm">no genealogy relevance</p>
+          <p className="text-3xl font-serif font-bold text-stone-500">{summary.db_stats?.unreviewed || 0}</p>
+          <p className="text-stone-500 text-sm">Not yet sorted as family research or not</p>
         </CardContent></Card>
       </div>
 

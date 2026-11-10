@@ -50,8 +50,8 @@ const ResearchAssistant = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF6F0] text-stone-900 font-serif">
-      <nav className="border-b border-stone-200 px-4 py-3 bg-white sticky top-0">
-        <div className="max-w-7xl mx-auto flex items-center gap-4">
+      <nav className="border-b border-stone-200 px-4 py-3 bg-white sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-serif font-bold text-[#800020]">Research Assistant</h1>
           <Select onValueChange={(v) => setFilterAccount(v as 'all' | 'daniele' | 'info')}>
             <SelectTrigger className="bg-white border-stone-300">
@@ -80,12 +80,6 @@ const ResearchAssistant = () => {
             onChange={e => setSearchQuery(e.target.value)}
             className="bg-white border-stone-300"
           />
-          <Button onClick={() => navigate(-1)} className="text-sm px-3 py-1.5 text-stone-600 hover:text-stone-800">
-            ← Back
-          </Button>
-          <Button onClick={() => navigate('/')} className="text-sm px-3 py-1.5 text-stone-600 hover:text-stone-800">
-            ← Back to Tree
-          </Button>
         </div>
       </nav>
 

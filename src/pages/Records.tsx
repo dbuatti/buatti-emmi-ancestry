@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getAllRecords } from '@/lib/record-loader';
 import type { RecordEntry } from '@/lib/record-loader';
-import { stepLabel, type WorkflowStep } from '@/types/record';
+import { stepLabel, WORKFLOW_STEPS, type WorkflowStep } from '@/types/record';
+import { recordTitle } from '@/lib/record-title';
+import { initialPeople } from '@/data/familyDataWrapper';
+
+const PERSON_NAMES = new Map(initialPeople.map((p) => [p.id, p.name]));
+const nameOf = (id: string) => PERSON_NAMES.get(id) ?? id;
 
 const STEP_COLORS: Record<string, string> = {
   filed: 'bg-stone-100 text-stone-600',
@@ -149,7 +154,7 @@ export default function Records() {
             >
               <option value="all">All people</option>
               {people.map((p) => (
-                <option key={p} value={p}>{p}</option>
+                <option key={p} value={p}>{nameOf(p)}</option>
               ))}
             </select>
           </label>
@@ -221,24 +226,28 @@ export default function Records() {
                       <Card className="border-stone-200 hover:border-[#800020] transition-colors">
                         <CardContent className="p-3 flex items-center justify-between gap-3">
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-stone-800 text-sm truncate">{r.id}</div>
+                            <div className="font-medium text-stone-900 text-[15px] truncate">{recordTitle(fm, r.id, nameOf)}</div>
                             <div className="text-xs text-stone-500 font-sans mt-0.5">
                               {date}
                               {fm.place ? ` · ${fm.place}` : ''}
                               {fm.comune && fm.comune !== fm.place ? ` · ${fm.comune}` : ''}
                               {fm.atto ? ` · atto ${fm.atto}` : ''}
                               {(fm.parte || fm.serie) ? ` · ${[fm.parte ? `P. ${fm.parte}` : '', fm.serie ? `S. ${fm.serie}` : ''].filter(Boolean).join(' ')}` : ''}
-                              {recPeople.length > 0 ? ` · ${recPeople.join(', ')}` : ''}
                             </div>
+                            <div className="text-[10px] text-stone-400 font-mono mt-0.5 truncate" title="Record folder id">{r.id}</div>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            {isOnFs && (
-                              <Badge className="text-[9px] bg-purple-100 text-purple-800">FS</Badge>
-                            )}
-                            {isInApp && (
-                              <Badge className="text-[9px] bg-blue-100 text-blue-800">In app</Badge>
-                            )}
-                            <Badge className={`text-[9px] ${STEP_COLORS[r.step] || 'bg-stone-100 text-stone-600'}`}>
+                            <span
+                              className="hidden sm:flex items-center gap-1"
+                              role="img"
+                              aria-label={`Step ${r.stepNumber} of 5`}
+                              title={WORKFLOW_STEPS.map((st, i) => `${i < r.stepNumber ? '✓' : '○'} ${stepLabel(st)}`).join('\n')}
+                            >
+                              {WORKFLOW_STEPS.map((st, i) => (
+                                <span key={st} className={`w-1.5 h-1.5 rounded-full ${i < r.stepNumber ? 'bg-[#800020]' : 'bg-stone-300'}`} />
+                              ))}
+                            </span>
+                            <Badge className={`text-[10px] ${STEP_COLORS[r.step] || 'bg-stone-100 text-stone-600'}`}>
                               {stepLabel(r.step as WorkflowStep)}
                             </Badge>
                             <ArrowRight className="w-3.5 h-3.5 text-stone-400" />

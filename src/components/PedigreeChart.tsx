@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Users, BadgeCheck } from 'lucide-react';
+import { BadgeCheck } from 'lucide-react';
 import type { Person } from '@/types';
 import { collectAncestorIds, isIdentified, cleanDate, calculateAge } from '@/lib/tree';
 import { LINE_BORDER_LEFT, LINE_BG } from '@/lib/constants';
@@ -62,14 +62,14 @@ function PersonCard({ person, selected, onSelect }: { person: Person; selected: 
           <BadgeCheck className="w-4 h-4 text-emerald-600 bg-white rounded-full" />
         </div>
       )}
-      {age && (
-        <div className="absolute -top-1 -left-1 z-10 w-5 h-5 rounded-full bg-stone-700 text-white flex items-center justify-center text-[8px] font-sans font-bold leading-none" title={age.estimated ? `Est. ~${age.age} years` : `${age.age} years`}>
-          {age.estimated ? '~' : ''}{age.age}
-        </div>
-      )}
       <p className="font-bold truncate pr-1">{person.name}</p>
       <p className="text-[10px] font-sans opacity-80">
         {birthClean || 'Unknown'}{deathClean ? ` – ${deathClean}` : person.isLiving ? ' – Living' : ''}
+        {age && (
+          <span className="opacity-70" title={age.estimated ? 'Estimated from approximate dates' : undefined}>
+            {' '}· {age.estimated ? 'about ' : 'aged '}{age.age}
+          </span>
+        )}
       </p>
       {person.occupations && person.occupations.length > 0 && (
         <p className="text-[9px] font-sans italic opacity-60 truncate">{person.occupations[0]}</p>
@@ -107,10 +107,6 @@ export function PedigreeChart({ people, selectedPersonId, onSelectPerson }: Pedi
 
   return (
     <div className="lg:col-span-2 bg-[#F4EFE6] border border-stone-200 rounded-xl p-6 shadow-inner relative overflow-y-auto min-h-[400px] max-h-[70vh]">
-      <div className="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
-        <Users className="w-96 h-96 text-[#800020]" />
-      </div>
-
       <div className="text-center mb-4 relative z-10">
         <h3 className="text-lg font-bold text-[#800020] tracking-wide">Pedigree Chart</h3>
         <p className="text-xs text-stone-500 font-sans">Interactive lineage — verified ancestors marked with <BadgeCheck className="w-3 h-3 inline text-emerald-600" /></p>

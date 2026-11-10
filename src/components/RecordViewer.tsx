@@ -306,11 +306,11 @@ export function RecordViewer({ recordId, sticky = false, pages }: RecordViewerPr
 
       {/* Main card */}
       <Card className={`border-stone-200 flex flex-col h-full ${sticky ? "sticky top-0 z-10 bg-white border-b border-stone-200" : ""}`}>
-        <CardHeader className="flex items-center justify-between gap-2 bg-white/80 backdrop-blur sticky top-0 z-10 px-4 py-2">
+        <CardHeader className="flex flex-wrap items-center justify-between gap-2 bg-white/80 backdrop-blur sticky top-0 z-10 px-4 py-2">
           <CardTitle className="text-xs font-bold uppercase tracking-wider">
             Document Image
           </CardTitle>
-          <div className="flex gap-1">
+          <div className="flex flex-wrap justify-end gap-1">
             <Button
               variant="outline"
               size="sm"

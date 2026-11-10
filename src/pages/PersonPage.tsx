@@ -31,8 +31,8 @@ const isLocal = import.meta.env.DEV;
 
 function Section({ title, children, right }: { title: string; children: React.ReactNode; right?: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between mb-3">
+    <section className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm min-w-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h2 className="text-xs font-bold uppercase tracking-wider text-[#800020]">{title}</h2>
         {right}
       </div>
@@ -225,7 +225,7 @@ function PersonPageInner() {
                   </div>
                 ) : <div className="text-xs text-amber-700">Not saved yet.</div>}
                 {isLocal && (
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     <input className="flex-1 rounded border border-stone-300 px-2 py-1 text-xs" placeholder="Paste the FamilySearch person link or ID"
                       value={fsInput} onChange={(e) => setFsInput(e.target.value)} />
                     <Button size="sm" className="text-xs bg-[#800020] text-white" onClick={() => {
@@ -251,7 +251,7 @@ function PersonPageInner() {
                   ))}
                 </ul>
                 {isLocal && (
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     <input className="w-32 rounded border border-stone-300 px-2 py-1 text-xs" placeholder="Link or ID" value={altInput} onChange={(e) => setAltInput(e.target.value)} />
                     <input className="flex-1 rounded border border-stone-300 px-2 py-1 text-xs" placeholder="Note (e.g. possible duplicate)" value={altNote} onChange={(e) => setAltNote(e.target.value)} />
                     <Button size="sm" variant="outline" className="text-xs" onClick={() => {
@@ -277,7 +277,7 @@ function PersonPageInner() {
                   ))}
                 </ul>
                 {isLocal && (
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex flex-wrap gap-2 mt-2">
                     <input className="w-32 rounded border border-stone-300 px-2 py-1 text-xs" placeholder="Label" value={linkLabel} onChange={(e) => setLinkLabel(e.target.value)} />
                     <input className="flex-1 rounded border border-stone-300 px-2 py-1 text-xs" placeholder="https://…" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} />
                     <Button size="sm" variant="outline" className="text-xs" onClick={() => {
@@ -621,7 +621,7 @@ function StepGuide(props: {
             ['Event Date', fs.eventDate], ['Source Title', fs.sourceTitle], ['Source Type', fs.sourceType],
             ['Citation', fs.citation], ['Notes', fs.notes], ['Reason to Attach', fs.reason],
           ] as [string, string][]).map(([k, v]) => (
-            <div key={k} className="grid grid-cols-[8rem_1fr_auto] gap-2 items-start">
+            <div key={k} className="grid grid-cols-1 sm:grid-cols-[8rem_1fr_auto] gap-2 items-start">
               <div className="text-xs font-semibold text-stone-700 pt-1">{k}</div>
               <div className="text-xs text-stone-700 bg-white rounded border border-stone-200 p-2 whitespace-pre-wrap">{v || '—'}</div>
               <FieldCopy text={v} />

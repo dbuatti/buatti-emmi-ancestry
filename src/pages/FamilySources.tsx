@@ -36,7 +36,7 @@ const FamilySources = () => {
                   {g.records.map((r, i) => (
                     <li key={i} className="text-sm text-stone-800 flex items-start gap-2">
                       <FileText className="w-3.5 h-3.5 text-[#800020] mt-0.5 shrink-0" />
-                      <span>
+                      <span className="min-w-0 [overflow-wrap:anywhere]">
                         <span className="font-semibold">{r.type}</span>
                         {r.notes && <span className="text-stone-600"> — {r.notes}</span>}
                         {r.link && (
