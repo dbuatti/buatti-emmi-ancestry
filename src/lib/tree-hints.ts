@@ -56,11 +56,15 @@ const TITLES = new Set([
 function tokensOf(raw: string): string[] {
   return (raw || '')
     .replace(/\[[^\]]*\]/g, ' ')
+    .replace(/\([^)]*\)/g, ' ')
     .replace(/["“”']/g, ' ')
     .split(/[\s,;]+/)
     .map((t) => t.replace(/^[.(°·\-–—]+|[.(°·\-–—]+$/g, ''))
     .filter((t) => /^[A-Za-zà-ÿ]{3,}/.test(t) && !TITLES.has(t.toLowerCase()));
 }
+
+// Labels that describe a person without naming them — never a hint source.
+const NON_NAME_LABELS = /profession|occupation|mestiere|professione|residen|domicil|\bâge\b|\betà\b|\banni\b|\bage\b/i;
 
 function personTokens(p: Person): string[] {
   return (p.name || '')
@@ -127,7 +131,10 @@ function surnameOfPerson(all: Person[], name: string): string {
 
 /**
  * Build tree hints for one record.
- * @param subjectIds record subjects (frontMatter.people) — hints anchor on the first.
+ * Each family-role line anchors to the most plausible subject: the subject
+ * who already links a matching person in that slot wins (usually → skip as
+ * already connected); next, a subject with the slot empty; else the first
+ * subject. So "Bride father: Remo" on a joint record anchors to the bride.
  */
 export function buildHints(
   recordId: string,
@@ -136,13 +143,13 @@ export function buildHints(
   all: Person[]
 ): TreeHint[] {
   const hints: TreeHint[] = [];
-  if (subjectIds.length === 0) return hints;
-  const subject = all.find((p) => p.id === subjectIds[0]);
-  if (!subject) return hints;
-  const subjectSurname = surnameOfPerson(all, subject.name);
+  const subjects = subjectIds
+    .map((id) => all.find((p) => p.id === id))
+    .filter((p): p is Person => Boolean(p));
+  if (subjects.length === 0) return hints;
   const existingIds = new Set(all.map((p) => p.id));
 
-  const slotFilled = (role: HintRole): string | undefined => {
+  const slotFilled = (subject: Person, role: HintRole): string | undefined => {
     if (role === 'spouse') {
       return (subject.spouses ?? []).find((id) => existingIds.has(id));
     }
@@ -150,23 +157,50 @@ export function buildHints(
     return (subject.parents ?? []).find((id) => all.find((p) => p.id === id)?.gender === wantGender);
   };
 
-  for (const line of lines) {
-    const role = roleOf(line.label, line.value);
-    if (!role) continue;
-    const parsed = parseRoleName(line.value, subjectSurname);
-    if (!parsed) continue;
-    const { surname, given, inferred } = parsed;
-    const display = `${given} ${surname}`;
+  const matchOptions = (surname: string, given: string): string[] => {
     const wantTokens = [surname.toLowerCase(), ...given.toLowerCase().split(/\s+/)];
-
-    // Candidate existing people: name token set covers all hint tokens.
-    const options = all
+    return all
       .filter((p) => {
         const pt = personTokens(p);
         return wantTokens.every((t) => pt.includes(t));
       })
       .map((p) => p.id)
       .slice(0, 4);
+  };
+
+  for (const line of lines) {
+    const role = roleOf(line.label, line.value);
+    if (!role) continue;
+    // Profession / residence / age descriptors name nobody.
+    if (NON_NAME_LABELS.test(line.label)) continue;
+
+    // Anchor: the subject already linking a match wins (usually a no-op
+    // skip); else the first subject with the slot empty; else subjects[0].
+    // So "Bride father: Remo" anchors to the bride, not the groom.
+    const isLinked = (cand: Person, opts: string[]) =>
+      opts.find((id) =>
+        role === 'spouse'
+          ? (cand.spouses ?? []).includes(id)
+          : (cand.parents ?? []).includes(id)
+      );
+    const isEmptySlot = (cand: Person) =>
+      role === 'spouse'
+        ? (cand.spouses ?? []).length === 0
+        : !slotFilled(cand, role);
+    const perAnchor = subjects.map((cand) => {
+      const pc = parseRoleName(line.value, surnameOfPerson(all, cand.name));
+      return { cand, parsed: pc, options: pc ? matchOptions(pc.surname, pc.given) : [] };
+    });
+    if (perAnchor.every((a) => !a.parsed)) continue;
+    const linkedAnchor =
+      perAnchor.find((a) => a.parsed && isLinked(a.cand, a.options)) ??
+      perAnchor.find((a) => a.parsed && isEmptySlot(a.cand)) ??
+      perAnchor.find((a) => a.parsed)!;
+    const subject = linkedAnchor.cand;
+    const parsed = linkedAnchor.parsed!;
+    const options = linkedAnchor.options;
+    const { surname, given, inferred } = parsed;
+    const display = `${given} ${surname}`;
 
     const base = {
       subjectId: subject.id,
@@ -183,7 +217,7 @@ export function buildHints(
     };
 
     if (role === 'spouse') {
-      const linkedId = slotFilled('spouse');
+      const linkedId = slotFilled(subject, 'spouse');
       const hit = options.find((id) => (subject.spouses ?? []).includes(id));
       if (hit) continue; // already linked — nothing to propose
       if (options.length > 0) {
@@ -223,7 +257,7 @@ export function buildHints(
     }
 
     // father / mother
-    const linkedId = slotFilled(role);
+    const linkedId = slotFilled(subject, role);
     const hit = options.find((id) =>
       (subject.parents ?? []).includes(id)
     );
