@@ -11,6 +11,7 @@ import { RecordNextStep } from '@/components/RecordNextStep';
 import { TranscriptionPanel } from '@/components/TranscriptionPanel';
 import { RecordPeopleSection } from '@/components/RecordPeopleSection';
 import { TreeHintsPanel } from '@/components/TreeHintsPanel';
+import { RecordMentions } from '@/components/RecordMentions';
 import { CiecExtractPanel } from '@/components/CiecExtractPanel';
 import { ItalianExtractPanel } from '@/components/ItalianExtractPanel';
 import { SplitDocumentPanel } from '@/components/SplitDocumentPanel';
@@ -588,6 +589,14 @@ export default function RecordPage() {
               setStatus={setStatus}
             />
           )}
+
+          <CollapsibleSection title="Mentioned in email" defaultOpen={false}>
+            <RecordMentions
+              recordId={frontMatter.id}
+              atto={frontMatter.atto}
+              people={(frontMatter.people ?? []) as string[]}
+            />
+          </CollapsibleSection>
 
           {/* 4. FamilySearch — Add as Source */}
           <CollapsibleSection title="FamilySearch — Add as Source" defaultOpen={!!frontMatter.verified && !frontMatter.on_familysearch}>

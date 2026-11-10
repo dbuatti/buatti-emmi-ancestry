@@ -133,6 +133,25 @@ export function extractKeyTerms(texts: (string | undefined)[], personName: strin
   return { years, attos: uniq(attos, 6), names, places };
 }
 
+/** Search terms for a record page's "mentioned in email" section.
+ * Act numbers + linked surnames only — years and places match too broadly
+ * on their own. Capped so the panel fires a handful of LIKE queries. */
+export function recordTerms(
+  fm: { atto?: string; year?: string; date?: string },
+  surnames: string[]
+): string[] {
+  const terms: string[] = [];
+  const attoMatch = (fm.atto || '').match(/\d{1,4}/);
+  if (attoMatch) {
+    terms.push(`atto ${attoMatch[0]}`, `n. ${attoMatch[0]}`);
+  }
+  for (const s of surnames) {
+    const t = (s || '').trim();
+    if (t.length > 2) terms.push(t);
+  }
+  return uniq(terms, 6);
+}
+
 /** Flatten terms to an ordered search list (most specific first). */
 export function flattenTerms(terms: EmailKeyTerms): string[] {
   return uniq([...terms.attos, ...terms.names, ...terms.places, ...terms.years], 10);
