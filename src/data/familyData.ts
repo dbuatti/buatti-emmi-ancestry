@@ -2550,13 +2550,13 @@ export const initialPeople: Person[] = [
     line: 'Buatti',
     gender: 'M',
     birthDate: '20 November 1990',
-    birthPlace: 'Parkdale, Victoria, Australia',
+    birthPlace: 'Mordialloc, Victoria, Australia',
     spouses: [],
     parents: ['alfred-buatti', 'venera-buatti'],
     children: [],
     isLiving: true,
     records: [
-      { type: 'Birth Record', status: 'Found', notes: '20 Nov 1990, Parkdale VIC — confirmed by individual' }
+      { type: 'Birth Record', status: 'Found', notes: '20 Nov 1990, Mordialloc VIC — Victorian birth certificate 62805/1990, verified 10/11/2026' }
     ],
     lifeEvents: [
       { type: 'birth', status: 'known_no_record', note: 'Birth 20 Nov 1990, Parkdale, Victoria, Australia — confirmed by individual. No certificate held.' }

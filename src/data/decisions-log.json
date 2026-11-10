@@ -1,4 +1,19 @@
 {
   "version": 1,
-  "entries": []
+  "entries": [
+    {
+      "ts": "2026-11-10T00:23:07.720Z",
+      "kind": "parked-payments",
+      "subject": "paywalled-items",
+      "detail": "Parked until spending resumes: (1) Archivio di Stato AP 09/07/2026 prot 1733-P — Remo Chiappini ruolo matricolare 1909 n.10094/1911, €3 via single method; letter in _inbox. (2) Ascoli prot 0098310/2026 — Alfredo×Ida marriage search €300 (possibly moot if Ida death act names parents). (3) NAA Item 4384476 (Alfio+Rosaria, not ours) — buy copy vs Brisbane reading room. (4) SP1121/1 item 9637786 (Gino intake) $26.45 — blocked on relationship confirmation anyway.",
+      "by": "opencode"
+    },
+    {
+      "ts": "2026-11-10T00:23:07.709Z",
+      "kind": "spending-rule",
+      "subject": "all-requests",
+      "detail": "No-spend for now (10/11/2026, Daniele): no paid avenues — €3 Remo military digitisation, €300 Ascoli marriage search, NAA copy purchases, SP1121 $26.45. Free routes only. Revisit on his word.",
+      "by": "opencode"
+    }
+  ]
 }

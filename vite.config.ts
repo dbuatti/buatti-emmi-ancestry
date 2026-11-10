@@ -411,8 +411,17 @@ function localRecordsApiPlugin(): Plugin {
               const total = parseInt(m?.[1] || "1", 10);
               const n = Math.min(Math.max(1, total - fromPage + 1), 4);
               execFileSync(pdftoppm, ["-png", "-r", "300", "-f", String(fromPage), "-l", String(fromPage + n - 1), fp, tmpBase], { encoding: "utf8", timeout: 120000 });
-              pagePngs = [];
-              for (let pgi = 0; pgi < n; pgi++) pagePngs.push(`${tmpBase}-${fromPage + pgi}.png`);
+              // NOTE: poppler zero-pads page numbers to the document width
+              // (19pp doc → base-01.png), so glob instead of guessing names.
+              const base = path.basename(tmpBase);
+              pagePngs = fs.readdirSync(path.dirname(tmpBase))
+                .filter((f) => f.startsWith(base + "-") && f.endsWith(".png"))
+                .sort((a, b) => {
+                  const na = parseInt(a.slice(base.length + 1), 10) || 0;
+                  const nb = parseInt(b.slice(base.length + 1), 10) || 0;
+                  return na - nb;
+                })
+                .map((f) => path.join(path.dirname(tmpBase), f));
             } else {
               pagePngs = [fp];
             }

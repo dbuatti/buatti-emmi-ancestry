@@ -31,6 +31,7 @@ import {
   EVENT_LABELS,
   type RecordStepInfo,
   type EventOverrides,
+  type LifeEventType,
 } from '../../scripts/next-task';
 import eventRequests from '@/data/event-requests.json';
 import fsChecks from '@/data/fs-checks.json';
@@ -237,7 +238,7 @@ export function NextGuide() {
 
   if (!task) {
     const waiting = getWaitingTasks(initialPeople, eventRequests as EventOverrides, new Date());
-    const markWaitingReceived = async (personId: string, eventType: string) => {
+    const markWaitingReceived = async (personId: string, eventType: LifeEventType) => {
       setStatus('Saving…');
       try {
         await callApiEventOverride(eventKey(personId, eventType), {
