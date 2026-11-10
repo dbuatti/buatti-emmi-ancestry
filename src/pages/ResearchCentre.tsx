@@ -10,6 +10,7 @@ import { NewItemsView } from '@/components/NewItemsView';
 import { NextCorrespondenceAction } from '@/components/NextCorrespondenceAction';
 import { DecisionsLog } from '@/components/DecisionsLog';
 import { ScanStatusBanner } from '@/components/ScanStatusBanner';
+import { MailLedger } from '@/components/MailLedger';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 
@@ -77,10 +78,15 @@ export function ResearchCentre() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-4 h-auto flex-wrap justify-start">
             <TabsTrigger value="correspondence">Correspondence</TabsTrigger>
+            <TabsTrigger value="ledger">Sent &amp; received</TabsTrigger>
             <TabsTrigger value="newitems">New items</TabsTrigger>
             <TabsTrigger value="requests">Request review</TabsTrigger>
             <TabsTrigger value="decisions">Decisions</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="ledger">
+            <MailLedger />
+          </TabsContent>
 
           <TabsContent value="correspondence">
             <p className="text-xs text-stone-500 font-sans mb-3 max-w-3xl">

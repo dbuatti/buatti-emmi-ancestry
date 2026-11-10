@@ -2000,6 +2000,46 @@ function localCorrespondenceApiPlugin(): Plugin {
           }
         }
 
+        // ---- GET /api/correspondence/ledger-messages?scope=genealogy|all ----
+        // Minimal rows for the "Sent & received" ledger (src/lib/mail-ledger.ts
+        // does the grouping). Read-only. scope=genealogy (default) keeps only
+        // threads with at least one message marked definite/possible.
+        if (method === "GET" && url.split("?")[0] === "/api/correspondence/ledger-messages") {
+          try {
+            const db = await loadDb();
+            const scope = new URL(url, "http://localhost").searchParams.get("scope") === "all" ? "all" : "genealogy";
+            const threadFilter = scope === "all" ? "" : `AND m.thread_id IN (
+                SELECT DISTINCT m2.thread_id FROM messages m2
+                JOIN message_classification mc ON mc.message_id = m2.id
+                WHERE mc.genealogy_relevance IN ('definite','possible'))`;
+            const rows = db.prepare(
+              `SELECT m.id, m.gmail_thread_id, m.direction, m.from_email, m.from_name, m.to_json, m.subject,
+                      COALESCE(m.sent_at, m.received_at) AS at
+               FROM messages m
+               WHERE m.deleted_at IS NULL ${threadFilter}
+               ORDER BY at ASC
+               LIMIT 20000`
+            ).all() as Array<Record<string, unknown>>;
+            const messages = rows.map((r) => {
+              let to: string[] = [];
+              try {
+                const parsed = JSON.parse(String(r.to_json ?? "[]"));
+                if (Array.isArray(parsed)) to = parsed.map((x) => String(x?.email ?? x ?? "")).filter(Boolean);
+              } catch { /* malformed to_json: treat as no recipients */ }
+              return {
+                id: Number(r.id), thread: String(r.gmail_thread_id), direction: r.direction === "out" ? "out" : "in",
+                fromEmail: String(r.from_email ?? ""), fromName: r.from_name ? String(r.from_name) : undefined,
+                to, subject: String(r.subject ?? ""), at: String(r.at ?? ""),
+              };
+            });
+            const accounts = (db.prepare("SELECT DISTINCT account_email FROM messages").all() as Array<{ account_email: string }>)
+              .map((a) => String(a.account_email));
+            return sendJson(res, 200, { ok: true, scope, accounts, messages });
+          } catch (e) {
+            return sendJson(res, 500, { ok: false, error: e instanceof Error ? e.message : String(e) });
+          }
+        }
+
         // ---- GET /api/correspondence/genealogy/summary ----
         if (method === "GET" && url === "/api/correspondence/genealogy/summary") {
           try {

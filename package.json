@@ -12,6 +12,7 @@
     "typecheck": "tsc -b --noEmit",
     "export:tree": "node scripts/export-family-tree.mjs",
     "test:clues": "node --experimental-strip-types --no-warnings scripts/test-clues.mjs",
+    "test:ledger": "node --experimental-strip-types --no-warnings scripts/test-mail-ledger.mjs",
     "test:ocr": "node --experimental-strip-types --no-warnings scripts/test-ciec-extract.mjs",
     "preview": "vite preview"
   },
